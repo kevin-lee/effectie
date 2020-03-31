@@ -9,3 +9,5 @@ trait Effectful {
   def effectUnit[F[_] : EffectConstructor]: F[Unit] = EffectConstructor[F].unit
 
 }
+
+object Effectful extends Effectful
