@@ -11,3 +11,5 @@ trait ConsoleEffectful {
   def readYesNo[F[_] : ConsoleEffect](prompt: String): F[YesNo] = ConsoleEffect[F].readYesNo(prompt)
 
 }
+
+object ConsoleEffectful extends ConsoleEffectful
