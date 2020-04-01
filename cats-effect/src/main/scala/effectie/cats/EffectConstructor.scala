@@ -9,7 +9,7 @@ object EffectConstructor {
 
   implicit val ioEffectConstructor: EffectConstructor[IO] = new EffectConstructor[IO] {
 
-    override def effect[A](a: => A): IO[A] = IO(a)
+    override def effectOf[A](a: => A): IO[A] = IO(a)
 
     override def pureEffect[A](a: A): IO[A] = IO.pure(a)
 

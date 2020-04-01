@@ -1,7 +1,7 @@
 package effectie
 
 trait EffectConstructor[F[_]] {
-  def effect[A](a: => A): F[A]
+  def effectOf[A](a: => A): F[A]
   def pureEffect[A](a: A): F[A]
   def unit: F[Unit]
 }
