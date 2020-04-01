@@ -5,13 +5,21 @@ import cats.data.EitherT
 
 trait EitherTSupport {
 
-  def eitherTF[F[_] : EffectConstructor, A, B](ab: => Either[A, B]): EitherT[F, A, B] =
+  def eitherTEffect[F[_] : EffectConstructor, A, B](ab: => Either[A, B]): EitherT[F, A, B] =
     EitherT(EffectConstructor[F].effectOf(ab))
 
-  def eitherTEffect[F[_] : EffectConstructor : Functor, A, B](b: => B): EitherT[F, A, B] =
+  def eitherTPureEffect[F[_] : EffectConstructor, A, B](ab: Either[A, B]): EitherT[F, A, B] =
+    EitherT(EffectConstructor[F].pureEffect(ab))
+
+  def eitherTLiftEffect[F[_] : EffectConstructor : Functor, A, B](b: => B): EitherT[F, A, B] =
     EitherT.liftF[F, A, B](EffectConstructor[F].effectOf(b))
 
-  def eitherTLiftF[F[_] : EffectConstructor : Functor, A, B](fb: => F[B]): EitherT[F, A, B] =
+  def eitherTLiftPureEffect[F[_] : EffectConstructor : Functor, A, B](b: B): EitherT[F, A, B] =
+    EitherT.liftF[F, A, B](EffectConstructor[F].pureEffect(b))
+
+  def eitherTLiftF[F[_] : EffectConstructor : Functor, A, B](fb: F[B]): EitherT[F, A, B] =
     EitherT.liftF[F, A, B](fb)
 
 }
+
+object EitherTSupport extends  EitherTSupport
