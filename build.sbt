@@ -6,6 +6,7 @@ import microsites.ConfigYml
 
 val ProjectScalaVersion: String = "2.13.1"
 val CrossScalaVersions: Seq[String] = Seq("2.11.12", "2.12.11", ProjectScalaVersion)
+val IncludeTest: String = "compile->compile;test->test"
 
 lazy val hedgehogVersion = "97854199ef795a5dfba15478fd9abe66035ddea2"
 lazy val hedgehogRepo: MavenRepository =
@@ -187,7 +188,7 @@ lazy val catsEffect = (project in file("cats-effect"))
     })
     /* } Coveralls */
   )
-  .dependsOn(core % "compile->compile;test->test")
+  .dependsOn(core % IncludeTest)
 
 lazy val docDir = file("docs")
 lazy val docs = (project in docDir)

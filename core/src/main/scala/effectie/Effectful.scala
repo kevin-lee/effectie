@@ -2,7 +2,7 @@ package effectie
 
 trait Effectful {
 
-  def effect[F[_] : EffectConstructor, A](a: => A): F[A] = EffectConstructor[F].effect(a)
+  def effectOf[F[_] : EffectConstructor, A](a: => A): F[A] = EffectConstructor[F].effectOf(a)
 
   def pureEffect[F[_] : EffectConstructor, A](a: A): F[A] = EffectConstructor[F].pureEffect(a)
 

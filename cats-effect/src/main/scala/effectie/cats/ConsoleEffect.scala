@@ -12,13 +12,13 @@ object ConsoleEffect {
 
   final class ConsoleEffectF[F[_] : EffectConstructor : Monad] extends ConsoleEffect[F] {
     override def readLn: F[String] =
-      EffectConstructor[F].effect(scala.io.StdIn.readLine)
+      EffectConstructor[F].effectOf(scala.io.StdIn.readLine)
 
     override def putStrLn(value: String): F[Unit] =
-      EffectConstructor[F].effect(Console.out.println(value))
+      EffectConstructor[F].effectOf(Console.out.println(value))
 
     override def putErrStrLn(value: String): F[Unit] =
-      EffectConstructor[F].effect(Console.err.println(value))
+      EffectConstructor[F].effectOf(Console.err.println(value))
 
     @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
     override def readYesNo(prompt: String): F[YesNo] = for {
@@ -26,9 +26,9 @@ object ConsoleEffect {
       answer <- readLn
       yesOrN <-  answer match {
         case "y" | "Y" =>
-          EffectConstructor[F].effect(YesNo.yes)
+          EffectConstructor[F].effectOf(YesNo.yes)
         case "n" | "N" =>
-          EffectConstructor[F].effect(YesNo.no)
+          EffectConstructor[F].effectOf(YesNo.no)
         case _ =>
           readYesNo(prompt)
       }
