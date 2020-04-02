@@ -41,12 +41,21 @@ ThisBuild / scmInfo :=
 
 def prefixedProjectName(name: String) = s"effectie${if (name.isEmpty) "" else s"-$name"}"
 
+lazy val noPublish = Seq(
+  publish := {},
+  publishLocal := {},
+  publishArtifact := false,
+  skip in packagedArtifacts := true,
+  skip in publish := true
+)
+
 lazy val effectie = (project in file("."))
   .enablePlugins(DevOopsGitReleasePlugin)
   .settings(
     name := prefixedProjectName("")
   , description := "Effect Utils"
   )
+  .settings(noPublish)
 
 lazy val core = (project in file("core"))
   .enablePlugins(DevOopsGitReleasePlugin)
@@ -230,4 +239,5 @@ lazy val docs = (project in docDir)
     /* } microsites */
 
   )
+  .settings(noPublish)
   .dependsOn(core)
