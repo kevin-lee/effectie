@@ -41,7 +41,7 @@ ThisBuild / scmInfo :=
 
 def prefixedProjectName(name: String) = s"effectie${if (name.isEmpty) "" else s"-$name"}"
 
-lazy val noPublish = Seq(
+lazy val noPublish: SettingsDefinition = Seq(
   publish := {},
   publishLocal := {},
   publishArtifact := false,
