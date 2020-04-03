@@ -16,19 +16,27 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_AUTH_TOKEN_GITHUB }}
       run: |
-        echo "Run] sbt GitHub release"
+        echo "Run] sbt GitHub release - core"
         echo 'sbt -J-Xmx2048m "; project core; clean; +test; +packagedArtifacts"'
         sbt -J-Xmx2048m "; project core; clean; +test; +packagedArtifacts"
-        echo 'sbt -J-Xmx2048m "; gitHubRelease"'
-        sbt -J-Xmx2048m "; gitHubRelease"
+        echo 'sbt -J-Xmx2048m "; project core; gitHubRelease"'
+        sbt -J-Xmx2048m "; project core; gitHubRelease"
+        echo "Run] sbt GitHub release - cats-effect"
+        echo 'sbt -J-Xmx2048m "; project catsEffect; clean; +test; +packagedArtifacts"'
+        sbt -J-Xmx2048m "; project catsEffect; clean; +test; +packagedArtifacts"
+        echo 'sbt -J-Xmx2048m "; project catsEffect; gitHubRelease"'
+        sbt -J-Xmx2048m "; project catsEffect; gitHubRelease"
     - name: sbt Publish core
       env:
         BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
         BINTRAY_PASS: ${{ secrets.BINTRAY_PASS }}
       run: |
-        echo "Run] sbt publish"
-        echo 'sbt -J-Xmx2048m "; clean; +publish"'
-        sbt -J-Xmx2048m "; clean; +publish"
+        echo "Run] sbt publish - core"
+        echo 'sbt -J-Xmx2048m "; project core; clean; +publish"'
+        sbt -J-Xmx2048m "; project core; clean; +publish"
+        echo "Run] sbt publish - cats-effect"
+        echo 'sbt -J-Xmx2048m "; project catsEffect; clean; +publish"'
+        sbt -J-Xmx2048m "; project catsEffect; clean; +publish"
     - name: Sync core to Maven Central
       env:
         BINTRAY_USER: ${{ secrets.BINTRAY_USER }}

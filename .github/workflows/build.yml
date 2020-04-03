@@ -35,6 +35,9 @@ jobs:
       - name: Build core for Scala ${{ matrix.scala.version }}
         run: .github/workflows/sbt-build-simple.sh core ${{ matrix.scala.version }}
 
+      - name: Build catsEffect for Scala ${{ matrix.scala.version }}
+        run: .github/workflows/sbt-build-simple.sh catsEffect ${{ matrix.scala.version }}
+
   build_scala2_13:
     runs-on: ubuntu-latest
     steps:
@@ -56,7 +59,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-ivy-scala-2_13-
 
-      - name: Build for Scala 2.13
+      - name: Build core for Scala 2.13
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        run: .github/workflows/sbt-build.sh 2.13.1
+        run: .github/workflows/sbt-build.sh core 2.13.1
+
+      - name: Build catsEffect for Scala 2.13
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: .github/workflows/sbt-build.sh catsEffect 2.13.1

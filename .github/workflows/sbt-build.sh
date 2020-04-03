@@ -2,28 +2,29 @@
 
 set -x
 
-if [ -z "$1" ]
+if [ -z "$2" ]
   then
-    echo "Missing parameter. Please enter the [Scala version]."
-    echo "sbt-build.sh 2.12.10"
+    echo "Missing parameters. Please enter the [project] and [Scala version]."
+    echo "sbt-build.sh core 2.12.10"
     exit 1
 else
-  scala_version=$1
+  project_name=$1
+  scala_version=$2
   echo "============================================"
   echo "Build projects"
   echo "--------------------------------------------"
   echo ""
-  export CI_BRANCH="${GITHUB_REF#refs/heads/}"
-  if [[ "$CI_BRANCH" == "master" || "$CI_BRANCH" == "release" ]]
+  export CURRENT_BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+  if [[ "$CURRENT_BRANCH_NAME" == "master" || "$CURRENT_BRANCH_NAME" == "release" ]]
   then
-#    sbt -J-Xmx2048m "; ++ ${scala_version}! -v; clean; coverage; test; coverageReport; coverageAggregate"
-#    sbt -J-Xmx2048m "; ++ ${scala_version}! -v; coveralls"
-#    sbt -J-Xmx2048m "; ++ ${scala_version}! -v; clean; packagedArtifacts"
-    sbt -J-Xmx2048m "; ++ ${scala_version}! -v; clean; test; packagedArtifacts"
+#    sbt -J-Xmx2048m "; project ${project_name}; ++ ${scala_version}! -v; clean; coverage; test; coverageReport; coverageAggregate"
+#    sbt -J-Xmx2048m "; project ${project_name}; ++ ${scala_version}! -v; coveralls"
+#    sbt -J-Xmx2048m "; project ${project_name}; ++ ${scala_version}! -v; clean; packagedArtifacts"
+    sbt -J-Xmx2048m "; project ${project_name}; ++ ${scala_version}! -v; clean; test; packagedArtifacts"
   else
-#    sbt -J-Xmx2048m "; ++ ${scala_version}! -v; clean; coverage; test; coverageReport; coverageAggregate; package"
-#    sbt -J-Xmx2048m "; ++ ${scala_version}! -v; coveralls"
-    sbt -J-Xmx2048m "; ++ ${scala_version}! -v; clean; test"
+#    sbt -J-Xmx2048m "; project ${project_name}; ++ ${scala_version}! -v; clean; coverage; test; coverageReport; coverageAggregate; package"
+#    sbt -J-Xmx2048m "; project ${project_name}; ++ ${scala_version}! -v; coveralls"
+    sbt -J-Xmx2048m "; project ${project_name}; ++ ${scala_version}! -v; clean; test"
   fi
 
 
