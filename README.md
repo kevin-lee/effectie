@@ -1,5 +1,10 @@
-# effectie
+# Effectie
 
+[![Build Status](https://github.com/Kevin-Lee/effectie/workflows/Build%20All/badge.svg)](https://github.com/Kevin-Lee/effectie/actions?workflow=Build+All)
+[![Release Status](https://github.com/Kevin-Lee/effectie/workflows/Release/badge.svg)](https://github.com/Kevin-Lee/effectie/actions?workflow=Release)
+
+
+# Example
 ```scala
 import cats._
 import cats.effect._
@@ -22,7 +27,9 @@ object Something {
 
   implicit def foo[F[_] : EffectConstructor : Monad]: Something[F] = new SomethingF[F]
 
-  class SomethingF[F[_] : EffectConstructor : Monad] extends Something[F] {
+  final class SomethingF[F[_] : EffectConstructor : Monad]
+    extends Something[F] {
+
     override def foo[A : Semigroup](a: A): F[A] = for {
       n <- effectOf(a)
       blah <- pureEffect("blah blah")
