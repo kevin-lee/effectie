@@ -8,13 +8,15 @@
 ## For Cats Effect
 ```scala
 import cats._
-import cats.effect._
 import cats.implicits._
+import cats.effect._
 
-import effectie.cats.EffectConstructor
+import effectie.ConsoleEffectful._
 import effectie.Effectful._
+
 import effectie.cats.EitherTSupport._
 import effectie.cats.OptionTSupport._
+import effectie.cats._
 
 trait Something[F[_]] {
   def foo[A : Semigroup](a: A): F[A]
@@ -24,13 +26,13 @@ trait Something[F[_]] {
 
 object Something {
 
-  def apply[F[_] :EffectConstructor : Monad]: Something[F] =
+  def apply[F[_] : Something]: Something[F] =
     implicitly[Something[F]]
 
-  implicit def foo[F[_] : EffectConstructor : Monad]: Something[F] =
+  implicit def something[F[_] : EffectConstructor : ConsoleEffect : Monad]: Something[F] =
     new SomethingF[F]
 
-  final class SomethingF[F[_] : EffectConstructor : Monad]
+  final class SomethingF[F[_] : EffectConstructor : ConsoleEffect : Monad]
     extends Something[F] {
 
     override def foo[A : Semigroup](a: A): F[A] =
@@ -39,6 +41,7 @@ object Something {
         blah <- pureEffect("blah blah")
         _ <- effectOf(println(s"n: $n / BLAH: $blah"))
         x <- effectOf(n |+| n)
+        _ <- putStrLn(s"x: $x")
       } yield x
 
     override def bar[A : Semigroup](a: Option[A]): F[Option[A]] =
@@ -47,6 +50,7 @@ object Something {
         blah <- optionTPureEffect("blah blah".some)
         _ <- optionTLiftEffect(println(s"a: $a / BLAH: $blah"))
         x <- optionTLiftF(effectOf(a |+| a))
+        _ <- optionTLiftF(putStrLn(s"x: $x"))
       } yield x).value
 
     override def baz[A, B : Semigroup](ab: Either[A, B]): F[Either[A, B]] =
@@ -54,7 +58,8 @@ object Something {
         b <- eitherTEffect(ab)
         blah <- eitherTPureEffect("blah blah".asRight[A])
         _ <- eitherTLiftEffect(println(s"b: $b / BLAH: $blah"))
-        x <- eitherTLiftF[F, A, B](effectOf(b |+| b))
+        x <- eitherTLiftF(effectOf(b |+| b))
+        _ <- eitherTLiftF[F, A, Unit](putStrLn(s"x: $x"))
       } yield x).value
   }
 }
@@ -75,13 +80,16 @@ object TestMainApp extends App {
 ```
 ```
 n: 1 / BLAH: blah blah
+x: 2
 2
 =====
 a: 2 / BLAH: blah blah
+x: 4
 Some(4)
 None
 =====
 b: 2 / BLAH: blah blah
+x: 4
 Right(4)
 Left(ERROR!!!)
 =====
@@ -119,7 +127,6 @@ object Something {
 
     override def foo[A : Semigroup](a: A): F[A] =
       for {
-        //    n <- effect(a)
         n <- effectOf(a)
         blah <- pureEffect("blah blah")
         _ <- effectOf(println(s"n: $n / BLAH: $blah"))
