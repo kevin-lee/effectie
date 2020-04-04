@@ -18,11 +18,14 @@ lazy val hedgehogLibs: Seq[ModuleID] = Seq(
   , "qa.hedgehog" %% "hedgehog-sbt" % hedgehogVersion % Test
 )
 
-lazy val libCatsCore: Seq[ModuleID] = Seq("org.typelevel" %% "cats-core" % "2.1.1")
-lazy val libCatsEffect: Seq[ModuleID] = Seq("org.typelevel" %% "cats-effect" % "2.1.2")
+lazy val libScalazCore: ModuleID = "org.scalaz" %% "scalaz-core" % "7.2.30"
+lazy val libScalazEffect: ModuleID = "org.scalaz" %% "scalaz-effect" % "7.2.30"
 
-lazy val libCatsCore_2_0_0: Seq[ModuleID] = Seq("org.typelevel" %% "cats-core" % "2.0.0")
-lazy val libCatsEffect_2_0_0: Seq[ModuleID] = Seq("org.typelevel" %% "cats-effect" % "2.0.0")
+lazy val libCatsCore: ModuleID = "org.typelevel" %% "cats-core" % "2.1.1"
+lazy val libCatsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "2.1.2"
+
+lazy val libCatsCore_2_0_0: ModuleID = "org.typelevel" %% "cats-core" % "2.0.0"
+lazy val libCatsEffect_2_0_0: ModuleID = "org.typelevel" %% "cats-effect" % "2.0.0"
 
 ThisBuild / scalaVersion     := ProjectScalaVersion
 ThisBuild / version          := ProjectVersion
@@ -30,8 +33,8 @@ ThisBuild / organization     := "io.kevinlee"
 ThisBuild / organizationName := "Kevin's Code"
 ThisBuild / crossScalaVersions := CrossScalaVersions
 ThisBuild / developers   := List(
-  Developer("Kevin-Lee", "Kevin Lee", "kevin.code@kevinlee.io", url("https://github.com/Kevin-Lee"))
-)
+    Developer("Kevin-Lee", "Kevin Lee", "kevin.code@kevinlee.io", url("https://github.com/Kevin-Lee"))
+  )
 ThisBuild / homepage := Some(url("https://github.com/Kevin-Lee/effectie"))
 ThisBuild / scmInfo :=
   Some(ScmInfo(
@@ -111,7 +114,7 @@ lazy val effectie = (project in file("."))
     name := prefixedProjectName("")
   , description := "Effect Utils"
   )
-  .dependsOn(core, catsEffect)
+  .dependsOn(core, catsEffect, scalazEffect)
   .settings(noPublish)
 
 lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
@@ -144,14 +147,35 @@ lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effe
       ) {
           case (Major(2), Minor(10)) =>
             libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover") ++
-              libCatsCore_2_0_0 ++ libCatsEffect_2_0_0
+              Seq(libCatsCore_2_0_0, libCatsEffect_2_0_0)
           case (Major(2), Minor(11)) =>
-            libraryDependencies.value ++ libCatsCore_2_0_0 ++ libCatsEffect_2_0_0
+            libraryDependencies.value ++ Seq(libCatsCore_2_0_0, libCatsEffect_2_0_0)
           case x =>
-            libraryDependencies.value ++ libCatsCore ++ libCatsEffect
+            libraryDependencies.value ++ Seq(libCatsCore, libCatsEffect)
         }
     , initialCommands in console :=
       """import effectie.cats._"""
+
+  )
+  .dependsOn(core % IncludeTest)
+
+lazy val scalazEffect = projectCommonSettings("scalazEffect", ProjectName("scalaz-effect"), file("scalaz-effect"))
+  .enablePlugins(DevOopsGitReleasePlugin)
+  .settings(
+      description  := "Effect Utils for Scalaz Effect"
+    , libraryDependencies :=
+      crossVersionProps(
+          List.empty
+        , SemVer.parseUnsafe(scalaVersion.value)
+      ) {
+          case (Major(2), Minor(10)) =>
+            libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover") ++
+              Seq(libScalazCore, libScalazEffect)
+          case x =>
+            libraryDependencies.value ++ Seq(libScalazCore, libScalazEffect)
+        }
+    , initialCommands in console :=
+      """import effectie.scalaz._"""
 
   )
   .dependsOn(core % IncludeTest)
@@ -197,4 +221,4 @@ lazy val docs = (project in docDir)
 
   )
   .settings(noPublish)
-  .dependsOn(core, catsEffect)
+  .dependsOn(core, catsEffect, scalazEffect)
