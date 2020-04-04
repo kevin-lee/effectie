@@ -49,28 +49,78 @@ lazy val noPublish: SettingsDefinition = Seq(
   skip in publish := true
 )
 
+def projectCommonSettings(id: String, projectName: ProjectName, file: File): Project =
+  Project(id, file)
+    .settings(
+        name := prefixedProjectName(projectName.projectName)
+      , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
+      , addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
+      , resolvers ++= Seq(
+          Resolver.sonatypeRepo("releases")
+        , hedgehogRepo
+        )
+      , libraryDependencies ++= hedgehogLibs
+      , wartremoverErrors in (Compile, compile) ++= commonWarts((scalaBinaryVersion in update).value)
+      , wartremoverErrors in (Test, compile) ++= commonWarts((scalaBinaryVersion in update).value)
+      , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
+
+      /* Ammonite-REPL { */
+      , libraryDependencies ++=
+        (scalaBinaryVersion.value match {
+          case "2.10" =>
+            Seq.empty[ModuleID]
+          case "2.11" =>
+            Seq("com.lihaoyi" % "ammonite" % "1.6.7" % Test cross CrossVersion.full)
+          case "2.12" =>
+            Seq.empty[ModuleID] // TODO: add ammonite when it supports Scala 2.12.11
+          case _ =>
+            Seq("com.lihaoyi" % "ammonite" % "2.0.4" % Test cross CrossVersion.full)
+        })
+      , sourceGenerators in Test +=
+        (scalaBinaryVersion.value match {
+          case "2.10" =>
+            task(Seq.empty[File])
+          case "2.12" =>
+            task(Seq.empty[File]) // TODO: add ammonite when it supports Scala 2.12.11
+          case _ =>
+            task {
+              val file = (sourceManaged in Test).value / "amm.scala"
+              IO.write(file, """object amm extends App { ammonite.Main.main(args) }""")
+              Seq(file)
+            }
+        })
+      /* } Ammonite-REPL */
+      /* Bintray { */
+      , bintrayPackageLabels := Seq("Scala", "Effect", "Referential Transparency", "Tagless Final", "Finally Tagless", "Functional Programming", "FP")
+      , bintrayVcsUrl := Some("""git@github.com:Kevin-Lee/effectie.git""")
+      , licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
+      /* } Bintray */
+
+      /* Coveralls { */
+      , coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, 10)) =>
+          false
+        case _ =>
+          true
+      })
+      /* } Coveralls */
+    )
+
 lazy val effectie = (project in file("."))
-  .enablePlugins(DevOopsGitReleasePlugin)
   .settings(
     name := prefixedProjectName("")
   , description := "Effect Utils"
   )
+  .dependsOn(core, catsEffect)
   .settings(noPublish)
 
-lazy val core = (project in file("core"))
+lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
   .enablePlugins(DevOopsGitReleasePlugin)
   .settings(
-      name := prefixedProjectName("core")
-    , description  := "Effect Utils - Core"
-    , resolvers ++= Seq(
-      Resolver.sonatypeRepo("releases")
-      , hedgehogRepo
-    )
-    , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
-    , addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
+      description  := "Effect Utils - Core"
     , libraryDependencies :=
       crossVersionProps(
-          hedgehogLibs
+          Seq.empty
         , SemVer.parseUnsafe(scalaVersion.value)
       ) {
           case (Major(2), Minor(10)) =>
@@ -78,68 +128,18 @@ lazy val core = (project in file("core"))
           case x =>
             libraryDependencies.value
         }
-    /* Ammonite-REPL { */
-    , libraryDependencies ++=
-      (scalaBinaryVersion.value match {
-        case "2.10" =>
-          Seq.empty[ModuleID]
-        case "2.11" =>
-          Seq("com.lihaoyi" % "ammonite" % "1.6.7" % Test cross CrossVersion.full)
-        case "2.12" =>
-          Seq.empty[ModuleID] // TODO: add ammonite when it supports Scala 2.12.11
-        case _ =>
-          Seq("com.lihaoyi" % "ammonite" % "2.0.4" % Test cross CrossVersion.full)
-      })
-    , sourceGenerators in Test +=
-      (scalaBinaryVersion.value match {
-        case "2.10" =>
-          task(Seq.empty[File])
-        case "2.12" =>
-          task(Seq.empty[File]) // TODO: add ammonite when it supports Scala 2.12.11
-        case _ =>
-          task {
-            val file = (sourceManaged in Test).value / "amm.scala"
-            IO.write(file, """object amm extends App { ammonite.Main.main(args) }""")
-            Seq(file)
-          }
-      })
-    /* } Ammonite-REPL */
-    , wartremoverErrors in (Compile, compile) ++= commonWarts((scalaBinaryVersion in update).value)
-    , wartremoverErrors in (Test, compile) ++= commonWarts((scalaBinaryVersion in update).value)
-    , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
-    /* Bintray { */
-    , bintrayPackageLabels := Seq("Scala", "Effect", "Referential Transparency", "Tagless Final", "Finally Tagless", "Functional Programming", "FP")
-    , bintrayVcsUrl := Some("""git@github.com:Kevin-Lee/effectie.git""")
-    , licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
-    /* } Bintray */
-
     , initialCommands in console :=
-      """"""
+      """import effectie._"""
 
-    /* Coveralls { */
-    , coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, 10)) =>
-        false
-      case _ =>
-        true
-    })
-    /* } Coveralls */
   )
 
-lazy val catsEffect = (project in file("cats-effect"))
+lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effect"), file("cats-effect"))
   .enablePlugins(DevOopsGitReleasePlugin)
   .settings(
-      name := prefixedProjectName("cats-effect")
-    , description  := "Effect Utils - Cats Effect"
-    , resolvers ++= Seq(
-      Resolver.sonatypeRepo("releases")
-      , hedgehogRepo
-    )
-    , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
-    , addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
+      description  := "Effect Utils - Cats Effect"
     , libraryDependencies :=
       crossVersionProps(
-          hedgehogLibs
+          List.empty
         , SemVer.parseUnsafe(scalaVersion.value)
       ) {
           case (Major(2), Minor(10)) =>
@@ -150,52 +150,9 @@ lazy val catsEffect = (project in file("cats-effect"))
           case x =>
             libraryDependencies.value ++ libCatsCore ++ libCatsEffect
         }
-    /* Ammonite-REPL { */
-    , libraryDependencies ++=
-      (scalaBinaryVersion.value match {
-        case "2.10" =>
-          Seq.empty[ModuleID]
-        case "2.11" =>
-          Seq("com.lihaoyi" % "ammonite" % "1.6.7" % Test cross CrossVersion.full)
-        case "2.12" =>
-          Seq.empty[ModuleID] // TODO: add ammonite when it supports Scala 2.12.11
-        case _ =>
-          Seq("com.lihaoyi" % "ammonite" % "2.0.4" % Test cross CrossVersion.full)
-      })
-    , sourceGenerators in Test +=
-      (scalaBinaryVersion.value match {
-        case "2.10" =>
-          task(Seq.empty[File])
-        case "2.12" =>
-          task(Seq.empty[File]) // TODO: add ammonite when it supports Scala 2.12.11
-        case _ =>
-          task {
-            val file = (sourceManaged in Test).value / "amm.scala"
-            IO.write(file, """object amm extends App { ammonite.Main.main(args) }""")
-            Seq(file)
-          }
-      })
-    /* } Ammonite-REPL */
-    , wartremoverErrors in (Compile, compile) ++= commonWarts((scalaBinaryVersion in update).value)
-    , wartremoverErrors in (Test, compile) ++= commonWarts((scalaBinaryVersion in update).value)
-    , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
-    /* Bintray { */
-    , bintrayPackageLabels := Seq("Scala", "Effect", "Referential Transparency", "Tagless Final", "Finally Tagless", "Functional Programming", "FP")
-    , bintrayVcsUrl := Some("""git@github.com:Kevin-Lee/effectie.git""")
-    , licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
-    /* } Bintray */
-
     , initialCommands in console :=
-      """"""
+      """import effectie.cats._"""
 
-    /* Coveralls { */
-    , coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((2, 10)) =>
-        false
-      case _ =>
-        true
-    })
-    /* } Coveralls */
   )
   .dependsOn(core % IncludeTest)
 
@@ -240,4 +197,4 @@ lazy val docs = (project in docDir)
 
   )
   .settings(noPublish)
-  .dependsOn(core)
+  .dependsOn(core, catsEffect)
