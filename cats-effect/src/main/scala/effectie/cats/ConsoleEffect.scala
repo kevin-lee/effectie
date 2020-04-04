@@ -8,9 +8,12 @@ import effectie.YesNo
 trait ConsoleEffect[F[_]] extends effectie.ConsoleEffect[F]
 
 object ConsoleEffect {
-  def apply[F[_]: ConsoleEffect]: ConsoleEffect[F] = implicitly[ConsoleEffect[F]]
+  def apply[F[_] : ConsoleEffect]: ConsoleEffect[F] = implicitly[ConsoleEffect[F]]
 
-  final class ConsoleEffectF[F[_] : EffectConstructor : Monad] extends ConsoleEffect[F] {
+  implicit def consoleEffectF[F[_] : EffectConstructor : FlatMap]: ConsoleEffect[F] =
+    new ConsoleEffectF[F]
+
+  final class ConsoleEffectF[F[_] : EffectConstructor : FlatMap] extends ConsoleEffect[F] {
     override def readLn: F[String] =
       EffectConstructor[F].effectOf(scala.io.StdIn.readLine)
 
