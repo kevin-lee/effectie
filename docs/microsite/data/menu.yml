@@ -1,0 +1,30 @@
+options:
+  - title: Getting Started
+    url: docs
+    menu_section: intro-section
+
+  - title: For Cats Effect
+    url: docs/cats-effect
+    menu_section: cats-effect-section
+    nested_options:
+      - title: EffectConstructor
+        url: docs/cats-effect/effect-constructor.html
+      - title: ConsoleEffect
+        url: docs/cats-effect/console-effect.html
+      - title: OptionTSupport
+        url: docs/cats-effect/optiont-support.html
+      - title: EitherTSupport
+        url: docs/cats-effect/eithert-support.html
+
+  - title: For Scalaz Effect
+    url: docs/scalaz-effect
+    menu_section: cats-effect-section
+    nested_options:
+      - title: EffectConstructor
+        url: docs/scalaz-effect/effect-constructor.html
+      - title: ConsoleEffect
+        url: docs/scalaz-effect/console-effect.html
+      - title: OptionTSupport
+        url: docs/scalaz-effect/optiont-support.html
+      - title: EitherTSupport
+        url: docs/scalaz-effect/eithert-support.html
