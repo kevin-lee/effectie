@@ -190,10 +190,10 @@ lazy val docs = (project in docDir)
   .settings(
       name := prefixedProjectName("docs")
     /* microsites { */
-    , micrositeName := prefixedProjectName("")
+    , micrositeName := "Effectie"
     , micrositeAuthor := "Kevin Lee"
     , micrositeHomepage := "https://blog.kevinlee.io"
-    , micrositeDescription := "effectie"
+    , micrositeDescription := "A Tool for FP Effect Libraries"
     , micrositeGithubOwner := "Kevin-Lee"
     , micrositeGithubRepo := "effectie"
     , micrositeBaseUrl := "/effectie"
@@ -203,8 +203,8 @@ lazy val docs = (project in docDir)
     //  , micrositeTheme := "pattern"
     , micrositeHighlightTheme := "atom-one-light"
     , micrositeGitterChannel := false
-    , micrositeGithubLinks := false
-    , micrositeShareOnSocial := false
+    , micrositeGithubLinks := true
+    , micrositeShareOnSocial := true
     , micrositeHighlightLanguages ++= Seq("shell")
 
     , micrositeConfigYaml := ConfigYml(
