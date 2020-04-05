@@ -3,6 +3,7 @@ package effectie.cats
 import cats._
 import cats.implicits._
 
+import effectie.ConsoleEffect.ConsoleEffectWithoutBind
 import effectie.YesNo
 
 trait ConsoleEffect[F[_]] extends effectie.ConsoleEffect[F]
@@ -13,15 +14,9 @@ object ConsoleEffect {
   implicit def consoleEffectF[F[_] : EffectConstructor : FlatMap]: ConsoleEffect[F] =
     new ConsoleEffectF[F]
 
-  final class ConsoleEffectF[F[_] : EffectConstructor : FlatMap] extends ConsoleEffect[F] {
-    override def readLn: F[String] =
-      EffectConstructor[F].effectOf(scala.io.StdIn.readLine)
-
-    override def putStrLn(value: String): F[Unit] =
-      EffectConstructor[F].effectOf(Console.out.println(value))
-
-    override def putErrStrLn(value: String): F[Unit] =
-      EffectConstructor[F].effectOf(Console.err.println(value))
+  final class ConsoleEffectF[F[_] : EffectConstructor : FlatMap]
+    extends ConsoleEffectWithoutBind[F]
+    with ConsoleEffect[F] {
 
     @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
     override def readYesNo(prompt: String): F[YesNo] = for {
