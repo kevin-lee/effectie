@@ -2,7 +2,7 @@ import ProjectInfo._
 import kevinlee.sbt.SbtCommon.crossVersionProps
 import just.semver.SemVer
 import SemVer.{Major, Minor}
-import microsites.ConfigYml
+import microsites.{ConfigYml, MicrositeFavicon}
 
 val ProjectScalaVersion: String = "2.13.1"
 val CrossScalaVersions: Seq[String] = Seq("2.11.12", "2.12.11", ProjectScalaVersion)
@@ -220,7 +220,11 @@ lazy val docs = (project in docDir)
     , micrositeStaticDirectory := docDir / "microsite" / "static"
     , micrositeExtraMdFilesOutput := docDir / "microsite" / "extra_md"
     , micrositePluginsDirectory := docDir / "microsite" / "plugins"
-
+    , micrositeFavicons := Seq(
+        MicrositeFavicon("effectie-logo-16x16.png", "16x16")
+      , MicrositeFavicon("effectie-logo-32x32.png", "32x32")
+      , MicrositeFavicon("effectie-logo-96x96.png", "96x96")
+      )
     /* } microsites */
 
   )
