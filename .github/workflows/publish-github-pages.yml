@@ -31,7 +31,7 @@ jobs:
 
     - name: publish GitHub Pages
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_AUTH_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.RELEASE_AUTH_TOKEN_GITHUB }}
       run: |
         docker run \
         -e GITHUB_TOKEN=$GITHUB_TOKEN \
