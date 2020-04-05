@@ -19,13 +19,17 @@ jobs:
         echo "Run] sbt GitHub release - core"
         echo 'sbt -J-Xmx2048m "; project core; clean; +test; +packagedArtifacts"'
         sbt -J-Xmx2048m "; project core; clean; +test; +packagedArtifacts"
-        echo 'sbt -J-Xmx2048m "; project core; gitHubRelease"'
-        sbt -J-Xmx2048m "; project core; gitHubRelease"
+        echo "====================="
         echo "Run] sbt GitHub release - cats-effect"
         echo 'sbt -J-Xmx2048m "; project catsEffect; clean; +test; +packagedArtifacts"'
         sbt -J-Xmx2048m "; project catsEffect; clean; +test; +packagedArtifacts"
-        echo 'sbt -J-Xmx2048m "; project catsEffect; gitHubRelease"'
-        sbt -J-Xmx2048m "; project catsEffect; gitHubRelease"
+        echo "====================="
+        echo "Run] sbt GitHub release - scalaz-effect"
+        echo 'sbt -J-Xmx2048m "; project scalazEffect; clean; +test; +packagedArtifacts"'
+        sbt -J-Xmx2048m "; project scalazEffect; clean; +test; +packagedArtifacts"
+        echo "====================="
+        echo 'sbt -J-Xmx2048m "; gitHubRelease"'
+        sbt -J-Xmx2048m "; gitHubRelease"
     - name: sbt Publish core
       env:
         BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
@@ -34,9 +38,14 @@ jobs:
         echo "Run] sbt publish - core"
         echo 'sbt -J-Xmx2048m "; project core; clean; +publish"'
         sbt -J-Xmx2048m "; project core; clean; +publish"
+        echo "====================="
         echo "Run] sbt publish - cats-effect"
         echo 'sbt -J-Xmx2048m "; project catsEffect; clean; +publish"'
         sbt -J-Xmx2048m "; project catsEffect; clean; +publish"
+        echo "====================="
+        echo "Run] sbt publish - scalaz-effect"
+        echo 'sbt -J-Xmx2048m "; project scalazEffect; clean; +publish"'
+        sbt -J-Xmx2048m "; project scalazEffect; clean; +publish"
     - name: Sync core to Maven Central
       env:
         BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
@@ -48,7 +57,7 @@ jobs:
         echo "PROJECT_VERSION: $PROJECT_VERSION"
         echo "BINTRAY_SUBJECT: $BINTRAY_SUBJECT"
         echo "   BINTRAY_REPO: $BINTRAY_REPO"
-        BINTRAY_PACKAGES="effectie-core effectie-cats"
+        BINTRAY_PACKAGES="effectie-core effectie-cats effectie-scalaz"
         for bintray_package in $BINTRAY_PACKAGES
         do
           echo "bintray_package: $bintray_package"
