@@ -24,7 +24,7 @@ else
   else
 #    sbt -J-Xmx2048m "; project ${project_name}; ++ ${scala_version}! -v; clean; coverage; test; coverageReport; coverageAggregate; package"
 #    sbt -J-Xmx2048m "; project ${project_name}; ++ ${scala_version}! -v; coveralls"
-    sbt -J-Xmx2048m "; project ${project_name}; ++ ${scala_version}! -v; clean; test"
+    sbt -J-Xmx2048m "; project ${project_name}; ++ ${scala_version}! -v; clean; test; package"
   fi
 
 

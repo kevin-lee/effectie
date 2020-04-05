@@ -101,24 +101,30 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
 
       /* Coveralls { */
       , coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, 10)) =>
-          false
-        case _ =>
-          true
-      })
+          case Some((2, 10)) =>
+            false
+          case _ =>
+            true
+        })
       /* } Coveralls */
     )
 
 lazy val effectie = (project in file("."))
+  .enablePlugins(DevOopsGitReleasePlugin)
   .settings(
     name := prefixedProjectName("")
   , description := "Effect Utils"
+    /* GitHub Release { */
+  , devOopsPackagedArtifacts := List(
+      s"core/target/scala-*/${name.value}*.jar"
+    , s"cats-effect/target/scala-*/${name.value}*.jar"
+    , s"scalaz-effect/target/scala-*/${name.value}*.jar"
+    )
+    /* } GitHub Release */
   )
   .dependsOn(core, catsEffect, scalazEffect)
-  .settings(noPublish)
 
 lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
-  .enablePlugins(DevOopsGitReleasePlugin)
   .settings(
       description  := "Effect Utils - Core"
     , libraryDependencies :=
@@ -137,7 +143,6 @@ lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
   )
 
 lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effect"), file("cats-effect"))
-  .enablePlugins(DevOopsGitReleasePlugin)
   .settings(
       description  := "Effect Utils - Cats Effect"
     , libraryDependencies :=
@@ -160,7 +165,6 @@ lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effe
   .dependsOn(core % IncludeTest)
 
 lazy val scalazEffect = projectCommonSettings("scalazEffect", ProjectName("scalaz-effect"), file("scalaz-effect"))
-  .enablePlugins(DevOopsGitReleasePlugin)
   .settings(
       description  := "Effect Utils for Scalaz Effect"
     , libraryDependencies :=
