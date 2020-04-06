@@ -200,11 +200,11 @@ lazy val docs = (project in docDir)
     , micrositeDocumentationUrl := s"${micrositeBaseUrl.value}/docs"
     , micrositePushSiteWith := GitHub4s
     , micrositeGithubToken := sys.env.get("GITHUB_TOKEN")
-    //  , micrositeTheme := "pattern"
+    , micrositeTheme := "pattern"
     , micrositeHighlightTheme := "atom-one-light"
     , micrositeGitterChannel := false
     , micrositeGithubLinks := true
-    , micrositeShareOnSocial := true
+    , micrositeShareOnSocial := false
     , micrositeHighlightLanguages ++= Seq("shell")
 
     , micrositeConfigYaml := ConfigYml(
