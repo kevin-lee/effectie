@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Effectie for Scalaz Effect
+title: "For Scalaz Effect"
 ---
 
 # Effectie for Scalaz Effect

@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: "OptionT Support"
+title: "OptionTSupport - Scalaz"
 ---
 
-# OptionT Support
+# OptionTSupport

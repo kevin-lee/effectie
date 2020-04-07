@@ -1,5 +1,5 @@
 ---
 layout: docs
-title: "EitherT Support"
+title: "EitherTSupport - Cats"
 ---
-# EitherT Support
+# EitherTSupport

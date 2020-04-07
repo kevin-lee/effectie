@@ -3,28 +3,32 @@ options:
     url: docs
     menu_section: intro-section
 
-  - title: For Cats Effect
+  - title: "For Cats Effect"
     url: docs/cats-effect
     menu_section: cats-effect-section
     nested_options:
-      - title: EffectConstructor
+      - title: "EffectConstructor - Cats"
         url: docs/cats-effect/effect-constructor.html
-      - title: ConsoleEffect
+      - title: "Effectful - Cats"
+        url: docs/cats-effect/effectful.html
+      - title: "ConsoleEffect - Cats"
         url: docs/cats-effect/console-effect.html
-      - title: OptionTSupport
+      - title: "OptionTSupport - Cats"
         url: docs/cats-effect/optiont-support.html
-      - title: EitherTSupport
+      - title: "EitherTSupport - Cats"
         url: docs/cats-effect/eithert-support.html
 
-  - title: For Scalaz Effect
+  - title: "For Scalaz Effect"
     url: docs/scalaz-effect
-    menu_section: cats-effect-section
+    menu_section: scalaz-effect-section
     nested_options:
-      - title: EffectConstructor
+      - title: "EffectConstructor - Scalaz"
         url: docs/scalaz-effect/effect-constructor.html
-      - title: ConsoleEffect
+      - title: "Effectful - Scalaz"
+        url: docs/scalaz-effect/effectful.html
+      - title: "ConsoleEffect - Scalaz"
         url: docs/scalaz-effect/console-effect.html
-      - title: OptionTSupport
+      - title: "OptionTSupport - Scalaz"
         url: docs/scalaz-effect/optiont-support.html
-      - title: EitherTSupport
+      - title: "EitherTSupport - Scalaz"
         url: docs/scalaz-effect/eithert-support.html
