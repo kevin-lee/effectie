@@ -68,9 +68,19 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
       , wartremoverErrors ++= commonWarts((scalaBinaryVersion in update).value)
 //      , wartremoverErrors ++= Warts.all
       , Compile / console / wartremoverErrors := List.empty
-      , Compile / console / scalacOptions := (console / scalacOptions).value.filterNot(_.contains("wartremover"))
+      , Compile / console / wartremoverWarnings := List.empty
+      , Compile / console / scalacOptions :=
+          (console / scalacOptions).value
+            .filterNot(option =>
+              option.contains("wartremover") || option.contains("import")
+            )
       , Test / console / wartremoverErrors := List.empty
-      , Test / console / scalacOptions := (console / scalacOptions).value.filterNot(_.contains("wartremover"))
+      , Test / console / wartremoverWarnings := List.empty
+      , Test / console / scalacOptions :=
+          (console / scalacOptions).value
+            .filterNot( option =>
+              option.contains("wartremover") || option.contains("import")
+            )
       , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
 
       /* Ammonite-REPL { */
