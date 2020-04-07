@@ -12,7 +12,7 @@ object EffectConstructor {
 
     override def effectOf[A](a: => A): IO[A] = IO(a)
 
-    override def pureEffect[A](a: A): IO[A] = Monad[IO].pure(a)
+    override def effectOfPure[A](a: A): IO[A] = Monad[IO].pure(a)
 
     override def unit: IO[Unit] = IO.ioUnit
   }
