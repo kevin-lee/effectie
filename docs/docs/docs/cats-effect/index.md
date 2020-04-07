@@ -45,7 +45,7 @@ object Something {
     override def foo[A : Semigroup](a: A): F[A] =
       for {
         n <- effectOf(a)
-        blah <- pureEffect("blah blah")
+        blah <- effectOfPure("blah blah")
         _ <- effectOf(println(s"n: $n / BLAH: $blah"))
         x <- effectOf(n |+| n)
         _ <- putStrLn(s"x: $x")
@@ -53,8 +53,8 @@ object Something {
 
     override def bar[A : Semigroup](a: Option[A]): F[Option[A]] =
       (for {
-        a <- optionTPureEffect(a)
-        blah <- optionTPureEffect("blah blah".some)
+        a <- optionTEffectOfPure(a)
+        blah <- optionTEffectOfPure("blah blah".some)
         _ <- optionTLiftEffect(println(s"a: $a / BLAH: $blah"))
         x <- optionTLiftF(effectOf(a |+| a))
         _ <- optionTLiftF(putStrLn(s"x: $x"))
@@ -63,7 +63,7 @@ object Something {
     override def baz[A, B : Semigroup](ab: Either[A, B]): F[Either[A, B]] =
       (for {
         b <- eitherTEffect(ab)
-        blah <- eitherTPureEffect("blah blah".asRight[A])
+        blah <- eitherTEffectOfPure("blah blah".asRight[A])
         _ <- eitherTLiftEffect(println(s"b: $b / BLAH: $blah"))
         x <- eitherTLiftF(effectOf(b |+| b))
         _ <- eitherTLiftF[F, A, Unit](putStrLn(s"x: $x"))
