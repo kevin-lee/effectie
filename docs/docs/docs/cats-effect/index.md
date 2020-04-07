@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: Effectie for Cats Effect
+title: "For Cats Effect"
 ---
 
 # Effectie for Cats Effect

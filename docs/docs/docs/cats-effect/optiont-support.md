@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: "OptionT Support"
+title: "OptionTSupport - Cats"
 ---
 
-# OptionT Support
+# OptionTSupport
