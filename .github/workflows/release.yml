@@ -46,22 +46,21 @@ jobs:
         echo "Run] sbt publish - scalaz-effect"
         echo 'sbt -J-Xmx2048m "; project scalazEffect; clean; +publish"'
         sbt -J-Xmx2048m "; project scalazEffect; clean; +publish"
-# TODO: Remove comments below once connection to Maven central is sorted out
-#    - name: Sync Effectie to Maven Central
-#      env:
-#        BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
-#        BINTRAY_PASS: ${{ secrets.BINTRAY_PASS }}
-#      run: |
-#        PROJECT_VERSION="${GITHUB_REF#refs/tags/v}"
-#        BINTRAY_SUBJECT=kevinlee
-#        BINTRAY_REPO=maven
-#        echo "PROJECT_VERSION: $PROJECT_VERSION"
-#        echo "BINTRAY_SUBJECT: $BINTRAY_SUBJECT"
-#        echo "   BINTRAY_REPO: $BINTRAY_REPO"
-#        BINTRAY_PACKAGES="effectie-core effectie-cats effectie-scalaz"
-#        for bintray_package in $BINTRAY_PACKAGES
-#        do
-#          echo "bintray_package: $bintray_package"
-#          echo "Sync to Maven Central..."
-#          curl --user $BINTRAY_USER:$BINTRAY_PASS -X POST "https://api.bintray.com/maven_central_sync/$BINTRAY_SUBJECT/$BINTRAY_REPO/$bintray_package/versions/$PROJECT_VERSION"
-#        done
+    - name: Sync Effectie to Maven Central
+      env:
+        BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
+        BINTRAY_PASS: ${{ secrets.BINTRAY_PASS }}
+      run: |
+        PROJECT_VERSION="${GITHUB_REF#refs/tags/v}"
+        BINTRAY_SUBJECT=kevinlee
+        BINTRAY_REPO=maven
+        echo "PROJECT_VERSION: $PROJECT_VERSION"
+        echo "BINTRAY_SUBJECT: $BINTRAY_SUBJECT"
+        echo "   BINTRAY_REPO: $BINTRAY_REPO"
+        BINTRAY_PACKAGES="effectie-core effectie-cats-effect effectie-scalaz-effect"
+        for bintray_package in $BINTRAY_PACKAGES
+        do
+          echo "bintray_package: $bintray_package"
+          echo "Sync to Maven Central..."
+          curl --user $BINTRAY_USER:$BINTRAY_PASS -X POST "https://api.bintray.com/maven_central_sync/$BINTRAY_SUBJECT/$BINTRAY_REPO/$bintray_package/versions/$PROJECT_VERSION"
+        done
