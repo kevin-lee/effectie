@@ -2,4 +2,4 @@
 layout: docs
 title: "EitherTSupport - Scalaz"
 ---
-# EitherTSupport
+# EitherTSupport - Scalaz

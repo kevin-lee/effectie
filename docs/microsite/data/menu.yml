@@ -13,6 +13,8 @@ options:
         url: docs/cats-effect/effectful.html
       - title: "ConsoleEffect - Cats"
         url: docs/cats-effect/console-effect.html
+      - title: "ConsoleEffectful - Cats"
+        url: docs/cats-effect/console-effectful.html
       - title: "OptionTSupport - Cats"
         url: docs/cats-effect/optiont-support.html
       - title: "EitherTSupport - Cats"
@@ -28,6 +30,8 @@ options:
         url: docs/scalaz-effect/effectful.html
       - title: "ConsoleEffect - Scalaz"
         url: docs/scalaz-effect/console-effect.html
+      - title: "ConsoleEffectful - Scalaz"
+        url: docs/scalaz-effect/console-effectful.html
       - title: "OptionTSupport - Scalaz"
         url: docs/scalaz-effect/optiont-support.html
       - title: "EitherTSupport - Scalaz"

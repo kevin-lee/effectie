@@ -5,10 +5,12 @@ title: "For Cats Effect"
 
 # Effectie for Cats Effect
 
-* [`EffectConstructor`](effect-constructor)
-* [`ConsoleEffect`](console-effect)
-* [`OptionTSupport`](optiont-support)
-* [`EitherTSupport`](eithert-support)
+* [EffectConstructor](effect-constructor)
+* [Effectful](effectful)
+* [ConsoleEffect](console-effect)
+* [ConsoleEffectful](console-effectful)
+* [OptionTSupport](optiont-support)
+* [EitherTSupport](eithert-support)
 
 # All in One Example
 

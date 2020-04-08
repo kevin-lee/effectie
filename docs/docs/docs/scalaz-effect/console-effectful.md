@@ -1,14 +1,15 @@
 ---
 layout: docs
-title: "ConsoleEffect - Scalaz"
+title: "ConsoleEffectful - Scalaz"
 ---
 
-# ConsoleEffect - Scalaz
+# ConsoleEffectful - Scalaz
 
 ```scala
 import scalaz._
 import Scalaz._
 
+import effectie.ConsoleEffectful._
 import effectie.scalaz._
 import effectie.YesNo
 
@@ -26,17 +27,17 @@ object Something {
 
   final class SomethingF[F[_] : ConsoleEffect : Monad]
     extends Something[F] {
-    
+
     def foo[A](): F[Unit] = for {
-      _ <- ConsoleEffect[F].putStrLn("Hello")
-      answer <- ConsoleEffect[F].readYesNo("Would you like to proceed?")
+      _ <- putStrLn("Hello")
+      answer <- readYesNo("Would you like to proceed?")
       result = answer match {
             case YesNo.Yes =>
               "Done"
             case YesNo.No =>
               "Cancelled"
           }
-      _ <- ConsoleEffect[F].putStrLn(result)
+      _ <- putStrLn(result)
     } yield ()
   }
 }
