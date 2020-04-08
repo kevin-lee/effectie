@@ -3,7 +3,7 @@ layout: docs
 title: "ConsoleEffectful - Cats"
 ---
 
-# ConsoleEffectful
+# ConsoleEffectful - Cats
 
 ```scala
 import cats._

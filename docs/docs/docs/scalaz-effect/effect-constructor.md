@@ -3,7 +3,8 @@ layout: docs
 title: "EffectConstructor - Scalaz"
 ---
 
-# EffectConstructor
+# EffectConstructor - Scalaz
+
 If you use Scalaz Effect and write tagless final code, and look for a generic way to construct `F[A]`, `EffectConstructor` can help you.
 
 ```scala mdoc:reset-object

@@ -3,7 +3,7 @@ layout: docs
 title: "ConsoleEffectful - Scalaz"
 ---
 
-# ConsoleEffectful
+# ConsoleEffectful - Scalaz
 
 ```scala
 import scalaz._

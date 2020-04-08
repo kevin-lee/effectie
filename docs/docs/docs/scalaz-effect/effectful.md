@@ -3,7 +3,8 @@ layout: docs
 title: "Effectful - Scalaz"
 ---
 
-# Effectful
+# Effectful - Scalaz
+
 If you're sick of repeating `EffectConstructor[F].effectOf()` and looking for more convenient ways?, use `Effectful` instead.
 
 ```scala mdoc:reset-object

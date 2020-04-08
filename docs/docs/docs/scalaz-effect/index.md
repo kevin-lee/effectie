@@ -8,6 +8,7 @@ title: "For Scalaz Effect"
 * [EffectConstructor](effect-constructor)
 * [Effectful](effectful)
 * [ConsoleEffect](console-effect)
+* [ConsoleEffectful](console-effectful)
 * [OptionTSupport](optiont-support)
 * [EitherTSupport](eithert-support)
 

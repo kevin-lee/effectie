@@ -3,7 +3,7 @@ layout: docs
 title: "ConsoleEffect - Scalaz"
 ---
 
-# ConsoleEffect
+# ConsoleEffect - Scalaz
 
 ```scala
 import scalaz._

@@ -3,4 +3,4 @@ layout: docs
 title: "OptionTSupport - Scalaz"
 ---
 
-# OptionTSupport
+# OptionTSupport - Scalaz

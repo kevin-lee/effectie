@@ -2,4 +2,4 @@
 layout: docs
 title: "EitherTSupport - Cats"
 ---
-# EitherTSupport
+# EitherTSupport - Cats

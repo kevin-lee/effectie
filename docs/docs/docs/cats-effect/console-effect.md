@@ -3,7 +3,7 @@ layout: docs
 title: "ConsoleEffect - Cats"
 ---
 
-# ConsoleEffect
+# ConsoleEffect - Cats
 
 ```scala
 import cats._

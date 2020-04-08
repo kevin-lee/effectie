@@ -3,7 +3,8 @@ layout: docs
 title: "EffectConstructor - Cats"
 ---
 
-# EffectConstructor
+# EffectConstructor - Cats
+
 If you use Cats Effect and write tagless final code, and look for a generic way to construct `F[A]`, `EffectConstructor` can help you.
 
 ```scala mdoc:reset-object
