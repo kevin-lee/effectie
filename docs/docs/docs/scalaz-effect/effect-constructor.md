@@ -13,10 +13,26 @@ trait Something[F[_]] {
   def get[A](a: => A): F[A]
 }
 
-class SomethingF[F[_] : EffectConstructor] extends Something[F] {
-  def get[A](a: => A): F[A] =
-    EffectConstructor[F].effectOf(a)
+object Something {
+  def apply[F[_] : Something]: Something[F] =
+    implicitly[Something[F]]
+
+  implicit def something[F[_] : EffectConstructor]: Something[F] =
+    new SomethingF[F]
+
+  final class SomethingF[F[_] : EffectConstructor]
+    extends Something[F] {
+
+    def get[A](a: => A): F[A] =
+      EffectConstructor[F].effectOf(a)
+  }
 }
+
+import scalaz.effect._
+
+val get1 = Something[IO].get(1)
+
+get1.unsafePerformIO()
 ```
 
-If you feel it's too cumbersome to repeat `EffectConstructor[F].effectOf()`, consider using [`Effectful`](effectful.md)
+If you feel it's too cumbersome to repeat `EffectConstructor[F].effectOf()`, consider using [Effectful](effectful.md)

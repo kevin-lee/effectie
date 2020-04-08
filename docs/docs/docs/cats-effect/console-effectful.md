@@ -1,14 +1,15 @@
 ---
 layout: docs
-title: "ConsoleEffect - Cats"
+title: "ConsoleEffectful - Cats"
 ---
 
-# ConsoleEffect
+# ConsoleEffectful
 
 ```scala
 import cats._
 import cats.implicits._
 
+import effectie.ConsoleEffectful._
 import effectie.cats._
 import effectie.YesNo
 
@@ -28,15 +29,15 @@ object Something {
     extends Something[F] {
 
     def foo[A](): F[Unit] = for {
-      _ <- ConsoleEffect[F].putStrLn("Hello")
-      answer <- ConsoleEffect[F].readYesNo("Would you like to proceed?")
+      _ <- putStrLn("Hello")
+      answer <- readYesNo("Would you like to proceed?")
       result = answer match {
             case YesNo.Yes =>
               "Done"
             case YesNo.No =>
               "Cancelled"
           }
-      _ <- ConsoleEffect[F].putStrLn(result)
+      _ <- putStrLn(result)
     } yield ()
   }
 }
