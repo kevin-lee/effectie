@@ -6,13 +6,13 @@ import cats.implicits._
 
 trait OptionTSupport {
 
-  def optionTEffect[F[_] : EffectConstructor, A](a: => Option[A]): OptionT[F, A] =
+  def optionTEffectOf[F[_] : EffectConstructor, A](a: => Option[A]): OptionT[F, A] =
     OptionT(EffectConstructor[F].effectOf(a))
 
   def optionTEffectOfPure[F[_] : EffectConstructor, A](a: Option[A]): OptionT[F, A] =
     OptionT(EffectConstructor[F].effectOfPure(a))
 
-  def optionTLiftEffect[F[_] : EffectConstructor : Functor, A](a: => A): OptionT[F, A] =
+  def optionTLiftEffectOf[F[_] : EffectConstructor : Functor, A](a: => A): OptionT[F, A] =
     OptionT.liftF[F, A](EffectConstructor[F].effectOf(a))
 
   def optionTLiftEffectOfPure[F[_] : EffectConstructor, A](a: A): OptionT[F, A] =
