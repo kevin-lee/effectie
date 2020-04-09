@@ -63,9 +63,9 @@ object Something {
 
     override def baz[A, B : Semigroup](ab: A \/ B): F[A \/ B] =
       (for {
-        b <- eitherTEffect(ab)
+        b <- eitherTEffectOf(ab)
         blah <- eitherTEffectOfPure("blah blah".right[A])
-        _ <- eitherTLiftEffect(println(s"b: $b / BLAH: $blah"))
+        _ <- eitherTLiftEffectOf(println(s"b: $b / BLAH: $blah"))
         x <- eitherTLiftF[F, A, B](effectOf(b |+| b))
         _ <- eitherTLiftF(putStrLn(s"x: $x"))
       } yield x).run
