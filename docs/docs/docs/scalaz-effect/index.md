@@ -56,7 +56,7 @@ object Something {
       (for {
         a <- optionTEffectOfPure(a)
         blah <- optionTEffectOfPure("blah blah".some)
-        _ <- optionTLiftEffect(println(s"a: $a / BLAH: $blah"))
+        _ <- optionTLiftEffectOf(println(s"a: $a / BLAH: $blah"))
         x <- optionTLiftF(effectOf(a |+| a))
         _ <- optionTLiftF(putStrLn(s"x: $x"))
       } yield x).run
