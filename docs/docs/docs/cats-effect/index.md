@@ -57,16 +57,16 @@ object Something {
       (for {
         a <- optionTEffectOfPure(a)
         blah <- optionTEffectOfPure("blah blah".some)
-        _ <- optionTLiftEffect(println(s"a: $a / BLAH: $blah"))
+        _ <- optionTLiftEffectOf(println(s"a: $a / BLAH: $blah"))
         x <- optionTLiftF(effectOf(a |+| a))
         _ <- optionTLiftF(putStrLn(s"x: $x"))
       } yield x).value
 
     override def baz[A, B : Semigroup](ab: Either[A, B]): F[Either[A, B]] =
       (for {
-        b <- eitherTEffect(ab)
+        b <- eitherTEffectOf(ab)
         blah <- eitherTEffectOfPure("blah blah".asRight[A])
-        _ <- eitherTLiftEffect(println(s"b: $b / BLAH: $blah"))
+        _ <- eitherTLiftEffectOf(println(s"b: $b / BLAH: $blah"))
         x <- eitherTLiftF(effectOf(b |+| b))
         _ <- eitherTLiftF[F, A, Unit](putStrLn(s"x: $x"))
       } yield x).value
