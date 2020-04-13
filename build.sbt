@@ -63,6 +63,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
         , hedgehogRepo
         )
       , libraryDependencies ++= hedgehogLibs
+      /* WartRemover and scalacOptions { */
 //      , wartremoverErrors in (Compile, compile) ++= commonWarts((scalaBinaryVersion in update).value)
 //      , wartremoverErrors in (Test, compile) ++= commonWarts((scalaBinaryVersion in update).value)
       , wartremoverErrors ++= commonWarts((scalaBinaryVersion in update).value)
@@ -81,6 +82,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
             .filterNot( option =>
               option.contains("wartremover") || option.contains("import")
             )
+      /* } WartRemover and scalacOptions */
       , testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework"))
 
       /* Ammonite-REPL { */
@@ -111,7 +113,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
       /* } Ammonite-REPL */
       /* Bintray { */
       , bintrayPackageLabels := Seq("Scala", "Effect", "Referential Transparency", "Tagless Final", "Finally Tagless", "Functional Programming", "FP")
-      , bintrayVcsUrl := Some("""git@github.com:Kevin-Lee/effectie.git""")
+      , bintrayVcsUrl := Some("""https://github.com/Kevin-Lee/effectie""")
       , licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
       /* } Bintray */
 
