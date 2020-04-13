@@ -3,7 +3,7 @@ layout: docs
 title: Getting Started
 ---
 
-# Effectie
+# ![Effectie Logo](/effectie/img/effectie-logo-96x96.png) Effectie
 A set of type-classes and utils for functional effect libraries (i.e. Scalaz and Cats Effect)
 
 Why Effectie? Please read ["Why?"](#why) section.

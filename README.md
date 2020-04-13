@@ -7,7 +7,6 @@
 
 | Project | Bintray | Maven Central |
 | ------: | ------- | ------------- |
-| effectie-core | [![Download](https://api.bintray.com/packages/kevinlee/maven/effectie-core/images/download.svg)](https://bintray.com/kevinlee/maven/effectie-core/_latestVersion) | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kevinlee/effectie-core_2.13/badge.svg)](https://search.maven.org/artifact/io.kevinlee/effectie-core_2.13) |
 | effectie-cats-effect | [![Download](https://api.bintray.com/packages/kevinlee/maven/effectie-cats-effect/images/download.svg)](https://bintray.com/kevinlee/maven/effectie-cats-effect/_latestVersion) | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kevinlee/effectie-cats-effect_2.13/badge.svg)](https://search.maven.org/artifact/io.kevinlee/effectie-cats-effect_2.13) |
 | effectie-scalaz-effect | [![Download](https://api.bintray.com/packages/kevinlee/maven/effectie-scalaz-effect/images/download.svg)](https://bintray.com/kevinlee/maven/effectie-scalaz-effect/_latestVersion) | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kevinlee/effectie-scalaz-effect_2.13/badge.svg)](https://search.maven.org/artifact/io.kevinlee/effectie-scalaz-effect_2.13) |
 
