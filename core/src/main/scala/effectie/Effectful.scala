@@ -6,7 +6,7 @@ trait Effectful {
 
   def effectOfPure[F[_] : EffectConstructor, A](a: A): F[A] = EffectConstructor[F].effectOfPure(a)
 
-  def effectUnit[F[_] : EffectConstructor]: F[Unit] = EffectConstructor[F].unit
+  def effectOfUnit[F[_] : EffectConstructor]: F[Unit] = EffectConstructor[F].effectOfUnit
 
 }
 
