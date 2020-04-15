@@ -13,7 +13,7 @@ object EffectConstructor {
 
     override def effectOfPure[A](a: A): IO[A] = IO.pure(a)
 
-    override def unit: IO[Unit] = IO.unit
+    override def effectOfUnit: IO[Unit] = IO.unit
   }
 
 }
