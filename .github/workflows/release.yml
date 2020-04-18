@@ -9,7 +9,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-java@v1
@@ -34,37 +33,81 @@ jobs:
         echo "====================="
         echo 'sbt -J-Xmx2048m "; gitHubRelease"'
         sbt -J-Xmx2048m "; gitHubRelease"
-    - name: sbt Publish Effectie
-      env:
-        BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
-        BINTRAY_PASS: ${{ secrets.BINTRAY_PASS }}
-      run: |
-        echo "Run] sbt publish - core"
-        echo 'sbt -J-Xmx2048m "; project core; clean; +publish"'
-        sbt -J-Xmx2048m "; project core; clean; +publish"
-        echo "====================="
-        echo "Run] sbt publish - cats-effect"
-        echo 'sbt -J-Xmx2048m "; project catsEffect; clean; +publish"'
-        sbt -J-Xmx2048m "; project catsEffect; clean; +publish"
-        echo "====================="
-        echo "Run] sbt publish - scalaz-effect"
-        echo 'sbt -J-Xmx2048m "; project scalazEffect; clean; +publish"'
-        sbt -J-Xmx2048m "; project scalazEffect; clean; +publish"
-    - name: Sync Effectie to Maven Central
-      env:
-        BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
-        BINTRAY_PASS: ${{ secrets.BINTRAY_PASS }}
-      run: |
-        PROJECT_VERSION="${GITHUB_REF#refs/tags/v}"
-        BINTRAY_SUBJECT=kevinlee
-        BINTRAY_REPO=maven
-        echo "PROJECT_VERSION: $PROJECT_VERSION"
-        echo "BINTRAY_SUBJECT: $BINTRAY_SUBJECT"
-        echo "   BINTRAY_REPO: $BINTRAY_REPO"
-        BINTRAY_PACKAGES="effectie-core effectie-cats-effect effectie-scalaz-effect"
-        for bintray_package in $BINTRAY_PACKAGES
-        do
-          echo "bintray_package: $bintray_package"
-          echo "Sync to Maven Central..."
-          curl --user $BINTRAY_USER:$BINTRAY_PASS -X POST "https://api.bintray.com/maven_central_sync/$BINTRAY_SUBJECT/$BINTRAY_REPO/$bintray_package/versions/$PROJECT_VERSION"
-        done
+
+  publish:
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        scala:
+          - { version: "2.11.12", binary-version: "2.11", java-version: "8" }
+          - { version: "2.12.11", binary-version: "2.12", java-version: "11" }
+          - { version: "2.13.1", binary-version: "2.13", java-version: "11" }
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.scala.java-version }}
+
+      - name: Cache Coursier
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/coursier
+          key: ${{ runner.os }}-coursier-scala-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-coursier-scala-${{ matrix.scala.binary-version }}-
+
+      - name: Cache Ivy
+        uses: actions/cache@v1
+        with:
+          path: ~/.ivy2/cache
+          key: ${{ runner.os }}-ivy-scala-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-ivy-scala-${{ matrix.scala.binary-version }}-
+
+      - name: sbt Publish Effectie
+        env:
+          BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
+          BINTRAY_PASS: ${{ secrets.BINTRAY_PASS }}
+        run: |
+          echo "Run] sbt publish - core for Scala ${{ matrix.scala.version }}"
+          echo 'sbt -J-Xmx2048m "; project core; ++ ${{ matrix.scala.version }}! -v; clean; publish"'
+          sbt -J-Xmx2048m "; project core; ++ ${{ matrix.scala.version }}! -v; clean; publish"
+          echo "====================="
+          echo "Run] sbt publish - cats-effect Scala ${{ matrix.scala.version }}"
+          echo 'sbt -J-Xmx2048m "; project catsEffect; ++ ${{ matrix.scala.version }}! -v; clean; publish"'
+          sbt -J-Xmx2048m "; project catsEffect; ++ ${{ matrix.scala.version }}! -v; clean; publish"
+          echo "====================="
+          echo "Run] sbt publish - scalaz-effect Scala ${{ matrix.scala.version }}"
+          echo 'sbt -J-Xmx2048m "; project scalazEffect; ++ ${{ matrix.scala.version }}! -v; clean; publish"'
+          sbt -J-Xmx2048m "; project scalazEffect; ++ ${{ matrix.scala.version }}! -v; clean; publish"
+
+  publish_maven:
+    needs: publish
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Sync Effectie to Maven Central
+        env:
+          BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
+          BINTRAY_PASS: ${{ secrets.BINTRAY_PASS }}
+        run: |
+          PROJECT_VERSION="${GITHUB_REF#refs/tags/v}"
+          BINTRAY_SUBJECT=kevinlee
+          BINTRAY_REPO=maven
+          echo "PROJECT_VERSION: $PROJECT_VERSION"
+          echo "BINTRAY_SUBJECT: $BINTRAY_SUBJECT"
+          echo "   BINTRAY_REPO: $BINTRAY_REPO"
+          BINTRAY_PACKAGES="effectie-core effectie-cats-effect effectie-scalaz-effect"
+          for bintray_package in $BINTRAY_PACKAGES
+          do
+            echo "bintray_package: $bintray_package"
+            echo "Sync to Maven Central..."
+            curl --user $BINTRAY_USER:$BINTRAY_PASS -X POST "https://api.bintray.com/maven_central_sync/$BINTRAY_SUBJECT/$BINTRAY_REPO/$bintray_package/versions/$PROJECT_VERSION"
+          done
