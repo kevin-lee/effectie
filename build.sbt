@@ -48,6 +48,7 @@ lazy val noPublish: SettingsDefinition = Seq(
   publish := {},
   publishLocal := {},
   publishArtifact := false,
+  skip in sbt.Keys.`package` := true,
   skip in packagedArtifacts := true,
   skip in publish := true
 )
@@ -140,7 +141,8 @@ lazy val effectie = (project in file("."))
     )
     /* } GitHub Release */
   )
-  .dependsOn(core, catsEffect, scalazEffect)
+  .settings(noPublish)
+  .aggregate(core, catsEffect, scalazEffect)
 
 lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
   .settings(
