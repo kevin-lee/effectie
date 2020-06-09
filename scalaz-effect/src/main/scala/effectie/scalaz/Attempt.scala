@@ -3,10 +3,11 @@ package effectie.scalaz
 import scala.concurrent.{ExecutionContext, Future}
 import scalaz._
 import Scalaz._
+import effectie.compat.FutureCompat
 import scalaz.effect._
 
 import scala.util.Try
-import scala.util.{Success => SuccessS, Failure => FailureS}
+import scala.util.{Failure => FailureS, Success => SuccessS}
 import scala.util.control.NonFatal
 
 /**
@@ -43,7 +44,7 @@ object Attempt {
   final class AttemptFuture(val EC0: ExecutionContext)
     extends Attempt[Future] {
     override def attempt[A, B](fb: Future[B])(f: Throwable => A): Future[A \/ B] =
-      fb.transform {
+      FutureCompat.transform(fb) {
         case SuccessS(b) =>
           Try(b.right[A])
 

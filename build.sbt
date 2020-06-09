@@ -147,6 +147,13 @@ lazy val effectie = (project in file("."))
 lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
   .settings(
       description  := "Effect Utils - Core"
+    , unmanagedSourceDirectories in Compile ++= {
+        val sharedSourceDir = baseDirectory.value / "src/main"
+        if (scalaVersion.value.startsWith("2.13") || scalaVersion.value.startsWith("2.12"))
+          Seq(sharedSourceDir / "scala-2.12_2.13")
+        else
+          Seq.empty
+      }
     , libraryDependencies :=
       crossVersionProps(
           Seq.empty

@@ -3,6 +3,7 @@ package effectie.cats
 import cats.Id
 import cats.effect.IO
 import cats.implicits._
+import effectie.compat.FutureCompat
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -30,7 +31,7 @@ object Attempt {
     extends Attempt[Future] {
     @SuppressWarnings(Array("org.wartremover.warts.Nothing"))
     override def attempt[A, B](fb: Future[B])(f: Throwable => A): Future[Either[A, B]] =
-      fb.transform {
+      FutureCompat.transform(fb) {
         case scala.util.Success(b) =>
           scala.util.Try[Either[A, B]](Right(b))
 
