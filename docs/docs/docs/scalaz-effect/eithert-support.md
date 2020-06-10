@@ -19,13 +19,13 @@ trait Something[F[_]] {
 }
 
 object Something {
-  def apply[F[_] : Something]: Something[F] =
+  def apply[F[_]: Something]: Something[F] =
     implicitly[Something[F]]
 
-  implicit def something[F[_] : EffectConstructor : Monad]: Something[F] =
+  implicit def something[F[_]: EffectConstructor: Monad]: Something[F] =
     new SomethingF[F]
 
-  final class SomethingF[F[_] : EffectConstructor : Monad]
+  final class SomethingF[F[_]: EffectConstructor: Monad]
     extends Something[F] {
 
     def foo(a: Int): F[String \/ Int] = (for {

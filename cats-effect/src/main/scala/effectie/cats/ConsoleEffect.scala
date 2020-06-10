@@ -9,12 +9,12 @@ import effectie.YesNo
 trait ConsoleEffect[F[_]] extends effectie.ConsoleEffect[F]
 
 object ConsoleEffect {
-  def apply[F[_] : ConsoleEffect]: ConsoleEffect[F] = implicitly[ConsoleEffect[F]]
+  def apply[F[_]: ConsoleEffect]: ConsoleEffect[F] = implicitly[ConsoleEffect[F]]
 
-  implicit def consoleEffectF[F[_] : EffectConstructor : FlatMap]: ConsoleEffect[F] =
+  implicit def consoleEffectF[F[_]: EffectConstructor: FlatMap]: ConsoleEffect[F] =
     new ConsoleEffectF[F]
 
-  final class ConsoleEffectF[F[_] : EffectConstructor : FlatMap]
+  final class ConsoleEffectF[F[_]: EffectConstructor: FlatMap]
     extends ConsoleEffectWithoutBind[F]
     with ConsoleEffect[F] {
 

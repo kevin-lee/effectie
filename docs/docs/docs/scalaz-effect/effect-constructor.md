@@ -15,13 +15,13 @@ trait Something[F[_]] {
 }
 
 object Something {
-  def apply[F[_] : Something]: Something[F] =
+  def apply[F[_]: Something]: Something[F] =
     implicitly[Something[F]]
 
-  implicit def something[F[_] : EffectConstructor]: Something[F] =
+  implicit def something[F[_]: EffectConstructor]: Something[F] =
     new SomethingF[F]
 
-  final class SomethingF[F[_] : EffectConstructor]
+  final class SomethingF[F[_]: EffectConstructor]
     extends Something[F] {
 
     def get[A](a: => A): F[A] =

@@ -27,23 +27,23 @@ import effectie.scalaz.OptionTSupport._
 import effectie.scalaz._
 
 trait Something[F[_]] {
-  def foo[A : Semigroup](a: A): F[A]
-  def bar[A : Semigroup](a: Option[A]): F[Option[A]]
-  def baz[A, B : Semigroup](a: A \/ B): F[A \/ B]
+  def foo[A: Semigroup](a: A): F[A]
+  def bar[A: Semigroup](a: Option[A]): F[Option[A]]
+  def baz[A, B: Semigroup](a: A \/ B): F[A \/ B]
 }
 
 object Something {
 
-  def apply[F[_] : Something]: Something[F] =
+  def apply[F[_]: Something]: Something[F] =
     implicitly[Something[F]]
 
-  implicit def something[F[_] : EffectConstructor : ConsoleEffect : Monad]: Something[F] =
+  implicit def something[F[_]: EffectConstructor: ConsoleEffect: Monad]: Something[F] =
     new SomethingF[F]
 
-  final class SomethingF[F[_] : EffectConstructor : ConsoleEffect : Monad]
+  final class SomethingF[F[_]: EffectConstructor: ConsoleEffect: Monad]
     extends Something[F] {
 
-    override def foo[A : Semigroup](a: A): F[A] =
+    override def foo[A: Semigroup](a: A): F[A] =
       for {
         n <- effectOf(a)
         blah <- effectOfPure("blah blah")
@@ -52,7 +52,7 @@ object Something {
         _ <- putStrLn(s"x: $x")
       } yield x
 
-    override def bar[A : Semigroup](a: Option[A]): F[Option[A]] =
+    override def bar[A: Semigroup](a: Option[A]): F[Option[A]] =
       (for {
         a <- optionTEffectOfPure(a)
         blah <- optionTEffectOfPure("blah blah".some)
@@ -61,7 +61,7 @@ object Something {
         _ <- optionTLiftF(putStrLn(s"x: $x"))
       } yield x).run
 
-    override def baz[A, B : Semigroup](ab: A \/ B): F[A \/ B] =
+    override def baz[A, B: Semigroup](ab: A \/ B): F[A \/ B] =
       (for {
         b <- eitherTEffectOf(ab)
         blah <- eitherTEffectOfPure("blah blah".right[A])
