@@ -22,19 +22,16 @@ object Attempt {
   def apply[F[_]: Attempt]: Attempt[F] = implicitly[Attempt[F]]
 
   implicit val attemptIo: Attempt[IO] = new Attempt[IO] {
+    @SuppressWarnings(Array("org.wartremover.warts.Throw"))
     override def attempt[A, B](fb: IO[B])(f: Throwable => A): IO[A \/ B] =
-      IO(Try(fb.map(Try(_) match {
-        case SuccessS(b) =>
-          b.right[A]
+      EitherT(fb.attempt)
+        .leftMap {
+          case NonFatal(ex) =>
+            f(ex)
+          case ex =>
+            throw ex
+        }.run
 
-        case FailureS(NonFatal(ex)) =>
-          f(ex).left[B]
-      }))).flatMap {
-        case SuccessS(b) =>
-          b
-        case FailureS(ex) =>
-          IO(f(ex).left[B])
-      }
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
