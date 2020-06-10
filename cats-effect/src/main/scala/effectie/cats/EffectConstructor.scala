@@ -8,7 +8,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait EffectConstructor[F[_]] extends effectie.EffectConstructor[F]
 
 object EffectConstructor {
-  def apply[F[_] : EffectConstructor]: EffectConstructor[F] = implicitly[EffectConstructor[F]]
+  def apply[F[_]: EffectConstructor]: EffectConstructor[F] = implicitly[EffectConstructor[F]]
 
   implicit val ioEffectConstructor: EffectConstructor[IO] = new EffectConstructor[IO] {
 

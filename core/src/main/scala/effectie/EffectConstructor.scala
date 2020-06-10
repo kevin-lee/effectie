@@ -9,7 +9,7 @@ trait EffectConstructor[F[_]] {
 }
 
 object EffectConstructor {
-  def apply[F[_] : EffectConstructor]: EffectConstructor[F] = implicitly[EffectConstructor[F]]
+  def apply[F[_]: EffectConstructor]: EffectConstructor[F] = implicitly[EffectConstructor[F]]
 
   trait FutureEffectConstructor extends EffectConstructor[Future] {
 

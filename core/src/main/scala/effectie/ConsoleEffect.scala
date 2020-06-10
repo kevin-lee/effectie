@@ -15,9 +15,9 @@ trait ConsoleEffect[F[_]] {
 }
 
 object ConsoleEffect {
-  def apply[F[_] : ConsoleEffect]: ConsoleEffect[F] = implicitly[ConsoleEffect[F]]
+  def apply[F[_]: ConsoleEffect]: ConsoleEffect[F] = implicitly[ConsoleEffect[F]]
 
-  abstract class ConsoleEffectWithoutBind[F[_] : EffectConstructor] extends ConsoleEffect[F] {
+  abstract class ConsoleEffectWithoutBind[F[_]: EffectConstructor] extends ConsoleEffect[F] {
 
     override def readLn: F[String] =
       EffectConstructor[F].effectOf(scala.io.StdIn.readLine)

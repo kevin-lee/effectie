@@ -6,19 +6,19 @@ import cats.implicits._
 
 trait EitherTSupport {
 
-  def eitherTEffectOf[F[_] : EffectConstructor, A, B](ab: => Either[A, B]): EitherT[F, A, B] =
+  def eitherTEffectOf[F[_]: EffectConstructor, A, B](ab: => Either[A, B]): EitherT[F, A, B] =
     EitherT(EffectConstructor[F].effectOf(ab))
 
-  def eitherTEffectOfPure[F[_] : EffectConstructor, A, B](ab: Either[A, B]): EitherT[F, A, B] =
+  def eitherTEffectOfPure[F[_]: EffectConstructor, A, B](ab: Either[A, B]): EitherT[F, A, B] =
     EitherT(EffectConstructor[F].effectOfPure(ab))
 
-  def eitherTLiftEffectOf[F[_] : EffectConstructor : Functor, A, B](b: => B): EitherT[F, A, B] =
+  def eitherTLiftEffectOf[F[_]: EffectConstructor: Functor, A, B](b: => B): EitherT[F, A, B] =
     EitherT.liftF[F, A, B](EffectConstructor[F].effectOf(b))
 
-  def eitherTLiftEffectOfPure[F[_] : EffectConstructor, A, B](b: B): EitherT[F, A, B] =
+  def eitherTLiftEffectOfPure[F[_]: EffectConstructor, A, B](b: B): EitherT[F, A, B] =
     EitherT(EffectConstructor[F].effectOfPure(b.asRight[A]))
 
-  def eitherTLiftF[F[_] : EffectConstructor : Functor, A, B](fb: F[B]): EitherT[F, A, B] =
+  def eitherTLiftF[F[_]: EffectConstructor: Functor, A, B](fb: F[B]): EitherT[F, A, B] =
     EitherT.liftF[F, A, B](fb)
 
 }

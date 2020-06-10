@@ -112,7 +112,7 @@ How would you construct `F[A]`? You could probably do `Applicative[F].pure` or `
 ```scala
 import cats._
 
-class Bar[F[_] : Applicative] extends Foo[F] { // or [F[_] : Monad]
+class Bar[F[_]: Applicative] extends Foo[F] { // or [F[_]: Monad]
   def get[A](a: => A): F[A] =
     Applicative[F].pure(a) // or Monad[F].pure(a)
 }
@@ -138,7 +138,7 @@ trait Foo[F[_]] {
   def get[A](a: => A): F[A]
 }
 
-class Bar[F[_] : EffectConstructor] extends Foo[F] {
+class Bar[F[_]: EffectConstructor] extends Foo[F] {
   def get[A](a: => A): F[A] =
     EffectConstructor[F].effectOf(a)
 }
@@ -164,7 +164,7 @@ trait Foo[F[_]] {
   def get[A](a: => A): F[A]
 }
 
-class Bar[F[_] : EffectConstructor] extends Foo[F] {
+class Bar[F[_]: EffectConstructor] extends Foo[F] {
   def get[A](a: => A): F[A] =
     effectOf(a) // no more EffectConstructor[F].effectOf
 }

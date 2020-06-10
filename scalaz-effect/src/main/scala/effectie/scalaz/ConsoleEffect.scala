@@ -12,10 +12,10 @@ trait ConsoleEffect[F[_]] extends effectie.ConsoleEffect[F]
 object ConsoleEffect {
   def apply[F[_]: ConsoleEffect]: ConsoleEffect[F] = implicitly[ConsoleEffect[F]]
 
-  implicit def consoleEffectF[F[_] : EffectConstructor : Bind]: ConsoleEffect[F] =
+  implicit def consoleEffectF[F[_]: EffectConstructor: Bind]: ConsoleEffect[F] =
     new ConsoleEffectF[F]
 
-  final class ConsoleEffectF[F[_] : EffectConstructor : Bind]
+  final class ConsoleEffectF[F[_]: EffectConstructor: Bind]
     extends ConsoleEffectWithoutBind[F]
     with ConsoleEffect[F] {
 
