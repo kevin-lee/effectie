@@ -14,16 +14,16 @@ import scala.util.control.NonFatal
  * @author Kevin Lee
  * @since 2020-06-07
  */
-trait Attempt[F[_]] extends effectie.Attempt[F] {
+trait CanCatch[F[_]] extends effectie.CanCatch[F] {
   type Xor[A, B] = A \/ B
 }
 
-object Attempt {
-  def apply[F[_]: Attempt]: Attempt[F] = implicitly[Attempt[F]]
+object CanCatch {
+  def apply[F[_]: CanCatch]: CanCatch[F] = implicitly[CanCatch[F]]
 
-  implicit val attemptIo: Attempt[IO] = new Attempt[IO] {
+  implicit val canCatchIo: CanCatch[IO] = new CanCatch[IO] {
     @SuppressWarnings(Array("org.wartremover.warts.Throw"))
-    override def attempt[A, B](fb: IO[B])(f: Throwable => A): IO[A \/ B] =
+    override def catchNonFatal[A, B](fb: IO[B])(f: Throwable => A): IO[A \/ B] =
       EitherT(fb.attempt)
         .leftMap {
           case NonFatal(ex) =>
@@ -35,12 +35,12 @@ object Attempt {
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
-  implicit def attemptFuture(implicit EC: ExecutionContext): Attempt[Future] =
-    new AttemptFuture(EC)
+  implicit def canCatchFuture(implicit EC: ExecutionContext): CanCatch[Future] =
+    new CanCatchFuture(EC)
 
-  final class AttemptFuture(val EC0: ExecutionContext)
-    extends Attempt[Future] {
-    override def attempt[A, B](fb: Future[B])(f: Throwable => A): Future[A \/ B] =
+  final class CanCatchFuture(val EC0: ExecutionContext)
+    extends CanCatch[Future] {
+    override def catchNonFatal[A, B](fb: Future[B])(f: Throwable => A): Future[A \/ B] =
       FutureCompat.transform(fb) {
         case SuccessS(b) =>
           Try(b.right[A])
@@ -50,8 +50,8 @@ object Attempt {
       }(EC0)
   }
 
-  implicit val attemptId: Attempt[Id] = new Attempt[Id] {
-    override def attempt[A, B](fb: Id[B])(f: Throwable => A): Id[A \/ B] =
+  implicit val canCatchId: CanCatch[Id] = new CanCatch[Id] {
+    override def catchNonFatal[A, B](fb: Id[B])(f: Throwable => A): Id[A \/ B] =
       Try(fb) match {
         case SuccessS(b) =>
           b.right[A]
