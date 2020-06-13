@@ -4,7 +4,7 @@ import just.semver.SemVer
 import SemVer.{Major, Minor}
 import microsites.{ConfigYml, MicrositeFavicon}
 
-val ProjectScalaVersion: String = "2.13.1"
+val ProjectScalaVersion: String = "2.13.2"
 val CrossScalaVersions: Seq[String] = Seq("2.11.12", "2.12.11", ProjectScalaVersion)
 val IncludeTest: String = "compile->compile;test->test"
 
