@@ -29,14 +29,16 @@ object Something {
     extends Something[F] {
 
     def foo(a: Int): F[String \/ Int] = (for {
-      x <- eitherTLiftEffectOfPure(a) // == eitherT.liftF(effectOfPure(a))
-      y <- eitherTLiftEffectOf(x + 10) // == eitherT.liftF(effectOf(x + 10))
-      z <- eitherTLiftF[F, String, Int](effectOf(y + 100)) // == eitherT.lieftF(effectOf(y + 100))
+      x <- eitherTRightPure(a) // == EitherT(effectOfPure(a).map(_.right[String]))
+      y <- eitherTRight(x + 10) // == EitherT(effectOf(x + 10).map(_.right[String]))
+      y2 <- if (y > 100) eitherTLeft[F, Int]("Error - Bigger than 100") else eitherTRightPure[F, String](y)
+         // ↑ if y > 100 EitherT(effectOf("Error - Bigger than 100").map(_.left[Int]))
+      z <- eitherTRightF[String](effectOf(y + 100)) // == EitherT(effectOf(y + 100).map(_.right))
     } yield z).run
 
     def bar(a: String \/ Int): F[String \/ Int] = (for {
-      x <- eitherTEffectOfPure(a) // == eitherT(effectOfPure(a: String \/ Int))
-      y <- eitherTEffectOf[F, String, Int]((x + 999).right[String])  // == eitherT(effectOf((x + 999).right[String]))
+      x <- eitherTOfPure(a) // == EitherT(effectOfPure(a: String \/ Int))
+      y <- eitherTOf((x + 999).right[String])  // == EitherT(effectOf((x + 999).right[String]))
     } yield y).run
   }
 

@@ -29,14 +29,14 @@ object Something {
     extends Something[F] {
 
     def foo(a: Int): F[Option[Int]] = (for {
-      x <- optionTLiftEffectOfPure(a) // == OptionT.liftF(effectOfPure(a))
-      y <- optionTLiftEffectOf(x + 10) // == OptionT.liftF(effectOf(x + 10))
-      z <- optionTLiftF(effectOf(y + 100)) // == OptionT.lieftF(effectOf(y + 100))
+      x <- optionTSomePure(a) // == OptionT.liftF(effectOfPure(a))
+      y <- optionTSome(x + 10) // == OptionT.liftF(effectOf(x + 10))
+      z <- optionTSomeF(effectOf(y + 100)) // == OptionT.lieftF(effectOf(y + 100))
     } yield z).value
 
     def bar(a: Option[Int]): F[Option[Int]] = (for {
-      x <- optionTEffectOfPure(a) // == OptionT(effectOfPure(a: Option[Int]))
-      y <- optionTEffectOf((x + 999).some)  // == OptionT(effectOf((x + 999).some))
+      x <- optionTOfPure(a) // == OptionT(effectOfPure(a: Option[Int]))
+      y <- optionTOf((x + 999).some)  // == OptionT(effectOf((x + 999).some))
     } yield y).value
   }
 
