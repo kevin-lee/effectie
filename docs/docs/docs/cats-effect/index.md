@@ -55,20 +55,20 @@ object Something {
 
     override def bar[A: Semigroup](a: Option[A]): F[Option[A]] =
       (for {
-        a <- optionTEffectOfPure(a)
-        blah <- optionTEffectOfPure("blah blah".some)
-        _ <- optionTLiftEffectOf(println(s"a: $a / BLAH: $blah"))
-        x <- optionTLiftF(effectOf(a |+| a))
-        _ <- optionTLiftF(putStrLn(s"x: $x"))
+        a <- optionTOfPure(a)
+        blah <- optionTOfPure("blah blah".some)
+        _ <- optionTSome(println(s"a: $a / BLAH: $blah"))
+        x <- optionTSomeF(effectOf(a |+| a))
+        _ <- optionTSomeF(putStrLn(s"x: $x"))
       } yield x).value
 
     override def baz[A, B: Semigroup](ab: Either[A, B]): F[Either[A, B]] =
       (for {
-        b <- eitherTEffectOf(ab)
-        blah <- eitherTEffectOfPure("blah blah".asRight[A])
-        _ <- eitherTLiftEffectOf(println(s"b: $b / BLAH: $blah"))
-        x <- eitherTLiftF(effectOf(b |+| b))
-        _ <- eitherTLiftF[F, A, Unit](putStrLn(s"x: $x"))
+        b <- eitherTOf(ab)
+        blah <- eitherTOfPure("blah blah".asRight[A])
+        _ <- eitherTRight(println(s"b: $b / BLAH: $blah"))
+        x <- eitherTRightF(effectOf(b |+| b))
+        _ <- eitherTRightF[A](putStrLn(s"x: $x"))
       } yield x).value
   }
 }
