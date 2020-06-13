@@ -96,7 +96,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
           case "2.12" =>
             Seq.empty[ModuleID] // TODO: add ammonite when it supports Scala 2.12.11
           case _ =>
-            Seq("com.lihaoyi" % "ammonite" % "2.0.4" % Test cross CrossVersion.full)
+            Seq("com.lihaoyi" % "ammonite" % "2.1.4" % Test cross CrossVersion.full)
         })
       , sourceGenerators in Test +=
         (scalaBinaryVersion.value match {
