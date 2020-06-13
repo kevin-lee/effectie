@@ -90,6 +90,11 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        project:
+          name: [ "effectie-core", "effectie-cats-effect", "effectie-scalaz-effect" ]
+
     steps:
       - uses: actions/checkout@v2
 
@@ -104,10 +109,8 @@ jobs:
           echo "PROJECT_VERSION: $PROJECT_VERSION"
           echo "BINTRAY_SUBJECT: $BINTRAY_SUBJECT"
           echo "   BINTRAY_REPO: $BINTRAY_REPO"
-          BINTRAY_PACKAGES="effectie-core effectie-cats-effect effectie-scalaz-effect"
-          for bintray_package in $BINTRAY_PACKAGES
-          do
-            echo "bintray_package: $bintray_package"
-            echo "Sync to Maven Central..."
-            curl --user $BINTRAY_USER:$BINTRAY_PASS -X POST "https://api.bintray.com/maven_central_sync/$BINTRAY_SUBJECT/$BINTRAY_REPO/$bintray_package/versions/$PROJECT_VERSION"
-          done
+
+          bintray_package=${{ matrix.project.name }}
+          echo "bintray_package: $bintray_package"
+          echo "Sync to Maven Central..."
+          curl --user $BINTRAY_USER:$BINTRAY_PASS -X POST "https://api.bintray.com/maven_central_sync/$BINTRAY_SUBJECT/$BINTRAY_REPO/$bintray_package/versions/$PROJECT_VERSION"
