@@ -133,13 +133,14 @@ lazy val effectie = (project in file("."))
   .settings(
     name := prefixedProjectName("")
   , description := "Effect Utils"
-    /* GitHub Release { */
+  /* GitHub Release { */
+  , gitTagFrom := "main"
   , devOopsPackagedArtifacts := List(
       s"core/target/scala-*/${name.value}*.jar"
     , s"cats-effect/target/scala-*/${name.value}*.jar"
     , s"scalaz-effect/target/scala-*/${name.value}*.jar"
     )
-    /* } GitHub Release */
+  /* } GitHub Release */
   )
   .settings(noPublish)
   .aggregate(core, catsEffect, scalazEffect)

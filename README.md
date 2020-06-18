@@ -1,4 +1,4 @@
-# ![Effectie Logo](https://github.com/Kevin-Lee/effectie/raw/master/docs/microsite/img/effectie-logo-96x96.png) Effectie
+# ![Effectie Logo](https://github.com/Kevin-Lee/effectie/raw/main/docs/microsite/img/effectie-logo-96x96.png) Effectie
 
 ## Please visit [https://kevin-lee.github.io/effectie](https://kevin-lee.github.io/effectie)
 
