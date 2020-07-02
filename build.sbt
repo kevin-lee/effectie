@@ -2,7 +2,6 @@ import ProjectInfo._
 import kevinlee.sbt.SbtCommon.crossVersionProps
 import just.semver.SemVer
 import SemVer.{Major, Minor}
-import microsites.{ConfigYml, MicrositeFavicon}
 
 val ProjectScalaVersion: String = "2.13.2"
 val CrossScalaVersions: Seq[String] = Seq("2.11.12", "2.12.11", ProjectScalaVersion)
@@ -27,22 +26,27 @@ lazy val libCatsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "2.1.2"
 lazy val libCatsCore_2_0_0: ModuleID = "org.typelevel" %% "cats-core" % "2.0.0"
 lazy val libCatsEffect_2_0_0: ModuleID = "org.typelevel" %% "cats-effect" % "2.0.0"
 
+val GitHubUsername = "Kevin-Lee"
+val RepoName = "effectie"
+
 ThisBuild / scalaVersion     := ProjectScalaVersion
 ThisBuild / version          := ProjectVersion
 ThisBuild / organization     := "io.kevinlee"
 ThisBuild / organizationName := "Kevin's Code"
 ThisBuild / crossScalaVersions := CrossScalaVersions
+
 ThisBuild / developers   := List(
-    Developer("Kevin-Lee", "Kevin Lee", "kevin.code@kevinlee.io", url("https://github.com/Kevin-Lee"))
+    Developer(GitHubUsername, "Kevin Lee", "kevin.code@kevinlee.io", url("https://github.com/" + GitHubUsername))
   )
-ThisBuild / homepage := Some(url("https://github.com/Kevin-Lee/effectie"))
+
+ThisBuild / homepage := Some(url("https://github.com/" + GitHubUsername + "/" + RepoName))
 ThisBuild / scmInfo :=
   Some(ScmInfo(
-    url("https://github.com/Kevin-Lee/effectie")
-    , "git@github.com:Kevin-Lee/effectie.git"
+    url("https://github.com/" + GitHubUsername + "/" + RepoName)
+    , "git@github.com:" + GitHubUsername + "/" + RepoName + ".git"
   ))
 
-def prefixedProjectName(name: String) = s"effectie${if (name.isEmpty) "" else s"-$name"}"
+def prefixedProjectName(name: String) = s"$RepoName${if (name.isEmpty) "" else s"-$name"}"
 
 lazy val noPublish: SettingsDefinition = Seq(
   publish := {},
@@ -114,7 +118,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
       /* } Ammonite-REPL */
       /* Bintray { */
       , bintrayPackageLabels := Seq("Scala", "Effect", "Referential Transparency", "Tagless Final", "Finally Tagless", "Functional Programming", "FP")
-      , bintrayVcsUrl := Some("""https://github.com/Kevin-Lee/effectie""")
+      , bintrayVcsUrl := Some("""https://github.com/""" + GitHubUsername + """/""" + RepoName)
       , licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
       /* } Bintray */
 
@@ -166,7 +170,7 @@ lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
             libraryDependencies.value
         }
     , initialCommands in console :=
-      """import effectie._"""
+      """import """ + RepoName + """._"""
 
   )
 
@@ -187,7 +191,7 @@ lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effe
             libraryDependencies.value ++ Seq(libCatsCore, libCatsEffect)
         }
     , initialCommands in console :=
-      """import effectie.cats._"""
+      """import """ + RepoName + """.cats._"""
 
   )
   .dependsOn(core % IncludeTest)
@@ -207,54 +211,23 @@ lazy val scalazEffect = projectCommonSettings("scalazEffect", ProjectName("scala
             libraryDependencies.value ++ Seq(libScalazCore, libScalazEffect)
         }
     , initialCommands in console :=
-      """import effectie.scalaz._"""
+      """import """ + RepoName + """.scalaz._"""
 
   )
   .dependsOn(core % IncludeTest)
 
-lazy val docDir = file("docs")
-lazy val docs = (project in docDir)
-  .enablePlugins(MicrositesPlugin)
+
+lazy val docs = (project in file("generated-docs"))
+  .enablePlugins(MdocPlugin, DocusaurPlugin)
   .settings(
       name := prefixedProjectName("docs")
-    /* microsites { */
-    , micrositeName := "Effectie"
-    , micrositeAuthor := "Kevin Lee"
-    , micrositeHomepage := "https://blog.kevinlee.io"
-    , micrositeDescription := "A Tool for FP Effect Libraries"
-    , micrositeGithubOwner := "Kevin-Lee"
-    , micrositeGithubRepo := "effectie"
-    , micrositeBaseUrl := "/effectie"
-    , micrositeDocumentationUrl := s"${micrositeBaseUrl.value}/docs"
-    , micrositePushSiteWith := GitHub4s
-    , micrositeGithubToken := sys.env.get("GITHUB_TOKEN")
-    , micrositeTheme := "pattern"
-    , micrositeHighlightTheme := "atom-one-light"
-    , micrositeGitterChannel := false
-    , micrositeGithubLinks := true
-    , micrositeShareOnSocial := false
-    , micrositeHighlightLanguages ++= Seq("shell")
+    , skip in publish := true
 
-    , micrositeConfigYaml := ConfigYml(
-      yamlPath = Some(docDir / "microsite" / "_config.yml")
-    )
-    , micrositeImgDirectory := docDir / "microsite" / "img"
-    , micrositeCssDirectory := docDir / "microsite" / "css"
-    , micrositeSassDirectory := docDir / "microsite" / "sass"
-    , micrositeJsDirectory := docDir / "microsite" / "js"
-    , micrositeExternalLayoutsDirectory := docDir / "microsite" / "layouts"
-    , micrositeExternalIncludesDirectory := docDir / "microsite" / "includes"
-    , micrositeDataDirectory := docDir / "microsite" / "data"
-    , micrositeStaticDirectory := docDir / "microsite" / "static"
-    , micrositeExtraMdFilesOutput := docDir / "microsite" / "extra_md"
-    , micrositePluginsDirectory := docDir / "microsite" / "plugins"
-    , micrositeFavicons := Seq(
-        MicrositeFavicon("effectie-logo-16x16.png", "16x16")
-      , MicrositeFavicon("effectie-logo-32x32.png", "32x32")
-      , MicrositeFavicon("effectie-logo-96x96.png", "96x96")
-      )
-    /* } microsites */
+    , docusaurDir := (ThisBuild / baseDirectory).value / "website"
+    , docusaurBuildDir := docusaurDir.value / "build"
 
+    , gitHubPagesOrgName := GitHubUsername
+    , gitHubPagesRepoName := RepoName
   )
   .settings(noPublish)
   .dependsOn(core, catsEffect, scalazEffect)

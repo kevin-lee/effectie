@@ -10,38 +10,55 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        scala:
+          - { version: "2.13.3", binary-version: "2.13", java-version: "11" }
+
     steps:
-    - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.scala.java-version }}
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '14.4.0'
+          registry-url: 'https://registry.npmjs.org'
 
-    - name: Cache Coursier
-      uses: actions/cache@v1
-      with:
-        path: ~/.cache/coursier
-        key: ${{ runner.os }}-coursier-scala-2_13-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-coursier-scala-2_13-
+      - name: Cache Coursier
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/coursier
+          key: ${{ runner.os }}-coursier-scala-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-coursier-scala-${{ matrix.scala.binary-version }}-
 
-    - name: Cache Ivy
-      uses: actions/cache@v1
-      with:
-        path: ~/.ivy2/cache
-        key: ${{ runner.os }}-ivy-scala-2_13-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-ivy-scala-2_13-
+      - name: Cache Ivy
+        uses: actions/cache@v1
+        with:
+          path: ~/.ivy2/cache
+          key: ${{ runner.os }}-ivy-scala-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-ivy-scala-${{ matrix.scala.binary-version }}-
 
-    - name: publish GitHub Pages
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_AUTH_TOKEN_GITHUB }}
-      run: |
-        docker run \
-        -e GITHUB_TOKEN=$GITHUB_TOKEN \
-        -v ${{ github.workspace }}:/app \
-        -v ~/.cache/coursier:/root/.cache/coursier:z \
-        -v ~/.ivy2/cache:/root/.ivy2/cache:z \
-        k3vin/sbt-java8-jekyll:latest /bin/bash -c "cd /app && sbt 'project docs' clean publishMicrosite"
+      - name: Cache npm
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
-    - name: correct dir permission
-      run: |
-        sudo chown -R $(whoami):docker ~/.ivy2
-        sudo chown -R $(whoami):docker ~/.cache
-        sudo chown -R $(whoami):docker ${{ github.workspace }}
+      - name: Build and publish website
+        env:
+          ALGOLIA_API_KEY: ${{ secrets.ALGOLIA_API_KEY }}
+          ALGOLIA_INDEX_NAME: ${{ secrets.ALGOLIA_INDEX_NAME }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          sbt clean \
+            docs/mdoc \
+            docs/docusaurGenerateAlgoliaConfigFile \
+            docs/docusaurInstall \
+            docs/docusaurCleanBuild \
+            docs/docusaurBuild \
+            docs/publishToGitHubPages
