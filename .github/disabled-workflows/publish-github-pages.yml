@@ -1,0 +1,47 @@
+name: Publish GitHub Pages
+
+on:
+  push:
+    branches:
+      - publish-docs
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Cache Coursier
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/coursier
+        key: ${{ runner.os }}-coursier-scala-2_13-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-coursier-scala-2_13-
+
+    - name: Cache Ivy
+      uses: actions/cache@v1
+      with:
+        path: ~/.ivy2/cache
+        key: ${{ runner.os }}-ivy-scala-2_13-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-ivy-scala-2_13-
+
+    - name: publish GitHub Pages
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_AUTH_TOKEN_GITHUB }}
+      run: |
+        docker run \
+        -e GITHUB_TOKEN=$GITHUB_TOKEN \
+        -v ${{ github.workspace }}:/app \
+        -v ~/.cache/coursier:/root/.cache/coursier:z \
+        -v ~/.ivy2/cache:/root/.ivy2/cache:z \
+        k3vin/sbt-java8-jekyll:latest /bin/bash -c "cd /app && sbt 'project docs' clean publishMicrosite"
+
+    - name: correct dir permission
+      run: |
+        sudo chown -R $(whoami):docker ~/.ivy2
+        sudo chown -R $(whoami):docker ~/.cache
+        sudo chown -R $(whoami):docker ${{ github.workspace }}
