@@ -36,7 +36,7 @@ val get1 = Something[IO].get(1)
 get1.unsafePerformIO()
 ```
 
-If you feel it's too cumbersome to repeat `EffectConstructor[F].effectOf()`, consider using [Effectful](effectful)
+If you feel it's too cumbersome to repeat `EffectConstructor[F].effectOf()`, consider using [Effectful](#effectful)
 
 
 ## Effectful
