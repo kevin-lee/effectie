@@ -9,7 +9,7 @@ import styles from './styles.module.css';
 const features = [
   {
     title: <>Effect</>,
-    imageUrl: 'img/undraw_docusaurus_mountain.svg',
+    imageUrl: 'img/io-2-200x200.png',
     description: (
       <>
         Effectie is a tool for FP Effect libraries like Cats Effect and
@@ -19,7 +19,7 @@ const features = [
   },
   {
     title: <>Tagless Final</>,
-    imageUrl: 'img/undraw_docusaurus_tree.svg',
+    imageUrl: 'img/f_-200x200.png',
     description: (
       <>
         It helps you have abstraction in your code using Tagless Final.
@@ -30,7 +30,7 @@ const features = [
   },
   {
     title: <>Referential Transparency</>,
-    imageUrl: 'img/undraw_docusaurus_react.svg',
+    imageUrl: 'img/lambda-centred-200x200.png',
     description: (
       <>
         So that you can keep the abstraction and also enjoy coding
