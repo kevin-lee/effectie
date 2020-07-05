@@ -9,7 +9,7 @@ import styles from './styles.module.css';
 const features = [
   {
     title: <>Effect</>,
-    imageUrl: 'img/io_-200x200.png',
+    imageUrl: 'img/io-2-200x200.png',
     description: (
       <>
         Effectie is a tool for FP Effect libraries like Cats Effect and
