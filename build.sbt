@@ -36,14 +36,14 @@ ThisBuild / organizationName := "Kevin's Code"
 ThisBuild / crossScalaVersions := CrossScalaVersions
 
 ThisBuild / developers   := List(
-    Developer(GitHubUsername, "Kevin Lee", "kevin.code@kevinlee.io", url("https://github.com/" + GitHubUsername))
+    Developer(GitHubUsername, "Kevin Lee", "kevin.code@kevinlee.io", url(s"https://github.com/$GitHubUsername"))
   )
 
-ThisBuild / homepage := Some(url("https://github.com/" + GitHubUsername + "/" + RepoName))
+ThisBuild / homepage := Some(url(s"https://github.com/$GitHubUsername/$RepoName"))
 ThisBuild / scmInfo :=
   Some(ScmInfo(
-    url("https://github.com/" + GitHubUsername + "/" + RepoName)
-    , "git@github.com:" + GitHubUsername + "/" + RepoName + ".git"
+    url(s"https://github.com/$GitHubUsername/$RepoName")
+  , s"git@github.com:$GitHubUsername/$RepoName.git"
   ))
 
 def prefixedProjectName(name: String) = s"$RepoName${if (name.isEmpty) "" else s"-$name"}"
@@ -118,7 +118,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
       /* } Ammonite-REPL */
       /* Bintray { */
       , bintrayPackageLabels := Seq("Scala", "Effect", "Referential Transparency", "Tagless Final", "Finally Tagless", "Functional Programming", "FP")
-      , bintrayVcsUrl := Some("""https://github.com/""" + GitHubUsername + """/""" + RepoName)
+      , bintrayVcsUrl := Some(s"""https://github.com/$GitHubUsername/$RepoName""")
       , licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
       /* } Bintray */
 
@@ -170,7 +170,7 @@ lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
             libraryDependencies.value
         }
     , initialCommands in console :=
-      """import """ + RepoName + """._"""
+      """import effectie._"""
 
   )
 
@@ -191,7 +191,7 @@ lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effe
             libraryDependencies.value ++ Seq(libCatsCore, libCatsEffect)
         }
     , initialCommands in console :=
-      """import """ + RepoName + """.cats._"""
+      """import effectie.cats._"""
 
   )
   .dependsOn(core % IncludeTest)
@@ -211,7 +211,7 @@ lazy val scalazEffect = projectCommonSettings("scalazEffect", ProjectName("scala
             libraryDependencies.value ++ Seq(libScalazCore, libScalazEffect)
         }
     , initialCommands in console :=
-      """import """ + RepoName + """.scalaz._"""
+      """import effectie.scalaz._"""
 
   )
   .dependsOn(core % IncludeTest)
