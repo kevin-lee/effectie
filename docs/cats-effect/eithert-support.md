@@ -31,8 +31,14 @@ object Something {
     def foo(a: Int): F[Either[String, Int]] = (for {
       x <- eitherTRightPure(a) // == EitherT.liftF(effectOfPure(a))
       y <- eitherTRight(x + 10) // == EitherT.liftF(effectOf(x + 10))
-      y2 <- if (y > 100) eitherTLeft("Error - Bigger than 100") else eitherTRightPure(y)
-         // ↑ if y > 100 EitherT(effectOf("Error - Bigger than 100").map(_.asLeft[Int]))
+      y2 <- if (y > 100)
+          eitherTLeft("Error - Bigger than 100")
+        else
+          eitherTRightPure(y)
+        // ↑ if (y > 100)
+        //     EitherT(effectOf("Error - Bigger than 100").map(_.asLeft[Int]))
+        //   else
+        //     EitherT(effectOfPure(y).map(_.asRight[String]))
       z <- eitherTRightF[String](effectOf(y + 100)) // == EitherT.lieftF(effectOf(y + 100))
     } yield z).value
 

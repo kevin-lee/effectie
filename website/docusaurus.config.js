@@ -16,6 +16,7 @@ const websiteConfig = {
   organizationName: 'Kevin-Lee', // Usually your GitHub org/user name.
   projectName: 'effectie', // Usually your repo name.
   themeConfig: {
+    sidebarCollapsible: false,
     prism: {
       theme: require('prism-react-renderer/themes/nightOwl'),
       darkTheme: require('prism-react-renderer/themes/nightOwl'),
