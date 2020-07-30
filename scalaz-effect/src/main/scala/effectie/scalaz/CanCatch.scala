@@ -1,21 +1,24 @@
 package effectie.scalaz
 
-import scala.concurrent.{ExecutionContext, Future}
 import scalaz._
 import Scalaz._
 import effectie.compat.FutureCompat
 import scalaz.effect._
 
-import scala.util.Try
-import scala.util.{Failure => FailureS, Success => SuccessS}
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
+import scala.util.{Try, Failure => FailureS, Success => SuccessS}
 
 /**
  * @author Kevin Lee
  * @since 2020-06-07
  */
 trait CanCatch[F[_]] extends effectie.CanCatch[F] {
-  type Xor[A, B] = A \/ B
+  override type Xor[A, B] = A \/ B
+  override type XorT[A, B] = EitherT[F, A, B]
+
+  override def catchNonFatalEitherT[A, B](fab: => EitherT[F, A, B])(f: Throwable => A): EitherT[F, A, B] =
+    EitherT(catchNonFatalEither(fab.run)(f))
 }
 
 object CanCatch {
@@ -31,6 +34,9 @@ object CanCatch {
           case ex =>
             throw ex
         }.run
+
+    override def catchNonFatalEither[A, B](fab: => IO[A \/ B])(f: Throwable => A): IO[A \/ B] =
+      catchNonFatal(fab)(f).map(_.flatMap(identity))
 
   }
 
@@ -48,6 +54,9 @@ object CanCatch {
         case FailureS(NonFatal(ex)) =>
           Try(f(ex).left[B])
       }(EC0)
+
+    override def catchNonFatalEither[A, B](fab: => Future[A \/ B])(f: Throwable => A): Future[A \/ B] =
+      catchNonFatal(fab)(f).map(_.flatMap(identity))(EC0)
   }
 
   implicit val canCatchId: CanCatch[Id] = new CanCatch[Id] {
@@ -59,6 +68,9 @@ object CanCatch {
         case FailureS(NonFatal(ex)) =>
           f(ex).left[B]
       }
+
+    override def catchNonFatalEither[A, B](fab: => Id[A \/ B])(f: Throwable => A): Id[A \/ B] =
+      catchNonFatal(fab)(f).flatMap(identity)
   }
 
 }
