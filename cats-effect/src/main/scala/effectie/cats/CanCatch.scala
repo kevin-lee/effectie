@@ -19,7 +19,7 @@ object CanCatch {
   def apply[F[_]: CanCatch]: CanCatch[F] = implicitly[CanCatch[F]]
 
   implicit val canCatchIo: CanCatch[IO] = new CanCatch[IO] {
-    override def catchNonFatal[A, B](fb: IO[B])(f: Throwable => A): IO[Either[A, B]] =
+    override def catchNonFatal[A, B](fb: => IO[B])(f: Throwable => A): IO[Either[A, B]] =
       fb.attempt.map(_.leftMap(f))
   }
 
@@ -30,7 +30,7 @@ object CanCatch {
   final class CanCatchFuture(val EC0: ExecutionContext)
     extends CanCatch[Future] {
     @SuppressWarnings(Array("org.wartremover.warts.Nothing"))
-    override def catchNonFatal[A, B](fb: Future[B])(f: Throwable => A): Future[Either[A, B]] =
+    override def catchNonFatal[A, B](fb: => Future[B])(f: Throwable => A): Future[Either[A, B]] =
       FutureCompat.transform(fb) {
         case scala.util.Success(b) =>
           scala.util.Try[Either[A, B]](Right(b))
@@ -41,7 +41,7 @@ object CanCatch {
   }
 
   implicit val canCatchId: CanCatch[Id] = new CanCatch[Id] {
-    override def catchNonFatal[A, B](fb: Id[B])(f: Throwable => A): Id[Either[A, B]] =
+    override def catchNonFatal[A, B](fb: => Id[B])(f: Throwable => A): Id[Either[A, B]] =
       scala.util.Try(fb) match {
         case scala.util.Success(b) =>
           b.asRight[A]

@@ -11,7 +11,7 @@ object FutureCompat {
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
   def transform[A, B](
-    future: Future[A]
+    future: => Future[A]
   )(
     f: Try[A] => Try[B]
   )(implicit executor: ExecutionContext): Future[B] =
