@@ -92,7 +92,7 @@ object CatchingSpec extends Properties {
     throw throwable
 
   def run[F[_]: EffectConstructor: Functor, A](a: => A): F[A] =
-    effectOf[F, A](a)
+    effectOf[F](a)
 
   sealed trait SomeError
   object SomeError {
