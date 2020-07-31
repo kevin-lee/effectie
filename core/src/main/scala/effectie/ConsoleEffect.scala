@@ -20,7 +20,7 @@ object ConsoleEffect {
   abstract class ConsoleEffectWithoutBind[F[_]: EffectConstructor] extends ConsoleEffect[F] {
 
     override def readLn: F[String] =
-      EffectConstructor[F].effectOf(scala.io.StdIn.readLine)
+      EffectConstructor[F].effectOf(scala.io.StdIn.readLine())
 
     override def putStr(value: String): F[Unit] =
       EffectConstructor[F].effectOf(Console.out.print(value))
