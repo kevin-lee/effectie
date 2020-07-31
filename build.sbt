@@ -154,8 +154,23 @@ lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
       description  := "Effect Utils - Core"
     , unmanagedSourceDirectories in Compile ++= {
         val sharedSourceDir = baseDirectory.value / "src/main"
-        if (scalaVersion.value.startsWith("2.13") || scalaVersion.value.startsWith("2.12"))
+        if (scalaVersion.value.startsWith("2.13"))
           Seq(sharedSourceDir / "scala-2.12_2.13")
+        else if (scalaVersion.value.startsWith("2.12"))
+          Seq(sharedSourceDir / "scala-2.12_2.13", sharedSourceDir / "scala-2.11_2.12")
+        else if (scalaVersion.value.startsWith("2.11"))
+          Seq(sharedSourceDir / "scala-2.11_2.12")
+        else
+          Seq.empty
+      }
+    , unmanagedSourceDirectories in Test ++= {
+        val sharedSourceDir = baseDirectory.value / "src/test"
+        if (scalaVersion.value.startsWith("2.13"))
+          Seq(sharedSourceDir / "scala-2.12_2.13")
+        else if (scalaVersion.value.startsWith("2.12"))
+          Seq(sharedSourceDir / "scala-2.12_2.13", sharedSourceDir / "scala-2.11_2.12")
+        else if (scalaVersion.value.startsWith("2.11"))
+          Seq(sharedSourceDir / "scala-2.11_2.12")
         else
           Seq.empty
       }

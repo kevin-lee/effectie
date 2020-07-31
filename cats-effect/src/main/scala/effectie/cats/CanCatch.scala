@@ -1,6 +1,7 @@
 package effectie.cats
 
 import cats.Id
+import cats.data.EitherT
 import cats.effect.IO
 import cats.implicits._
 import effectie.compat.FutureCompat
@@ -12,7 +13,11 @@ import scala.concurrent.{ExecutionContext, Future}
  * @since 2020-06-07
  */
 trait CanCatch[F[_]] extends effectie.CanCatch[F] {
-  type Xor[A, B] = Either[A, B]
+  override type Xor[A, B] = Either[A, B]
+  override type XorT[A, B] = EitherT[F, A, B]
+
+  override def catchNonFatalEitherT[A, B](fab: => EitherT[F, A, B])(f: Throwable => A): EitherT[F, A, B] =
+    EitherT(catchNonFatalEither(fab.value)(f))
 }
 
 object CanCatch {
@@ -21,6 +26,9 @@ object CanCatch {
   implicit val canCatchIo: CanCatch[IO] = new CanCatch[IO] {
     override def catchNonFatal[A, B](fb: => IO[B])(f: Throwable => A): IO[Either[A, B]] =
       fb.attempt.map(_.leftMap(f))
+
+    override def catchNonFatalEither[A, B](fab: => IO[Either[A, B]])(f: Throwable => A): IO[Either[A, B]] =
+      catchNonFatal(fab)(f).map(_.joinRight)
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
@@ -38,6 +46,10 @@ object CanCatch {
         case scala.util.Failure(scala.util.control.NonFatal(ex)) =>
           scala.util.Try[Either[A, B]](Left(f(ex)))
       }(EC0)
+
+    override def catchNonFatalEither[A, B](fab: => Future[Either[A, B]])(f: Throwable => A): Future[Either[A, B]] =
+      catchNonFatal(fab)(f).map(_.joinRight)(EC0)
+
   }
 
   implicit val canCatchId: CanCatch[Id] = new CanCatch[Id] {
@@ -49,6 +61,10 @@ object CanCatch {
         case scala.util.Failure(scala.util.control.NonFatal(ex)) =>
           f(ex).asLeft[B]
       }
+
+    override def catchNonFatalEither[A, B](fab: => Id[Either[A, B]])(f: Throwable => A): Id[Either[A, B]] =
+      catchNonFatal(fab)(f).joinRight
+
   }
 
 }
