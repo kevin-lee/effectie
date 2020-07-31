@@ -511,4 +511,5 @@ object CanCatchSpec extends Properties {
     }
 
   }
+
 }
