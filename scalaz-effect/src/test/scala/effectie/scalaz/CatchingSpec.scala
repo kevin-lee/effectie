@@ -79,6 +79,11 @@ object CatchingSpec extends Properties {
     example("test Catching.catchNonFatalEither[Id] should return the successful result", IdSpec.testCatching_Id_catchNonFatalEitherShouldReturnSuccessfulResult),
     example("test Catching.catchNonFatalEither[Id] should return the failed result", IdSpec.testCatching_Id_catchNonFatalEitherShouldReturnFailedResult),
 
+    example("test Catching.catchNonFatalEitherF[Id] should catch NonFatal", IdSpec.testCatching_Id_catchNonFatalEitherFShouldCatchNonFatal),
+    example("test Catching.catchNonFatalEitherF[Id] should not catch Fatal", IdSpec.testCatching_Id_catchNonFatalEitherFShouldNotCatchFatal),
+    example("test Catching.catchNonFatalEitherF[Id] should return the successful result", IdSpec.testCatching_Id_catchNonFatalEitherFShouldReturnSuccessfulResult),
+    example("test Catching.catchNonFatalEitherF[Id] should return the failed result", IdSpec.testCatching_Id_catchNonFatalEitherFShouldReturnFailedResult),
+
     example("test Catching.catchNonFatalEitherT[Id] should catch NonFatal", IdSpec.testCatching_Id_catchNonFatalEitherTShouldCatchNonFatal),
     example("test Catching.catchNonFatalEitherT[Id] should not catch Fatal", IdSpec.testCatching_Id_catchNonFatalEitherTShouldNotCatchFatal),
     example("test Catching.catchNonFatalEitherT[Id] should return the successful result", IdSpec.testCatching_Id_catchNonFatalEitherTShouldReturnSuccessfulResult),
@@ -653,6 +658,53 @@ object CatchingSpec extends Properties {
       val fa = run[Id, SomeError \/ Int](expectedFailure.left[Int])
       val expected = expectedFailure.left[Int]
       val actual = catchNonFatalEither(fa)(SomeError.someThrowable)
+
+      actual ==== expected
+    }
+
+
+    def testCatching_Id_catchNonFatalEitherFShouldCatchNonFatal: Result = {
+
+      val expectedExpcetion = new RuntimeException("Something's wrong")
+      val expected = SomeError.someThrowable(expectedExpcetion).left[Int]
+      val actual =
+        catchNonFatalEitherF[Id](throwThrowable[SomeError \/ Int](expectedExpcetion))(SomeError.someThrowable)
+
+      actual ==== expected
+    }
+
+    @SuppressWarnings(Array("org.wartremover.warts.ToString"))
+    def testCatching_Id_catchNonFatalEitherFShouldNotCatchFatal: Result = {
+
+      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+
+      try {
+        val actual =
+          catchNonFatalEitherF[Id](throwThrowable[SomeError \/ Int](fatalExpcetion))(SomeError.someThrowable)
+        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+      } catch {
+        case ex: ControlThrowable =>
+          ex ==== fatalExpcetion
+
+        case ex: Throwable =>
+          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+      }
+
+    }
+
+    def testCatching_Id_catchNonFatalEitherFShouldReturnSuccessfulResult: Result = {
+
+      val expected = 1.right[SomeError]
+      val actual = catchNonFatalEitherF[Id](1.right[SomeError])(SomeError.someThrowable)
+
+      actual ==== expected
+    }
+
+    def testCatching_Id_catchNonFatalEitherFShouldReturnFailedResult: Result = {
+
+      val expectedFailure = SomeError.message("Failed")
+      val expected = expectedFailure.left[Int]
+      val actual = catchNonFatalEitherF[Id](expectedFailure.left[Int])(SomeError.someThrowable)
 
       actual ==== expected
     }
