@@ -5,7 +5,7 @@ set -x
 if [ -z "$2" ]
   then
     echo "Missing parameters. Please enter the [project] and [Scala version]."
-    echo "sbt-build.sh core 2.12.10"
+    echo "sbt-build.sh core 2.12.12"
     exit 1
 else
   project_name=$1
