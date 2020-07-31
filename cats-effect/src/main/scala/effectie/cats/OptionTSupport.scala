@@ -8,11 +8,11 @@ trait OptionTSupport {
 
   import OptionTSupport._
 
-  def optionTOf[A]: PartiallyAppliedOptionTOf[A] =
-    new PartiallyAppliedOptionTOf[A]
+  def optionTOf[F[_]]: PartiallyAppliedOptionTOf[F] =
+    new PartiallyAppliedOptionTOf[F]
 
-  def optionTOfPure[A]: PartiallyAppliedOptionTOfPure[A] =
-    new PartiallyAppliedOptionTOfPure[A]
+  def optionTOfPure[F[_]]: PartiallyAppliedOptionTOfPure[F] =
+    new PartiallyAppliedOptionTOfPure[F]
 
   def optionTSome[F[_]]: PartiallyAppliedOptionTSome[F] =
     new PartiallyAppliedOptionTSome[F]
@@ -30,13 +30,13 @@ trait OptionTSupport {
 
 object OptionTSupport extends OptionTSupport {
 
-  private[OptionTSupport] final class PartiallyAppliedOptionTOf[A] {
-    def apply[F[_]: EffectConstructor](a: => Option[A]): OptionT[F, A] =
+  private[OptionTSupport] final class PartiallyAppliedOptionTOf[F[_]] {
+    def apply[A](a: => Option[A])(implicit EF: EffectConstructor[F]): OptionT[F, A] =
       OptionT(EffectConstructor[F].effectOf(a))
   }
 
-  private[OptionTSupport] final class PartiallyAppliedOptionTOfPure[A] {
-    def apply[F[_]: EffectConstructor](a: Option[A]): OptionT[F, A] =
+  private[OptionTSupport] final class PartiallyAppliedOptionTOfPure[F[_]] {
+    def apply[A](a: Option[A])(implicit EF: EffectConstructor[F]): OptionT[F, A] =
       OptionT(EffectConstructor[F].effectOfPure(a))
   }
 
