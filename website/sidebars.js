@@ -12,6 +12,7 @@ module.exports = {
     'Effectie - Scalaz Effect': [
       'scalaz-effect/scalaz-effect',
       'scalaz-effect/effect-constructor',
+      'scalaz-effect/can-catch',
       'scalaz-effect/optiont-support',
       'scalaz-effect/eithert-support',
       'scalaz-effect/console-effect',
