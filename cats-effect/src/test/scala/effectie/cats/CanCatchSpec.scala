@@ -245,7 +245,7 @@ object CanCatchSpec extends Properties {
           throw ex
       } finally {
         try {
-          ExecutorServiceOps.shutdownAndAwaitTermination(executorService, waitFor)
+          ExecutorServiceOps.shutdownAndAwaitTerminationWithLogger(executorService, waitFor)(println(_))
         } catch {
           case NonFatal(ex) =>
             @SuppressWarnings(Array("org.wartremover.warts.ToString"))
