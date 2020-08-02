@@ -39,7 +39,7 @@ object Something {
         //     EitherT(effectOf("Error - Bigger than 100").map(_.asLeft[Int]))
         //   else
         //     EitherT(effectOfPure(y).map(_.asRight[String]))
-      z <- eitherTRightF[String](effectOf(y + 100)) // == EitherT.lieftF(effectOf(y + 100))
+      z <- eitherTRightF[String](effectOf(y2 + 100)) // == EitherT.lieftF(effectOf(y + 100))
     } yield z).value
 
     def bar(a: Either[String, Int]): F[Either[String, Int]] = (for {
