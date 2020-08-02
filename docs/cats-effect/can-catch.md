@@ -566,60 +566,72 @@ result match {
 
 ```scala mdoc:reset-object
 import java.util.concurrent.{ExecutorService, Executors}
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Success, Failure}
+import scala.concurrent.{ExecutionContext, Future, Await}
+import scala.concurrent.duration._
 
 import cats._
 import cats.implicits._
 
 import effectie.cats._
 import effectie.Effectful._
+import effectie.concurrent.ExecutorServiceOps
 
-implicit val executorService: ExecutorService = Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
-implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(executorService)
+object MyApp {
+  sealed trait MyError
+  object MyError {
+    final case class NonFatalThrowable(throwable: Throwable) extends MyError
+    case object DivideByZero extends MyError
 
-sealed trait MyError
-object MyError {
-  final case class NonFatalThrowable(throwable: Throwable) extends MyError
-  case object DivideByZero extends MyError
+    def nonFatalThrowable(throwable: Throwable): MyError
+      = NonFatalThrowable(throwable)
   
-  def nonFatalThrowable(throwable: Throwable): MyError
-    = NonFatalThrowable(throwable)
+    def divideByZero: MyError = DivideByZero
+  }
 
-  def divideByZero: MyError = DivideByZero
+  def divide100By(n: Int): Either[MyError, Int] =
+    if (n === 0)
+      MyError.divideByZero.asLeft[Int]
+    else
+      (100 / n).asRight[MyError]
+  
+  def doSomethingBad(n: Int): Int =
+    if (n < 0)
+      throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
+    else
+      n * 2
+
+  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+    n: Int
+  ): F[Either[MyError, Int]] =
+    CanCatch[F].catchNonFatalEither(
+      for {
+        aOrB <- effectOfPure(divide100By(n))
+        c <- effectOf(aOrB.map(b => doSomethingBad(b)))
+      } yield c
+    )(MyError.nonFatalThrowable)
+
+  def main(args: Array[String]): Unit = {
+    val executorService: ExecutorService =
+      Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
+    implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(executorService)
+
+    try {
+      val fa = doSomething[Future](1)
+      println(fa)
+      val result = Await.result(fa, 1.second)
+      println(result)
+      result match {
+        case Right(b) =>
+          println(s"Result is $b")
+        case Left(a) =>
+          println(s"Result: Failed with $a")
+      }
+    } finally {
+      ExecutorServiceOps.shutdownAndAwaitTermination(executorService, 1.second)
+    }
+  }
 }
-
-def divide100By(n: Int): Either[MyError, Int] =
-  if (n === 0)
-    MyError.divideByZero.asLeft[Int]
-  else
-    (100 / n).asRight[MyError]
-
-def doSomethingBad(n: Int): Int =
-  if (n < 0)
-    throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
-  else
-    n * 2
-
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
-  n: Int
-): F[Either[MyError, Int]] =
-  CanCatch[F].catchNonFatalEither(
-    for {
-      aOrB <- effectOfPure(divide100By(n))
-      c <- effectOf(aOrB.map(b => doSomethingBad(b)))
-    } yield c
-  )(MyError.nonFatalThrowable)
-
-val fa = doSomething[Future](1)
-fa.onComplete {
-  case Success(Right(b)) =>
-    println(s"Result is $b")
-  case Success(Left(a)) =>
-    println(s"Result: Failed with $a")
-  case Failure(error) =>
-    println(s"Failed! $error")
-}
+MyApp.main(Array.empty)
 ```
 
   </TabItem>
@@ -751,60 +763,72 @@ result match {
 
 ```scala mdoc:reset-object
 import java.util.concurrent.{ExecutorService, Executors}
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Success, Failure}
+import scala.concurrent.{ExecutionContext, Future, Await}
+import scala.concurrent.duration._
 
 import cats._
 import cats.implicits._
 
 import effectie.cats._
 import effectie.Effectful._
+import effectie.concurrent.ExecutorServiceOps
 
-implicit val executorService: ExecutorService = Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
-implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(executorService)
-
-sealed trait MyError
-object MyError {
-  final case class NonFatalThrowable(throwable: Throwable) extends MyError
-  case object DivideByZero extends MyError
+object MyApp {
+  sealed trait MyError
+  object MyError {
+    final case class NonFatalThrowable(throwable: Throwable) extends MyError
+    case object DivideByZero extends MyError
+    
+    def nonFatalThrowable(throwable: Throwable): MyError
+      = NonFatalThrowable(throwable)
   
-  def nonFatalThrowable(throwable: Throwable): MyError
-    = NonFatalThrowable(throwable)
+    def divideByZero: MyError = DivideByZero
+  }
 
-  def divideByZero: MyError = DivideByZero
+  def divide100By(n: Int): Either[MyError, Int] =
+    if (n === 0)
+      MyError.divideByZero.asLeft[Int]
+    else
+      (100 / n).asRight[MyError]
+
+  def doSomethingBad(n: Int): Int =
+    if (n < 0)
+      throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
+    else
+      n * 2
+
+  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+    n: Int
+  ): F[Either[MyError, Int]] =
+    CanCatch[F].catchNonFatalEither(
+      for {
+        aOrB <- effectOfPure(divide100By(n))
+        c <- effectOf(aOrB.map(b => doSomethingBad(b)))
+      } yield c
+    )(MyError.nonFatalThrowable)
+
+  def main(args: Array[String]): Unit = {
+    val executorService: ExecutorService =
+      Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
+    implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(executorService)
+    
+    try {
+      val fa = doSomething[Future](-1)
+      println(fa)
+      val result = Await.result(fa, 1.second)
+      println(result)
+      result match {
+        case Right(b) =>
+          println(s"Result is $b")
+        case Left(a) =>
+          println(s"Result: Failed with $a")
+      }
+    } finally {
+      ExecutorServiceOps.shutdownAndAwaitTermination(executorService, 1.second)
+    }
+  }
 }
-
-def divide100By(n: Int): Either[MyError, Int] =
-  if (n === 0)
-    MyError.divideByZero.asLeft[Int]
-  else
-    (100 / n).asRight[MyError]
-
-def doSomethingBad(n: Int): Int =
-  if (n < 0)
-    throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
-  else
-    n * 2
-
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
-  n: Int
-): F[Either[MyError, Int]] =
-  CanCatch[F].catchNonFatalEither(
-    for {
-      aOrB <- effectOfPure(divide100By(n))
-      c <- effectOf(aOrB.map(b => doSomethingBad(b)))
-    } yield c
-  )(MyError.nonFatalThrowable)
-
-val fa = doSomething[Future](-1)
-fa.onComplete {
-  case Success(Right(b)) =>
-    println(s"Result is $b")
-  case Success(Left(a)) =>
-    println(s"Result: Failed with $a")
-  case Failure(error) =>
-    println(s"Failed! $error")
-}
+MyApp.main(Array.empty)
 ```
 
   </TabItem>
@@ -1014,8 +1038,8 @@ result match {
 
 ```scala mdoc:reset-object
 import java.util.concurrent.{ExecutorService, Executors}
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Success, Failure}
+import scala.concurrent.{ExecutionContext, Future, Await}
+import scala.concurrent.duration._
 
 import cats._
 import cats.data.EitherT
@@ -1024,52 +1048,64 @@ import cats.implicits._
 import effectie.cats._
 import effectie.Effectful._
 import effectie.cats.EitherTSupport._
+import effectie.concurrent.ExecutorServiceOps
 
-implicit val executorService: ExecutorService = Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
-implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(executorService)
-
-sealed trait MyError
-object MyError {
-  final case class NonFatalThrowable(throwable: Throwable) extends MyError
-  case object DivideByZero extends MyError
+object MyApp {
+  sealed trait MyError
+  object MyError {
+    final case class NonFatalThrowable(throwable: Throwable) extends MyError
+    case object DivideByZero extends MyError
+    
+    def nonFatalThrowable(throwable: Throwable): MyError
+      = NonFatalThrowable(throwable)
   
-  def nonFatalThrowable(throwable: Throwable): MyError
-    = NonFatalThrowable(throwable)
+    def divideByZero: MyError = DivideByZero
+  }
 
-  def divideByZero: MyError = DivideByZero
+  def divide100By(n: Int): Either[MyError, Int] =
+    if (n === 0)
+      MyError.divideByZero.asLeft[Int]
+    else
+      (100 / n).asRight[MyError]
+
+  def doSomethingBad(n: Int): Int =
+    if (n < 0)
+      throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
+    else
+      n * 2
+
+  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+    n: Int
+  ): F[Either[MyError, Int]] =
+    CanCatch[F].catchNonFatalEitherT(
+      for {
+        b <- EitherT(effectOfPure(divide100By(n)))
+        c <- eitherTRight[MyError](doSomethingBad(b))
+      } yield c
+    )(MyError.nonFatalThrowable).value
+
+  def main(args: Array[String]): Unit = {
+    val executorService: ExecutorService =
+      Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
+    implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(executorService)
+    
+    try {
+      val fa = doSomething[Future](1)
+      println(fa)
+      val result = Await.result(fa, 1.second)
+      println(result)
+      result match {
+        case Right(b) =>
+          println(s"Result is $b")
+        case Left(a) =>
+          println(s"Result: Failed with $a")
+      }
+    } finally {
+      ExecutorServiceOps.shutdownAndAwaitTermination(executorService, 1.second)
+    }
+  }
 }
-
-def divide100By(n: Int): Either[MyError, Int] =
-  if (n === 0)
-    MyError.divideByZero.asLeft[Int]
-  else
-    (100 / n).asRight[MyError]
-
-def doSomethingBad(n: Int): Int =
-  if (n < 0)
-    throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
-  else
-    n * 2
-
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
-  n: Int
-): F[Either[MyError, Int]] =
-  CanCatch[F].catchNonFatalEitherT(
-    for {
-      b <- EitherT(effectOfPure(divide100By(n)))
-      c <- eitherTRight[MyError](doSomethingBad(b))
-    } yield c
-  )(MyError.nonFatalThrowable).value
-
-val fa = doSomething[Future](1)
-fa.onComplete {
-  case Success(Right(b)) =>
-    println(s"Result is $b")
-  case Success(Left(a)) =>
-    println(s"Result: Failed with $a")
-  case Failure(error) =>
-    println(s"Failed! $error")
-}
+MyApp.main(Array.empty)
 ```
 
   </TabItem>
@@ -1205,8 +1241,8 @@ result match {
 
 ```scala mdoc:reset-object
 import java.util.concurrent.{ExecutorService, Executors}
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Success, Failure}
+import scala.concurrent.{ExecutionContext, Future, Await}
+import scala.concurrent.duration._
 
 import cats._
 import cats.data.EitherT
@@ -1215,52 +1251,64 @@ import cats.implicits._
 import effectie.cats._
 import effectie.Effectful._
 import effectie.cats.EitherTSupport._
+import effectie.concurrent.ExecutorServiceOps
 
-implicit val executorService: ExecutorService = Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
-implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(executorService)
-
-sealed trait MyError
-object MyError {
-  final case class NonFatalThrowable(throwable: Throwable) extends MyError
-  case object DivideByZero extends MyError
+object MyApp {
+  sealed trait MyError
+  object MyError {
+    final case class NonFatalThrowable(throwable: Throwable) extends MyError
+    case object DivideByZero extends MyError
+    
+    def nonFatalThrowable(throwable: Throwable): MyError
+      = NonFatalThrowable(throwable)
   
-  def nonFatalThrowable(throwable: Throwable): MyError
-    = NonFatalThrowable(throwable)
+    def divideByZero: MyError = DivideByZero
+  }
 
-  def divideByZero: MyError = DivideByZero
+  def divide100By(n: Int): Either[MyError, Int] =
+    if (n === 0)
+      MyError.divideByZero.asLeft[Int]
+    else
+      (100 / n).asRight[MyError]
+
+  def doSomethingBad(n: Int): Int =
+    if (n < 0)
+      throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
+    else
+      n * 2
+
+  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+    n: Int
+  ): F[Either[MyError, Int]] =
+    CanCatch[F].catchNonFatalEitherT(
+      for {
+        b <- EitherT(effectOfPure(divide100By(n)))
+        c <- eitherTRight[MyError](doSomethingBad(b))
+      } yield c
+    )(MyError.nonFatalThrowable).value
+
+  def main(args: Array[String]): Unit = {
+    val executorService: ExecutorService =
+      Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
+    implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(executorService)
+    
+    try {
+      val fa = doSomething[Future](-1)
+      println(fa)
+      val result = Await.result(fa, 1.second)
+      println(result)
+      result match {
+        case Right(b) =>
+          println(s"Result is $b")
+        case Left(a) =>
+          println(s"Result: Failed with $a")
+      }
+    } finally {
+      ExecutorServiceOps.shutdownAndAwaitTermination(executorService, 1.second)
+    }
+  }
 }
-
-def divide100By(n: Int): Either[MyError, Int] =
-  if (n === 0)
-    MyError.divideByZero.asLeft[Int]
-  else
-    (100 / n).asRight[MyError]
-
-def doSomethingBad(n: Int): Int =
-  if (n < 0)
-    throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
-  else
-    n * 2
-
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
-  n: Int
-): F[Either[MyError, Int]] =
-  CanCatch[F].catchNonFatalEitherT(
-    for {
-      b <- EitherT(effectOfPure(divide100By(n)))
-      c <- eitherTRight[MyError](doSomethingBad(b))
-    } yield c
-  )(MyError.nonFatalThrowable).value
-
-val fa = doSomething[Future](-1)
-fa.onComplete {
-  case Success(Right(b)) =>
-    println(s"Result is $b")
-  case Success(Left(a)) =>
-    println(s"Result: Failed with $a")
-  case Failure(error) =>
-    println(s"Failed! $error")
-}
+MyApp.main(Array.empty)
 ```
 
   </TabItem>
