@@ -20,7 +20,9 @@ trait CanCatch[F[_]] {
 ```
 
 ## CanCatch.catchNonFatal
- 
+`CanCatch[F].catchNonFatal[A, B]` lets you catch `NonFatal` `Throwable` from `F[B]`
+ and returns `F[Either[A, B]]`.
+
 ### How to Use
 
 <Tabs
@@ -107,14 +109,6 @@ import cats.effect._
 import effectie.cats._
 import effectie.Effectful._
 
-object BadApp {
-  def doSomethingBad(n: Int): Int =
-    if (n < 0)
-      throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
-    else
-      n * 2
-}
-
 sealed trait MyError
 object MyError {
   final case class NonFatalThrowable(throwable: Throwable) extends MyError
@@ -122,32 +116,30 @@ object MyError {
     = NonFatalThrowable(throwable)
 }
 
-object MyService {
+def doSomethingBad(n: Int): Int =
+  if (n < 0)
+    throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
+  else
+    n * 2
 
-  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
-    n: Int
-  ): F[Either[MyError, Int]] =
-    CanCatch[F].catchNonFatal(
-      for {
-        a <- effectOfPure(n + 100)
-        b <- effectOf(BadApp.doSomethingBad(a))
-      } yield b
-    )(MyError.nonFatalThrowable)
+def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+  n: Int
+): F[Either[MyError, Int]] =
+  CanCatch[F].catchNonFatal(
+    for {
+      a <- effectOfPure(n + 100)
+      b <- effectOf(doSomethingBad(a))
+    } yield b
+  )(MyError.nonFatalThrowable)
+
+val fa = doSomething[IO](1)
+val result = fa.unsafeRunSync()
+result match {
+  case Right(b) =>
+    println(s"Result is $b")
+  case Left(MyError.NonFatalThrowable(a)) =>
+    println(s"Result: Failed with $a")
 }
-
-object MyApp {
-  def main(args: Array[String]): Unit =
-    MyService.doSomething[IO](1)
-      .unsafeRunSync() match {
-        case Right(b) =>
-          println(s"Result is $b")
-        case Left(MyError.NonFatalThrowable(a)) =>
-          println(s"Result: Failed with $a")
-      }
-    
-}
-
-MyApp.main(Array.empty)
 ```
 
   </TabItem>
@@ -156,8 +148,7 @@ MyApp.main(Array.empty)
 
 ```scala mdoc:reset-object
 import java.util.concurrent.{ExecutorService, Executors}
-import scala.concurrent.{ExecutionContext, Future, Await}
-import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Success, Failure}
 
 import cats._
@@ -169,14 +160,6 @@ import effectie.Effectful._
 implicit val executorService: ExecutorService = Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
 implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(executorService)
 
-object BadApp {
-  def doSomethingBad(n: Int): Int =
-    if (n < 0)
-      throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
-    else
-      n * 2
-}
-
 sealed trait MyError
 object MyError {
   final case class NonFatalThrowable(throwable: Throwable) extends MyError
@@ -184,37 +167,31 @@ object MyError {
     = NonFatalThrowable(throwable)
 }
 
-object MyService {
+def doSomethingBad(n: Int): Int =
+  if (n < 0)
+    throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
+  else
+    n * 2
 
-  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
-    n: Int
-  ): F[Either[MyError, Int]] =
-    CanCatch[F].catchNonFatal(
-      for {
-        a <- effectOfPure(n + 100)
-        b <- effectOf(BadApp.doSomethingBad(a))
-      } yield b
-    )(MyError.nonFatalThrowable)
+def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+  n: Int
+): F[Either[MyError, Int]] =
+  CanCatch[F].catchNonFatal(
+    for {
+      a <- effectOfPure(n + 100)
+      b <- effectOf(doSomethingBad(a))
+    } yield b
+  )(MyError.nonFatalThrowable)
+
+val fa = doSomething[Future](1)
+fa.onComplete {
+  case Success(Right(b)) =>
+    println(s"Result is $b")
+  case Success(Left(MyError.NonFatalThrowable(a))) =>
+    println(s"Result: Failed with $a")
+  case Failure(error) =>
+    println(s"Failed! $error")
 }
-
-object MyApp {
-  def main(args: Array[String]): Unit = {
-    val fa = MyService.doSomething[Future](1)
-    fa.onComplete {
-      case Success(Right(b)) =>
-        println(s"Result is $b")
-      case Success(Left(MyError.NonFatalThrowable(a))) =>
-        println(s"Result: Failed with $a")
-      case Failure(error) =>
-        println(s"Failed! $error")
-    }
-    Await.ready(fa, 1.second)
-    ()
-  }
-    
-}
-
-MyApp.main(Array.empty)
 ```
 
   </TabItem>
@@ -232,14 +209,6 @@ import cats.implicits._
 import effectie.cats._
 import effectie.Effectful._
 
-object BadApp {
-  def doSomethingBad(n: Int): Int =
-    if (n < 0)
-      throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
-    else
-      n * 2
-}
-
 sealed trait MyError
 object MyError {
   final case class NonFatalThrowable(throwable: Throwable) extends MyError
@@ -247,31 +216,29 @@ object MyError {
     = NonFatalThrowable(throwable)
 }
 
-object MyService {
+def doSomethingBad(n: Int): Int =
+  if (n < 0)
+    throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
+  else
+    n * 2
 
-  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
-    n: Int
-  ): F[Either[MyError, Int]] =
-    CanCatch[F].catchNonFatal(
-      for {
-        a <- effectOfPure(n + 100)
-        b <- effectOf(BadApp.doSomethingBad(a))
-      } yield b
-    )(MyError.nonFatalThrowable)
+def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+  n: Int
+): F[Either[MyError, Int]] =
+  CanCatch[F].catchNonFatal(
+    for {
+      a <- effectOfPure(n + 100)
+      b <- effectOf(doSomethingBad(a))
+    } yield b
+  )(MyError.nonFatalThrowable)
+
+val fa = doSomething[Id](1)
+fa match {
+  case Right(b) =>
+    println(s"Result is $b")
+  case Left(MyError.NonFatalThrowable(a)) =>
+    println(s"Result: Failed with $a")
 }
-
-object MyApp {
-  def main(args: Array[String]): Unit =
-    MyService.doSomething[Id](1) match {
-      case Right(b) =>
-        println(s"Result is $b")
-      case Left(MyError.NonFatalThrowable(a)) =>
-        println(s"Result: Failed with $a")
-    }
-    
-}
-
-MyApp.main(Array.empty)
 ```
 
   </TabItem>
@@ -296,14 +263,6 @@ import cats.effect._
 import effectie.cats._
 import effectie.Effectful._
 
-object BadApp {
-  def doSomethingBad(n: Int): Int =
-    if (n < 0)
-      throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
-    else
-      n * 2
-}
-
 sealed trait MyError
 object MyError {
   final case class NonFatalThrowable(throwable: Throwable) extends MyError
@@ -311,32 +270,32 @@ object MyError {
     = NonFatalThrowable(throwable)
 }
 
-object MyService {
+def doSomethingBad(n: Int): Int =
+if (n < 0)
+  throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
+else
+  n * 2
 
-  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
-    n: Int
-  ): F[Either[MyError, Int]] =
-    CanCatch[F].catchNonFatal(
-      for {
-        a <- effectOfPure(n + 100)
-        b <- effectOf(BadApp.doSomethingBad(a))
-      } yield b
-    )(MyError.nonFatalThrowable)
+
+def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+  n: Int
+): F[Either[MyError, Int]] =
+  CanCatch[F].catchNonFatal(
+    for {
+      a <- effectOfPure(n + 100)
+      b <- effectOf(doSomethingBad(a))
+    } yield b
+  )(MyError.nonFatalThrowable)
+
+val fa = doSomething[IO](-101)
+val result = fa.unsafeRunSync()
+result match {
+  case Right(b) =>
+    println(s"Result is $b")
+  case Left(MyError.NonFatalThrowable(a)) =>
+    println(s"Result: Failed with $a")
 }
 
-object MyApp {
-  def main(args: Array[String]): Unit = {
-    val fa = MyService.doSomething[IO](-101)
-    fa.unsafeRunSync() match {
-      case Right(b) =>
-        println(s"Result is $b")
-      case Left(MyError.NonFatalThrowable(a)) =>
-        println(s"Result: Failed with $a")
-    }
-  }
-}
-
-MyApp.main(Array.empty)
 ```
 
   </TabItem>
@@ -345,8 +304,7 @@ MyApp.main(Array.empty)
 
 ```scala mdoc:reset-object
 import java.util.concurrent.{ExecutorService, Executors}
-import scala.concurrent.{ExecutionContext, Future, Await}
-import scala.concurrent.duration._
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Success, Failure}
 
 import cats._
@@ -358,14 +316,6 @@ import effectie.Effectful._
 implicit val executorService: ExecutorService = Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
 implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(executorService)
 
-object BadApp {
-  def doSomethingBad(n: Int): Int =
-    if (n < 0)
-      throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
-    else
-      n * 2
-}
-
 sealed trait MyError
 object MyError {
   final case class NonFatalThrowable(throwable: Throwable) extends MyError
@@ -373,37 +323,31 @@ object MyError {
     = NonFatalThrowable(throwable)
 }
 
-object MyService {
+def doSomethingBad(n: Int): Int =
+  if (n < 0)
+    throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
+  else
+    n * 2
 
-  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
-    n: Int
-  ): F[Either[MyError, Int]] =
-    CanCatch[F].catchNonFatal(
-      for {
-        a <- effectOfPure(n + 100)
-        b <- effectOf(BadApp.doSomethingBad(a))
-      } yield b
-    )(MyError.nonFatalThrowable)
+def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+  n: Int
+): F[Either[MyError, Int]] =
+  CanCatch[F].catchNonFatal(
+    for {
+      a <- effectOfPure(n + 100)
+      b <- effectOf(doSomethingBad(a))
+    } yield b
+  )(MyError.nonFatalThrowable)
+
+val fa = doSomething[Future](-101)
+fa.onComplete {
+  case Success(Right(b)) =>
+    println(s"Result is $b")
+  case Success(Left(MyError.NonFatalThrowable(a))) =>
+    println(s"Result: Failed with $a")
+  case Failure(error) =>
+    println(s"Failed! $error")
 }
-
-object MyApp {
-  def main(args: Array[String]): Unit = {
-    val fa = MyService.doSomething[Future](-101)
-    fa.onComplete {
-      case Success(Right(b)) =>
-        println(s"Result is $b")
-      case Success(Left(MyError.NonFatalThrowable(a))) =>
-        println(s"Result: Failed with $a")
-      case Failure(error) =>
-        println(s"Failed! $error")
-    }
-    Await.ready(fa, 1.second)
-    ()
-  }
-    
-}
-
-MyApp.main(Array.empty)
 ```
 
   </TabItem>
@@ -421,14 +365,6 @@ import cats.implicits._
 import effectie.cats._
 import effectie.Effectful._
 
-object BadApp {
-  def doSomethingBad(n: Int): Int =
-    if (n < 0)
-      throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
-    else
-      n * 2
-}
-
 sealed trait MyError
 object MyError {
   final case class NonFatalThrowable(throwable: Throwable) extends MyError
@@ -436,31 +372,29 @@ object MyError {
     = NonFatalThrowable(throwable)
 }
 
-object MyService {
+def doSomethingBad(n: Int): Int =
+  if (n < 0)
+    throw new IllegalArgumentException(s"n cannot be a negative number. [n: $n]")
+  else
+    n * 2
 
-  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
-    n: Int
-  ): F[Either[MyError, Int]] =
-    CanCatch[F].catchNonFatal(
-      for {
-        a <- effectOfPure(n + 100)
-        b <- effectOf(BadApp.doSomethingBad(a))
-      } yield b
-    )(MyError.nonFatalThrowable)
+def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+  n: Int
+): F[Either[MyError, Int]] =
+  CanCatch[F].catchNonFatal(
+    for {
+      a <- effectOfPure(n + 100)
+      b <- effectOf(doSomethingBad(a))
+    } yield b
+  )(MyError.nonFatalThrowable)
+
+val fa = doSomething[Id](-101)
+fa match {
+  case Right(b) =>
+    println(s"Result is $b")
+  case Left(MyError.NonFatalThrowable(a)) =>
+    println(s"Result: Failed with $a")
 }
-
-object MyApp {
-  def main(args: Array[String]): Unit =
-    MyService.doSomething[Id](-101) match {
-      case Right(b) =>
-        println(s"Result is $b")
-      case Left(MyError.NonFatalThrowable(a)) =>
-        println(s"Result: Failed with $a")
-    }
-    
-}
-
-MyApp.main(Array.empty)
 ```
 
   </TabItem>
