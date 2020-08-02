@@ -8,7 +8,8 @@ import cats.effect._
 import cats.implicits._
 
 import effectie.Effectful.effectOf
-import effectie.{ExecutorServiceOps, SomeControlThrowable}
+import effectie.SomeControlThrowable
+import effectie.concurrent.ExecutorServiceOps
 
 import hedgehog._
 import hedgehog.runner._

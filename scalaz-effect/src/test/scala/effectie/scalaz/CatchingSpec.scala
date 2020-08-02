@@ -6,7 +6,8 @@ import scalaz.effect._
 
 import effectie.Effectful._
 import effectie.scalaz.Catching._
-import effectie.{ExecutorServiceOps, SomeControlThrowable}
+import effectie.SomeControlThrowable
+import effectie.concurrent.ExecutorServiceOps
 
 import hedgehog._
 import hedgehog.runner._

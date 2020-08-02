@@ -1,4 +1,4 @@
-package effectie
+package effectie.concurrent
 
 import java.util.concurrent.{ExecutorService, TimeUnit}
 
