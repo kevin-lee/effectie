@@ -4,16 +4,17 @@ module.exports = {
     'Effectie - Cats Effect': [
       'cats-effect/cats-effect',
       'cats-effect/effect-constructor',
-      'cats-effect/console-effect',
+      'cats-effect/can-catch',
       'cats-effect/optiont-support',
-      'cats-effect/eithert-support'
+      'cats-effect/eithert-support',
+      'cats-effect/console-effect',
     ],
     'Effectie - Scalaz Effect': [
       'scalaz-effect/scalaz-effect',
       'scalaz-effect/effect-constructor',
-      'scalaz-effect/console-effect',
       'scalaz-effect/optiont-support',
-      'scalaz-effect/eithert-support'
+      'scalaz-effect/eithert-support',
+      'scalaz-effect/console-effect',
     ],
   },
 };

@@ -7,6 +7,7 @@ title: "For Cats Effect"
 
 * [EffectConstructor](effect-constructor)
 * [ConsoleEffect](console-effect)
+* [CanCatch](can-catch)
 * [OptionTSupport](optiont-support)
 * [EitherTSupport](eithert-support)
 
