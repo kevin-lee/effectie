@@ -1,6 +1,14 @@
 name: Build All
 
-on: [push]
+on:
+  push:
+    branches:
+      - "*"
+
+  pull_request:
+    branches:
+      - main
+
 
 jobs:
 
@@ -36,17 +44,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-ivy-scala-${{ matrix.scala.binary-version }}-
 
-      - name: Build core for Scala ${{ matrix.scala.version }}
+      - name: "[Push] Build All for Scala ${{ matrix.scala.version }}"
+        if: github.event_name == 'push'
+        env:
+          CURRENT_BRANCH_NAME: ${{ github.ref }}
         run: |
+          echo "[BEFORE]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
+          export CURRENT_BRANCH_NAME="${CURRENT_BRANCH_NAME#refs/heads/}"
+          echo " [AFTER]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
           java -version
-          .github/workflows/sbt-build.sh core ${{ matrix.scala.version }}
+          .github/workflows/sbt-build-all.sh ${{ matrix.scala.version }}
 
-      - name: Build catsEffect for Scala ${{ matrix.scala.version }}
+      - name: "[PR] Build All for Scala ${{ matrix.scala.version }}"
+        if: github.event_name == 'pull_request'
+        env:
+          CURRENT_BRANCH_NAME: ${{ github.base_ref }}
         run: |
+          echo "Rull request to the '${CURRENT_BRANCH_NAME}' branch"
           java -version
-          .github/workflows/sbt-build.sh catsEffect ${{ matrix.scala.version }}
-
-      - name: Build scalazEffect for Scala ${{ matrix.scala.version }}
-        run: |
-          java -version
-          .github/workflows/sbt-build.sh scalazEffect ${{ matrix.scala.version }}
+          .github/workflows/sbt-build-all.sh ${{ matrix.scala.version }}
