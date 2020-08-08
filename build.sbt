@@ -149,14 +149,12 @@ lazy val effectie = (project in file("."))
   /* GitHub Release { */
   , gitTagFrom := "main"
   , devOopsPackagedArtifacts := List(
-      s"core/target/scala-*/${name.value}*.jar"
-    , s"cats-effect/target/scala-*/${name.value}*.jar"
-    , s"scalaz-effect/target/scala-*/${name.value}*.jar"
+      s"*/target/scala-*/${name.value}*.jar"
     )
   /* } GitHub Release */
   )
   .settings(noPublish)
-  .aggregate(core, catsEffect, scalazEffect)
+  .aggregate(core, catsEffect, scalazEffect, docs)
 
 lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
   .settings(
@@ -245,7 +243,6 @@ lazy val docs = (project in file("generated-docs"))
   .enablePlugins(MdocPlugin, DocusaurPlugin)
   .settings(
       name := prefixedProjectName("docs")
-    , skip in publish := true
 
     , docusaurDir := (ThisBuild / baseDirectory).value / "website"
     , docusaurBuildDir := docusaurDir.value / "build"
