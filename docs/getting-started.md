@@ -5,7 +5,7 @@ title: Getting Started
 
 ## ![Effectie Logo](../img/effectie-logo-96x96.png) Effectie
 
-[![Build Status](https://github.com/Kevin-Lee/effectie/workflows/Build%20All/badge.svg)](https://github.com/Kevin-Lee/effectie/actions?workflow=Build+All)
+[![Build Status](https://github.com/Kevin-Lee/effectie/workflows/Build-All/badge.svg)](https://github.com/Kevin-Lee/effectie/actions?workflow=Build-All)
 [![Release Status](https://github.com/Kevin-Lee/effectie/workflows/Release/badge.svg)](https://github.com/Kevin-Lee/effectie/actions?workflow=Release)
 [![Latest version](https://index.scala-lang.org/kevin-lee/effectie/latest.svg)](https://index.scala-lang.org/kevin-lee/effectie)
 
