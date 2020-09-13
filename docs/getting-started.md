@@ -1,9 +1,10 @@
 ---
 id: getting-started
 title: Getting Started
+slug: "/"
 ---
 
-## ![Effectie Logo](../img/effectie-logo-96x96.png) Effectie
+## ![Effectie Logo](/img/effectie-logo-96x96.png) Effectie
 
 [![Build Status](https://github.com/Kevin-Lee/effectie/workflows/Build-All/badge.svg)](https://github.com/Kevin-Lee/effectie/actions?workflow=Build-All)
 [![Release Status](https://github.com/Kevin-Lee/effectie/workflows/Release/badge.svg)](https://github.com/Kevin-Lee/effectie/actions?workflow=Release)
@@ -61,7 +62,7 @@ import effectie.scalaz.OptionTSupport._
 import effectie.scalaz._
 ```
 
-For more details, check out [Effectie for Scalaz Effect](scalaz-effect).
+For more details, check out [Effectie for Scalaz Effect](scalaz-effect/scalaz-effect).
 
 
 ## Why?
