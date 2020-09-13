@@ -12,6 +12,7 @@ const websiteConfig = {
   tagline: 'A Tool for FP Effect Libraries',
   url: 'https://effectie.kevinly.dev',
   baseUrl: '/',
+  onBrokenLinks: 'error',
   favicon: 'img/favicon.png',
   organizationName: 'Kevin-Lee', // Usually your GitHub org/user name.
   projectName: 'effectie', // Usually your repo name.
@@ -28,7 +29,7 @@ const websiteConfig = {
         alt: 'Effectie Logo',
         src: 'img/effectie-logo-32x32.png',
       },
-      links: [
+      items: [
         {
           to: 'docs/',
           activeBasePath: 'docs',
@@ -89,8 +90,6 @@ const websiteConfig = {
       {
         docs: {
           path: '../generated-docs/target/mdoc/',
-          // It is recommended to set document id as docs home page (`docs/` path).
-          homePageId: 'getting-started',
           sidebarPath: require.resolve('./sidebars.js'),
         },
         theme: {
