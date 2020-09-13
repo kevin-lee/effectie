@@ -27,7 +27,7 @@ Why Effectie? Please read ["Why?"](#why) section.
 In `build.sbt`,
 
 ```scala
-libraryDependencies += "io.kevinlee" %% "effectie-cats-effect" % "1.2.0"
+libraryDependencies += "io.kevinlee" %% "effectie-cats-effect" % "@VERSION@"
 ```
 then import
 
@@ -48,7 +48,7 @@ For more details, check out [Effectie for Cats Effect](cats-effect/cats-effect).
 In `build.sbt`,
 
 ```scala
-libraryDependencies += "io.kevinlee" %% "effectie-scalaz-effect" % "1.2.0"
+libraryDependencies += "io.kevinlee" %% "effectie-scalaz-effect" % "@VERSION@"
 ```
 then import
 
