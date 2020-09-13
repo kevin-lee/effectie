@@ -57,6 +57,16 @@ lazy val noPublish: SettingsDefinition = Seq(
   skip in publish := true
 )
 
+def scalacOptionsPostProcess(scalaSemVer: SemVer, options: Seq[String]): Seq[String] = scalaSemVer match {
+  case SemVer(SemVer.Major(2), SemVer.Minor(13), SemVer.Patch(patch), _, _) =>
+    if (patch >= 3)
+      options.filterNot(_ == "-Xlint:nullary-override")
+    else
+      options
+  case _: SemVer =>
+    options
+}
+
 def projectCommonSettings(id: String, projectName: ProjectName, file: File): Project =
   Project(id, file)
     .settings(
@@ -64,16 +74,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
       , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
       , addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 
-      , scalacOptions := (SemVer.parseUnsafe(scalaVersion.value) match {
-          case SemVer(SemVer.Major(2), SemVer.Minor(13), SemVer.Patch(patch), _, _) =>
-            val options = scalacOptions.value
-            if (patch >= 3)
-              options.filterNot(_ == "-Xlint:nullary-override")
-            else
-              options
-          case _: SemVer =>
-            scalacOptions.value
-        })
+      , scalacOptions := scalacOptionsPostProcess(SemVer.parseUnsafe(scalaVersion.value), scalacOptions.value)
       , resolvers ++= Seq(
           Resolver.sonatypeRepo("releases")
         , hedgehogRepo
@@ -243,6 +244,10 @@ lazy val docs = (project in file("generated-docs"))
   .enablePlugins(MdocPlugin, DocusaurPlugin)
   .settings(
       name := prefixedProjectName("docs")
+    , scalacOptions := scalacOptionsPostProcess(SemVer.parseUnsafe(scalaVersion.value), scalacOptions.value)
+    , mdocVariables := Map(
+        "VERSION" -> (ThisBuild / version).value
+      )
 
     , docusaurDir := (ThisBuild / baseDirectory).value / "website"
     , docusaurBuildDir := docusaurDir.value / "build"
