@@ -4,7 +4,7 @@ import cats._
 import cats.data.EitherT
 import cats.effect.IO
 import cats.implicits._
-import effectie.Effectful.effectOf
+import effectie.cats.Effectful._
 import effectie.SomeControlThrowable
 import effectie.concurrent.ExecutorServiceOps
 import hedgehog._

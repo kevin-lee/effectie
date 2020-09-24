@@ -4,14 +4,32 @@ import effectie.Effectful._
 
 trait Effectful {
 
+  @deprecated(
+    message = "Use effectie.cats.Effectful or effectie.scalaz.Effectful instead depending on the effect library you use.",
+    since = "1.4.0"
+  )
   def effectOf[F[_]]: CurriedEffectOf[F] = new CurriedEffectOf[F]
 
+
+  @deprecated(
+    message = "Use effectie.cats.Effectful or effectie.scalaz.Effectful instead depending on the effect library you use.",
+    since = "1.4.0"
+  )
   def effectOfPure[F[_]]: CurriedEffectOfPure[F] = new CurriedEffectOfPure[F]
 
+
+  @deprecated(
+    message = "Use effectie.cats.Effectful or effectie.scalaz.Effectful instead depending on the effect library you use.",
+    since = "1.4.0"
+  )
   def effectOfUnit[F[_]: EffectConstructor]: F[Unit] = EffectConstructor[F].effectOfUnit
 
 }
 
+@deprecated(
+  message = "Use effectie.cats.Effectful or effectie.scalaz.Effectful instead depending on the effect library you use.",
+  since = "1.4.0"
+)
 object Effectful extends Effectful {
 
   private[Effectful] final class CurriedEffectOf[F[_]] {
