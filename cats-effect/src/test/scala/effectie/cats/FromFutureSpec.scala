@@ -28,7 +28,7 @@ object FromFutureSpec extends Properties {
       implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(es, println(_))
       implicit val cs: ContextShift[IO] = IO.contextShift(ec)
 
-      ConcurrentSupport.runAndShutdown(es, 100.milliseconds) {
+      ConcurrentSupport.runAndShutdown(es, 200.milliseconds) {
         lazy val fa = Future(a)
         val actual = FromFuture[IO].toEffect(fa).unsafeRunSync()
 
@@ -44,9 +44,9 @@ object FromFutureSpec extends Properties {
       val es = ConcurrentSupport.newExecutorService()
       implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(es, println(_))
 
-      ConcurrentSupport.runAndShutdown(es, 100.milliseconds) {
+      ConcurrentSupport.runAndShutdown(es, 200.milliseconds) {
         lazy val fa = Future(a)
-        val actual = ConcurrentSupport.futureToValue(FromFuture[Future].toEffect(fa), 100.milliseconds)
+        val actual = ConcurrentSupport.futureToValue(FromFuture[Future].toEffect(fa), 200.milliseconds)
 
         actual ==== a
       }
@@ -60,9 +60,9 @@ object FromFutureSpec extends Properties {
       val es = ConcurrentSupport.newExecutorService()
       implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(es, println(_))
 
-      ConcurrentSupport.runAndShutdown(es, 100.milliseconds) {
+      ConcurrentSupport.runAndShutdown(es, 200.milliseconds) {
         implicit val timeout: FromFuture.FromFutureToIdTimeout =
-          FromFuture.FromFutureToIdTimeout(100.milliseconds)
+          FromFuture.FromFutureToIdTimeout(200.milliseconds)
         lazy val fa = Future(a)
         val actual = FromFuture[Id].toEffect(fa)
 
