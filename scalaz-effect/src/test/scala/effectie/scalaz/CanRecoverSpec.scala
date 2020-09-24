@@ -4,7 +4,7 @@ import scalaz._
 import Scalaz._
 import scalaz.effect._
 
-import effectie.Effectful.effectOf
+import effectie.scalaz.Effectful._
 import effectie.SomeControlThrowable
 import effectie.concurrent.ExecutorServiceOps
 
