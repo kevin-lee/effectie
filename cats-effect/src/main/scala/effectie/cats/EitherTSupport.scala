@@ -43,7 +43,7 @@ object EitherTSupport extends  EitherTSupport {
 
   private[EitherTSupport] final class PartiallyAppliedEitherTEffectOfPure[F[_]] {
     def apply[A, B](ab: Either[A, B])(implicit EF: EffectConstructor[F]): EitherT[F, A, B] =
-      EitherT(EffectConstructor[F].effectOfPure(ab))
+      EitherT(EffectConstructor[F].pureOf(ab))
   }
 
   private[EitherTSupport] final class PartiallyAppliedEitherTRightEffectOf[A] {
@@ -53,7 +53,7 @@ object EitherTSupport extends  EitherTSupport {
 
   private[EitherTSupport] final class PartiallyAppliedEitherTRightEffectOfPure[A] {
     def apply[F[_], B](b: B)(implicit EC: EffectConstructor[F], FT: Functor[F]): EitherT[F, A, B] =
-      EitherT.liftF(EffectConstructor[F].effectOfPure(b))
+      EitherT.liftF(EffectConstructor[F].pureOf(b))
   }
 
   private[EitherTSupport] final class PartiallyAppliedEitherTLeftEffectOf[B] {
@@ -63,7 +63,7 @@ object EitherTSupport extends  EitherTSupport {
 
   private[EitherTSupport] final class PartiallyAppliedEitherTLeftEffectOfPure[B] {
     def apply[F[_], A](a: A)(implicit EC: EffectConstructor[F], FT: Functor[F]): EitherT[F, A, B] =
-      EitherT(EffectConstructor[F].effectOfPure(a).map(_.asLeft[B]))
+      EitherT(EffectConstructor[F].pureOf(a).map(_.asLeft[B]))
   }
 
   private[EitherTSupport] final class PartiallyAppliedEitherTRightF[A] {

@@ -14,7 +14,9 @@ object EffectConstructor {
 
     override def effectOf[A](a: => A): IO[A] = IO(a)
 
-    override def effectOfPure[A](a: A): IO[A] = IO.pure(a)
+    override def effectOfPure[A](a: A): IO[A] = pureOf(a)
+
+    override def pureOf[A](a: A): IO[A] = IO.pure(a)
 
     override def effectOfUnit: IO[Unit] = IO.unit
   }
@@ -29,11 +31,13 @@ object EffectConstructor {
 
   implicit final val idEffectConstructor: EffectConstructor[Id] = new EffectConstructor[Id] {
 
-    override def effectOf[A](a: => A): Id[A] = a
+    @inline override def effectOf[A](a: => A): Id[A] = a
 
-    override def effectOfPure[A](a: A): Id[A] = a
+    @inline override def effectOfPure[A](a: A): Id[A] = pureOf(a)
 
-    override def effectOfUnit: Id[Unit] = ()
+    override def pureOf[A](a: A): Id[A] = effectOf(a)
+
+    @inline override def effectOfUnit: Id[Unit] = ()
   }
 
 }
