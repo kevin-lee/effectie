@@ -18,9 +18,9 @@ jobs:
     strategy:
       matrix:
         scala:
-          - { version: "2.11.12", binary-version: "2.11", java-version: "8" }
-          - { version: "2.12.12", binary-version: "2.12", java-version: "11" }
-          - { version: "2.13.3",  binary-version: "2.13", java-version: "11" }
+          - { name: "Scala", version: "2.11.12", binary-version: "2.11", java-version: "8" }
+          - { name: "Scala", version: "2.12.12", binary-version: "2.12", java-version: "11" }
+          - { name: "Scala", version: "2.13.3",  binary-version: "2.13", java-version: "11" }
 
     steps:
       - uses: actions/checkout@v2
@@ -44,22 +44,33 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-ivy-scala-${{ matrix.scala.binary-version }}-
 
-      - name: "[Push] Build All for Scala ${{ matrix.scala.version }}"
+      - name: "[Push] Build All for ${{ matrix.scala.name }} ${{ matrix.scala.version }} - ${{ github.run_number }}"
         if: github.event_name == 'push'
         env:
           CURRENT_BRANCH_NAME: ${{ github.ref }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_NUMBER: ${{ github.run_number }}
         run: |
           echo "[BEFORE]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
           export CURRENT_BRANCH_NAME="${CURRENT_BRANCH_NAME#refs/heads/}"
           echo " [AFTER]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
+          echo "RUN_ID=${RUN_ID}"
+          echo "RUN_NUMBER=${RUN_NUMBER}"
+          echo "Push #${PUSH_NUMBER}"
           java -version
           .github/workflows/sbt-build-all.sh ${{ matrix.scala.version }}
 
-      - name: "[PR] Build All for Scala ${{ matrix.scala.version }}"
+      - name: "[PR] Build All for ${{ matrix.scala.name }} ${{ matrix.scala.version }} - PR-#${{ github.event.pull_request.number }} - ${{ github.run_number }}"
         if: github.event_name == 'pull_request'
         env:
           CURRENT_BRANCH_NAME: ${{ github.base_ref }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_NUMBER: ${{ github.run_number }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           echo "Rull request to the '${CURRENT_BRANCH_NAME}' branch"
+          echo "RUN_ID=${RUN_ID}"
+          echo "RUN_NUMBER=${RUN_NUMBER}"
+          echo "PR #${PR_NUMBER}"
           java -version
           .github/workflows/sbt-build-all.sh ${{ matrix.scala.version }}
