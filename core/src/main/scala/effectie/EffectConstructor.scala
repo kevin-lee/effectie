@@ -4,7 +4,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait EffectConstructor[F[_]] {
   def effectOf[A](a: => A): F[A]
+  @deprecated(message = "Use EffectConstructor[F].pureOf instead", since = "1.4.0")
   def effectOfPure[A](a: A): F[A]
+  def pureOf[A](a: A): F[A]
   def effectOfUnit: F[Unit]
 }
 
@@ -17,7 +19,9 @@ object EffectConstructor {
 
     override def effectOf[A](a: => A): Future[A] = Future(a)
 
-    override def effectOfPure[A](a: A): Future[A] = effectOf(a)
+    override def effectOfPure[A](a: A): Future[A] = pureOf(a)
+
+    override def pureOf[A](a: A): Future[A] = effectOf(a)
 
     override def effectOfUnit: Future[Unit] = Future(())
   }

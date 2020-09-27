@@ -6,7 +6,10 @@ trait Effectful {
 
   def effectOf[F[_]]: CurriedEffectOf[F] = new CurriedEffectOf[F]
 
-  def effectOfPure[F[_]]: CurriedEffectOfPure[F] = new CurriedEffectOfPure[F]
+  @deprecated(message = "Use pureOf instead.", since = "1.4.0")
+  def effectOfPure[F[_]]: CurriedEffectOfPure[F] = pureOf[F]
+
+  def pureOf[F[_]]: CurriedEffectOfPure[F] = new CurriedEffectOfPure[F]
 
   def effectOfUnit[F[_]: EffectConstructor]: F[Unit] = EffectConstructor[F].effectOfUnit
 
@@ -21,7 +24,7 @@ object Effectful extends Effectful {
 
   private[Effectful] final class CurriedEffectOfPure[F[_]] {
     def apply[A](a: A)(implicit EF: EffectConstructor[F]): F[A] =
-      EffectConstructor[F].effectOfPure(a)
+      EffectConstructor[F].pureOf(a)
   }
 
 }
