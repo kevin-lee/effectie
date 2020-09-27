@@ -11,7 +11,10 @@ trait Effectful {
 
   def pureOf[F[_]]: CurriedEffectOfPure[F] = new CurriedEffectOfPure[F]
 
-  def effectOfUnit[F[_]: EffectConstructor]: F[Unit] = EffectConstructor[F].effectOfUnit
+  @deprecated(message = "Use unitOf instead", since = "1.4.0")
+  def effectOfUnit[F[_]: EffectConstructor]: F[Unit] = unitOf[F]
+
+  def unitOf[F[_]: EffectConstructor]: F[Unit] = EffectConstructor[F].unitOf
 
 }
 

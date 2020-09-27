@@ -19,7 +19,9 @@ object EffectConstructor {
 
     override def pureOf[A](a: A): IO[A] = Monad[IO].pure(a)
 
-    override def effectOfUnit: IO[Unit] = IO.ioUnit
+    override def effectOfUnit: IO[Unit] = unitOf
+
+    override def unitOf: IO[Unit] = IO.ioUnit
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
@@ -38,7 +40,9 @@ object EffectConstructor {
 
     @inline override def pureOf[A](a: A): Id[A] = effectOf(a)
 
-    @inline override def effectOfUnit: Id[Unit] = ()
+    @inline override def effectOfUnit: Id[Unit] = unitOf
+
+    @inline override def unitOf: Id[Unit] = ()
   }
 
 }
