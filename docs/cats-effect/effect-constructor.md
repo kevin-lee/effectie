@@ -44,7 +44,7 @@ If you feel it's too cumbersome to repeat `EffectConstructor[F].effectOf()`, con
 If you're sick of repeating `EffectConstructor[F].effectOf()` and looking for more convenient ways?, use `Effectful` instead.
 
 ```scala mdoc:reset-object
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats._
 
 trait Something[F[_]] {

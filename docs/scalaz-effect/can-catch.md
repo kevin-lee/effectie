@@ -109,7 +109,7 @@ import Scalaz._
 import scalaz.effect._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -129,7 +129,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatal(
     for {
-      a <- effectOfPure(n + 100)
+      a <- pureOf(n + 100)
       b <- effectOf(doSomethingBad(a))
     } yield b
   )(MyError.nonFatalThrowable)
@@ -157,7 +157,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -179,7 +179,7 @@ object MyApp {
   ): F[MyError \/ Int] =
     CanCatch[F].catchNonFatal(
       for {
-        a <- effectOfPure(n + 100)
+        a <- pureOf(n + 100)
         b <- effectOf(doSomethingBad(a))
       } yield b
     )(MyError.nonFatalThrowable)
@@ -221,7 +221,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -241,7 +241,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatal(
     for {
-      a <- effectOfPure(n + 100)
+      a <- pureOf(n + 100)
       b <- effectOf(doSomethingBad(a))
     } yield b
   )(MyError.nonFatalThrowable)
@@ -275,7 +275,7 @@ import Scalaz._
 import scalaz.effect._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -296,7 +296,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatal(
     for {
-      a <- effectOfPure(n + 100)
+      a <- pureOf(n + 100)
       b <- effectOf(doSomethingBad(a))
     } yield b
   )(MyError.nonFatalThrowable)
@@ -326,7 +326,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -348,7 +348,7 @@ object MyApp {
   ): F[MyError \/ Int] =
     CanCatch[F].catchNonFatal(
       for {
-        a <- effectOfPure(n + 100)
+        a <- pureOf(n + 100)
         b <- effectOf(doSomethingBad(a))
       } yield b
     )(MyError.nonFatalThrowable)
@@ -390,7 +390,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -410,7 +410,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatal(
     for {
-      a <- effectOfPure(n + 100)
+      a <- pureOf(n + 100)
       b <- effectOf(doSomethingBad(a))
     } yield b
   )(MyError.nonFatalThrowable)
@@ -519,7 +519,7 @@ import Scalaz._
 import scalaz.effect._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -549,7 +549,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatalEither(
     for {
-      aOrB <- effectOfPure(divide100By(n))
+      aOrB <- pureOf(divide100By(n))
       c <- effectOf(aOrB.map(b => doSomethingBad(b)))
     } yield c
   )(MyError.nonFatalThrowable)
@@ -577,7 +577,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -609,7 +609,7 @@ object MyApp {
   ): F[MyError \/ Int] =
     CanCatch[F].catchNonFatalEither(
       for {
-        aOrB <- effectOfPure(divide100By(n))
+        aOrB <- pureOf(divide100By(n))
         c <- effectOf(aOrB.map(b => doSomethingBad(b)))
       } yield c
     )(MyError.nonFatalThrowable)
@@ -651,7 +651,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -681,7 +681,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatalEither(
     for {
-      aOrB <- effectOfPure(divide100By(n))
+      aOrB <- pureOf(divide100By(n))
       c <- effectOf(aOrB.map(b => doSomethingBad(b)))
     } yield c
   )(MyError.nonFatalThrowable)
@@ -715,7 +715,7 @@ import Scalaz._
 import scalaz.effect._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -745,7 +745,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatalEither(
     for {
-      aOrB <- effectOfPure(divide100By(n))
+      aOrB <- pureOf(divide100By(n))
       c <- effectOf(aOrB.map(b => doSomethingBad(b)))
     } yield c
   )(MyError.nonFatalThrowable)
@@ -774,7 +774,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -806,7 +806,7 @@ object MyApp {
   ): F[MyError \/ Int] =
     CanCatch[F].catchNonFatalEither(
       for {
-        aOrB <- effectOfPure(divide100By(n))
+        aOrB <- pureOf(divide100By(n))
         c <- effectOf(aOrB.map(b => doSomethingBad(b)))
       } yield c
     )(MyError.nonFatalThrowable)
@@ -848,7 +848,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -878,7 +878,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatalEither(
     for {
-      aOrB <- effectOfPure(divide100By(n))
+      aOrB <- pureOf(divide100By(n))
       c <- effectOf(aOrB.map(b => doSomethingBad(b)))
     } yield c
   )(MyError.nonFatalThrowable)
@@ -989,7 +989,7 @@ import Scalaz._
 import scalaz.effect._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.EitherTSupport._
 
 sealed trait MyError
@@ -1020,7 +1020,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatalEitherT(
     for {
-      b <- EitherT(effectOfPure(divide100By(n)))
+      b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
   )(MyError.nonFatalThrowable).run
@@ -1048,7 +1048,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.EitherTSupport._
 import effectie.concurrent.ExecutorServiceOps
 
@@ -1081,7 +1081,7 @@ object MyApp {
   ): F[MyError \/ Int] =
     CanCatch[F].catchNonFatalEitherT(
       for {
-        b <- EitherT(effectOfPure(divide100By(n)))
+        b <- EitherT(pureOf(divide100By(n)))
         c <- eitherTRight[MyError](doSomethingBad(b))
       } yield c
     )(MyError.nonFatalThrowable).run
@@ -1123,7 +1123,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.EitherTSupport._
 
 sealed trait MyError
@@ -1154,7 +1154,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatalEitherT(
     for {
-      b <- EitherT(effectOfPure(divide100By(n)))
+      b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
   )(MyError.nonFatalThrowable).run
@@ -1189,7 +1189,7 @@ import scalaz.effect._
 
 import effectie.scalaz._
 import effectie.scalaz.EitherTSupport._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -1219,7 +1219,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatalEitherT(
     for {
-      b <- EitherT(effectOfPure(divide100By(n)))
+      b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
   )(MyError.nonFatalThrowable).run
@@ -1248,7 +1248,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.EitherTSupport._
 import effectie.concurrent.ExecutorServiceOps
 
@@ -1281,7 +1281,7 @@ object MyApp {
   ): F[MyError \/ Int] =
     CanCatch[F].catchNonFatalEitherT(
       for {
-        b <- EitherT(effectOfPure(divide100By(n)))
+        b <- EitherT(pureOf(divide100By(n)))
         c <- eitherTRight[MyError](doSomethingBad(b))
       } yield c
     )(MyError.nonFatalThrowable).run
@@ -1323,7 +1323,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.EitherTSupport._
 
 sealed trait MyError
@@ -1354,7 +1354,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatalEitherT(
     for {
-      b <- EitherT(effectOfPure(divide100By(n)))
+      b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
   )(MyError.nonFatalThrowable).run
@@ -1466,7 +1466,7 @@ import Scalaz._
 import scalaz.effect._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.Catching._
 
 sealed trait MyError
@@ -1487,7 +1487,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   catchNonFatal(
     for {
-      a <- effectOfPure(n + 100)
+      a <- pureOf(n + 100)
       b <- effectOf(doSomethingBad(a))
     } yield b
   )(MyError.nonFatalThrowable)
@@ -1515,7 +1515,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.Catching._
 import effectie.concurrent.ExecutorServiceOps
 
@@ -1539,7 +1539,7 @@ object MyApp {
   ): F[MyError \/ Int] =
     catchNonFatal(
       for {
-        a <- effectOfPure(n + 100)
+        a <- pureOf(n + 100)
         b <- effectOf(doSomethingBad(a))
       } yield b
     )(MyError.nonFatalThrowable)
@@ -1581,7 +1581,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.Catching._
 
 sealed trait MyError
@@ -1602,7 +1602,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   catchNonFatal(
     for {
-      a <- effectOfPure(n + 100)
+      a <- pureOf(n + 100)
       b <- effectOf(doSomethingBad(a))
     } yield b
   )(MyError.nonFatalThrowable)
@@ -1636,7 +1636,7 @@ import Scalaz._
 import scalaz.effect._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.Catching._
 
 sealed trait MyError
@@ -1658,7 +1658,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   catchNonFatal(
     for {
-      a <- effectOfPure(n + 100)
+      a <- pureOf(n + 100)
       b <- effectOf(doSomethingBad(a))
     } yield b
   )(MyError.nonFatalThrowable)
@@ -1688,7 +1688,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.Catching._
 import effectie.concurrent.ExecutorServiceOps
 
@@ -1711,7 +1711,7 @@ object MyApp {
   ): F[MyError \/ Int] =
     catchNonFatal(
       for {
-        a <- effectOfPure(n + 100)
+        a <- pureOf(n + 100)
         b <- effectOf(doSomethingBad(a))
       } yield b
     )(MyError.nonFatalThrowable)
@@ -1753,7 +1753,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.Catching._
 
 sealed trait MyError
@@ -1774,7 +1774,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   catchNonFatal(
     for {
-      a <- effectOfPure(n + 100)
+      a <- pureOf(n + 100)
       b <- effectOf(doSomethingBad(a))
     } yield b
   )(MyError.nonFatalThrowable)
@@ -1883,7 +1883,7 @@ import Scalaz._
 import scalaz.effect._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.Catching._
 
 sealed trait MyError
@@ -1914,7 +1914,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   catchNonFatalEither(
     for {
-      aOrB <- effectOfPure(divide100By(n))
+      aOrB <- pureOf(divide100By(n))
       c <- effectOf(aOrB.map(b => doSomethingBad(b)))
     } yield c
   )(MyError.nonFatalThrowable)
@@ -1942,7 +1942,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.Catching._
 import effectie.concurrent.ExecutorServiceOps
 
@@ -1975,7 +1975,7 @@ object MyApp {
   ): F[MyError \/ Int] =
     catchNonFatalEither(
       for {
-        aOrB <- effectOfPure(divide100By(n))
+        aOrB <- pureOf(divide100By(n))
         c <- effectOf(aOrB.map(b => doSomethingBad(b)))
       } yield c
     )(MyError.nonFatalThrowable)
@@ -2017,7 +2017,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.Catching._
 
 sealed trait MyError
@@ -2048,7 +2048,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   catchNonFatalEither(
     for {
-      aOrB <- effectOfPure(divide100By(n))
+      aOrB <- pureOf(divide100By(n))
       c <- effectOf(aOrB.map(b => doSomethingBad(b)))
     } yield c
   )(MyError.nonFatalThrowable)
@@ -2082,7 +2082,7 @@ import Scalaz._
 import scalaz.effect._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.Catching._
 
 sealed trait MyError
@@ -2113,7 +2113,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   catchNonFatalEither(
     for {
-      aOrB <- effectOfPure(divide100By(n))
+      aOrB <- pureOf(divide100By(n))
       c <- effectOf(aOrB.map(b => doSomethingBad(b)))
     } yield c
   )(MyError.nonFatalThrowable)
@@ -2142,7 +2142,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.Catching._
 import effectie.concurrent.ExecutorServiceOps
 
@@ -2175,7 +2175,7 @@ object MyApp {
   ): F[MyError \/ Int] =
     catchNonFatalEither(
       for {
-        aOrB <- effectOfPure(divide100By(n))
+        aOrB <- pureOf(divide100By(n))
         c <- effectOf(aOrB.map(b => doSomethingBad(b)))
       } yield c
     )(MyError.nonFatalThrowable)
@@ -2217,7 +2217,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.Catching._
 
 sealed trait MyError
@@ -2248,7 +2248,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   catchNonFatalEither(
     for {
-      aOrB <- effectOfPure(divide100By(n))
+      aOrB <- pureOf(divide100By(n))
       c <- effectOf(aOrB.map(b => doSomethingBad(b)))
     } yield c
   )(MyError.nonFatalThrowable)
@@ -2360,7 +2360,7 @@ import Scalaz._
 import scalaz.effect._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.Catching._
 import effectie.scalaz.EitherTSupport._
 
@@ -2392,7 +2392,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   catchNonFatalEitherT(
     for {
-      b <- EitherT(effectOfPure(divide100By(n)))
+      b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
   )(MyError.nonFatalThrowable).run
@@ -2420,7 +2420,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.Catching._
 import effectie.scalaz.EitherTSupport._
 import effectie.concurrent.ExecutorServiceOps
@@ -2454,7 +2454,7 @@ object MyApp {
   ): F[MyError \/ Int] =
     catchNonFatalEitherT(
       for {
-        b <- EitherT(effectOfPure(divide100By(n)))
+        b <- EitherT(pureOf(divide100By(n)))
         c <- eitherTRight[MyError](doSomethingBad(b))
       } yield c
     )(MyError.nonFatalThrowable).run
@@ -2496,7 +2496,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.Catching._
 import effectie.scalaz.EitherTSupport._
 
@@ -2528,7 +2528,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   catchNonFatalEitherT(
     for {
-      b <- EitherT(effectOfPure(divide100By(n)))
+      b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
   )(MyError.nonFatalThrowable).run
@@ -2562,7 +2562,7 @@ import Scalaz._
 import scalaz.effect._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.Catching._
 import effectie.scalaz.EitherTSupport._
 
@@ -2594,7 +2594,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   catchNonFatalEitherT(
     for {
-      b <- EitherT(effectOfPure(divide100By(n)))
+      b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
   )(MyError.nonFatalThrowable).run
@@ -2623,7 +2623,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.Catching._
 import effectie.scalaz.EitherTSupport._
 import effectie.concurrent.ExecutorServiceOps
@@ -2657,7 +2657,7 @@ object MyApp {
   ): F[MyError \/ Int] =
     catchNonFatalEitherT(
       for {
-        b <- EitherT(effectOfPure(divide100By(n)))
+        b <- EitherT(pureOf(divide100By(n)))
         c <- eitherTRight[MyError](doSomethingBad(b))
       } yield c
     )(MyError.nonFatalThrowable).run
@@ -2699,7 +2699,7 @@ import scalaz._
 import Scalaz._
 
 import effectie.scalaz._
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz.Catching._
 import effectie.scalaz.EitherTSupport._
 
@@ -2731,7 +2731,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[MyError \/ Int] =
   catchNonFatalEitherT(
     for {
-      b <- EitherT(effectOfPure(divide100By(n)))
+      b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
   )(MyError.nonFatalThrowable).run

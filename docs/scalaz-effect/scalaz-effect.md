@@ -17,8 +17,8 @@ import scalaz._
 import Scalaz._
 import scalaz.effect._
 
-import effectie.ConsoleEffectful._
-import effectie.Effectful._
+import effectie.scalaz.ConsoleEffectful._
+import effectie.scalaz.Effectful._
 
 import effectie.scalaz.EitherTSupport._
 import effectie.scalaz.OptionTSupport._
@@ -44,7 +44,7 @@ object Something {
     override def foo[A: Semigroup](a: A): F[A] =
       for {
         n <- effectOf(a)
-        blah <- effectOfPure("blah blah")
+        blah <- pureOf("blah blah")
         _ <- effectOf(println(s"n: $n / BLAH: $blah"))
         x <- effectOf(n |+| n)
         _ <- putStrLn(s"x: $x")

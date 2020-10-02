@@ -108,7 +108,7 @@ import cats.implicits._
 import cats.effect._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -128,7 +128,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatal(
     for {
-      a <- effectOfPure(n + 100)
+      a <- pureOf(n + 100)
       b <- effectOf(doSomethingBad(a))
     } yield b
   )(MyError.nonFatalThrowable)
@@ -156,7 +156,7 @@ import cats._
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -178,7 +178,7 @@ object MyApp {
   ): F[Either[MyError, Int]] =
     CanCatch[F].catchNonFatal(
       for {
-        a <- effectOfPure(n + 100)
+        a <- pureOf(n + 100)
         b <- effectOf(doSomethingBad(a))
       } yield b
     )(MyError.nonFatalThrowable)
@@ -220,7 +220,7 @@ import cats._
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -240,7 +240,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatal(
     for {
-      a <- effectOfPure(n + 100)
+      a <- pureOf(n + 100)
       b <- effectOf(doSomethingBad(a))
     } yield b
   )(MyError.nonFatalThrowable)
@@ -274,7 +274,7 @@ import cats.implicits._
 import cats.effect._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -295,7 +295,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatal(
     for {
-      a <- effectOfPure(n + 100)
+      a <- pureOf(n + 100)
       b <- effectOf(doSomethingBad(a))
     } yield b
   )(MyError.nonFatalThrowable)
@@ -325,7 +325,7 @@ import cats._
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -347,7 +347,7 @@ object MyApp {
   ): F[Either[MyError, Int]] =
     CanCatch[F].catchNonFatal(
       for {
-        a <- effectOfPure(n + 100)
+        a <- pureOf(n + 100)
         b <- effectOf(doSomethingBad(a))
       } yield b
     )(MyError.nonFatalThrowable)
@@ -389,7 +389,7 @@ import cats._
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -409,7 +409,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatal(
     for {
-      a <- effectOfPure(n + 100)
+      a <- pureOf(n + 100)
       b <- effectOf(doSomethingBad(a))
     } yield b
   )(MyError.nonFatalThrowable)
@@ -514,7 +514,7 @@ import cats.implicits._
 import cats.effect._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -544,7 +544,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatalEither(
     for {
-      aOrB <- effectOfPure(divide100By(n))
+      aOrB <- pureOf(divide100By(n))
       c <- effectOf(aOrB.map(b => doSomethingBad(b)))
     } yield c
   )(MyError.nonFatalThrowable)
@@ -572,7 +572,7 @@ import cats._
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -604,7 +604,7 @@ object MyApp {
   ): F[Either[MyError, Int]] =
     CanCatch[F].catchNonFatalEither(
       for {
-        aOrB <- effectOfPure(divide100By(n))
+        aOrB <- pureOf(divide100By(n))
         c <- effectOf(aOrB.map(b => doSomethingBad(b)))
       } yield c
     )(MyError.nonFatalThrowable)
@@ -646,7 +646,7 @@ import cats._
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -676,7 +676,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatalEither(
     for {
-      aOrB <- effectOfPure(divide100By(n))
+      aOrB <- pureOf(divide100By(n))
       c <- effectOf(aOrB.map(b => doSomethingBad(b)))
     } yield c
   )(MyError.nonFatalThrowable)
@@ -710,7 +710,7 @@ import cats.implicits._
 import cats.effect._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -740,7 +740,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatalEither(
     for {
-      aOrB <- effectOfPure(divide100By(n))
+      aOrB <- pureOf(divide100By(n))
       c <- effectOf(aOrB.map(b => doSomethingBad(b)))
     } yield c
   )(MyError.nonFatalThrowable)
@@ -769,7 +769,7 @@ import cats._
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -801,7 +801,7 @@ object MyApp {
   ): F[Either[MyError, Int]] =
     CanCatch[F].catchNonFatalEither(
       for {
-        aOrB <- effectOfPure(divide100By(n))
+        aOrB <- pureOf(divide100By(n))
         c <- effectOf(aOrB.map(b => doSomethingBad(b)))
       } yield c
     )(MyError.nonFatalThrowable)
@@ -843,7 +843,7 @@ import cats._
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -873,7 +873,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatalEither(
     for {
-      aOrB <- effectOfPure(divide100By(n))
+      aOrB <- pureOf(divide100By(n))
       c <- effectOf(aOrB.map(b => doSomethingBad(b)))
     } yield c
   )(MyError.nonFatalThrowable)
@@ -985,7 +985,7 @@ import cats.data.EitherT
 import cats.effect._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.EitherTSupport._
 
 sealed trait MyError
@@ -1016,7 +1016,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatalEitherT(
     for {
-      b <- EitherT(effectOfPure(divide100By(n)))
+      b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
   )(MyError.nonFatalThrowable).value
@@ -1045,7 +1045,7 @@ import cats.data.EitherT
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.EitherTSupport._
 import effectie.concurrent.ExecutorServiceOps
 
@@ -1078,7 +1078,7 @@ object MyApp {
   ): F[Either[MyError, Int]] =
     CanCatch[F].catchNonFatalEitherT(
       for {
-        b <- EitherT(effectOfPure(divide100By(n)))
+        b <- EitherT(pureOf(divide100By(n)))
         c <- eitherTRight[MyError](doSomethingBad(b))
       } yield c
     )(MyError.nonFatalThrowable).value
@@ -1121,7 +1121,7 @@ import cats.data.EitherT
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.EitherTSupport._
 
 sealed trait MyError
@@ -1152,7 +1152,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatalEitherT(
     for {
-      b <- EitherT(effectOfPure(divide100By(n)))
+      b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
   )(MyError.nonFatalThrowable).value
@@ -1188,7 +1188,7 @@ import cats.effect._
 
 import effectie.cats._
 import effectie.cats.EitherTSupport._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -1218,7 +1218,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatalEitherT(
     for {
-      b <- EitherT(effectOfPure(divide100By(n)))
+      b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
   )(MyError.nonFatalThrowable).value
@@ -1248,7 +1248,7 @@ import cats.data.EitherT
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.EitherTSupport._
 import effectie.concurrent.ExecutorServiceOps
 
@@ -1281,7 +1281,7 @@ object MyApp {
   ): F[Either[MyError, Int]] =
     CanCatch[F].catchNonFatalEitherT(
       for {
-        b <- EitherT(effectOfPure(divide100By(n)))
+        b <- EitherT(pureOf(divide100By(n)))
         c <- eitherTRight[MyError](doSomethingBad(b))
       } yield c
     )(MyError.nonFatalThrowable).value
@@ -1324,7 +1324,7 @@ import cats.data.EitherT
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.EitherTSupport._
 
 sealed trait MyError
@@ -1355,7 +1355,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatalEitherT(
     for {
-      b <- EitherT(effectOfPure(divide100By(n)))
+      b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
   )(MyError.nonFatalThrowable).value
@@ -1466,7 +1466,7 @@ import cats.implicits._
 import cats.effect._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.Catching._
 
 sealed trait MyError
@@ -1487,7 +1487,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   catchNonFatal(
     for {
-      a <- effectOfPure(n + 100)
+      a <- pureOf(n + 100)
       b <- effectOf(doSomethingBad(a))
     } yield b
   )(MyError.nonFatalThrowable)
@@ -1515,7 +1515,7 @@ import cats._
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.Catching._
 import effectie.concurrent.ExecutorServiceOps
 
@@ -1539,7 +1539,7 @@ object MyApp {
   ): F[Either[MyError, Int]] =
     catchNonFatal(
       for {
-        a <- effectOfPure(n + 100)
+        a <- pureOf(n + 100)
         b <- effectOf(doSomethingBad(a))
       } yield b
     )(MyError.nonFatalThrowable)
@@ -1581,7 +1581,7 @@ import cats._
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.Catching._
 
 sealed trait MyError
@@ -1602,7 +1602,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   catchNonFatal(
     for {
-      a <- effectOfPure(n + 100)
+      a <- pureOf(n + 100)
       b <- effectOf(doSomethingBad(a))
     } yield b
   )(MyError.nonFatalThrowable)
@@ -1636,7 +1636,7 @@ import cats.implicits._
 import cats.effect._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.Catching._
 
 sealed trait MyError
@@ -1658,7 +1658,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   catchNonFatal(
     for {
-      a <- effectOfPure(n + 100)
+      a <- pureOf(n + 100)
       b <- effectOf(doSomethingBad(a))
     } yield b
   )(MyError.nonFatalThrowable)
@@ -1688,7 +1688,7 @@ import cats._
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.Catching._
 import effectie.concurrent.ExecutorServiceOps
 
@@ -1711,7 +1711,7 @@ object MyApp {
   ): F[Either[MyError, Int]] =
     catchNonFatal(
       for {
-        a <- effectOfPure(n + 100)
+        a <- pureOf(n + 100)
         b <- effectOf(doSomethingBad(a))
       } yield b
     )(MyError.nonFatalThrowable)
@@ -1753,7 +1753,7 @@ import cats._
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.Catching._
 
 sealed trait MyError
@@ -1774,7 +1774,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   catchNonFatal(
     for {
-      a <- effectOfPure(n + 100)
+      a <- pureOf(n + 100)
       b <- effectOf(doSomethingBad(a))
     } yield b
   )(MyError.nonFatalThrowable)
@@ -1879,7 +1879,7 @@ import cats.implicits._
 import cats.effect._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.Catching._
 
 sealed trait MyError
@@ -1910,7 +1910,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   catchNonFatalEither(
     for {
-      aOrB <- effectOfPure(divide100By(n))
+      aOrB <- pureOf(divide100By(n))
       c <- effectOf(aOrB.map(b => doSomethingBad(b)))
     } yield c
   )(MyError.nonFatalThrowable)
@@ -1938,7 +1938,7 @@ import cats._
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.Catching._
 import effectie.concurrent.ExecutorServiceOps
 
@@ -1971,7 +1971,7 @@ object MyApp {
   ): F[Either[MyError, Int]] =
     catchNonFatalEither(
       for {
-        aOrB <- effectOfPure(divide100By(n))
+        aOrB <- pureOf(divide100By(n))
         c <- effectOf(aOrB.map(b => doSomethingBad(b)))
       } yield c
     )(MyError.nonFatalThrowable)
@@ -2013,7 +2013,7 @@ import cats._
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.Catching._
 
 sealed trait MyError
@@ -2044,7 +2044,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   catchNonFatalEither(
     for {
-      aOrB <- effectOfPure(divide100By(n))
+      aOrB <- pureOf(divide100By(n))
       c <- effectOf(aOrB.map(b => doSomethingBad(b)))
     } yield c
   )(MyError.nonFatalThrowable)
@@ -2078,7 +2078,7 @@ import cats.implicits._
 import cats.effect._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.Catching._
 
 sealed trait MyError
@@ -2109,7 +2109,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   catchNonFatalEither(
     for {
-      aOrB <- effectOfPure(divide100By(n))
+      aOrB <- pureOf(divide100By(n))
       c <- effectOf(aOrB.map(b => doSomethingBad(b)))
     } yield c
   )(MyError.nonFatalThrowable)
@@ -2138,7 +2138,7 @@ import cats._
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.Catching._
 import effectie.concurrent.ExecutorServiceOps
 
@@ -2171,7 +2171,7 @@ object MyApp {
   ): F[Either[MyError, Int]] =
     catchNonFatalEither(
       for {
-        aOrB <- effectOfPure(divide100By(n))
+        aOrB <- pureOf(divide100By(n))
         c <- effectOf(aOrB.map(b => doSomethingBad(b)))
       } yield c
     )(MyError.nonFatalThrowable)
@@ -2213,7 +2213,7 @@ import cats._
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.Catching._
 
 sealed trait MyError
@@ -2244,7 +2244,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   catchNonFatalEither(
     for {
-      aOrB <- effectOfPure(divide100By(n))
+      aOrB <- pureOf(divide100By(n))
       c <- effectOf(aOrB.map(b => doSomethingBad(b)))
     } yield c
   )(MyError.nonFatalThrowable)
@@ -2357,7 +2357,7 @@ import cats.data.EitherT
 import cats.effect._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.Catching._
 import effectie.cats.EitherTSupport._
 
@@ -2389,7 +2389,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   catchNonFatalEitherT(
     for {
-      b <- EitherT(effectOfPure(divide100By(n)))
+      b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
   )(MyError.nonFatalThrowable).value
@@ -2418,7 +2418,7 @@ import cats.data.EitherT
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.Catching._
 import effectie.cats.EitherTSupport._
 import effectie.concurrent.ExecutorServiceOps
@@ -2452,7 +2452,7 @@ object MyApp {
   ): F[Either[MyError, Int]] =
     catchNonFatalEitherT(
       for {
-        b <- EitherT(effectOfPure(divide100By(n)))
+        b <- EitherT(pureOf(divide100By(n)))
         c <- eitherTRight[MyError](doSomethingBad(b))
       } yield c
     )(MyError.nonFatalThrowable).value
@@ -2495,7 +2495,7 @@ import cats.data.EitherT
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.Catching._
 import effectie.cats.EitherTSupport._
 
@@ -2527,7 +2527,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   catchNonFatalEitherT(
     for {
-      b <- EitherT(effectOfPure(divide100By(n)))
+      b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
   )(MyError.nonFatalThrowable).value
@@ -2562,7 +2562,7 @@ import cats.implicits._
 import cats.effect._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.Catching._
 import effectie.cats.EitherTSupport._
 
@@ -2594,7 +2594,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   catchNonFatalEitherT(
     for {
-      b <- EitherT(effectOfPure(divide100By(n)))
+      b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
   )(MyError.nonFatalThrowable).value
@@ -2624,7 +2624,7 @@ import cats.data.EitherT
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.Catching._
 import effectie.cats.EitherTSupport._
 import effectie.concurrent.ExecutorServiceOps
@@ -2658,7 +2658,7 @@ object MyApp {
   ): F[Either[MyError, Int]] =
     catchNonFatalEitherT(
       for {
-        b <- EitherT(effectOfPure(divide100By(n)))
+        b <- EitherT(pureOf(divide100By(n)))
         c <- eitherTRight[MyError](doSomethingBad(b))
       } yield c
     )(MyError.nonFatalThrowable).value
@@ -2701,7 +2701,7 @@ import cats.data.EitherT
 import cats.implicits._
 
 import effectie.cats._
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats.Catching._
 import effectie.cats.EitherTSupport._
 
@@ -2733,7 +2733,7 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 ): F[Either[MyError, Int]] =
   catchNonFatalEitherT(
     for {
-      b <- EitherT(effectOfPure(divide100By(n)))
+      b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
   )(MyError.nonFatalThrowable).value
