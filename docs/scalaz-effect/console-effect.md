@@ -67,7 +67,7 @@ Done
 import scalaz._
 import Scalaz._
 
-import effectie.ConsoleEffectful._
+import effectie.scalaz.ConsoleEffectful._
 import effectie.scalaz._
 import effectie.YesNo
 

@@ -9,7 +9,7 @@ title: "OptionTSupport - Cats"
 import cats._
 import cats.implicits._
 
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats._
 import effectie.cats.OptionTSupport._
 
@@ -29,13 +29,13 @@ object Something {
     extends Something[F] {
 
     def foo(a: Int): F[Option[Int]] = (for {
-      x <- optionTSomePure(a) // == OptionT.liftF(effectOfPure(a))
+      x <- optionTSomePure(a) // == OptionT.liftF(pureOf(a))
       y <- optionTSome(x + 10) // == OptionT.liftF(effectOf(x + 10))
       z <- optionTSomeF(effectOf(y + 100)) // == OptionT.lieftF(effectOf(y + 100))
     } yield z).value
 
     def bar(a: Option[Int]): F[Option[Int]] = (for {
-      x <- optionTOfPure(a) // == OptionT(effectOfPure(a: Option[Int]))
+      x <- optionTOfPure(a) // == OptionT(pureOf(a: Option[Int]))
       y <- optionTOf((x + 999).some)  // == OptionT(effectOf((x + 999).some))
     } yield y).value
   }

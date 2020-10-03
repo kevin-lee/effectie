@@ -33,8 +33,8 @@ libraryDependencies += "io.kevinlee" %% "effectie-cats-effect" % "@VERSION@"
 then import
 
 ```scala
-import effectie.ConsoleEffectful._
-import effectie.Effectful._
+import effectie.cats.ConsoleEffectful._
+import effectie.cats.Effectful._
 
 import effectie.cats.EitherTSupport._
 import effectie.cats.OptionTSupport._
@@ -54,8 +54,8 @@ libraryDependencies += "io.kevinlee" %% "effectie-scalaz-effect" % "@VERSION@"
 then import
 
 ```scala
-import effectie.ConsoleEffectful._
-import effectie.Effectful._
+import effectie.scalaz.ConsoleEffectful._
+import effectie.scalaz.Effectful._
 
 import effectie.scalaz.EitherTSupport._
 import effectie.scalaz.OptionTSupport._
@@ -171,7 +171,7 @@ Or a more convenient way like
 ```scala mdoc:reset-object
 import cats.effect._
 
-import effectie.Effectful._
+import effectie.cats.Effectful._
 import effectie.cats._
 
 trait Foo[F[_]] {

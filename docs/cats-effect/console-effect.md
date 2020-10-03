@@ -67,7 +67,7 @@ Done
 import cats._
 import cats.implicits._
 
-import effectie.ConsoleEffectful._
+import effectie.cats.ConsoleEffectful._
 import effectie.cats._
 import effectie.YesNo
 

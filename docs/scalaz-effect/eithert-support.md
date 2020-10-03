@@ -9,7 +9,7 @@ title: "EitherTSupport - Scalaz"
 import scalaz._
 import Scalaz._
 
-import effectie.Effectful._
+import effectie.scalaz.Effectful._
 import effectie.scalaz._
 import effectie.scalaz.EitherTSupport._
 
@@ -29,7 +29,7 @@ object Something {
     extends Something[F] {
 
     def foo(a: Int): F[String \/ Int] = (for {
-      x <- eitherTRightPure(a) // == EitherT(effectOfPure(a).map(_.right[String]))
+      x <- eitherTRightPure(a) // == EitherT(pureOf(a).map(_.right[String]))
       y <- eitherTRight(x + 10) // == EitherT(effectOf(x + 10).map(_.right[String]))
       y2 <- if (y > 100)
           eitherTLeft[Int]("Error - Bigger than 100")
@@ -38,12 +38,12 @@ object Something {
         // ↑ if (y > 100)
         //     EitherT(effectOf("Error - Bigger than 100").map(_.left[Int]))
         //   else
-        //     EitherT(effectOfPure(y).map(_.right[String]))
+        //     EitherT(pureOf(y).map(_.right[String]))
       z <- eitherTRightF[String](effectOf(y2 + 100)) // == EitherT(effectOf(y + 100).map(_.right))
     } yield z).run
 
     def bar(a: String \/ Int): F[String \/ Int] = (for {
-      x <- eitherTOfPure(a) // == EitherT(effectOfPure(a: String \/ Int))
+      x <- eitherTOfPure(a) // == EitherT(pureOf(a: String \/ Int))
       y <- eitherTOf((x + 999).right[String])  // == EitherT(effectOf((x + 999).right[String]))
     } yield y).run
   }

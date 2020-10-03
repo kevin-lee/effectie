@@ -19,8 +19,8 @@ import cats._
 import cats.implicits._
 import cats.effect._
 
-import effectie.ConsoleEffectful._
-import effectie.Effectful._
+import effectie.cats.ConsoleEffectful._
+import effectie.cats.Effectful._
 
 import effectie.cats.EitherTSupport._
 import effectie.cats.OptionTSupport._
@@ -46,7 +46,7 @@ object Something {
     override def foo[A: Semigroup](a: A): F[A] =
       for {
         n <- effectOf(a)
-        blah <- effectOfPure("blah blah")
+        blah <- pureOf("blah blah")
         _ <- effectOf(println(s"n: $n / BLAH: $blah"))
         x <- effectOf(n |+| n)
         _ <- putStrLn(s"x: $x")
