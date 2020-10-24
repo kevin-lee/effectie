@@ -31,6 +31,9 @@ local.properties
 # Locally stored "Eclipse launch configurations"
 *.launch
 
+# sbt
+.bsp/
+
 # sbteclipse plugin
 .target
 
