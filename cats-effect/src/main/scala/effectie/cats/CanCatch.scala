@@ -37,7 +37,7 @@ object CanCatch {
 
   final class CanCatchFuture(val EC0: ExecutionContext)
     extends CanCatch[Future] {
-    @SuppressWarnings(Array("org.wartremover.warts.Nothing"))
+    @SuppressWarnings(Array("org.wartremover.warts.Nothing", "org.wartremover.warts.Throw"))
     override def catchNonFatal[A, B](fb: => Future[B])(f: Throwable => A): Future[Either[A, B]] =
       FutureCompat.transform(fb) {
         case scala.util.Success(b) =>
@@ -45,6 +45,9 @@ object CanCatch {
 
         case scala.util.Failure(scala.util.control.NonFatal(ex)) =>
           scala.util.Try[Either[A, B]](Left(f(ex)))
+
+        case scala.util.Failure(ex) =>
+          throw ex
       }(EC0)
 
     override def catchNonFatalEither[A, B](fab: => Future[Either[A, B]])(f: Throwable => A): Future[Either[A, B]] =
@@ -53,6 +56,7 @@ object CanCatch {
   }
 
   implicit val canCatchId: CanCatch[Id] = new CanCatch[Id] {
+    @SuppressWarnings(Array("org.wartremover.warts.Throw"))
     override def catchNonFatal[A, B](fb: => Id[B])(f: Throwable => A): Id[Either[A, B]] =
       scala.util.Try(fb) match {
         case scala.util.Success(b) =>
@@ -60,6 +64,9 @@ object CanCatch {
 
         case scala.util.Failure(scala.util.control.NonFatal(ex)) =>
           f(ex).asLeft[B]
+
+        case scala.util.Failure(ex) =>
+          throw ex
       }
 
     override def catchNonFatalEither[A, B](fab: => Id[Either[A, B]])(f: Throwable => A): Id[Either[A, B]] =

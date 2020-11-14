@@ -46,6 +46,7 @@ object CanCatch {
 
   final class CanCatchFuture(val EC0: ExecutionContext)
     extends CanCatch[Future] {
+    @SuppressWarnings(Array("org.wartremover.warts.Throw"))
     override def catchNonFatal[A, B](fb: => Future[B])(f: Throwable => A): Future[A \/ B] =
       FutureCompat.transform(fb) {
         case SuccessS(b) =>
@@ -53,6 +54,9 @@ object CanCatch {
 
         case FailureS(NonFatal(ex)) =>
           Try(f(ex).left[B])
+
+        case FailureS(ex) =>
+          throw ex
       }(EC0)
 
     override def catchNonFatalEither[A, B](fab: => Future[A \/ B])(f: Throwable => A): Future[A \/ B] =
@@ -60,6 +64,7 @@ object CanCatch {
   }
 
   implicit val canCatchId: CanCatch[Id] = new CanCatch[Id] {
+    @SuppressWarnings(Array("org.wartremover.warts.Throw"))
     override def catchNonFatal[A, B](fb: => Id[B])(f: Throwable => A): Id[A \/ B] =
       Try(fb) match {
         case SuccessS(b) =>
@@ -67,6 +72,9 @@ object CanCatch {
 
         case FailureS(NonFatal(ex)) =>
           f(ex).left[B]
+
+        case FailureS(ex) =>
+          throw ex
       }
 
     override def catchNonFatalEither[A, B](fab: => Id[A \/ B])(f: Throwable => A): Id[A \/ B] =
