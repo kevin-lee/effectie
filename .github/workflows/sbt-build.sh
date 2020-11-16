@@ -21,6 +21,7 @@ else
 #    sbt -J-Xmx2048m "project ${project_name}" ++${scala_version}! -v clean coverage test coverageReport coverageAggregate
 #    sbt -J-Xmx2048m "project ${project_name}" ++${scala_version}! -v coveralls
 #    sbt -J-Xmx2048m "project ${project_name}" ++${scala_version}! -v clean packagedArtifacts
+    mkdir -p dotty-docs
     sbt \
       -J-Xmx2048m \
       "project ${project_name}" \

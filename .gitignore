@@ -33,6 +33,7 @@ local.properties
 
 # sbt
 .bsp/
+/dotty-docs/
 
 # sbteclipse plugin
 .target
