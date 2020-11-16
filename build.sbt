@@ -80,7 +80,8 @@ def scalacOptionsPostProcess(scalaSemVer: SemVer, isDotty: Boolean, options: Seq
           "experimental.macros",
           "implicitConversions"
         ).mkString(","),
-      "-Ykind-projector"
+      "-Ykind-projector",
+      "-siteroot", "./dotty-docs",
     )
   } else {
     scalaSemVer match {
