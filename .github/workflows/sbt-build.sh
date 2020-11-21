@@ -16,6 +16,8 @@ else
   echo "Build projects"
   echo "--------------------------------------------"
   echo ""
+  echo "mkdir -p dotty-docs"
+  mkdir -p dotty-docs
   export SOURCE_DATE_EPOCH=$(($(date +%s%N)/1000000))
   echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH"
 
@@ -24,7 +26,6 @@ else
 #    sbt -J-Xmx2048m "project ${project_name}" ++${scala_version}! -v clean coverage test coverageReport coverageAggregate
 #    sbt -J-Xmx2048m "project ${project_name}" ++${scala_version}! -v coveralls
 #    sbt -J-Xmx2048m "project ${project_name}" ++${scala_version}! -v clean packagedArtifacts
-    mkdir -p dotty-docs
     sbt \
       -J-Xmx2048m \
       "project ${project_name}" \
