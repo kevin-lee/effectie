@@ -6,6 +6,7 @@ module.exports = {
       'cats-effect/effect-constructor',
       'cats-effect/can-catch',
       'cats-effect/can-handle-error',
+      'cats-effect/from-future',
       'cats-effect/optiont-support',
       'cats-effect/eithert-support',
       'cats-effect/console-effect',
