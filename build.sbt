@@ -3,7 +3,7 @@ import kevinlee.sbt.SbtCommon.crossVersionProps
 import just.semver.SemVer
 import SemVer.{Major, Minor}
 
-val DottyVersion = "3.0.0-M1"
+val DottyVersion = "3.0.0-M2"
 val ProjectScalaVersion = "2.13.3"
 
 val removeDottyIncompatible: ModuleID => Boolean =
