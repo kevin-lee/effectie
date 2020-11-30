@@ -329,7 +329,14 @@ lazy val docs = (project in file("generated-docs"))
         scalaVersion.value, isDotty.value, libraryDependencies.value
       )
     , mdocVariables := Map(
-        "VERSION" -> (ThisBuild / version).value
+        "VERSION" -> (ThisBuild / version).value,
+        "SUPPORTED_SCALA_VERSIONS" -> {
+            val versions = CrossScalaVersions.map(v => s"`$v`")
+            if (versions.length > 1)
+              s"${versions.init.mkString(", ")} and ${versions.last}"
+            else
+              versions.mkString
+          }
       )
 
     , docusaurDir := (ThisBuild / baseDirectory).value / "website"
