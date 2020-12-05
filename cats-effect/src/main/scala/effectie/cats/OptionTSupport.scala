@@ -2,7 +2,7 @@ package effectie.cats
 
 import cats.Functor
 import cats.data.OptionT
-import cats.implicits._
+import cats.syntax.all._
 
 trait OptionTSupport {
 

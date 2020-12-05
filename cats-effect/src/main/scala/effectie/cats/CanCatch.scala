@@ -3,7 +3,7 @@ package effectie.cats
 import cats.Id
 import cats.data.EitherT
 import cats.effect.IO
-import cats.implicits._
+import cats.syntax.all._
 import effectie.compat.FutureCompat
 
 import scala.concurrent.{ExecutionContext, Future}
