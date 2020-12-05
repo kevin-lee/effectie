@@ -2,7 +2,7 @@ package effectie.cats
 
 import cats.Functor
 import cats.data.EitherT
-import cats.implicits._
+import cats.syntax.all._
 
 trait EitherTSupport {
 

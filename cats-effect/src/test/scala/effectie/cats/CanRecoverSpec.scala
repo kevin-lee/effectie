@@ -1,7 +1,8 @@
 package effectie.cats
 
 import cats._
-import cats.implicits._
+import cats.syntax.all._
+import cats.instances.all._
 import cats.data.EitherT
 import cats.effect.IO
 

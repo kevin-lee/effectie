@@ -2,10 +2,11 @@ package effectie.cats
 
 import cats.Id
 import cats.effect.IO
+import effectie.{CommonEffectConstructor, OldEffectConstructor}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait EffectConstructor[F[_]] extends effectie.EffectConstructor[F]
+trait EffectConstructor[F[_]] extends CommonEffectConstructor[F] with OldEffectConstructor[F]
 
 object EffectConstructor {
   def apply[F[_]: EffectConstructor]: EffectConstructor[F] = implicitly[EffectConstructor[F]]
@@ -14,11 +15,7 @@ object EffectConstructor {
 
     override def effectOf[A](a: => A): IO[A] = IO(a)
 
-    override def effectOfPure[A](a: A): IO[A] = pureOf(a)
-
     override def pureOf[A](a: A): IO[A] = IO.pure(a)
-
-    override def effectOfUnit: IO[Unit] = unitOf
 
     override def unitOf: IO[Unit] = IO.unit
   }
@@ -29,17 +26,14 @@ object EffectConstructor {
 
   final class FutureEffectConstructor(override val EC0: ExecutionContext)
     extends EffectConstructor[Future]
-    with effectie.EffectConstructor.FutureEffectConstructor
+    with CommonEffectConstructor.CommonFutureEffectConstructor
+    with OldEffectConstructor.OldFutureEffectConstructor
 
   implicit final val idEffectConstructor: EffectConstructor[Id] = new EffectConstructor[Id] {
 
     @inline override def effectOf[A](a: => A): Id[A] = a
 
-    @inline override def effectOfPure[A](a: A): Id[A] = pureOf(a)
-
     @inline override def pureOf[A](a: A): Id[A] = effectOf(a)
-
-    @inline override def effectOfUnit: Id[Unit] = unitOf
 
     @inline override def unitOf: Id[Unit] = ()
   }

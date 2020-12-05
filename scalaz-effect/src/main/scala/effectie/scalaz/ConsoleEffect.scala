@@ -1,23 +1,22 @@
 package effectie.scalaz
 
+import effectie.YesNo
 import scalaz._
 import Scalaz._
-
-import effectie.ConsoleEffect.ConsoleEffectWithoutBind
-import effectie.YesNo
-
+import effectie.ConsoleEffect.ConsoleEffectWithoutFlatMap
 
 trait ConsoleEffect[F[_]] extends effectie.ConsoleEffect[F]
 
 object ConsoleEffect {
-  def apply[F[_]: ConsoleEffect]: ConsoleEffect[F] = implicitly[ConsoleEffect[F]]
+  def apply[F[_]: ConsoleEffect]: ConsoleEffect[F] =
+    implicitly[ConsoleEffect[F]]
 
   implicit def consoleEffectF[F[_]: EffectConstructor: Bind]: ConsoleEffect[F] =
     new ConsoleEffectF[F]
 
   final class ConsoleEffectF[F[_]: EffectConstructor: Bind]
-    extends ConsoleEffectWithoutBind[F]
-    with ConsoleEffect[F] {
+      extends ConsoleEffectWithoutFlatMap[F]
+      with ConsoleEffect[F] {
 
     @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
     override def readYesNo(prompt: String): F[YesNo] = for {

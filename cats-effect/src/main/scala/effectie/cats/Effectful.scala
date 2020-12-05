@@ -6,15 +6,15 @@ trait Effectful {
 
   def effectOf[F[_]]: CurriedEffectOf[F] = new CurriedEffectOf[F]
 
-  @deprecated(message = "Use pureOf instead.", since = "1.4.0")
-  def effectOfPure[F[_]]: CurriedEffectOfPure[F] = pureOf[F]
-
   def pureOf[F[_]]: CurriedEffectOfPure[F] = new CurriedEffectOfPure[F]
 
-  @deprecated(message = "Use unitOf instead", since = "1.4.0")
-  def effectOfUnit[F[_]: EffectConstructor]: F[Unit] = unitOf[F]
+  @deprecated(message = "Use pureOf instead.", since = "1.4.0")
+  @inline def effectOfPure[F[_]]: CurriedEffectOfPure[F] = pureOf[F]
 
   def unitOf[F[_]: EffectConstructor]: F[Unit] = EffectConstructor[F].unitOf
+
+  @deprecated(message = "Use unitOf instead", since = "1.4.0")
+  @inline def effectOfUnit[F[_]: EffectConstructor]: F[Unit] = unitOf[F]
 
 }
 

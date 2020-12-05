@@ -3,7 +3,8 @@ package effectie.cats
 import cats._
 import cats.data.EitherT
 import cats.effect.IO
-import cats.implicits._
+import cats.syntax.all._
+import cats.instances.all._
 import effectie.cats.Effectful._
 import effectie.SomeControlThrowable
 import effectie.concurrent.ExecutorServiceOps
