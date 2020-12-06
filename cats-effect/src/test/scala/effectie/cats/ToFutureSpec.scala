@@ -42,7 +42,7 @@ object ToFutureSpec extends Properties {
 
       implicit val es: ExecutorService = ConcurrentSupport.newExecutorService()
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
-      implicit val ec = ConcurrentSupport.newExecutionContext(es, println(_))
+      implicit val ec = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
       ConcurrentSupport.runAndShutdown(es, 300.milliseconds) {
         val expected = Future(a)
         val future = ToFuture[IO].unsafeToFuture(fa)
@@ -68,7 +68,7 @@ object ToFutureSpec extends Properties {
     } yield {
       implicit val es: ExecutorService = ConcurrentSupport.newExecutorService()
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
-      implicit val ec = ConcurrentSupport.newExecutionContext(es, println(_))
+      implicit val ec = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
       ConcurrentSupport.runAndShutdown(es, 300.milliseconds) {
         val expected = Future(a)
         val fa = Future(a)
@@ -98,7 +98,7 @@ object ToFutureSpec extends Properties {
 
       val fa = a
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
-      implicit val ec = ConcurrentSupport.newExecutionContext(es, println(_))
+      implicit val ec = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
       ConcurrentSupport.runAndShutdown(es, 300.milliseconds) {
         val expected = Future(a)
 
