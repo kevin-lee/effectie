@@ -2,12 +2,16 @@ package effectie.monix
 
 
 import cats._
-import monix.eval.Task
+
 import effectie.ConcurrentSupport
+
 import hedgehog._
 import hedgehog.runner._
+
+import monix.eval.Task
 import monix.execution.Scheduler
 
+import java.util.concurrent.ExecutorService
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
@@ -38,7 +42,7 @@ object ToFutureSpec extends Properties {
     } yield {
       val fa = Task(a)
 
-      val es = ConcurrentSupport.newExecutorService()
+      implicit val es: ExecutorService = ConcurrentSupport.newExecutorService()
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
       implicit val ec = ConcurrentSupport.newExecutionContext(es, println(_))
       implicit val scheduler: Scheduler = Scheduler(ec)
@@ -66,8 +70,7 @@ object ToFutureSpec extends Properties {
     def testUnsafeToFuture: Property = for {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {
-      val es = ConcurrentSupport.newExecutorService()
-
+      implicit val es: ExecutorService = ConcurrentSupport.newExecutorService()
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
       implicit val ec = ConcurrentSupport.newExecutionContext(es, println(_))
       ConcurrentSupport.runAndShutdown(es, 300.milliseconds) {
@@ -95,7 +98,7 @@ object ToFutureSpec extends Properties {
     def testUnsafeToFuture: Property = for {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {
-      val es = ConcurrentSupport.newExecutorService()
+      implicit val es: ExecutorService = ConcurrentSupport.newExecutorService()
 
       val fa = a
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))

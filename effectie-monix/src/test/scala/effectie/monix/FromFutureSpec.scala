@@ -11,6 +11,7 @@ import hedgehog.runner._
 import monix.eval.Task
 import monix.execution.Scheduler
 
+import java.util.concurrent.ExecutorService
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -46,8 +47,8 @@ object FromFutureSpec extends Properties {
     def testToEffect: Property = for {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {
-      val es = ConcurrentSupport.newExecutorService()
-      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(es, println(_))
+      implicit val es: ExecutorService = ConcurrentSupport.newExecutorService()
+      implicit val ec: ExecutionContext = ConcurrentSupport.executionContextExecutor(es)
 
       ConcurrentSupport.runAndShutdown(es, 300.milliseconds) {
         lazy val fa = Future(a)
