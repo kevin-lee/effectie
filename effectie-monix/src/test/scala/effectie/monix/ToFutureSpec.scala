@@ -1,12 +1,12 @@
-package effectie.cats
+package effectie.monix
+
 
 import cats._
-import cats.effect._
-
+import monix.eval.Task
 import effectie.ConcurrentSupport
-
 import hedgehog._
 import hedgehog.runner._
+import monix.execution.Scheduler
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -18,7 +18,7 @@ import scala.concurrent.duration._
 object ToFutureSpec extends Properties {
   override def tests: List[Test] = List(
     property(
-      "test ToFuture[IO].unsafeToFuture",
+      "test ToFuture[Task].unsafeToFuture",
       IoSpec.testUnsafeToFuture
     ),
     property(
@@ -36,14 +36,16 @@ object ToFutureSpec extends Properties {
     def testUnsafeToFuture: Property = for {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {
-      val fa = IO(a)
+      val fa = Task(a)
 
       val es = ConcurrentSupport.newExecutorService()
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
       implicit val ec = ConcurrentSupport.newExecutionContext(es, println(_))
+      implicit val scheduler: Scheduler = Scheduler(ec)
+
       ConcurrentSupport.runAndShutdown(es, 300.milliseconds) {
         val expected = Future(a)
-        val future = ToFuture[IO].unsafeToFuture(fa)
+        val future = ToFuture[Task].unsafeToFuture(fa)
         val actual = ConcurrentSupport.futureToValue(future, 300.milliseconds)
 
         Result.all(

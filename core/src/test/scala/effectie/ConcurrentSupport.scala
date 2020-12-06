@@ -1,12 +1,11 @@
-package effectie.cats
-
-import java.io.{PrintWriter, StringWriter}
-import java.util.concurrent.{ExecutorService, Executors, TimeoutException}
+package effectie
 
 import effectie.concurrent.ExecutorServiceOps
 
-import scala.concurrent.{Await, ExecutionContext, Future}
+import java.io.{PrintWriter, StringWriter}
+import java.util.concurrent.{ExecutorService, Executors, TimeoutException}
 import scala.concurrent.duration._
+import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 /**
