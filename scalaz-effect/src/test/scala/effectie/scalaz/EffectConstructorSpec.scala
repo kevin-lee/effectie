@@ -94,12 +94,10 @@ object EffectConstructorSpec extends Properties {
       var actual = before
       val testBefore = actual ==== before
       val future: Future[Unit] = EffectConstructor[Future].effectOf({ actual = after; ()})
-      val testBeforeRun = actual ==== before
-      ConcurrentSupport.futureToValue(future, waitFor)
+      ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
       val testAfterRun = actual ==== after
       Result.all(List(
         testBefore.log("testBefore"),
-        testBeforeRun.log("testBeforeRun"),
         testAfterRun.log("testAfterRun")
       ))
     }
@@ -115,12 +113,10 @@ object EffectConstructorSpec extends Properties {
       var actual = before
       val testBefore = actual ==== before
       val future = EffectConstructor[Future].pureOf({ actual = after; ()})
-      val testBeforeRun = actual ==== after
-      ConcurrentSupport.futureToValue(future, waitFor)
+      ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
       val testAfterRun = actual ==== after
       Result.all(List(
         testBefore.log("testBefore"),
-        testBeforeRun.log("testBeforeRun"),
         testAfterRun.log("testAfterRun")
       ))
     }
@@ -130,7 +126,7 @@ object EffectConstructorSpec extends Properties {
       implicit val ec: ExecutionContext = ConcurrentSupport.executionContextExecutor(executorService)
       val future = EffectConstructor[Future].unitOf
       val expected: Unit = ()
-      val actual: Unit = ConcurrentSupport.futureToValue(future, waitFor)
+      val actual: Unit = ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
       actual ==== expected
     }
 

@@ -354,7 +354,7 @@ object CatchingSpec extends Properties {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Int](throwThrowable[Int](expectedExpcetion))
       val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual = ConcurrentSupport.futureToValue(catchNonFatal(fa)(SomeError.someThrowable), waitFor)
+      val actual = ConcurrentSupport.futureToValueAndTerminate(catchNonFatal(fa)(SomeError.someThrowable), waitFor)
 
       actual ==== expected
     }
@@ -366,7 +366,7 @@ object CatchingSpec extends Properties {
 
       val fa = run[Future, Int](1)
       val expected = 1.asRight[SomeError]
-      val actual = ConcurrentSupport.futureToValue(catchNonFatal(fa)(SomeError.someThrowable), waitFor)
+      val actual = ConcurrentSupport.futureToValueAndTerminate(catchNonFatal(fa)(SomeError.someThrowable), waitFor)
 
       actual ==== expected
     }
@@ -379,7 +379,7 @@ object CatchingSpec extends Properties {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual = ConcurrentSupport.futureToValue(catchNonFatalF[Future](throwThrowable[Int](expectedExpcetion))(SomeError.someThrowable), waitFor)
+      val actual = ConcurrentSupport.futureToValueAndTerminate(catchNonFatalF[Future](throwThrowable[Int](expectedExpcetion))(SomeError.someThrowable), waitFor)
 
       actual ==== expected
     }
@@ -390,7 +390,7 @@ object CatchingSpec extends Properties {
       implicit val ec: ExecutionContext = ConcurrentSupport.executionContextExecutor(executorService)
 
       val expected = 1.asRight[SomeError]
-      val actual = ConcurrentSupport.futureToValue(catchNonFatalF[Future](1)(SomeError.someThrowable), waitFor)
+      val actual = ConcurrentSupport.futureToValueAndTerminate(catchNonFatalF[Future](1)(SomeError.someThrowable), waitFor)
 
       actual ==== expected
     }
@@ -404,7 +404,7 @@ object CatchingSpec extends Properties {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual = ConcurrentSupport.futureToValue(catchNonFatalEither(fa)(SomeError.someThrowable), waitFor)
+      val actual = ConcurrentSupport.futureToValueAndTerminate(catchNonFatalEither(fa)(SomeError.someThrowable), waitFor)
 
       actual ==== expected
     }
@@ -416,7 +416,7 @@ object CatchingSpec extends Properties {
 
       val fa = run[Future, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
-      val actual = ConcurrentSupport.futureToValue(catchNonFatalEither(fa)(SomeError.someThrowable), waitFor)
+      val actual = ConcurrentSupport.futureToValueAndTerminate(catchNonFatalEither(fa)(SomeError.someThrowable), waitFor)
 
       actual ==== expected
     }
@@ -429,7 +429,7 @@ object CatchingSpec extends Properties {
       val expectedFailure = SomeError.message("Failed")
       val fa = run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected = expectedFailure.asLeft[Int]
-      val actual = ConcurrentSupport.futureToValue(catchNonFatalEither(fa)(SomeError.someThrowable), waitFor)
+      val actual = ConcurrentSupport.futureToValueAndTerminate(catchNonFatalEither(fa)(SomeError.someThrowable), waitFor)
 
       actual ==== expected
     }
@@ -443,7 +443,7 @@ object CatchingSpec extends Properties {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actual =
-        ConcurrentSupport.futureToValue(
+        ConcurrentSupport.futureToValueAndTerminate(
           catchNonFatalEitherF[Future](
             throwThrowable[Either[SomeError, Int]](expectedExpcetion)
           )(SomeError.someThrowable),
@@ -460,7 +460,7 @@ object CatchingSpec extends Properties {
 
       val expected = 1.asRight[SomeError]
       val actual =
-        ConcurrentSupport.futureToValue(
+        ConcurrentSupport.futureToValueAndTerminate(
           catchNonFatalEitherF[Future](1.asRight[SomeError])(SomeError.someThrowable),
           waitFor
         )
@@ -475,7 +475,7 @@ object CatchingSpec extends Properties {
 
       val expectedFailure = SomeError.message("Failed")
       val expected = expectedFailure.asLeft[Int]
-      val actual = ConcurrentSupport.futureToValue(
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
         catchNonFatalEitherF[Future](expectedFailure.asLeft[Int])(SomeError.someThrowable),
         waitFor
       )
@@ -492,7 +492,7 @@ object CatchingSpec extends Properties {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
       val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual = ConcurrentSupport.futureToValue(
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
         catchNonFatalEitherT[Future](fa)(SomeError.someThrowable).value,
         waitFor
       )
@@ -507,7 +507,7 @@ object CatchingSpec extends Properties {
 
       val fa = EitherT(run[Future, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected = 1.asRight[SomeError]
-      val actual = ConcurrentSupport.futureToValue(
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
         catchNonFatalEitherT[Future](fa)(SomeError.someThrowable).value,
         waitFor
       )
@@ -523,7 +523,7 @@ object CatchingSpec extends Properties {
       val expectedFailure = SomeError.message("Failed")
       val fa = EitherT(run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
       val expected = expectedFailure.asLeft[Int]
-      val actual = ConcurrentSupport.futureToValue(
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
         catchNonFatalEitherT[Future](fa)(SomeError.someThrowable).value,
         waitFor
       )

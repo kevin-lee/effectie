@@ -50,7 +50,7 @@ object FromFutureSpec extends Properties {
 
       ConcurrentSupport.runAndShutdown(es, 300.milliseconds) {
         lazy val fa = Future(a)
-        val actual = ConcurrentSupport.futureToValue(FromFuture[Future].toEffect(fa), 300.milliseconds)
+        val actual = ConcurrentSupport.futureToValueAndTerminate(FromFuture[Future].toEffect(fa), 300.milliseconds)
 
         actual ==== a
       }

@@ -477,7 +477,7 @@ object CanRecoverSpec extends Properties {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Int](throwThrowable[Int](expectedExpcetion))
       val expected = 1
-      val actual = ConcurrentSupport.futureToValue[Int](CanRecover[Future].recoverFromNonFatalWith(fa) {
+      val actual = ConcurrentSupport.futureToValueAndTerminate[Int](CanRecover[Future].recoverFromNonFatalWith(fa) {
           case NonFatal(`expectedExpcetion`) => Future(expected)
         },
         waitFor
@@ -493,7 +493,7 @@ object CanRecoverSpec extends Properties {
 
       val fa = run[Future, Int](1)
       val expected = 1
-      val actual = ConcurrentSupport.futureToValue(CanRecover[Future].recoverFromNonFatalWith(fa) {
+      val actual = ConcurrentSupport.futureToValueAndTerminate(CanRecover[Future].recoverFromNonFatalWith(fa) {
           case NonFatal(_) => Future(123)
         },
         waitFor
@@ -521,7 +521,7 @@ object CanRecoverSpec extends Properties {
       val fa2 = run[Future, SomeError \/ Int](throwThrowable[SomeError \/ Int](expectedExpcetion))
       val expected = 1.right[SomeError]
       val actual =
-        ConcurrentSupport.futureToValue(CanRecover[Future].recoverFromNonFatalWith(fa2) {
+        ConcurrentSupport.futureToValueAndTerminate(CanRecover[Future].recoverFromNonFatalWith(fa2) {
             case NonFatal(`expectedExpcetion`) => Future(expected)
           },
           waitFor
@@ -538,7 +538,7 @@ object CanRecoverSpec extends Properties {
       val fa = run[Future, SomeError \/ Int](1.right[SomeError])
       val expected = 1.right[SomeError]
       val actual =
-        ConcurrentSupport.futureToValue(CanRecover[Future].recoverFromNonFatalWith(fa) {
+        ConcurrentSupport.futureToValueAndTerminate(CanRecover[Future].recoverFromNonFatalWith(fa) {
             case err => Future(SomeError.someThrowable(err).left[Int])
           },
           waitFor
@@ -556,7 +556,7 @@ object CanRecoverSpec extends Properties {
       val fa = run[Future, SomeError \/ Int](expectedFailure.left[Int])
       val expected = expectedFailure.left[Int]
       val actual =
-        ConcurrentSupport.futureToValue(CanRecover[Future].recoverFromNonFatalWith(fa) {
+        ConcurrentSupport.futureToValueAndTerminate(CanRecover[Future].recoverFromNonFatalWith(fa) {
             case NonFatal(_) => Future(1.right[SomeError])
           },
           waitFor
@@ -584,7 +584,7 @@ object CanRecoverSpec extends Properties {
       val fa2 = EitherT(run[Future, SomeError \/ Int](throwThrowable[SomeError \/ Int](expectedExpcetion)))
       val expected = 1.right[SomeError]
       val actual =
-        ConcurrentSupport.futureToValue(
+        ConcurrentSupport.futureToValueAndTerminate(
           CanRecover[Future].recoverEitherTFromNonFatalWith(fa2) {
             case err => Future(expected)
           }.run,
@@ -601,7 +601,7 @@ object CanRecoverSpec extends Properties {
 
       val fa = EitherT(run[Future, SomeError \/ Int](1.right[SomeError]))
       val expected = 1.right[SomeError]
-      val actual = ConcurrentSupport.futureToValue(
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
         CanRecover[Future].recoverEitherTFromNonFatalWith(fa) {
             case err => Future(SomeError.someThrowable(err).left[Int])
           }.run,
@@ -620,7 +620,7 @@ object CanRecoverSpec extends Properties {
       val fa = EitherT(run[Future, SomeError \/ Int](expectedFailure.left[Int]))
       val expected = expectedFailure.left[Int]
       val actual =
-        ConcurrentSupport.futureToValue(CanRecover[Future].recoverEitherTFromNonFatalWith(fa) {
+        ConcurrentSupport.futureToValueAndTerminate(CanRecover[Future].recoverEitherTFromNonFatalWith(fa) {
             case NonFatal(_) => Future(expected)
           }.run,
           waitFor
@@ -639,7 +639,7 @@ object CanRecoverSpec extends Properties {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Int](throwThrowable[Int](expectedExpcetion))
       val expected = 1
-      val actual = ConcurrentSupport.futureToValue[Int](
+      val actual = ConcurrentSupport.futureToValueAndTerminate[Int](
         CanRecover[Future].recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => expected },
         waitFor
       )
@@ -654,7 +654,7 @@ object CanRecoverSpec extends Properties {
 
       val fa = run[Future, Int](1)
       val expected = 1
-      val actual = ConcurrentSupport.futureToValue(
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
         CanRecover[Future].recoverFromNonFatal(fa) { case NonFatal(_) => 123 },
         waitFor
       )
@@ -680,7 +680,7 @@ object CanRecoverSpec extends Properties {
 
       val fa2 = run[Future, SomeError \/ Int](throwThrowable[SomeError \/ Int](expectedExpcetion))
       val expected = 1.right[SomeError]
-      val actual = ConcurrentSupport.futureToValue(
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
         CanRecover[Future].recoverFromNonFatal(fa2) { case NonFatal(`expectedExpcetion`) => expected },
         waitFor
       )
@@ -696,7 +696,7 @@ object CanRecoverSpec extends Properties {
       val fa = run[Future, SomeError \/ Int](1.right[SomeError])
       val expected = 1.right[SomeError]
       val actual =
-        ConcurrentSupport.futureToValue(CanRecover[Future].recoverFromNonFatal(fa) {
+        ConcurrentSupport.futureToValueAndTerminate(CanRecover[Future].recoverFromNonFatal(fa) {
             case err => SomeError.someThrowable(err).left[Int]
           },
           waitFor
@@ -713,7 +713,7 @@ object CanRecoverSpec extends Properties {
       val expectedFailure = SomeError.message("Failed")
       val fa = run[Future, SomeError \/ Int](expectedFailure.left[Int])
       val expected = expectedFailure.left[Int]
-      val actual = ConcurrentSupport.futureToValue(
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
         CanRecover[Future].recoverFromNonFatal(fa) { case NonFatal(_) => 1.right[SomeError] },
         waitFor
       )
@@ -740,7 +740,7 @@ object CanRecoverSpec extends Properties {
       val fa2 = EitherT(run[Future, SomeError \/ Int](throwThrowable[SomeError \/ Int](expectedExpcetion)))
       val expected = 1.right[SomeError]
       val actual =
-        ConcurrentSupport.futureToValue(
+        ConcurrentSupport.futureToValueAndTerminate(
           CanRecover[Future].recoverEitherTFromNonFatal(fa2) { case err => expected }.run,
           waitFor
         )
@@ -755,7 +755,7 @@ object CanRecoverSpec extends Properties {
 
       val fa = EitherT(run[Future, SomeError \/ Int](1.right[SomeError]))
       val expected = 1.right[SomeError]
-      val actual = ConcurrentSupport.futureToValue(
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
           CanRecover[Future].recoverEitherTFromNonFatal(fa) {
             case err => SomeError.someThrowable(err).left[Int]
           }.run,
@@ -774,7 +774,7 @@ object CanRecoverSpec extends Properties {
       val fa = EitherT(run[Future, SomeError \/ Int](expectedFailure.left[Int]))
       val expected = expectedFailure.left[Int]
       val actual =
-        ConcurrentSupport.futureToValue(
+        ConcurrentSupport.futureToValueAndTerminate(
           CanRecover[Future].recoverEitherTFromNonFatal(fa) { case NonFatal(_) => expected }.run,
           waitFor
         )

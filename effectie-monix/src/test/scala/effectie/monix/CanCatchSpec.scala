@@ -241,7 +241,10 @@ object CanCatchSpec extends Properties {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Int](throwThrowable[Int](expectedExpcetion))
       val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual = ConcurrentSupport.futureToValue(CanCatch[Future].catchNonFatal(fa)(SomeError.someThrowable), waitFor)
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
+        CanCatch[Future].catchNonFatal(fa)(SomeError.someThrowable),
+        waitFor
+      )
 
       actual ==== expected
     }
@@ -253,7 +256,10 @@ object CanCatchSpec extends Properties {
 
       val fa = run[Future, Int](1)
       val expected = 1.asRight[SomeError]
-      val actual = ConcurrentSupport.futureToValue(CanCatch[Future].catchNonFatal(fa)(SomeError.someThrowable), waitFor)
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
+        CanCatch[Future].catchNonFatal(fa)(SomeError.someThrowable),
+        waitFor
+      )
 
       actual ==== expected
     }
@@ -267,7 +273,10 @@ object CanCatchSpec extends Properties {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual = ConcurrentSupport.futureToValue(CanCatch[Future].catchNonFatalEither(fa)(SomeError.someThrowable), waitFor)
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
+        CanCatch[Future].catchNonFatalEither(fa)(SomeError.someThrowable),
+        waitFor
+      )
 
       actual ==== expected
     }
@@ -279,7 +288,7 @@ object CanCatchSpec extends Properties {
 
       val fa = run[Future, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
-      val actual = ConcurrentSupport.futureToValue(CanCatch[Future].catchNonFatalEither(fa)(SomeError.someThrowable), waitFor)
+      val actual = ConcurrentSupport.futureToValueAndTerminate(CanCatch[Future].catchNonFatalEither(fa)(SomeError.someThrowable), waitFor)
 
       actual ==== expected
     }
@@ -292,7 +301,7 @@ object CanCatchSpec extends Properties {
       val expectedFailure = SomeError.message("Failed")
       val fa = run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected = expectedFailure.asLeft[Int]
-      val actual = ConcurrentSupport.futureToValue(CanCatch[Future].catchNonFatalEither(fa)(SomeError.someThrowable), waitFor)
+      val actual = ConcurrentSupport.futureToValueAndTerminate(CanCatch[Future].catchNonFatalEither(fa)(SomeError.someThrowable), waitFor)
 
       actual ==== expected
     }
@@ -306,7 +315,7 @@ object CanCatchSpec extends Properties {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
       val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual = ConcurrentSupport.futureToValue(CanCatch[Future].catchNonFatalEitherT(fa)(SomeError.someThrowable).value, waitFor)
+      val actual = ConcurrentSupport.futureToValueAndTerminate(CanCatch[Future].catchNonFatalEitherT(fa)(SomeError.someThrowable).value, waitFor)
 
       actual ==== expected
     }
@@ -318,7 +327,7 @@ object CanCatchSpec extends Properties {
 
       val fa = EitherT(run[Future, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected = 1.asRight[SomeError]
-      val actual = ConcurrentSupport.futureToValue(CanCatch[Future].catchNonFatalEitherT(fa)(SomeError.someThrowable).value, waitFor)
+      val actual = ConcurrentSupport.futureToValueAndTerminate(CanCatch[Future].catchNonFatalEitherT(fa)(SomeError.someThrowable).value, waitFor)
 
       actual ==== expected
     }
@@ -331,7 +340,7 @@ object CanCatchSpec extends Properties {
       val expectedFailure = SomeError.message("Failed")
       val fa = EitherT(run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
       val expected = expectedFailure.asLeft[Int]
-      val actual = ConcurrentSupport.futureToValue(CanCatch[Future].catchNonFatalEitherT(fa)(SomeError.someThrowable).value, waitFor)
+      val actual = ConcurrentSupport.futureToValueAndTerminate(CanCatch[Future].catchNonFatalEitherT(fa)(SomeError.someThrowable).value, waitFor)
 
       actual ==== expected
     }

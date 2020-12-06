@@ -444,7 +444,7 @@ object CanHandleErrorSpec extends Properties {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Int](throwThrowable[Int](expectedExpcetion))
       val expected = 1
-      val actual = ConcurrentSupport.futureToValue[Int](
+      val actual = ConcurrentSupport.futureToValueAndTerminate[Int](
         CanHandleError[Future].handleNonFatalWith(fa)(_ => Future(expected)),
         waitFor
       )
@@ -459,7 +459,7 @@ object CanHandleErrorSpec extends Properties {
 
       val fa = run[Future, Int](1)
       val expected = 1
-      val actual = ConcurrentSupport.futureToValue(
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
         CanHandleError[Future].handleNonFatalWith(fa)(_ => Future(123)),
         waitFor
       )
@@ -484,7 +484,7 @@ object CanHandleErrorSpec extends Properties {
 
       val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val expected = 1.asRight[SomeError]
-      val actual = ConcurrentSupport.futureToValue(
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
         CanHandleError[Future].handleNonFatalWith(fa2)(_ => Future(expected)),
         waitFor
       )
@@ -500,7 +500,7 @@ object CanHandleErrorSpec extends Properties {
       val fa = run[Future, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual =
-        ConcurrentSupport.futureToValue(
+        ConcurrentSupport.futureToValueAndTerminate(
           CanHandleError[Future].handleNonFatalWith(fa)(err => Future(SomeError.someThrowable(err).asLeft[Int])),
           waitFor
         )
@@ -516,7 +516,7 @@ object CanHandleErrorSpec extends Properties {
       val expectedFailure = SomeError.message("Failed")
       val fa = run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected = expectedFailure.asLeft[Int]
-      val actual = ConcurrentSupport.futureToValue(
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
         CanHandleError[Future].handleNonFatalWith(fa)(_ => Future(1.asRight[SomeError])),
         waitFor
       )
@@ -543,7 +543,7 @@ object CanHandleErrorSpec extends Properties {
       val fa2 = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
       val expected = 1.asRight[SomeError]
       val actual =
-        ConcurrentSupport.futureToValue(
+        ConcurrentSupport.futureToValueAndTerminate(
           CanHandleError[Future].handleEitherTNonFatalWith(fa2)(err => Future(expected)).value,
           waitFor
         )
@@ -558,7 +558,7 @@ object CanHandleErrorSpec extends Properties {
 
       val fa = EitherT(run[Future, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected = 1.asRight[SomeError]
-      val actual = ConcurrentSupport.futureToValue(
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
         CanHandleError[Future].handleEitherTNonFatalWith(fa)(err =>
             Future(SomeError.someThrowable(err).asLeft[Int])
         ).value,
@@ -577,7 +577,7 @@ object CanHandleErrorSpec extends Properties {
       val fa = EitherT(run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
       val expected = expectedFailure.asLeft[Int]
       val actual =
-        ConcurrentSupport.futureToValue(
+        ConcurrentSupport.futureToValueAndTerminate(
           CanHandleError[Future].handleEitherTNonFatalWith(fa)(_ => Future(expected)).value,
           waitFor
         )
@@ -594,7 +594,7 @@ object CanHandleErrorSpec extends Properties {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Int](throwThrowable[Int](expectedExpcetion))
       val expected = 1
-      val actual = ConcurrentSupport.futureToValue[Int](
+      val actual = ConcurrentSupport.futureToValueAndTerminate[Int](
         CanHandleError[Future].handleNonFatal(fa)(_ => expected),
         waitFor
       )
@@ -609,7 +609,7 @@ object CanHandleErrorSpec extends Properties {
 
       val fa = run[Future, Int](1)
       val expected = 1
-      val actual = ConcurrentSupport.futureToValue(
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
         CanHandleError[Future].handleNonFatal(fa)(_ => 123),
         waitFor
       )
@@ -634,7 +634,7 @@ object CanHandleErrorSpec extends Properties {
 
       val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val expected = 1.asRight[SomeError]
-      val actual = ConcurrentSupport.futureToValue(
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
         CanHandleError[Future].handleNonFatal(fa2)(_ => expected),
         waitFor
       )
@@ -650,7 +650,7 @@ object CanHandleErrorSpec extends Properties {
       val fa = run[Future, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual =
-        ConcurrentSupport.futureToValue(
+        ConcurrentSupport.futureToValueAndTerminate(
           CanHandleError[Future].handleNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int]),
           waitFor
         )
@@ -666,7 +666,7 @@ object CanHandleErrorSpec extends Properties {
       val expectedFailure = SomeError.message("Failed")
       val fa = run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected = expectedFailure.asLeft[Int]
-      val actual = ConcurrentSupport.futureToValue(
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
         CanHandleError[Future].handleNonFatal(fa)(_ => 1.asRight[SomeError]),
         waitFor
       )
@@ -693,7 +693,7 @@ object CanHandleErrorSpec extends Properties {
       val fa2 = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
       val expected = 1.asRight[SomeError]
       val actual =
-        ConcurrentSupport.futureToValue(
+        ConcurrentSupport.futureToValueAndTerminate(
           CanHandleError[Future].handleEitherTNonFatal(fa2)(err => expected).value,
           waitFor
         )
@@ -708,7 +708,7 @@ object CanHandleErrorSpec extends Properties {
 
       val fa = EitherT(run[Future, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected = 1.asRight[SomeError]
-      val actual = ConcurrentSupport.futureToValue(
+      val actual = ConcurrentSupport.futureToValueAndTerminate(
         CanHandleError[Future].handleEitherTNonFatal(fa)(err =>
           SomeError.someThrowable(err).asLeft[Int]
         ).value,
@@ -727,7 +727,7 @@ object CanHandleErrorSpec extends Properties {
       val fa = EitherT(run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
       val expected = expectedFailure.asLeft[Int]
       val actual =
-        ConcurrentSupport.futureToValue(
+        ConcurrentSupport.futureToValueAndTerminate(
           CanHandleError[Future].handleEitherTNonFatal(fa)(_ => expected).value,
           waitFor
         )

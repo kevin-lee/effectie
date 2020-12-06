@@ -44,20 +44,20 @@ trait ConcurrentSupport {
     }
 
 
-//  @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter", "org.wartremover.warts.Throw"))
-//  def futureToValue[A](fa: Future[A], waitFor: FiniteDuration): A =
-//    try {
-//      Await.result(fa, waitFor)
-//    } catch {
-//      case ex: TimeoutException =>
-//        @SuppressWarnings(Array("org.wartremover.warts.ToString"))
-//        val message = ex.toString
-//        println(s"ex: $message")
-//        throw ex
-//    }
+  @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter", "org.wartremover.warts.Throw"))
+  def futureToValue[A](fa: Future[A], waitFor: FiniteDuration): A =
+    try {
+      Await.result(fa, waitFor)
+    } catch {
+      case ex: TimeoutException =>
+        @SuppressWarnings(Array("org.wartremover.warts.ToString"))
+        val message = ex.toString
+        println(s"ex: $message")
+        throw ex
+    }
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter", "org.wartremover.warts.Throw"))
-  def futureToValue[A](fa: Future[A], waitFor: FiniteDuration)(implicit executorService: ExecutorService): A =
+  def futureToValueAndTerminate[A](fa: Future[A], waitFor: FiniteDuration)(implicit executorService: ExecutorService): A =
     try {
       Await.result(fa, waitFor)
     } catch {

@@ -1,6 +1,7 @@
 package effectie.monix
 
 import cats.Id
+
 import effectie.ConcurrentSupport
 
 import hedgehog._
@@ -68,8 +69,9 @@ object EffectConstructorSpec extends Properties {
 
     def testUnitOf: Result = {
       val task = EffectConstructor[Task].unitOf
-      val actual = task.runSyncUnsafe()
-      actual ==== ()
+      val expected: Unit = ()
+      val actual: Unit = task.runSyncUnsafe()
+      actual ==== expected
     }
 
   }
@@ -92,12 +94,10 @@ object EffectConstructorSpec extends Properties {
       var actual = before
       val testBefore = actual ==== before
       val future: Future[Unit] = EffectConstructor[Future].effectOf({ actual = after; ()})
-      val testBeforeRun = actual ==== before
-      ConcurrentSupport.futureToValue(future, waitFor)
+      ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
       val testAfterRun = actual ==== after
       Result.all(List(
         testBefore.log("testBefore"),
-        testBeforeRun.log("testBeforeRun"),
         testAfterRun.log("testAfterRun")
       ))
     }
@@ -113,12 +113,10 @@ object EffectConstructorSpec extends Properties {
       var actual = before
       val testBefore = actual ==== before
       val future = EffectConstructor[Future].pureOf({ actual = after; ()})
-      val testBeforeRun = actual ==== after
-      ConcurrentSupport.futureToValue(future, waitFor)
+      ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
       val testAfterRun = actual ==== after
       Result.all(List(
         testBefore.log("testBefore"),
-        testBeforeRun.log("testBeforeRun"),
         testAfterRun.log("testAfterRun")
       ))
     }
@@ -127,8 +125,9 @@ object EffectConstructorSpec extends Properties {
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
       implicit val ec: ExecutionContext = ConcurrentSupport.executionContextExecutor(executorService)
       val future = EffectConstructor[Future].unitOf
-      val actual = ConcurrentSupport.futureToValue(future, waitFor)
-      actual ==== ()
+      val expected: Unit = ()
+      val actual: Unit = ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
+      actual ==== expected
     }
 
   }
@@ -163,8 +162,9 @@ object EffectConstructorSpec extends Properties {
     }
 
     def testUnitOf: Result = {
+      val expected: Unit = ()
       val actual = EffectConstructor[Id].unitOf
-      actual ==== ()
+      actual ==== expected
     }
 
   }
