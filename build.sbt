@@ -37,6 +37,8 @@ lazy val libCatsEffect: ModuleID = "org.typelevel" %% "cats-effect" % "2.1.2"
 lazy val libCatsCore_2_0_0: ModuleID = "org.typelevel" %% "cats-core" % "2.0.0"
 lazy val libCatsEffect_2_0_0: ModuleID = "org.typelevel" %% "cats-effect" % "2.0.0"
 
+lazy val libMonix: ModuleID = "io.monix" %% "monix" % "3.3.0"
+
 val GitHubUsername = "Kevin-Lee"
 val RepoName = "effectie"
 
@@ -159,6 +161,53 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
           case _ =>
             Seq.empty[ModuleID]
         })
+      , unmanagedSourceDirectories in Compile ++= {
+        val sharedSourceDir = baseDirectory.value / "src/main"
+        if (scalaVersion.value.startsWith("3.0"))
+          Seq(
+            sharedSourceDir / "scala-2.12_3.0",
+            sharedSourceDir / "scala-2.13_3.0",
+          )
+        else if (scalaVersion.value.startsWith("2.13"))
+          Seq(
+            sharedSourceDir / "scala-2.12_2.13",
+            sharedSourceDir / "scala-2.12_3.0",
+            sharedSourceDir / "scala-2.13_3.0",
+          )
+        else if (scalaVersion.value.startsWith("2.12"))
+          Seq(
+            sharedSourceDir / "scala-2.12_2.13",
+            sharedSourceDir / "scala-2.12_3.0",
+            sharedSourceDir / "scala-2.11_2.12",
+          )
+        else if (scalaVersion.value.startsWith("2.11"))
+          Seq(sharedSourceDir / "scala-2.11_2.12")
+        else
+          Seq.empty
+      }
+      , unmanagedSourceDirectories in Test ++= {
+        val sharedSourceDir = baseDirectory.value / "src/test"
+        if (scalaVersion.value.startsWith("3.0"))
+          Seq(
+            sharedSourceDir / "scala-2.12_3.0",
+            sharedSourceDir / "scala-2.13_3.0",
+          )
+        else if (scalaVersion.value.startsWith("2.13"))
+          Seq(
+            sharedSourceDir / "scala-2.12_2.13",
+            sharedSourceDir / "scala-2.13_3.0",
+          )
+        else if (scalaVersion.value.startsWith("2.12"))
+          Seq(
+            sharedSourceDir / "scala-2.12_2.13",
+            sharedSourceDir / "scala-2.12_3.0",
+            sharedSourceDir / "scala-2.11_2.12",
+          )
+        else if (scalaVersion.value.startsWith("2.11"))
+          Seq(sharedSourceDir / "scala-2.11_2.12")
+        else
+          Seq.empty
+      }
       , sourceGenerators in Test +=
         (scalaBinaryVersion.value match {
           case "2.10" =>
@@ -208,53 +257,6 @@ lazy val effectie = (project in file("."))
 lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
   .settings(
       description  := "Effect Utils - Core"
-    , unmanagedSourceDirectories in Compile ++= {
-        val sharedSourceDir = baseDirectory.value / "src/main"
-        if (scalaVersion.value.startsWith("3.0"))
-          Seq(
-            sharedSourceDir / "scala-2.12_3.0",
-            sharedSourceDir / "scala-2.13_3.0",
-          )
-        else if (scalaVersion.value.startsWith("2.13"))
-          Seq(
-            sharedSourceDir / "scala-2.12_2.13",
-            sharedSourceDir / "scala-2.12_3.0",
-            sharedSourceDir / "scala-2.13_3.0",
-          )
-        else if (scalaVersion.value.startsWith("2.12"))
-          Seq(
-            sharedSourceDir / "scala-2.12_2.13",
-            sharedSourceDir / "scala-2.12_3.0",
-            sharedSourceDir / "scala-2.11_2.12",
-          )
-        else if (scalaVersion.value.startsWith("2.11"))
-          Seq(sharedSourceDir / "scala-2.11_2.12")
-        else
-          Seq.empty
-      }
-    , unmanagedSourceDirectories in Test ++= {
-        val sharedSourceDir = baseDirectory.value / "src/test"
-        if (scalaVersion.value.startsWith("3.0"))
-          Seq(
-            sharedSourceDir / "scala-2.12_3.0",
-            sharedSourceDir / "scala-2.13_3.0",
-          )
-        else if (scalaVersion.value.startsWith("2.13"))
-          Seq(
-            sharedSourceDir / "scala-2.12_2.13",
-            sharedSourceDir / "scala-2.13_3.0",
-          )
-        else if (scalaVersion.value.startsWith("2.12"))
-          Seq(
-            sharedSourceDir / "scala-2.12_2.13",
-            sharedSourceDir / "scala-2.12_3.0",
-            sharedSourceDir / "scala-2.11_2.12",
-          )
-        else if (scalaVersion.value.startsWith("2.11"))
-          Seq(sharedSourceDir / "scala-2.11_2.12")
-        else
-          Seq.empty
-      }
     , libraryDependencies :=
       crossVersionProps(
           Seq.empty
@@ -290,6 +292,26 @@ lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effe
     , libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, isDotty.value, libraryDependencies.value)
     , initialCommands in console :=
       """import effectie.cats._"""
+
+  )
+  .dependsOn(core % IncludeTest)
+
+lazy val monixEffect = projectCommonSettings("monix", ProjectName("monix"), file(s"$RepoName-monix"))
+  .settings(
+      description  := "Effect Utils - Monix"
+    , libraryDependencies :=
+      crossVersionProps(
+          List.empty
+        , SemVer.parseUnsafe(scalaVersion.value)
+      ) {
+          case (Major(2), Minor(10)) =>
+            libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover")
+          case x =>
+            libraryDependencies.value ++ Seq(libMonix)
+        }
+    , libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, isDotty.value, libraryDependencies.value)
+    , initialCommands in console :=
+      """import effectie.monix._"""
 
   )
   .dependsOn(core % IncludeTest)
