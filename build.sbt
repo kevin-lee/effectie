@@ -252,7 +252,7 @@ lazy val effectie = (project in file("."))
   /* } GitHub Release */
   )
   .settings(noPublish)
-  .aggregate(core, catsEffect, scalazEffect)
+  .aggregate(core, catsEffect, scalazEffect, monix)
 
 lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
   .settings(
@@ -296,7 +296,7 @@ lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effe
   )
   .dependsOn(core % IncludeTest)
 
-lazy val monixEffect = projectCommonSettings("monix", ProjectName("monix"), file(s"$RepoName-monix"))
+lazy val monix = projectCommonSettings("monix", ProjectName("monix"), file(s"$RepoName-monix"))
   .settings(
       description  := "Effect Utils - Monix"
     , libraryDependencies :=
@@ -368,4 +368,4 @@ lazy val docs = (project in file("generated-docs"))
     , gitHubPagesRepoName := RepoName
   )
   .settings(noPublish)
-  .dependsOn(core, catsEffect, scalazEffect)
+  .dependsOn(core, catsEffect, scalazEffect, monix)

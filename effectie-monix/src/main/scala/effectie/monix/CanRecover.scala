@@ -24,11 +24,7 @@ object CanRecover {
     override def recoverFromNonFatalWith[A, AA >: A](
       fa: => Task[A]
     )(handleError: PartialFunction[Throwable, Task[AA]]): Task[AA] =
-      fa.onErrorRecoverWith(
-        err =>
-          handleError
-            .applyOrElse(err, ApplicativeError[Task, Throwable].raiseError[AA])
-      )
+      fa.onErrorRecoverWith(handleError)
 
     override def recoverEitherTFromNonFatalWith[A, AA >: A, B, BB >: B](
       efab: => EitherT[Task, A, B]
