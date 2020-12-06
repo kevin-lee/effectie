@@ -236,7 +236,7 @@ object CanCatchSpec extends Properties {
     def testCanCatch_Future_catchNonFatalShouldCatchNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext = ConcurrentSupport.executionContextExecutor(executorService)
+      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Int](throwThrowable[Int](expectedExpcetion))
@@ -252,7 +252,7 @@ object CanCatchSpec extends Properties {
     def testCanCatch_Future_catchNonFatalShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext = ConcurrentSupport.executionContextExecutor(executorService)
+      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
 
       val fa = run[Future, Int](1)
       val expected = 1.asRight[SomeError]
@@ -268,7 +268,7 @@ object CanCatchSpec extends Properties {
     def testCanCatch_Future_catchNonFatalEitherShouldCatchNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext = ConcurrentSupport.executionContextExecutor(executorService)
+      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -284,7 +284,7 @@ object CanCatchSpec extends Properties {
     def testCanCatch_Future_catchNonFatalEitherShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext = ConcurrentSupport.executionContextExecutor(executorService)
+      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
 
       val fa = run[Future, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
@@ -296,7 +296,7 @@ object CanCatchSpec extends Properties {
     def testCanCatch_Future_catchNonFatalEitherShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext = ConcurrentSupport.executionContextExecutor(executorService)
+      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
 
       val expectedFailure = SomeError.message("Failed")
       val fa = run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int])
@@ -310,7 +310,7 @@ object CanCatchSpec extends Properties {
     def testCanCatch_Future_catchNonFatalEitherTShouldCatchNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext = ConcurrentSupport.executionContextExecutor(executorService)
+      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
@@ -323,7 +323,7 @@ object CanCatchSpec extends Properties {
     def testCanCatch_Future_catchNonFatalEitherTShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext = ConcurrentSupport.executionContextExecutor(executorService)
+      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
 
       val fa = EitherT(run[Future, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected = 1.asRight[SomeError]
@@ -335,7 +335,7 @@ object CanCatchSpec extends Properties {
     def testCanCatch_Future_catchNonFatalEitherTShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext = ConcurrentSupport.executionContextExecutor(executorService)
+      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
 
       val expectedFailure = SomeError.message("Failed")
       val fa = EitherT(run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int]))

@@ -16,10 +16,10 @@ trait ConcurrentSupport {
   def newExecutorService(): ExecutorService =
     Executors.newFixedThreadPool(math.max(1, Runtime.getRuntime.availableProcessors() >> 1))
 
-  def executionContextExecutor(executorService: ExecutorService): ExecutionContext =
-    newExecutionContext(executorService, println(_))
+  def newExecutionContext(executorService: ExecutorService): ExecutionContext =
+    newExecutionContextWithLogger(executorService, println(_))
 
-  def newExecutionContext(executorService: ExecutorService, logger: String => Unit): ExecutionContext =
+  def newExecutionContextWithLogger(executorService: ExecutorService, logger: String => Unit): ExecutionContext =
     scala.concurrent.ExecutionContext.fromExecutor(
       executorService,
       { th =>

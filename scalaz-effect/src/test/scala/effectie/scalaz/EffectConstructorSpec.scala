@@ -88,7 +88,7 @@ object EffectConstructorSpec extends Properties {
       after <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext = ConcurrentSupport.executionContextExecutor(executorService)
+      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual = before
@@ -107,7 +107,7 @@ object EffectConstructorSpec extends Properties {
       after <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext = ConcurrentSupport.executionContextExecutor(executorService)
+      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual = before
@@ -123,7 +123,7 @@ object EffectConstructorSpec extends Properties {
 
     def testUnitOf: Result = {
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext = ConcurrentSupport.executionContextExecutor(executorService)
+      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
       val future = EffectConstructor[Future].unitOf
       val expected: Unit = ()
       val actual: Unit = ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
