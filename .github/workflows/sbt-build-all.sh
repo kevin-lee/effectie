@@ -17,7 +17,7 @@ else
   echo ""
   echo "mkdir -p dotty-docs"
   mkdir -p dotty-docs
-  export SOURCE_DATE_EPOCH=$(($(date +%s%N)/1000000))
+  export SOURCE_DATE_EPOCH=$(date +%s)
   echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH"
 
   if [[ "$CURRENT_BRANCH_NAME" == "main" || "$CURRENT_BRANCH_NAME" == "release" ]]
