@@ -3,7 +3,7 @@ import kevinlee.sbt.SbtCommon.crossVersionProps
 import just.semver.SemVer
 import SemVer.{Major, Minor}
 
-val DottyVersion = "3.0.0-M2"
+val DottyVersion = "3.0.0-M3"
 val ProjectScalaVersion = "2.13.3"
 
 val removeDottyIncompatible: ModuleID => Boolean =
@@ -18,7 +18,7 @@ val CrossScalaVersions: Seq[String] = Seq(
 ).distinct
 val IncludeTest: String = "compile->compile;test->test"
 
-lazy val hedgehogVersion = "0.5.1"
+lazy val hedgehogVersion = "f6139169375836149f2e3bfeef85c350c92bd01f"
 lazy val hedgehogRepo: MavenRepository =
   "bintray-scala-hedgehog" at "https://dl.bintray.com/hedgehogqa/scala-hedgehog"
 
