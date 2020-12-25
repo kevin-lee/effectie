@@ -18,7 +18,7 @@ val CrossScalaVersions: Seq[String] = Seq(
 ).distinct
 val IncludeTest: String = "compile->compile;test->test"
 
-lazy val hedgehogVersion = "f6139169375836149f2e3bfeef85c350c92bd01f"
+lazy val hedgehogVersion = "0.6.1"
 lazy val hedgehogRepo: MavenRepository =
   "bintray-scala-hedgehog" at "https://dl.bintray.com/hedgehogqa/scala-hedgehog"
 
