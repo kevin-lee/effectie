@@ -1,4 +1,4 @@
-name: Publish GitHub Pages
+name: Manual-Publish-GitHub-Pages
 
 on:
   workflow_dispatch:
