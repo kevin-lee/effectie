@@ -54,7 +54,6 @@ jobs:
             ${{ runner.os }}-ivy-scala-${{ matrix.scala.binary-version }}-
 
       - name: "Build All for ${{ matrix.scala.name }} ${{ matrix.scala.version }} - ${{ github.run_number }}"
-        if: github.event_name == 'push'
         env:
           CURRENT_BRANCH_NAME: ${{ github.ref }}
           RUN_ID: ${{ github.run_id }}
