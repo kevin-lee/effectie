@@ -1,0 +1,70 @@
+name: Build-All
+
+on:
+  workflow_dispatch:
+    inputs:
+      java-version:
+        description: 'Java Version'
+        required: true
+        default: '11'
+      scala-version:
+        description: 'Scala Version'
+        required: true
+        default: '2.13.3'
+      scala-binary-version:
+        description: 'Scala Binary Version'
+        required: true
+        default: '2.13'
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        scala:
+          - {
+              name: "Scala",
+              version: "${{ github.event.inputs.scala-version }}",
+              binary-version: "${{ github.event.inputs.scala-binary-version }}",
+              java-version: "${{ github.event.inputs.java-version }}"
+            }
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.scala.java-version }}
+
+      - name: Cache Coursier
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/coursier
+          key: ${{ runner.os }}-coursier-scala-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-coursier-scala-${{ matrix.scala.binary-version }}-
+
+      - name: Cache Ivy
+        uses: actions/cache@v1
+        with:
+          path: ~/.ivy2/cache
+          key: ${{ runner.os }}-ivy-scala-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-ivy-scala-${{ matrix.scala.binary-version }}-
+
+      - name: "Build All for ${{ matrix.scala.name }} ${{ matrix.scala.version }} - ${{ github.run_number }}"
+        if: github.event_name == 'push'
+        env:
+          CURRENT_BRANCH_NAME: ${{ github.ref }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          echo "[BEFORE]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
+          export CURRENT_BRANCH_NAME="${CURRENT_BRANCH_NAME#refs/heads/}"
+          echo " [AFTER]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
+          echo "RUN_ID=${RUN_ID}"
+          echo "RUN_NUMBER=${RUN_NUMBER}"
+          echo "Push #${PUSH_NUMBER}"
+          java -version
+          .github/workflows/sbt-build-all.sh ${{ matrix.scala.version }}
