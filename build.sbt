@@ -86,15 +86,7 @@ def scalacOptionsPostProcess(scalaSemVer: SemVer, isDotty: Boolean, options: Seq
       "-siteroot", "./dotty-docs",
     )
   } else {
-    scalaSemVer match {
-      case SemVer(SemVer.Major(2), SemVer.Minor(13), SemVer.Patch(patch), _, _) =>
-        if (patch >= 3)
-          options.filterNot(_ == "-Xlint:nullary-override")
-        else
-          options
-      case _: SemVer =>
-        options
-    }
+    options
   }
 
 def libraryDependenciesPostProcess(
@@ -239,13 +231,12 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
     )
 
 lazy val effectie = (project in file("."))
-  .enablePlugins(DevOopsGitReleasePlugin)
+  .enablePlugins(DevOopsGitHubReleasePlugin)
   .settings(
     name := prefixedProjectName("")
   , description := "Effect Utils"
   , libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, isDotty.value, libraryDependencies.value)
   /* GitHub Release { */
-  , gitTagFrom := "main"
   , devOopsPackagedArtifacts := List(
       s"*/target/scala-*/${name.value}*.jar"
     )
@@ -262,7 +253,7 @@ lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
           Seq.empty
         , SemVer.parseUnsafe(scalaVersion.value)
       ) {
-          case (Major(2), Minor(10)) =>
+          case (Major(2), Minor(10), _) =>
             libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover")
           case x =>
             libraryDependencies.value
@@ -281,10 +272,10 @@ lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effe
           List.empty
         , SemVer.parseUnsafe(scalaVersion.value)
       ) {
-          case (Major(2), Minor(10)) =>
+          case (Major(2), Minor(10), _) =>
             libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover") ++
               Seq(libCatsCore_2_0_0, libCatsEffect_2_0_0)
-          case (Major(2), Minor(11)) =>
+          case (Major(2), Minor(11), _) =>
             libraryDependencies.value ++ Seq(libCatsCore_2_0_0, libCatsEffect_2_0_0)
           case x =>
             libraryDependencies.value ++ Seq(libCatsCore, libCatsEffect)
@@ -304,7 +295,7 @@ lazy val monix = projectCommonSettings("monix", ProjectName("monix"), file(s"$Re
           List.empty
         , SemVer.parseUnsafe(scalaVersion.value)
       ) {
-          case (Major(2), Minor(10)) =>
+          case (Major(2), Minor(10), _) =>
             libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover")
           case x =>
             libraryDependencies.value ++ Seq(libMonix)
@@ -324,7 +315,7 @@ lazy val scalazEffect = projectCommonSettings("scalazEffect", ProjectName("scala
           List.empty
         , SemVer.parseUnsafe(scalaVersion.value)
       ) {
-          case (Major(2), Minor(10)) =>
+          case (Major(2), Minor(10), _) =>
             libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover") ++
               Seq(libScalazCore, libScalazEffect)
           case x =>
