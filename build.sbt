@@ -3,7 +3,7 @@ import kevinlee.sbt.SbtCommon.crossVersionProps
 import just.semver.SemVer
 import SemVer.{Major, Minor}
 
-val DottyVersion = "3.0.0-M3"
+val DottyVersion = "3.0.0-RC1"
 val ProjectScalaVersion = "2.13.3"
 
 val removeDottyIncompatible: ModuleID => Boolean =
@@ -14,9 +14,18 @@ val removeDottyIncompatible: ModuleID => Boolean =
       m.name == "mdoc"
 
 val CrossScalaVersions: Seq[String] = Seq(
-  "2.11.12", "2.12.12", "2.13.3", DottyVersion
+  "2.11.12", "2.12.12", ProjectScalaVersion, DottyVersion
 ).distinct
 val IncludeTest: String = "compile->compile;test->test"
+
+lazy val scala3cLanguageOptions = "-language:" + List(
+  "dynamics",
+  "existentials",
+  "higherKinds",
+  "reflectiveCalls",
+  "experimental.macros",
+  "implicitConversions"
+).mkString(",")
 
 lazy val hedgehogVersion = "0.6.1"
 lazy val hedgehogRepo: MavenRepository =
@@ -74,14 +83,7 @@ def scalacOptionsPostProcess(scalaSemVer: SemVer, isDotty: Boolean, options: Seq
   if (isDotty || (scalaSemVer.major, scalaSemVer.minor) == (SemVer.Major(3), SemVer.Minor(0))) {
     Seq(
       "-source:3.0-migration",
-      "-language:" + List(
-          "dynamics",
-          "existentials",
-          "higherKinds",
-          "reflectiveCalls",
-          "experimental.macros",
-          "implicitConversions"
-        ).mkString(","),
+      scala3cLanguageOptions,
       "-Ykind-projector",
       "-siteroot", "./dotty-docs",
     )
@@ -106,7 +108,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
   Project(id, file)
     .settings(
         name := prefixedProjectName(projectName.projectName)
-      , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.0" cross CrossVersion.full)
+      , addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.3" cross CrossVersion.full)
       , addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 
       , scalacOptions := scalacOptionsPostProcess(
@@ -114,6 +116,27 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
           isDotty.value,
           scalacOptions.value
         )
+      , Compile / doc / scalacOptions := ((Compile / doc / scalacOptions).value.filterNot(
+          if (isDotty.value) {
+            Set(
+              "-source:3.0-migration",
+              "-scalajs",
+              "-deprecation",
+              "-explain-types",
+              "-explain",
+              "-feature",
+              scala3cLanguageOptions,
+              "-unchecked",
+              "-Xfatal-warnings",
+              "-Ykind-projector",
+              "-from-tasty",
+              "-encoding",
+              "utf8",
+            )
+          } else {
+            Set.empty[String]
+          }
+        ))
       , resolvers ++= Seq(
           Resolver.sonatypeRepo("releases")
         , hedgehogRepo
@@ -149,7 +172,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
           case "2.11" =>
             Seq("com.lihaoyi" % "ammonite" % "1.6.7" % Test cross CrossVersion.full)
           case "2.12" | "2.13" =>
-            Seq("com.lihaoyi" % "ammonite" % "2.2.0" % Test cross CrossVersion.full)
+            Seq("com.lihaoyi" % "ammonite" % "2.3.8-36-1cce53f3" % Test cross CrossVersion.full)
           case _ =>
             Seq.empty[ModuleID]
         })
