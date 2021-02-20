@@ -13,10 +13,6 @@ on:
       scala-binary-version:
         description: 'Scala Binary Version (e.g. 2.13) - Make sure it matches with Scala Version above'
         required: true
-      sbt_actions:
-        description: 'sbt actions to perform. If not sure, put `gitHubRelease`'
-        required: true
-
 
 jobs:
   github-release:
@@ -37,7 +33,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v1
         with:
-          java-version: "11"
+          java-version: ${{ matrix.scala.java-version }}
 
       - name: Cache SBT
         uses: actions/cache@v2
@@ -55,14 +51,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.RELEASE_AUTH_TOKEN_GITHUB }}
         run: |
           echo "Run] sbt GitHub release"
-          echo "mkdir -p dotty-docs"
-          mkdir -p dotty-docs
-          export SOURCE_DATE_EPOCH=$(date +%s)
-          echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH"
-          echo 'sbt -J-Xmx2048m clean +test +packagedArtifacts gitHubRelease'
+          echo 'sbt -J-Xmx2048m devOopsGitHubRelease'
           sbt \
             -J-Xmx2048m \
-            clean \
-            +test \
-            +packagedArtifacts \
-            ${{ github.event.inputs.sbt_actions }}
+            devOopsGitHubRelease

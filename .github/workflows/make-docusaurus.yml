@@ -9,7 +9,7 @@ on:
       - publish-docs
 
 jobs:
-  build:
+  build-docusaurus:
 
     runs-on: ubuntu-latest
 
@@ -40,7 +40,7 @@ jobs:
             ${{ runner.os }}-sbt-${{ matrix.scala.binary-version }}-
 
       - name: Cache npm
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}

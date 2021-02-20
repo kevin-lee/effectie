@@ -17,7 +17,7 @@ on:
 
 jobs:
 
-  publish:
+  github-release-artifacts-and-publish:
 
     runs-on: ubuntu-latest
 
@@ -50,6 +50,7 @@ jobs:
 
       - name: "sbt Publish for ${{ matrix.scala.name }} ${{ matrix.scala.version }} - ${{ github.run_number }}"
         env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_AUTH_TOKEN_GITHUB }}
           BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
           BINTRAY_PASS: ${{ secrets.BINTRAY_PASS }}
         run: |
@@ -58,10 +59,13 @@ jobs:
           mkdir -p dotty-docs
           export SOURCE_DATE_EPOCH=$(date +%s)
           echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH"
-          echo 'sbt -J-Xmx2048m ++${{ matrix.scala.version }}! -v clean publish'
+          echo 'sbt -J-Xmx2048m ++${{ matrix.scala.version }}! -v clean test packagedArtifacts devOopsGitHubReleaseUploadArtifacts publish'
           sbt \
             -J-Xmx2048m \
             ++${{ matrix.scala.version }}! \
             -v \
             clean \
+            test \
+            packagedArtifacts \
+            devOopsGitHubReleaseUploadArtifacts \
             publish
