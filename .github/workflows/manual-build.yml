@@ -10,7 +10,7 @@ on:
       scala-version:
         description: 'Scala Version'
         required: true
-        default: '2.13.3'
+        default: '2.13.4'
       scala-binary-version:
         description: 'Scala Binary Version - Make sure it matches with Scala Version above'
         required: true
