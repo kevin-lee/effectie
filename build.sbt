@@ -4,7 +4,7 @@ import just.semver.SemVer
 import SemVer.{Major, Minor}
 
 val DottyVersion = "3.0.0-RC1"
-val ProjectScalaVersion = "2.13.3"
+val ProjectScalaVersion = "2.13.4"
 
 val removeDottyIncompatible: ModuleID => Boolean =
   m =>
