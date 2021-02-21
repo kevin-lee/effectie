@@ -1,4 +1,4 @@
-name: Manual-Publish
+name: "[Manual] Publish"
 
 on:
   workflow_dispatch:
@@ -50,7 +50,6 @@ jobs:
 
       - name: "sbt Publish for ${{ matrix.scala.name }} ${{ matrix.scala.version }} - ${{ github.run_number }}"
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_AUTH_TOKEN_GITHUB }}
           BINTRAY_USER: ${{ secrets.BINTRAY_USER }}
           BINTRAY_PASS: ${{ secrets.BINTRAY_PASS }}
         run: |
@@ -67,5 +66,4 @@ jobs:
             clean \
             test \
             packagedArtifacts \
-            devOopsGitHubReleaseUploadArtifacts \
             publish

@@ -1,4 +1,4 @@
-name: Manual-Publish-GitHub-Pages
+name: "Doc Site Publish"
 
 on:
   workflow_dispatch:
