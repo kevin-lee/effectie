@@ -1,4 +1,4 @@
-name: Build Docusaurus
+name: "Doc Site Build Only"
 
 on:
   push:
