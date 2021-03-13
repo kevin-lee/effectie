@@ -18,10 +18,10 @@ jobs:
     strategy:
       matrix:
         scala:
-          - { name: "Scala 2", version: "2.11.12", binary-version: "2.11", java-version: "8" }
-          - { name: "Scala 2", version: "2.12.12", binary-version: "2.12", java-version: "11" }
-          - { name: "Scala 2", version: "2.13.4",  binary-version: "2.13", java-version: "11" }
-          - { name: "Scala 3", version: "3.0.0-RC1",  binary-version: "3.0.0-RC1", java-version: "11" }
+          - { name: "Scala 2", version: "2.11.12",   binary-version: "2.11",      java-version: "8"  }
+          - { name: "Scala 2", version: "2.12.12",   binary-version: "2.12",      java-version: "11" }
+          - { name: "Scala 2", version: "2.13.4",    binary-version: "2.13",      java-version: "11" }
+          - { name: "Scala 3", version: "3.0.0-RC1", binary-version: "3.0.0-RC1", java-version: "11" }
 
     steps:
       - uses: actions/checkout@v2
@@ -69,4 +69,4 @@ jobs:
           echo "RUN_NUMBER=${RUN_NUMBER}"
           echo "PR #${PR_NUMBER}"
           java -version
-          .github/workflows/sbt-build-all.sh ${{ matrix.scala.version }}
+          .github/workflows/sbt-build-all.sh ${{ matrix.scala.version }} ${{ matrix.scala.report }}
