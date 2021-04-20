@@ -33,6 +33,9 @@ local.properties
 
 # sbt
 .bsp/
+.bloop/
+.metals/
+.vscode/
 /dotty-docs/
 
 # sbteclipse plugin

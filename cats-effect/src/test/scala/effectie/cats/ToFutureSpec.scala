@@ -43,17 +43,16 @@ object ToFutureSpec extends Properties {
       implicit val es: ExecutorService = ConcurrentSupport.newExecutorService()
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
       implicit val ec = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
-      ConcurrentSupport.runAndShutdown(es, 300.milliseconds) {
-        val expected = Future(a)
+      ConcurrentSupport.runAndShutdown(es, 800.milliseconds) {
         val future = ToFuture[IO].unsafeToFuture(fa)
-        val actual = ConcurrentSupport.futureToValueAndTerminate(future, 300.milliseconds)
+        val expected = a
+        val actual = ConcurrentSupport.futureToValueAndTerminate(future, 500.milliseconds)
 
         Result.all(
           List(
             Result.assert(future.isInstanceOf[Future[Int]])
               .log(s"future is not an instance of Future[Int]. future.getClass: ${future.getClass.toString}"),
-            actual ==== ConcurrentSupport.futureToValueAndTerminate(expected, 300.milliseconds),
-            actual ==== a
+            actual ==== expected
           )
         )
       }

@@ -2,9 +2,8 @@ package effectie.cats
 
 import cats.Id
 import cats.effect._
-
 import effectie.ConcurrentSupport
-
+import effectie.cats.compat.CatsEffectIoCompat
 import hedgehog._
 import hedgehog.runner._
 
@@ -27,7 +26,7 @@ object EffectConstructorSpec extends Properties {
     example("test EffectConstructor[Id].unitOf", IdSpec.testUnitOf)
   )
 
-  object IoSpec {
+  object IoSpec extends CatsEffectIoCompat {
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
