@@ -5,10 +5,9 @@ import cats.data.EitherT
 import cats.effect._
 import cats.instances.all._
 import cats.syntax.all._
-
 import effectie.cats.Effectful._
+import effectie.cats.compat.CatsEffectIoCompat
 import effectie.{ConcurrentSupport, SomeControlThrowable}
-
 import hedgehog._
 import hedgehog.runner._
 
@@ -85,7 +84,7 @@ object CanCatchSpec extends Properties {
 
   }
 
-  object IoSpec {
+  object IoSpec extends CatsEffectIoCompat {
 
     def testCanCatch_IO_catchNonFatalShouldCatchNonFatal: Result = {
 
@@ -107,8 +106,8 @@ object CanCatchSpec extends Properties {
         val actual = CanCatch[IO].catchNonFatal(fa)(SomeError.someThrowable).unsafeRunSync()
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
-        case ex: ControlThrowable =>
-          ex ==== fatalExpcetion
+        case ex: SomeControlThrowable =>
+          ex.getMessage ==== fatalExpcetion.getMessage
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -146,8 +145,8 @@ object CanCatchSpec extends Properties {
         val actual = CanCatch[IO].catchNonFatalEither(fa)(SomeError.someThrowable).unsafeRunSync()
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
-        case ex: ControlThrowable =>
-          ex ==== fatalExpcetion
+        case ex: SomeControlThrowable =>
+          ex.getMessage ==== fatalExpcetion.getMessage
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -195,8 +194,8 @@ object CanCatchSpec extends Properties {
         val actual = CanCatch[IO].catchNonFatalEitherT(fa)(SomeError.someThrowable).value.unsafeRunSync()
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
-        case ex: ControlThrowable =>
-          ex ==== fatalExpcetion
+        case ex: SomeControlThrowable =>
+          ex.getMessage ==== fatalExpcetion.getMessage
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")

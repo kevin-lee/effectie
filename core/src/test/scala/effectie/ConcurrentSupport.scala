@@ -14,7 +14,7 @@ import scala.util.control.NonFatal
  */
 trait ConcurrentSupport {
   def newExecutorService(): ExecutorService =
-    Executors.newFixedThreadPool(math.max(1, Runtime.getRuntime.availableProcessors() >> 1))
+    Executors.newFixedThreadPool(math.max(2, Runtime.getRuntime.availableProcessors() >> 1))
 
   def newExecutionContext(executorService: ExecutorService): ExecutionContext =
     newExecutionContextWithLogger(executorService, println(_))
@@ -26,7 +26,7 @@ trait ConcurrentSupport {
         val stringWriter = new StringWriter()
         val printWriter = new PrintWriter(stringWriter)
         th.printStackTrace(printWriter)
-        logger(s"Error in Executor: ${stringWriter.toString}")
+        logger(s"⚠️ Error in Executor: ${stringWriter.toString}")
       }
     )
 
@@ -52,7 +52,7 @@ trait ConcurrentSupport {
       case ex: TimeoutException =>
         @SuppressWarnings(Array("org.wartremover.warts.ToString"))
         val message = ex.toString
-        println(s"ex: $message")
+        println(s"TimeoutException ⚠️: $message")
         throw ex
     }
 

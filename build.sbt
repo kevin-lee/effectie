@@ -9,8 +9,15 @@ ThisBuild / organization       := "io.kevinlee"
 ThisBuild / organizationName   := "Kevin's Code"
 ThisBuild / crossScalaVersions := props.CrossScalaVersions
 
+ThisBuild / testFrameworks ~=
+  (frameworks => (TestFramework("hedgehog.sbt.Framework") +: frameworks).distinct)
+
 ThisBuild / developers := List(
-    Developer(props.GitHubUsername, "Kevin Lee", "kevin.code@kevinlee.io", url(s"https://github.com/${props.GitHubUsername}"))
+    Developer(
+      props.GitHubUsername,
+      "Kevin Lee", "kevin.code@kevinlee.io",
+      url(s"https://github.com/${props.GitHubUsername}"),
+    )
   )
 
 ThisBuild / homepage := Some(url(s"https://github.com/${props.GitHubUsername}/${props.RepoName}"))
@@ -26,7 +33,7 @@ lazy val effectie = (project in file("."))
     name := prefixedProjectName(""),
     description := "Effect Utils",
     libraryDependencies :=
-      libraryDependenciesPostProcess(scalaVersion.value, isDotty.value, libraryDependencies.value),
+      libraryDependenciesPostProcess(isDotty.value, libraryDependencies.value),
   /* GitHub Release { */
     devOopsPackagedArtifacts := List(
       s"*/target/scala-*/${name.value}*.jar",
@@ -50,8 +57,8 @@ lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
             libraryDependencies.value
         },
     libraryDependencies :=
-      libraryDependenciesPostProcess(scalaVersion.value, isDotty.value, libraryDependencies.value),
-    initialCommands in console :=
+      libraryDependenciesPostProcess(isDotty.value, libraryDependencies.value),
+    console / initialCommands :=
       """import effectie._""",
 
   )
@@ -69,11 +76,15 @@ lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effe
               Seq(libs.libCatsCore_2_0_0, libs.libCatsEffect_2_0_0)
           case (Major(2), Minor(11), _) =>
             libraryDependencies.value ++ Seq(libs.libCatsCore_2_0_0, libs.libCatsEffect_2_0_0)
+          case (Major(3), Minor(0), _) =>
+            libraryDependencies.value ++ Seq(libs.libCatsCore, libs.libCatsEffect)
+            // libraryDependencies.value ++ Seq(libs.libCatsCore, libs.libCatsEffect3)
+//              .map(_.withDottyCompat(scalaVersion.value))
           case x =>
             libraryDependencies.value ++ Seq(libs.libCatsCore, libs.libCatsEffect)
         },
-    libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, isDotty.value, libraryDependencies.value),
-    initialCommands in console :=
+    libraryDependencies := libraryDependenciesPostProcess(isDotty.value, libraryDependencies.value),
+    console / initialCommands :=
       """import effectie.cats._""",
 
   )
@@ -90,10 +101,10 @@ lazy val monix = projectCommonSettings("monix", ProjectName("monix"), file(s"${p
           case (Major(2), Minor(10), _) =>
             libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover")
           case x =>
-            libraryDependencies.value ++ Seq(libs.libMonix)
+            libraryDependencies.value ++ Seq(libs.libMonix).map(_.withDottyCompat(scalaVersion.value))
         },
-    libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, isDotty.value, libraryDependencies.value),
-    initialCommands in console :=
+    libraryDependencies := libraryDependenciesPostProcess(isDotty.value, libraryDependencies.value),
+    console / initialCommands :=
       """import effectie.monix._""",
 
   )
@@ -111,10 +122,11 @@ lazy val scalazEffect = projectCommonSettings("scalazEffect", ProjectName("scala
             libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover") ++
               Seq(libs.libScalazCore, libs.libScalazEffect)
           case x =>
-            libraryDependencies.value ++ Seq(libs.libScalazCore, libs.libScalazEffect)
+            libraryDependencies.value ++
+              (Seq(libs.libScalazCore, libs.libScalazEffect).map(_.withDottyCompat(scalaVersion.value)))
         },
-    libraryDependencies := libraryDependenciesPostProcess(scalaVersion.value, isDotty.value, libraryDependencies.value),
-    initialCommands in console :=
+    libraryDependencies := libraryDependenciesPostProcess(isDotty.value, libraryDependencies.value),
+    console / initialCommands :=
       """import effectie.scalaz._""",
 
   )
@@ -131,7 +143,7 @@ lazy val docs = (project in file("generated-docs"))
         scalacOptions.value,
       ),
     libraryDependencies := libraryDependenciesPostProcess(
-        scalaVersion.value, isDotty.value, libraryDependencies.value
+        isDotty.value, libraryDependencies.value
       ),
     mdocVariables := Map(
         "VERSION" -> (ThisBuild / version).value,
@@ -158,8 +170,11 @@ lazy val props = new {
   val GitHubUsername = "Kevin-Lee"
   val RepoName = "effectie"
 
-  val DottyVersion = "3.0.0-RC1"
-  val ProjectScalaVersion = "2.13.4"
+  val DottyVersions = List("3.0.0-RC1", "3.0.0-RC2")
+  val DottyVersion = DottyVersions.last
+
+//    val ProjectScalaVersion = DottyVersion
+  val ProjectScalaVersion = "2.13.5"
 
   val removeDottyIncompatible: ModuleID => Boolean =
     m =>
@@ -169,9 +184,10 @@ lazy val props = new {
         m.name == "better-monadic-for" ||
         m.name == "mdoc"
 
-  val CrossScalaVersions: Seq[String] = Seq(
-    "2.11.12", "2.12.12", ProjectScalaVersion, DottyVersion
-  ).distinct
+  val CrossScalaVersions: Seq[String] = (
+    List(
+      "2.11.12", "2.12.12", "2.13.5", ProjectScalaVersion
+    ) ++ DottyVersions).distinct
   val IncludeTest: String = "compile->compile;test->test"
 
   lazy val scala3cLanguageOptions = "-language:" + List(
@@ -185,8 +201,9 @@ lazy val props = new {
 
   val hedgehogVersion = "0.6.5"
 
-  val catsVersion       = "2.1.1"
-  val catsEffectVersion = "2.1.2"
+  val catsVersion       = "2.5.0"
+  val catsEffectVersion = "2.4.1"
+  val catsEffect3Version = "3.0.2"
 
   val cats2_0_0Version       = "2.0.0"
   val catsEffect2_0_0Version = "2.0.0"
@@ -194,6 +211,7 @@ lazy val props = new {
   val monixVersion = "3.3.0"
 
   val scalazVersion = "7.2.30"
+
 }
 
 lazy val libs = new {
@@ -208,6 +226,7 @@ lazy val libs = new {
 
   lazy val libCatsCore: ModuleID = "org.typelevel" %% "cats-core" % props.catsVersion
   lazy val libCatsEffect: ModuleID = "org.typelevel" %% "cats-effect" % props.catsEffectVersion
+  lazy val libCatsEffect3: ModuleID = "org.typelevel" %% "cats-effect" % props.catsEffect3Version
 
   lazy val libCatsCore_2_0_0: ModuleID = "org.typelevel" %% "cats-core" %props.cats2_0_0Version
   lazy val libCatsEffect_2_0_0: ModuleID = "org.typelevel" %% "cats-effect" % props.catsEffect2_0_0Version
@@ -216,15 +235,6 @@ lazy val libs = new {
 }
 
 def prefixedProjectName(name: String) = s"${props.RepoName}${if (name.isEmpty) "" else s"-$name"}"
-
-lazy val noPublish: SettingsDefinition = Seq(
-  publish := {},
-  publishLocal := {},
-  publishArtifact := false,
-  skip in sbt.Keys.`package` := true,
-  skip in packagedArtifacts := true,
-  skip in publish := true,
-)
 
 def scalacOptionsPostProcess(scalaSemVer: SemVer, isDotty: Boolean, options: Seq[String]): Seq[String] =
   if (isDotty || (scalaSemVer.major, scalaSemVer.minor) == (SemVer.Major(3), SemVer.Minor(0))) {
@@ -239,14 +249,13 @@ def scalacOptionsPostProcess(scalaSemVer: SemVer, isDotty: Boolean, options: Seq
   }
 
 def libraryDependenciesPostProcess(
-  scalaVersion: String,
   isDotty: Boolean,
   libraries: Seq[ModuleID]
 ): Seq[ModuleID] = (
   if (isDotty) {
     libraries
       .filterNot(props.removeDottyIncompatible)
-      .map(_.withDottyCompat(scalaVersion))
+//      .map(_.withDottyCompat(scalaVersion))
   } else
     libraries
   )
@@ -255,9 +264,14 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
   Project(id, file)
     .settings(
       name := prefixedProjectName(projectName.projectName),
-      addCompilerPlugin("org.typelevel" % "kind-projector" % "0.11.3" cross CrossVersion.full),
-      addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1"),
-
+      libraryDependencies ++= (if (isDotty.value || scalaVersion.value.startsWith("3.0")) {
+        List.empty[ModuleID]
+      } else {
+        List(
+          compilerPlugin("org.typelevel" % "kind-projector" % "0.11.3" cross CrossVersion.full),
+          compilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
+        )
+      }),
       scalacOptions := scalacOptionsPostProcess(
         SemVer.parseUnsafe(scalaVersion.value),
         isDotty.value,
@@ -284,11 +298,11 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
           Set.empty[String]
         }
       )),
-      libraryDependencies ++= libs.hedgehogLibs,
+      libraryDependencies ++= libs.hedgehogLibs.map(_.withDottyCompat(scalaVersion.value)),
       /* WartRemover and scalacOptions { */
       //      , wartremoverErrors in (Compile, compile) ++= commonWarts((scalaBinaryVersion in update).value)
       //      , wartremoverErrors in (Test, compile) ++= commonWarts((scalaBinaryVersion in update).value)
-      wartremoverErrors ++= commonWarts((scalaBinaryVersion in update).value),
+      wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
       //      , wartremoverErrors ++= Warts.all
       Compile / console / wartremoverErrors := List.empty,
       Compile / console / wartremoverWarnings := List.empty,
@@ -305,7 +319,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
             option.contains("wartremover") || option.contains("import")
           ),
       /* } WartRemover and scalacOptions */
-      testFrameworks ++= Seq(TestFramework("hedgehog.sbt.Framework")),
+      testFrameworks ++= (testFrameworks.value ++ Seq(TestFramework("hedgehog.sbt.Framework"))).distinct,
 
       /* Ammonite-REPL { */
       libraryDependencies ++=
@@ -315,64 +329,76 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
           case "2.11" =>
             Seq("com.lihaoyi" % "ammonite" % "1.6.7" % Test cross CrossVersion.full)
           case "2.12" | "2.13" =>
-            Seq("com.lihaoyi" % "ammonite" % "2.3.8-36-1cce53f3" % Test cross CrossVersion.full)
+            Seq("com.lihaoyi" % "ammonite" % "2.3.8-58-aa8b2ab1" % Test cross CrossVersion.full)
           case _ =>
             Seq.empty[ModuleID]
         }),
-      unmanagedSourceDirectories in Compile ++= {
-        val sharedSourceDir = baseDirectory.value / "src/main"
-        if (scalaVersion.value.startsWith("3.0"))
+      Compile / unmanagedSourceDirectories ++= {
+        val sharedSourceDir = baseDirectory.value / "src" / "main"
+        if (isDotty.value || scalaVersion.value.startsWith("3.0"))
           Seq(
             sharedSourceDir / "scala-2.12_3.0",
             sharedSourceDir / "scala-2.13_3.0",
+            sharedSourceDir / "scala-3",
           )
         else if (scalaVersion.value.startsWith("2.13"))
           Seq(
             sharedSourceDir / "scala-2.12_2.13",
             sharedSourceDir / "scala-2.12_3.0",
             sharedSourceDir / "scala-2.13_3.0",
+            sharedSourceDir / "scala-2",
           )
         else if (scalaVersion.value.startsWith("2.12"))
           Seq(
             sharedSourceDir / "scala-2.12_2.13",
             sharedSourceDir / "scala-2.12_3.0",
             sharedSourceDir / "scala-2.11_2.12",
+            sharedSourceDir / "scala-2",
           )
         else if (scalaVersion.value.startsWith("2.11"))
-          Seq(sharedSourceDir / "scala-2.11_2.12")
+          Seq(
+            sharedSourceDir / "scala-2.11_2.12",
+            sharedSourceDir / "scala-2",
+          )
         else
           Seq.empty
       },
-      unmanagedSourceDirectories in Test ++= {
-        val sharedSourceDir = baseDirectory.value / "src/test"
-        if (scalaVersion.value.startsWith("3.0"))
+      Test / unmanagedSourceDirectories ++= {
+        val sharedSourceDir = baseDirectory.value / "src" / "test"
+        if (isDotty.value || scalaVersion.value.startsWith("3.0"))
           Seq(
             sharedSourceDir / "scala-2.12_3.0",
             sharedSourceDir / "scala-2.13_3.0",
+            sharedSourceDir / "scala-3",
           )
         else if (scalaVersion.value.startsWith("2.13"))
           Seq(
             sharedSourceDir / "scala-2.12_2.13",
             sharedSourceDir / "scala-2.13_3.0",
+            sharedSourceDir / "scala-2",
           )
         else if (scalaVersion.value.startsWith("2.12"))
           Seq(
             sharedSourceDir / "scala-2.12_2.13",
             sharedSourceDir / "scala-2.12_3.0",
             sharedSourceDir / "scala-2.11_2.12",
+            sharedSourceDir / "scala-2",
           )
         else if (scalaVersion.value.startsWith("2.11"))
-          Seq(sharedSourceDir / "scala-2.11_2.12")
+          Seq(
+            sharedSourceDir / "scala-2.11_2.12",
+            sharedSourceDir / "scala-2",
+          )
         else
           Seq.empty
       },
-      sourceGenerators in Test +=
+      Test / sourceGenerators +=
         (scalaBinaryVersion.value match {
           case "2.10" =>
             task(Seq.empty[File])
           case "2.12" | "2.13" =>
             task {
-              val file = (sourceManaged in Test).value / "amm.scala"
+              val file = (Test / sourceManaged).value / "amm.scala"
               IO.write(file, """object amm extends App { ammonite.Main.main(args) }""")
               Seq(file)
             }

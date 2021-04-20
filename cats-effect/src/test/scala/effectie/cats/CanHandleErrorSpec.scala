@@ -5,10 +5,9 @@ import cats.data.EitherT
 import cats.effect.IO
 import cats.instances.all._
 import cats.syntax.all._
-
 import effectie.cats.Effectful._
+import effectie.cats.compat.CatsEffectIoCompat
 import effectie.{ConcurrentSupport, SomeControlThrowable}
-
 import hedgehog._
 import hedgehog.runner._
 
@@ -126,7 +125,7 @@ object CanHandleErrorSpec extends Properties {
 
   }
 
-  object IoSpec {
+  object IoSpec extends CatsEffectIoCompat {
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
@@ -193,8 +192,8 @@ object CanHandleErrorSpec extends Properties {
         val actual = CanHandleError[IO].handleNonFatalWith(fa)(_  => IO.pure(123.asRight[SomeError])).unsafeRunSync()
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
-        case ex: ControlThrowable =>
-          ex ==== fatalExpcetion
+        case ex: SomeControlThrowable =>
+          ex.getMessage ==== fatalExpcetion.getMessage
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")

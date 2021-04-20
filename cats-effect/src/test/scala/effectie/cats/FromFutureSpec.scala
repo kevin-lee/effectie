@@ -1,15 +1,13 @@
 package effectie.cats
 
 import cats.Id
-import cats.effect.{ContextShift, IO}
-
+import cats.effect._
 import effectie.ConcurrentSupport
-
+import effectie.cats.compat.{CatsEffectIoCompat, CatsEffectIoCompatForFuture}
 import hedgehog._
 import hedgehog.runner._
 
 import java.util.concurrent.ExecutorService
-
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -24,13 +22,12 @@ object FromFutureSpec extends Properties {
     property("test FromFuture[Id].toEffect", IdSpec.testToEffect)
   )
 
-  object IoSpec {
+  object IoSpec extends CatsEffectIoCompat {
     def testToEffect: Property = for {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {
-      val es = ConcurrentSupport.newExecutorService()
-      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
-      implicit val cs: ContextShift[IO] = IO.contextShift(ec)
+      val compat = new CatsEffectIoCompatForFuture
+      import compat._
 
       ConcurrentSupport.runAndShutdown(es, 300.milliseconds) {
         lazy val fa = Future(a)
