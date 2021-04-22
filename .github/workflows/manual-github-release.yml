@@ -1,4 +1,4 @@
-name: "[Manual] GitHub Release"
+name: "[M] GitHub Release"
 
 on:
   workflow_dispatch:
