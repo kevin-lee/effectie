@@ -186,7 +186,7 @@ lazy val props = new {
 
   val CrossScalaVersions: Seq[String] = (
     List(
-      "2.11.12", "2.12.12", "2.13.5", ProjectScalaVersion
+      "2.11.12", "2.12.13", "2.13.5", ProjectScalaVersion
     ) ++ DottyVersions).distinct
   val IncludeTest: String = "compile->compile;test->test"
 

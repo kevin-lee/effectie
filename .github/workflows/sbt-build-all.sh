@@ -17,14 +17,29 @@ else
   echo ""
   echo "mkdir -p dotty-docs"
   mkdir -p dotty-docs
+
+#  test_task="test scalafix"
+  test_task="test"
+  if [ "$2" == "report" ]
+  then
+    # For now it does nothing
+#    test_task="coverage test scalafix coverageReport coverageAggregate coveralls"
+    echo "report build but it does nothing for now."
+  fi
+
+  echo "sbt -J-Xmx2048m ++${scala_version}! -v clean ${test_task}"
+  sbt \
+    -J-Xmx2048m \
+    ++${scala_version}! \
+    -v \
+    clean \
+    ${test_task}
+
   export SOURCE_DATE_EPOCH=$(date +%s)
   echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH"
 
   if [[ "$CURRENT_BRANCH_NAME" == "main" || "$CURRENT_BRANCH_NAME" == "release" ]]
   then
-#    sbt -J-Xmx2048m ++${scala_version}! -v clean; coverage; test; coverageReport; coverageAggregate
-#    sbt -J-Xmx2048m ++${scala_version}! -v coveralls
-#    sbt -J-Xmx2048m ++${scala_version}! -v clean; packagedArtifacts
     sbt \
       -J-Xmx2048m \
       ++${scala_version}! \
@@ -33,8 +48,6 @@ else
       test \
       packagedArtifacts
   else
-#    sbt -J-Xmx2048m ++${scala_version}! -v clean coverage test coverageReport coverageAggregate package
-#    sbt -J-Xmx2048m ++${scala_version}! -v coveralls
     sbt \
       -J-Xmx2048m \
       ++${scala_version}! \
