@@ -28,24 +28,33 @@ trait OptionTSupport {
 
 }
 
+@SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
 object OptionTSupport extends OptionTSupport {
 
-  private[OptionTSupport] final class PartiallyAppliedOptionTOf[F[_]] {
+  private[OptionTSupport] final class PartiallyAppliedOptionTOf[F[_]](
+    private val dummy: Boolean = true
+  ) extends AnyVal {
     def apply[A](a: => Option[A])(implicit EF: EffectConstructor[F]): OptionT[F, A] =
       OptionT(EffectConstructor[F].effectOf(a))
   }
 
-  private[OptionTSupport] final class PartiallyAppliedOptionTOfPure[F[_]] {
+  private[OptionTSupport] final class PartiallyAppliedOptionTOfPure[F[_]](
+    private val dummy: Boolean = true
+  ) extends AnyVal {
     def apply[A](a: Option[A])(implicit EF: EffectConstructor[F]): OptionT[F, A] =
       OptionT(EffectConstructor[F].pureOf(a))
   }
 
-  private[OptionTSupport] final class PartiallyAppliedOptionTSome[F[_]] {
+  private[OptionTSupport] final class PartiallyAppliedOptionTSome[F[_]](
+    private val dummy: Boolean = true
+  ) extends AnyVal {
     def apply[A](a: => A)(implicit EC: EffectConstructor[F], FT: Functor[F]): OptionT[F, A] =
       OptionT.liftF(EC.effectOf(a))
   }
 
-  private[OptionTSupport] final class PartiallyAppliedOptionTSomePure[F[_]] {
+  private[OptionTSupport] final class PartiallyAppliedOptionTSomePure[F[_]](
+    private val dummy: Boolean = true
+  ) extends AnyVal {
     def apply[A](a: A)(implicit EC: EffectConstructor[F], FT: Functor[F]): OptionT[F, A] =
       OptionT.liftF(EC.pureOf(a))
   }

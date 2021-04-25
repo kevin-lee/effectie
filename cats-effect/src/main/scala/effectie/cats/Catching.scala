@@ -2,10 +2,9 @@ package effectie.cats
 
 import cats.data.EitherT
 
-/**
- * @author Kevin Lee
- * @since 2020-06-07
- */
+/** @author Kevin Lee
+  * @since 2020-06-07
+  */
 trait Catching {
 
   import Catching._
@@ -16,13 +15,11 @@ trait Catching {
   final def catchNonFatalF[F[_]]: CurriedCanCatchF1[F] =
     new CurriedCanCatchF1[F]
 
-
   def catchNonFatalEither[F[_]]: CurriedCanCatchEither1[F] =
     new CurriedCanCatchEither1[F]
 
   def catchNonFatalEitherF[F[_]]: CurriedCanCatchEitherF1[F] =
     new CurriedCanCatchEitherF1[F]
-
 
   def catchNonFatalEitherT[F[_]]: CurriedCanCatchEitherT1[F] =
     new CurriedCanCatchEitherT1[F]
@@ -31,9 +28,12 @@ trait Catching {
 //    CanCatch[F].catchNonFatalEitherT(fab)(f)
 }
 
+@SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
 object Catching extends Catching {
 
-  private[Catching] final class CurriedCanCatch1[F[_]] {
+  private[Catching] final class CurriedCanCatch1[F[_]](
+    private val dummy: Boolean = true
+  ) extends AnyVal {
     def apply[B](fb: => F[B]): CurriedCanCatch2[F, B] =
       new CurriedCanCatch2[F, B](() => fb)
   }
@@ -46,7 +46,9 @@ object Catching extends Catching {
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
-  private[Catching] final class CurriedCanCatchF1[F[_]] {
+  private[Catching] final class CurriedCanCatchF1[F[_]](
+    private val dummy: Boolean = true
+  ) extends AnyVal {
     def apply[B](b: => B): CurriedCanCatchF2[F, B] =
       new CurriedCanCatchF2[F, B](() => b)
   }
@@ -58,7 +60,9 @@ object Catching extends Catching {
       CanCatch[F].catchNonFatal(EffectConstructor[F].effectOf(b()))(f)
   }
 
-  private[Catching] final class CurriedCanCatchEither1[F[_]] {
+  private[Catching] final class CurriedCanCatchEither1[F[_]](
+    private val dummy: Boolean = true
+  ) extends AnyVal {
     def apply[A, B](fab: => F[Either[A, B]]): CurriedCanCatchEither2[F, A, B] =
       new CurriedCanCatchEither2[F, A, B](() => fab)
   }
@@ -71,7 +75,9 @@ object Catching extends Catching {
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
-  private[Catching] final class CurriedCanCatchEitherF1[F[_]] {
+  private[Catching] final class CurriedCanCatchEitherF1[F[_]](
+    private val dummy: Boolean = true
+  ) extends AnyVal {
     def apply[A, B](ab: => Either[A, B]): CurriedCanCatchEitherF2[F, A, B] =
       new CurriedCanCatchEitherF2[F, A, B](() => ab)
   }
@@ -83,7 +89,9 @@ object Catching extends Catching {
       CanCatch[F].catchNonFatalEither(EffectConstructor[F].effectOf(ab()))(f)
   }
 
-  private[Catching] final class CurriedCanCatchEitherT1[F[_]] {
+  private[Catching] final class CurriedCanCatchEitherT1[F[_]](
+    private val dummy: Boolean = true
+  ) extends AnyVal {
     def apply[A, B](fab: => EitherT[F, A, B]): CurriedCanCatchEitherT2[F, A, B] =
       new CurriedCanCatchEitherT2[F, A, B](() => fab)
   }
