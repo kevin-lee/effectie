@@ -211,13 +211,14 @@ lazy val props =
         "implicitConversions",
       ).mkString(",")
 
-    val hedgehogVersion = "0.6.5"
+    val hedgehogVersion       = "0.6.6"
+    val hedgehogLatestVersion = "0.6.7"
 
     val catsVersion              = "2.5.0"
     val catsLatestVersion        = "2.6.0"
     val catsEffect2Version       = "2.4.1"
     val catsEffect2LatestVersion = "2.5.0"
-    val catsEffect3Version       = "3.0.2"
+//    val catsEffect3Version       = "3.0.2"
 
     val cats2_0_0Version       = "2.0.0"
     val catsEffect2_0_0Version = "2.0.0"
@@ -230,11 +231,18 @@ lazy val props =
 
 lazy val libs =
   new {
-    lazy val hedgehogLibs: Seq[ModuleID] = Seq(
-      "qa.hedgehog" %% "hedgehog-core"   % props.hedgehogVersion % Test,
-      "qa.hedgehog" %% "hedgehog-runner" % props.hedgehogVersion % Test,
-      "qa.hedgehog" %% "hedgehog-sbt"    % props.hedgehogVersion % Test,
-    )
+    def hedgehogLibs(scalaVersion: String): List[ModuleID] = {
+      val hedgehogVersion =
+        if (scalaVersion == "3.0.0-RC1")
+          props.hedgehogVersion
+        else
+          props.hedgehogLatestVersion
+      List(
+        "qa.hedgehog" %% "hedgehog-core"   % hedgehogVersion % Test,
+        "qa.hedgehog" %% "hedgehog-runner" % hedgehogVersion % Test,
+        "qa.hedgehog" %% "hedgehog-sbt"    % hedgehogVersion % Test,
+      )
+    }
 
     lazy val libScalazCore: ModuleID   = "org.scalaz" %% "scalaz-core"   % props.scalazVersion
     lazy val libScalazEffect: ModuleID = "org.scalaz" %% "scalaz-effect" % props.scalazVersion
@@ -242,7 +250,7 @@ lazy val libs =
     def libCatsCore(catsVersion: String): ModuleID = "org.typelevel" %% "cats-core" % catsVersion
 
     def libCatsEffect(catsEffectVersion: String): ModuleID = "org.typelevel" %% "cats-effect" % catsEffectVersion
-    lazy val libCatsEffect3: ModuleID                      = "org.typelevel" %% "cats-effect" % props.catsEffect3Version
+//    lazy val libCatsEffect3: ModuleID                      = "org.typelevel" %% "cats-effect" % props.catsEffect3Version
 
     lazy val libCatsCore_2_0_0: ModuleID   = "org.typelevel" %% "cats-core"   % props.cats2_0_0Version
     lazy val libCatsEffect_2_0_0: ModuleID = "org.typelevel" %% "cats-effect" % props.catsEffect2_0_0Version
@@ -325,7 +333,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
             Set.empty[String]
           }
         )),
-      libraryDependencies ++= libs.hedgehogLibs.map(_.cross(CrossVersion.for3Use2_13)),
+      libraryDependencies ++= libs.hedgehogLibs(scalaVersion.value),
       /* WartRemover and scalacOptions { */
       //      , wartremoverErrors in (Compile, compile) ++= commonWarts((scalaBinaryVersion in update).value)
       //      , wartremoverErrors in (Test, compile) ++= commonWarts((scalaBinaryVersion in update).value)
