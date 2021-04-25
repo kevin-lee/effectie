@@ -3,6 +3,8 @@ package effectie
 trait ConsoleEffect[F[_]] {
   def readLn: F[String]
 
+  def readPassword: F[Array[Char]]
+
   def putStr(value: String): F[Unit]
 
   def putStrLn(value: String): F[Unit]
@@ -22,6 +24,9 @@ object ConsoleEffect {
 
     override def readLn: F[String] =
       implicitly[CommonEffectConstructor[F]].effectOf(scala.io.StdIn.readLine())
+
+    override def readPassword: F[Array[Char]] =
+      implicitly[CommonEffectConstructor[F]].effectOf(System.console().readPassword())
 
     override def putStr(value: String): F[Unit] =
       implicitly[CommonEffectConstructor[F]].effectOf(Console.out.print(value))
