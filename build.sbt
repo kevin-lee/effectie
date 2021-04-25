@@ -335,8 +335,8 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
         )),
       libraryDependencies ++= libs.hedgehogLibs(scalaVersion.value),
       /* WartRemover and scalacOptions { */
-      //      , wartremoverErrors in (Compile, compile) ++= commonWarts((scalaBinaryVersion in update).value)
-      //      , wartremoverErrors in (Test, compile) ++= commonWarts((scalaBinaryVersion in update).value)
+//      Compile / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
+//      Test / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
       wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
       //      , wartremoverErrors ++= Warts.all
       Compile / console / wartremoverErrors := List.empty,

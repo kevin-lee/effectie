@@ -29,9 +29,12 @@ trait Catching {
 
 }
 
+@SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
 object Catching extends Catching {
 
-  private[Catching] final class CurriedCanCatch1[F[_]] {
+  private[Catching] final class CurriedCanCatch1[F[_]](
+    private val dummy: Boolean = true
+  ) extends AnyVal {
     def apply[B](fb: => F[B]): CurriedCanCatch2[F, B] =
       new CurriedCanCatch2[F, B](() => fb)
   }
@@ -44,7 +47,9 @@ object Catching extends Catching {
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
-  private[Catching] final class CurriedCanCatchF1[F[_]] {
+  private[Catching] final class CurriedCanCatchF1[F[_]](
+    private val dummy: Boolean = true
+  ) extends AnyVal {
     def apply[B](b: => B): CurriedCanCatchF2[F, B] =
       new CurriedCanCatchF2[F, B](() => b)
   }
@@ -56,7 +61,9 @@ object Catching extends Catching {
       CanCatch[F].catchNonFatal(EffectConstructor[F].effectOf(b()))(f)
   }
 
-  private[Catching] final class CurriedCanCatchEither1[F[_]] {
+  private[Catching] final class CurriedCanCatchEither1[F[_]](
+    private val dummy: Boolean = true
+  ) extends AnyVal {
     def apply[A, B](fab: => F[A \/ B]): CurriedCanCatchEither2[F, A, B] =
       new CurriedCanCatchEither2[F, A, B](() => fab)
   }
@@ -69,7 +76,9 @@ object Catching extends Catching {
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
-  private[Catching] final class CurriedCanCatchEitherF1[F[_]] {
+  private[Catching] final class CurriedCanCatchEitherF1[F[_]](
+    private val dummy: Boolean = true
+  ) extends AnyVal {
     def apply[A, B](ab: => A \/ B): CurriedCanCatchEitherF2[F, A, B] =
       new CurriedCanCatchEitherF2[F, A, B](() => ab)
   }
@@ -81,7 +90,9 @@ object Catching extends Catching {
       CanCatch[F].catchNonFatalEither(EffectConstructor[F].effectOf(ab()))(f)
   }
 
-  private[Catching] final class CurriedCanCatchEitherT1[F[_]] {
+  private[Catching] final class CurriedCanCatchEitherT1[F[_]](
+    private val dummy: Boolean = true
+  ) extends AnyVal {
     def apply[A, B](fab: => EitherT[F, A, B]): CurriedCanCatchEitherT2[F, A, B] =
       new CurriedCanCatchEitherT2[F, A, B](() => fab)
   }

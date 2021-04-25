@@ -12,14 +12,19 @@ trait Effectful {
 
 }
 
+@SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
 object Effectful extends Effectful {
 
-  private[Effectful] final class CurriedEffectOf[F[_]] {
+  private[Effectful] final class CurriedEffectOf[F[_]](
+    private val dummy: Boolean = true
+  ) extends AnyVal {
     def apply[A](a: => A)(implicit EF: EffectConstructor[F]): F[A] =
       EffectConstructor[F].effectOf(a)
   }
 
-  private[Effectful] final class CurriedEffectOfPure[F[_]] {
+  private[Effectful] final class CurriedEffectOfPure[F[_]](
+    private val dummy: Boolean = true
+  ) extends AnyVal {
     def apply[A](a: A)(implicit EF: EffectConstructor[F]): F[A] =
       EffectConstructor[F].pureOf(a)
   }
