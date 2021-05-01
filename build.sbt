@@ -153,7 +153,12 @@ lazy val docs         = (project in file("generated-docs"))
       libraryDependencies.value
     ),
     mdocVariables := Map(
-      "VERSION"                  -> (ThisBuild / version).value,
+      "VERSION" -> {
+        import sys.process._
+        "git fetch --tags".!
+        val tag = "git rev-list --tags --max-count=1".!!.trim
+        s"git describe --tags $tag".!!.trim.stripPrefix("v")
+      },
       "SUPPORTED_SCALA_VERSIONS" -> {
         val versions = props.CrossScalaVersions.map(v => s"`$v`")
         if (versions.length > 1)
