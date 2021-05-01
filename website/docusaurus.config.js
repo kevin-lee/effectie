@@ -14,7 +14,8 @@ const websiteConfig = {
   tagline: 'A Tool for FP Effect Libraries',
   url: 'https://effectie.kevinly.dev',
   baseUrl: '/',
-  onBrokenLinks: 'error',
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'error',
   favicon: 'img/favicon.png',
   organizationName: 'Kevin-Lee', // Usually your GitHub org/user name.
   projectName: 'effectie', // Usually your repo name.
