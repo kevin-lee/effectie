@@ -1,6 +1,6 @@
 ---
 id: can-catch
-title: "CanCatch - Cats"
+title: "CanCatch"
 ---
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -104,7 +104,7 @@ CanCatch[Id].catchNonFatal(
 
 ```scala mdoc:reset-object
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 import cats.effect._
 
 import effectie.cats._
@@ -153,7 +153,7 @@ import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -217,7 +217,7 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 
 ```scala mdoc:reset-object
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -270,7 +270,7 @@ fa match {
 
 ```scala mdoc:reset-object
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 import cats.effect._
 
 import effectie.cats._
@@ -322,7 +322,7 @@ import scala.concurrent.duration._
 
 
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -386,7 +386,7 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 
 ```scala mdoc:reset-object
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -510,7 +510,7 @@ CanCatch[Id].catchNonFatalEither(
 
 ```scala mdoc:reset-object
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 import cats.effect._
 
 import effectie.cats._
@@ -569,7 +569,7 @@ import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -643,7 +643,7 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 
 ```scala mdoc:reset-object
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -706,7 +706,7 @@ fa match {
 
 ```scala mdoc:reset-object
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 import cats.effect._
 
 import effectie.cats._
@@ -766,7 +766,7 @@ import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -840,7 +840,7 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 
 ```scala mdoc:reset-object
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -980,7 +980,7 @@ fa.value
 
 ```scala mdoc:reset-object
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 import cats.data.EitherT
 import cats.effect._
 
@@ -1042,7 +1042,7 @@ import scala.concurrent.duration._
 
 import cats._
 import cats.data.EitherT
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -1118,7 +1118,7 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 ```scala mdoc:reset-object
 import cats._
 import cats.data.EitherT
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -1183,7 +1183,7 @@ fa match {
 ```scala mdoc:reset-object
 import cats._
 import cats.data.EitherT
-import cats.implicits._
+import cats.syntax.all._
 import cats.effect._
 
 import effectie.cats._
@@ -1245,7 +1245,7 @@ import scala.concurrent.duration._
 
 import cats._
 import cats.data.EitherT
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -1321,7 +1321,7 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 ```scala mdoc:reset-object
 import cats._
 import cats.data.EitherT
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -1462,7 +1462,7 @@ catchNonFatal[Id](
 
 ```scala mdoc:reset-object
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 import cats.effect._
 
 import effectie.cats._
@@ -1512,7 +1512,7 @@ import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -1578,7 +1578,7 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 
 ```scala mdoc:reset-object
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -1632,7 +1632,7 @@ fa match {
 
 ```scala mdoc:reset-object
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 import cats.effect._
 
 import effectie.cats._
@@ -1685,7 +1685,7 @@ import scala.concurrent.duration._
 
 
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -1750,7 +1750,7 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 
 ```scala mdoc:reset-object
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -1875,7 +1875,7 @@ catchNonFatalEither[Id](
 
 ```scala mdoc:reset-object
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 import cats.effect._
 
 import effectie.cats._
@@ -1935,7 +1935,7 @@ import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -2010,7 +2010,7 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 
 ```scala mdoc:reset-object
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -2074,7 +2074,7 @@ fa match {
 
 ```scala mdoc:reset-object
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 import cats.effect._
 
 import effectie.cats._
@@ -2135,7 +2135,7 @@ import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -2210,7 +2210,7 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 
 ```scala mdoc:reset-object
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -2352,7 +2352,7 @@ fa.value
 
 ```scala mdoc:reset-object
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 import cats.data.EitherT
 import cats.effect._
 
@@ -2415,7 +2415,7 @@ import scala.concurrent.duration._
 
 import cats._
 import cats.data.EitherT
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -2492,7 +2492,7 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 ```scala mdoc:reset-object
 import cats._
 import cats.data.EitherT
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -2558,7 +2558,7 @@ fa match {
 ```scala mdoc:reset-object
 import cats._
 import cats.data.EitherT
-import cats.implicits._
+import cats.syntax.all._
 import cats.effect._
 
 import effectie.cats._
@@ -2621,7 +2621,7 @@ import scala.concurrent.duration._
 
 import cats._
 import cats.data.EitherT
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._
@@ -2698,7 +2698,7 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 ```scala mdoc:reset-object
 import cats._
 import cats.data.EitherT
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.cats.Effectful._

@@ -9,9 +9,9 @@ title: "EitherTSupport"
 import cats._
 import cats.syntax.all._
 
-import effectie.cats.Effectful._
-import effectie.cats._
-import effectie.cats.EitherTSupport._
+import effectie.monix.Effectful._
+import effectie.monix._
+import effectie.monix.EitherTSupport._
 
 trait Something[F[_]] {
   def foo(a: Int): F[Either[String, Int]]
@@ -50,11 +50,12 @@ object Something {
 
 }
 
-import cats.effect._
+import monix.eval._
+import monix.execution.Scheduler.Implicits.global
 
-Something[IO].foo(1).unsafeRunSync()
-Something[IO].foo(10).unsafeRunSync()
+Something[Task].foo(1).runSyncUnsafe()
+Something[Task].foo(10).runSyncUnsafe()
 
-Something[IO].bar(1.asRight[String]).unsafeRunSync()
-Something[IO].bar("No number".asLeft[Int]).unsafeRunSync()
+Something[Task].bar(1.asRight[String]).runSyncUnsafe()
+Something[Task].bar("No number".asLeft[Int]).runSyncUnsafe()
 ```

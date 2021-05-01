@@ -1,9 +1,9 @@
 ---
-id: cats-effect
-title: "For Cats Effect"
+id: monix
+title: "For Monix"
 ---
 
-## Effectie for Cats Effect
+## Effectie for Monix
 
 * [EffectConstructor](effect-constructor)
 * [ConsoleEffect](console-effect)
@@ -19,14 +19,14 @@ title: "For Cats Effect"
 
 import cats._
 import cats.syntax.all._
-import cats.effect._
+import monix.eval._
 
-import effectie.cats.ConsoleEffectful._
-import effectie.cats.Effectful._
+import effectie.monix.ConsoleEffectful._
+import effectie.monix.Effectful._
 
-import effectie.cats.EitherTSupport._
-import effectie.cats.OptionTSupport._
-import effectie.cats._
+import effectie.monix.EitherTSupport._
+import effectie.monix.OptionTSupport._
+import effectie.monix._
 
 trait Something[F[_]] {
   def foo[A: Semigroup](a: A): F[A]
@@ -73,13 +73,14 @@ object Something {
       } yield x).value
   }
 }
+import monix.execution.Scheduler.Implicits.global
 
-println(Something[IO].foo(1).unsafeRunSync())
+println(Something[Task].foo(1).runSyncUnsafe())
 
-println(Something[IO].bar(2.some).unsafeRunSync())
-println(Something[IO].bar(none[String]).unsafeRunSync())
+println(Something[Task].bar(2.some).runSyncUnsafe())
+println(Something[Task].bar(none[String]).runSyncUnsafe())
 
-println(Something[IO].baz(2.asRight[String]).unsafeRunSync())
-println(Something[IO].baz("ERROR!!!".asLeft[Int]).unsafeRunSync())
+println(Something[Task].baz(2.asRight[String]).runSyncUnsafe())
+println(Something[Task].baz("ERROR!!!".asLeft[Int]).runSyncUnsafe())
 
 ```

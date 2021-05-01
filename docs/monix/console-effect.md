@@ -5,11 +5,11 @@ title: "ConsoleEffect"
 
 ## ConsoleEffect
 
-```scala
+```scala mdoc:compile-only
 import cats._
 import cats.syntax.all._
 
-import effectie.cats._
+import effectie.monix._
 import effectie.YesNo
 
 trait Something[F[_]] {
@@ -41,10 +41,11 @@ object Something {
   }
 }
 
-import cats.effect._
+import monix.eval._
+import monix.execution.Scheduler.Implicits.global
 
-val foo = Something[IO].foo()
-foo.unsafeRunSync()
+val foo = Something[Task].foo()
+foo.runSyncUnsafe()
 ```
 
 ```
@@ -63,12 +64,12 @@ Done
 
 ## ConsoleEffectful
 
-```scala
+```scala mdoc:compile-only
 import cats._
 import cats.syntax.all._
 
-import effectie.cats.ConsoleEffectful._
-import effectie.cats._
+import effectie.monix.ConsoleEffectful._
+import effectie.monix._
 import effectie.YesNo
 
 trait Something[F[_]] {
@@ -100,10 +101,11 @@ object Something {
   }
 }
 
-import cats.effect._
+import monix.eval._
+import monix.execution.Scheduler.Implicits.global
 
-val foo = Something[IO].foo()
-foo.unsafeRunSync()
+val foo = Something[Task].foo()
+foo.runSyncUnsafe()
 ```
 
 ```

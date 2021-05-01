@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: "EitherTSupport - Scalaz"
+title: "EitherTSupport"
 ---
 
 ## EitherTSupport

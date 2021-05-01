@@ -12,9 +12,9 @@ import TabItem from '@theme/TabItem';
  
 ```scala
 trait CanCatch[F[_]] {
-  def catchNonFatal[A, B](fb: => F[B])(f: Throwable => A): F[A \/ B]
+  def catchNonFatal[A, B](fb: => F[B])(f: Throwable => A): F[Either[A, B]]
 
-  def catchNonFatalEither[A, B](fab: => F[A \/ B])(f: Throwable => A): F[A \/ B]
+  def catchNonFatalEither[A, B](fab: => F[Either[A, B]])(f: Throwable => A): F[Either[A, B]]
 
   def catchNonFatalEitherT[A, B](fab: => EitherT[F, A, B])(f: Throwable => A): EitherT[F, A, B]
 }
@@ -22,30 +22,31 @@ trait CanCatch[F[_]] {
 
 ## CanCatch.catchNonFatal
 `CanCatch[F].catchNonFatal[A, B]` lets you catch `NonFatal` `Throwable` from `F[B]`
- and returns `F[A \/ B]`.
+ and returns `F[Either[A, B]]`.
 
 ### How to Use
 
 <Tabs
-  groupId="effects"
-  defaultValue="io"
+  groupId="monix"
+  defaultValue="task"
   values={[
-    {label: 'IO', value: 'io'},
+    {label: 'Task', value: 'task'},
     {label: 'Future', value: 'future'},
     {label: 'Id', value: 'id'},
   ]}>
-  <TabItem value="io">
+  <TabItem value="task">
 
 ```scala mdoc:reset-object
-import scalaz.effect._
+import monix.eval._
 
-import effectie.scalaz._
+import effectie.monix._
 
-val fa = CanCatch[IO].catchNonFatal(
-    IO(throw new RuntimeException("Something's wrong!"))
+val fa = CanCatch[Task].catchNonFatal(
+    Task(throw new RuntimeException("Something's wrong!"))
   )(identity)
 
-fa.unsafePerformIO()
+import monix.execution.Scheduler.Implicits.global
+fa.runSyncUnsafe()
 ```
 
   </TabItem>
@@ -57,9 +58,9 @@ import java.util.concurrent.{ExecutorService, Executors}
 import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
-import effectie.scalaz._
+import effectie.monix._
 
-val executorService: ExecutorService = Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
+implicit val executorService: ExecutorService = Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
 implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(executorService)
 
 val fa = CanCatch[Future].catchNonFatal(
@@ -79,10 +80,9 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 :::
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
+import cats._
 
-import effectie.scalaz._
+import effectie.monix._
 
 CanCatch[Id].catchNonFatal(
     throw new RuntimeException("Something's wrong!")
@@ -94,22 +94,22 @@ CanCatch[Id].catchNonFatal(
 
 ### Happy Path Example
 <Tabs
-  groupId="effects"
-  defaultValue="io"
+  groupId="monix"
+  defaultValue="task"
   values={[
-    {label: 'IO', value: 'io'},
+    {label: 'Task', value: 'task'},
     {label: 'Future', value: 'future'},
     {label: 'Id', value: 'id'},
   ]}>
-  <TabItem value="io">
+  <TabItem value="task">
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
-import scalaz.effect._
+import cats._
+import cats.syntax.all._
+import monix.eval._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
+import effectie.monix._
+import effectie.monix.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -126,7 +126,7 @@ def doSomethingBad(n: Int): Int =
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatal(
     for {
       a <- pureOf(n + 100)
@@ -134,12 +134,14 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     } yield b
   )(MyError.nonFatalThrowable)
 
-val fa = doSomething[IO](1)
-val result = fa.unsafePerformIO()
+val fa = doSomething[Task](1)
+
+import monix.execution.Scheduler.Implicits.global
+val result = fa.runSyncUnsafe()
 result match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(MyError.NonFatalThrowable(a)) =>
+  case Left(MyError.NonFatalThrowable(a)) =>
     println(s"Result: Failed with $a")
 }
 ```
@@ -153,11 +155,11 @@ import java.util.concurrent.{ExecutorService, Executors}
 import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
-import scalaz._
-import Scalaz._
+import cats._
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
+import effectie.monix._
+import effectie.monix.Effectful._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -176,7 +178,7 @@ object MyApp {
 
   def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     n: Int
-  ): F[MyError \/ Int] =
+  ): F[Either[MyError, Int]] =
     CanCatch[F].catchNonFatal(
       for {
         a <- pureOf(n + 100)
@@ -195,9 +197,9 @@ object MyApp {
       val result = Await.result(fa, 1.second)
       println(result)
       result match {
-        case \/-(b) =>
+        case Right(b) =>
           println(s"Result is $b")
-        case -\/(a) =>
+        case Left(a) =>
           println(s"Result: Failed with $a")
       }
     } finally {
@@ -217,11 +219,11 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 :::
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
+import cats._
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
+import effectie.monix._
+import effectie.monix.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -238,7 +240,7 @@ def doSomethingBad(n: Int): Int =
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatal(
     for {
       a <- pureOf(n + 100)
@@ -248,9 +250,9 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 
 val fa = doSomething[Id](1)
 fa match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(MyError.NonFatalThrowable(a)) =>
+  case Left(MyError.NonFatalThrowable(a)) =>
     println(s"Result: Failed with $a")
 }
 ```
@@ -260,22 +262,22 @@ fa match {
 
 ### Unhappy Path Example
 <Tabs
-  groupId="effects"
-  defaultValue="io"
+  groupId="monix"
+  defaultValue="task"
   values={[
-    {label: 'IO', value: 'io'},
+    {label: 'Task', value: 'task'},
     {label: 'Future', value: 'future'},
     {label: 'Id', value: 'id'},
   ]}>
-  <TabItem value="io">
+  <TabItem value="task">
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
-import scalaz.effect._
+import cats._
+import cats.syntax.all._
+import monix.eval._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
+import effectie.monix._
+import effectie.monix.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -293,7 +295,7 @@ else
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatal(
     for {
       a <- pureOf(n + 100)
@@ -301,12 +303,14 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     } yield b
   )(MyError.nonFatalThrowable)
 
-val fa = doSomething[IO](-101)
-val result = fa.unsafePerformIO()
+val fa = doSomething[Task](-101)
+
+import monix.execution.Scheduler.Implicits.global
+val result = fa.runSyncUnsafe()
 result match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(MyError.NonFatalThrowable(a)) =>
+  case Left(MyError.NonFatalThrowable(a)) =>
     println(s"Result: Failed with $a")
 }
 
@@ -322,11 +326,11 @@ import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
 
-import scalaz._
-import Scalaz._
+import cats._
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
+import effectie.monix._
+import effectie.monix.Effectful._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -345,7 +349,7 @@ object MyApp {
 
   def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     n: Int
-  ): F[MyError \/ Int] =
+  ): F[Either[MyError, Int]] =
     CanCatch[F].catchNonFatal(
       for {
         a <- pureOf(n + 100)
@@ -364,9 +368,9 @@ object MyApp {
       val result = Await.result(fa, 1.second)
       println(result)
       result match {
-        case \/-(b) =>
+        case Right(b) =>
           println(s"Result is $b")
-        case -\/(a) =>
+        case Left(a) =>
           println(s"Result: Failed with $a")
       }
     } finally {
@@ -386,11 +390,11 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 :::
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
+import cats._
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
+import effectie.monix._
+import effectie.monix.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -407,7 +411,7 @@ def doSomethingBad(n: Int): Int =
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatal(
     for {
       a <- pureOf(n + 100)
@@ -417,9 +421,9 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 
 val fa = doSomething[Id](-101)
 fa match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(MyError.NonFatalThrowable(a)) =>
+  case Left(MyError.NonFatalThrowable(a)) =>
     println(s"Result: Failed with $a")
 }
 ```
@@ -428,32 +432,32 @@ fa match {
 </Tabs>
 
 ## CanCatch.catchNonFatalEither
-`CanCatch[F].catchNonFatalEither[A, B]` lets you catch `NonFatal` `Throwable` from `F[A \/ B]`
- and returns `F[A \/ B]`.
+`CanCatch[F].catchNonFatalEither[A, B]` lets you catch `NonFatal` `Throwable` from `F[Either[A, B]]`
+ and returns `F[Either[A, B]]`.
 
 ### How to Use
 
 <Tabs
-  groupId="effects"
-  defaultValue="io"
+  groupId="monix"
+  defaultValue="task"
   values={[
-    {label: 'IO', value: 'io'},
+    {label: 'Task', value: 'task'},
     {label: 'Future', value: 'future'},
     {label: 'Id', value: 'id'},
   ]}>
-  <TabItem value="io">
+  <TabItem value="task">
 
 ```scala mdoc:reset-object
-import scalaz._
-import scalaz.effect._
+import monix.eval._
 
-import effectie.scalaz._
+import effectie.monix._
 
-val fa = CanCatch[IO].catchNonFatalEither(
-    IO((throw new RuntimeException("Something's wrong!")): Throwable \/ Int)
+val fa = CanCatch[Task].catchNonFatalEither(
+    Task((throw new RuntimeException("Something's wrong!")): Either[Throwable, Int])
   )(identity)
 
-fa.unsafePerformIO()
+import monix.execution.Scheduler.Implicits.global
+fa.runSyncUnsafe()
 ```
 
   </TabItem>
@@ -465,15 +469,13 @@ import java.util.concurrent.{ExecutorService, Executors}
 import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
-import scalaz._
+import effectie.monix._
 
-import effectie.scalaz._
-
-val executorService: ExecutorService = Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
+implicit val executorService: ExecutorService = Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
 implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(executorService)
 
 val fa = CanCatch[Future].catchNonFatalEither(
-    Future((throw new RuntimeException("Something's wrong!")): Throwable \/ Int)
+    Future((throw new RuntimeException("Something's wrong!")): Either[Throwable, Int])
   )(identity)
 
 // Just for this example, you wouldn't want to do it in your production code
@@ -489,13 +491,12 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 :::
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
+import cats._
 
-import effectie.scalaz._
+import effectie.monix._
 
 CanCatch[Id].catchNonFatalEither(
-    (throw new RuntimeException("Something's wrong!")): Throwable \/ Int
+    (throw new RuntimeException("Something's wrong!")): Either[Throwable, Int]
   )(identity)
 ```
 
@@ -504,22 +505,22 @@ CanCatch[Id].catchNonFatalEither(
 
 ### Happy Path Example
 <Tabs
-  groupId="effects"
-  defaultValue="io"
+  groupId="monix"
+  defaultValue="task"
   values={[
-    {label: 'IO', value: 'io'},
+    {label: 'Task', value: 'task'},
     {label: 'Future', value: 'future'},
     {label: 'Id', value: 'id'},
   ]}>
-  <TabItem value="io">
+  <TabItem value="task">
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
-import scalaz.effect._
+import cats._
+import cats.syntax.all._
+import monix.eval._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
+import effectie.monix._
+import effectie.monix.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -532,11 +533,11 @@ object MyError {
   def divideByZero: MyError = DivideByZero
 }
 
-def divide100By(n: Int): MyError \/ Int =
+def divide100By(n: Int): Either[MyError, Int] =
   if (n === 0)
-    MyError.divideByZero.left[Int]
+    MyError.divideByZero.asLeft[Int]
   else
-    (100 / n).right[MyError]
+    (100 / n).asRight[MyError]
 
 def doSomethingBad(n: Int): Int =
   if (n < 0)
@@ -546,7 +547,7 @@ def doSomethingBad(n: Int): Int =
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatalEither(
     for {
       aOrB <- pureOf(divide100By(n))
@@ -554,12 +555,14 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     } yield c
   )(MyError.nonFatalThrowable)
 
-val fa = doSomething[IO](1)
-val result = fa.unsafePerformIO()
+val fa = doSomething[Task](1)
+
+import monix.execution.Scheduler.Implicits.global
+val result = fa.runSyncUnsafe()
 result match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(a) =>
+  case Left(a) =>
     println(s"Result: Failed with $a")
 }
 ```
@@ -573,11 +576,11 @@ import java.util.concurrent.{ExecutorService, Executors}
 import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
-import scalaz._
-import Scalaz._
+import cats._
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
+import effectie.monix._
+import effectie.monix.Effectful._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -592,11 +595,11 @@ object MyApp {
     def divideByZero: MyError = DivideByZero
   }
 
-  def divide100By(n: Int): MyError \/ Int =
+  def divide100By(n: Int): Either[MyError, Int] =
     if (n === 0)
-      MyError.divideByZero.left[Int]
+      MyError.divideByZero.asLeft[Int]
     else
-      (100 / n).right[MyError]
+      (100 / n).asRight[MyError]
   
   def doSomethingBad(n: Int): Int =
     if (n < 0)
@@ -606,7 +609,7 @@ object MyApp {
 
   def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     n: Int
-  ): F[MyError \/ Int] =
+  ): F[Either[MyError, Int]] =
     CanCatch[F].catchNonFatalEither(
       for {
         aOrB <- pureOf(divide100By(n))
@@ -625,9 +628,9 @@ object MyApp {
       val result = Await.result(fa, 1.second)
       println(result)
       result match {
-        case \/-(b) =>
+        case Right(b) =>
           println(s"Result is $b")
-        case -\/(a) =>
+        case Left(a) =>
           println(s"Result: Failed with $a")
       }
     } finally {
@@ -647,11 +650,11 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 :::
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
+import cats._
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
+import effectie.monix._
+import effectie.monix.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -664,11 +667,11 @@ object MyError {
   def divideByZero: MyError = DivideByZero
 }
 
-def divide100By(n: Int): MyError \/ Int =
+def divide100By(n: Int): Either[MyError, Int] =
   if (n === 0)
-    MyError.divideByZero.left[Int]
+    MyError.divideByZero.asLeft[Int]
   else
-    (100 / n).right[MyError]
+    (100 / n).asRight[MyError]
 
 def doSomethingBad(n: Int): Int =
   if (n < 0)
@@ -678,7 +681,7 @@ def doSomethingBad(n: Int): Int =
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatalEither(
     for {
       aOrB <- pureOf(divide100By(n))
@@ -688,9 +691,9 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 
 val fa = doSomething[Id](1)
 fa match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(a) =>
+  case Left(a) =>
     println(s"Result: Failed with $a")
 }
 ```
@@ -700,22 +703,22 @@ fa match {
 
 ### Unhappy Path Example
 <Tabs
-  groupId="effects"
-  defaultValue="io"
+  groupId="monix"
+  defaultValue="task"
   values={[
-    {label: 'IO', value: 'io'},
+    {label: 'Task', value: 'task'},
     {label: 'Future', value: 'future'},
     {label: 'Id', value: 'id'},
   ]}>
-  <TabItem value="io">
+  <TabItem value="task">
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
-import scalaz.effect._
+import cats._
+import cats.syntax.all._
+import monix.eval._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
+import effectie.monix._
+import effectie.monix.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -728,11 +731,11 @@ object MyError {
   def divideByZero: MyError = DivideByZero
 }
 
-def divide100By(n: Int): MyError \/ Int =
+def divide100By(n: Int): Either[MyError, Int] =
   if (n === 0)
-    MyError.divideByZero.left[Int]
+    MyError.divideByZero.asLeft[Int]
   else
-    (100 / n).right[MyError]
+    (100 / n).asRight[MyError]
 
 def doSomethingBad(n: Int): Int =
 if (n < 0)
@@ -742,7 +745,7 @@ else
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatalEither(
     for {
       aOrB <- pureOf(divide100By(n))
@@ -750,12 +753,14 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     } yield c
   )(MyError.nonFatalThrowable)
 
-val fa = doSomething[IO](-1)
-val result = fa.unsafePerformIO()
+val fa = doSomething[Task](-1)
+
+import monix.execution.Scheduler.Implicits.global
+val result = fa.runSyncUnsafe()
 result match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(a) =>
+  case Left(a) =>
     println(s"Result: Failed with $a")
 }
 
@@ -770,11 +775,11 @@ import java.util.concurrent.{ExecutorService, Executors}
 import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
-import scalaz._
-import Scalaz._
+import cats._
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
+import effectie.monix._
+import effectie.monix.Effectful._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -789,11 +794,11 @@ object MyApp {
     def divideByZero: MyError = DivideByZero
   }
 
-  def divide100By(n: Int): MyError \/ Int =
+  def divide100By(n: Int): Either[MyError, Int] =
     if (n === 0)
-      MyError.divideByZero.left[Int]
+      MyError.divideByZero.asLeft[Int]
     else
-      (100 / n).right[MyError]
+      (100 / n).asRight[MyError]
 
   def doSomethingBad(n: Int): Int =
     if (n < 0)
@@ -803,7 +808,7 @@ object MyApp {
 
   def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     n: Int
-  ): F[MyError \/ Int] =
+  ): F[Either[MyError, Int]] =
     CanCatch[F].catchNonFatalEither(
       for {
         aOrB <- pureOf(divide100By(n))
@@ -822,9 +827,9 @@ object MyApp {
       val result = Await.result(fa, 1.second)
       println(result)
       result match {
-        case \/-(b) =>
+        case Right(b) =>
           println(s"Result is $b")
-        case -\/(a) =>
+        case Left(a) =>
           println(s"Result: Failed with $a")
       }
     } finally {
@@ -844,11 +849,11 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 :::
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
+import cats._
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
+import effectie.monix._
+import effectie.monix.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -861,11 +866,11 @@ object MyError {
   def divideByZero: MyError = DivideByZero
 }
 
-def divide100By(n: Int): MyError \/ Int =
+def divide100By(n: Int): Either[MyError, Int] =
   if (n === 0)
-    MyError.divideByZero.left[Int]
+    MyError.divideByZero.asLeft[Int]
   else
-    (100 / n).right[MyError]
+    (100 / n).asRight[MyError]
 
 def doSomethingBad(n: Int): Int =
   if (n < 0)
@@ -875,7 +880,7 @@ def doSomethingBad(n: Int): Int =
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatalEither(
     for {
       aOrB <- pureOf(divide100By(n))
@@ -885,9 +890,9 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 
 val fa = doSomething[Id](-1)
 fa match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(a) =>
+  case Left(a) =>
     println(s"Result: Failed with $a")
 }
 ```
@@ -903,26 +908,27 @@ fa match {
 ### How to Use
 
 <Tabs
-  groupId="effects"
-  defaultValue="io"
+  groupId="monix"
+  defaultValue="task"
   values={[
-    {label: 'IO', value: 'io'},
+    {label: 'Task', value: 'task'},
     {label: 'Future', value: 'future'},
     {label: 'Id', value: 'id'},
   ]}>
-  <TabItem value="io">
+  <TabItem value="task">
 
 ```scala mdoc:reset-object
-import scalaz._
-import scalaz.effect._
+import cats.data.EitherT
+import monix.eval._
 
-import effectie.scalaz._
+import effectie.monix._
 
-val fa = CanCatch[IO].catchNonFatalEitherT(
-    EitherT(IO((throw new RuntimeException("Something's wrong!")): Throwable \/ Int))
+val fa = CanCatch[Task].catchNonFatalEitherT(
+    EitherT(Task((throw new RuntimeException("Something's wrong!")): Either[Throwable, Int]))
   )(identity)
 
-fa.run.unsafePerformIO()
+import monix.execution.Scheduler.Implicits.global
+fa.value.runSyncUnsafe()
 ```
 
   </TabItem>
@@ -934,18 +940,18 @@ import java.util.concurrent.{ExecutorService, Executors}
 import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
-import scalaz._
-import effectie.scalaz._
+import cats.data.EitherT
+import effectie.monix._
 
-val executorService: ExecutorService = Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
+implicit val executorService: ExecutorService = Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
 implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(executorService)
 
 val fa = CanCatch[Future].catchNonFatalEitherT(
-    EitherT(Future((throw new RuntimeException("Something's wrong!")): Throwable \/ Int))
+    EitherT(Future((throw new RuntimeException("Something's wrong!")): Either[Throwable, Int]))
   )(identity)
 
 // Just for this example, you wouldn't want to do it in your production code
-Await.result(fa.run, Duration.Inf)
+Await.result(fa.value, Duration.Inf)
 ```
 
   </TabItem>
@@ -957,16 +963,16 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 :::
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
+import cats._
+import cats.data.EitherT
 
-import effectie.scalaz._
+import effectie.monix._
 
 val fa = CanCatch[Id].catchNonFatalEitherT(
-    EitherT((throw new RuntimeException("Something's wrong!")): Id[Throwable \/ Int])
+    EitherT((throw new RuntimeException("Something's wrong!")): Id[Either[Throwable, Int]])
   )(identity)
 
-fa.run
+fa.value
 ```
 
   </TabItem>
@@ -974,23 +980,24 @@ fa.run
 
 ### Happy Path Example
 <Tabs
-  groupId="effects"
-  defaultValue="io"
+  groupId="monix"
+  defaultValue="task"
   values={[
-    {label: 'IO', value: 'io'},
+    {label: 'Task', value: 'task'},
     {label: 'Future', value: 'future'},
     {label: 'Id', value: 'id'},
   ]}>
-  <TabItem value="io">
+  <TabItem value="task">
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
-import scalaz.effect._
+import cats._
+import cats.syntax.all._
+import cats.data.EitherT
+import monix.eval._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.EitherTSupport._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.EitherTSupport._
 
 sealed trait MyError
 object MyError {
@@ -1003,11 +1010,11 @@ object MyError {
   def divideByZero: MyError = DivideByZero
 }
 
-def divide100By(n: Int): MyError \/ Int =
+def divide100By(n: Int): Either[MyError, Int] =
   if (n === 0)
-    MyError.divideByZero.left[Int]
+    MyError.divideByZero.asLeft[Int]
   else
-    (100 / n).right[MyError]
+    (100 / n).asRight[MyError]
 
 def doSomethingBad(n: Int): Int =
   if (n < 0)
@@ -1017,20 +1024,22 @@ def doSomethingBad(n: Int): Int =
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatalEitherT(
     for {
       b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
-  )(MyError.nonFatalThrowable).run
+  )(MyError.nonFatalThrowable).value
 
-val fa = doSomething[IO](1)
-val result = fa.unsafePerformIO()
+val fa = doSomething[Task](1)
+
+import monix.execution.Scheduler.Implicits.global
+val result = fa.runSyncUnsafe()
 result match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(a) =>
+  case Left(a) =>
     println(s"Result: Failed with $a")
 }
 ```
@@ -1044,12 +1053,13 @@ import java.util.concurrent.{ExecutorService, Executors}
 import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
-import scalaz._
-import Scalaz._
+import cats._
+import cats.data.EitherT
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.EitherTSupport._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.EitherTSupport._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -1064,11 +1074,11 @@ object MyApp {
     def divideByZero: MyError = DivideByZero
   }
 
-  def divide100By(n: Int): MyError \/ Int =
+  def divide100By(n: Int): Either[MyError, Int] =
     if (n === 0)
-      MyError.divideByZero.left[Int]
+      MyError.divideByZero.asLeft[Int]
     else
-      (100 / n).right[MyError]
+      (100 / n).asRight[MyError]
 
   def doSomethingBad(n: Int): Int =
     if (n < 0)
@@ -1078,13 +1088,13 @@ object MyApp {
 
   def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     n: Int
-  ): F[MyError \/ Int] =
+  ): F[Either[MyError, Int]] =
     CanCatch[F].catchNonFatalEitherT(
       for {
         b <- EitherT(pureOf(divide100By(n)))
         c <- eitherTRight[MyError](doSomethingBad(b))
       } yield c
-    )(MyError.nonFatalThrowable).run
+    )(MyError.nonFatalThrowable).value
 
   def main(args: Array[String]): Unit = {
     val executorService: ExecutorService =
@@ -1097,9 +1107,9 @@ object MyApp {
       val result = Await.result(fa, 1.second)
       println(result)
       result match {
-        case \/-(b) =>
+        case Right(b) =>
           println(s"Result is $b")
-        case -\/(a) =>
+        case Left(a) =>
           println(s"Result: Failed with $a")
       }
     } finally {
@@ -1119,12 +1129,13 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 :::
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
+import cats._
+import cats.data.EitherT
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.EitherTSupport._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.EitherTSupport._
 
 sealed trait MyError
 object MyError {
@@ -1137,11 +1148,11 @@ object MyError {
   def divideByZero: MyError = DivideByZero
 }
 
-def divide100By(n: Int): MyError \/ Int =
+def divide100By(n: Int): Either[MyError, Int] =
   if (n === 0)
-    MyError.divideByZero.left[Int]
+    MyError.divideByZero.asLeft[Int]
   else
-    (100 / n).right[MyError]
+    (100 / n).asRight[MyError]
 
 def doSomethingBad(n: Int): Int =
   if (n < 0)
@@ -1151,19 +1162,19 @@ def doSomethingBad(n: Int): Int =
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatalEitherT(
     for {
       b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
-  )(MyError.nonFatalThrowable).run
+  )(MyError.nonFatalThrowable).value
 
 val fa = doSomething[Id](1)
 fa match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(a) =>
+  case Left(a) =>
     println(s"Result: Failed with $a")
 }
 ```
@@ -1173,23 +1184,24 @@ fa match {
 
 ### Unhappy Path Example
 <Tabs
-  groupId="effects"
-  defaultValue="io"
+  groupId="monix"
+  defaultValue="task"
   values={[
-    {label: 'IO', value: 'io'},
+    {label: 'Task', value: 'task'},
     {label: 'Future', value: 'future'},
     {label: 'Id', value: 'id'},
   ]}>
-  <TabItem value="io">
+  <TabItem value="task">
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
-import scalaz.effect._
+import cats._
+import cats.data.EitherT
+import cats.syntax.all._
+import monix.eval._
 
-import effectie.scalaz._
-import effectie.scalaz.EitherTSupport._
-import effectie.scalaz.Effectful._
+import effectie.monix._
+import effectie.monix.EitherTSupport._
+import effectie.monix.Effectful._
 
 sealed trait MyError
 object MyError {
@@ -1202,11 +1214,11 @@ object MyError {
   def divideByZero: MyError = DivideByZero
 }
 
-def divide100By(n: Int): MyError \/ Int =
+def divide100By(n: Int): Either[MyError, Int] =
   if (n === 0)
-    MyError.divideByZero.left[Int]
+    MyError.divideByZero.asLeft[Int]
   else
-    (100 / n).right[MyError]
+    (100 / n).asRight[MyError]
 
 def doSomethingBad(n: Int): Int =
 if (n < 0)
@@ -1216,20 +1228,22 @@ else
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatalEitherT(
     for {
       b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
-  )(MyError.nonFatalThrowable).run
+  )(MyError.nonFatalThrowable).value
 
-val fa = doSomething[IO](-1)
-val result = fa.unsafePerformIO()
+val fa = doSomething[Task](-1)
+
+import monix.execution.Scheduler.Implicits.global
+val result = fa.runSyncUnsafe()
 result match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(a) =>
+  case Left(a) =>
     println(s"Result: Failed with $a")
 }
 
@@ -1244,12 +1258,13 @@ import java.util.concurrent.{ExecutorService, Executors}
 import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
-import scalaz._
-import Scalaz._
+import cats._
+import cats.data.EitherT
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.EitherTSupport._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.EitherTSupport._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -1264,11 +1279,11 @@ object MyApp {
     def divideByZero: MyError = DivideByZero
   }
 
-  def divide100By(n: Int): MyError \/ Int =
+  def divide100By(n: Int): Either[MyError, Int] =
     if (n === 0)
-      MyError.divideByZero.left[Int]
+      MyError.divideByZero.asLeft[Int]
     else
-      (100 / n).right[MyError]
+      (100 / n).asRight[MyError]
 
   def doSomethingBad(n: Int): Int =
     if (n < 0)
@@ -1278,13 +1293,13 @@ object MyApp {
 
   def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     n: Int
-  ): F[MyError \/ Int] =
+  ): F[Either[MyError, Int]] =
     CanCatch[F].catchNonFatalEitherT(
       for {
         b <- EitherT(pureOf(divide100By(n)))
         c <- eitherTRight[MyError](doSomethingBad(b))
       } yield c
-    )(MyError.nonFatalThrowable).run
+    )(MyError.nonFatalThrowable).value
 
   def main(args: Array[String]): Unit = {
     val executorService: ExecutorService =
@@ -1297,9 +1312,9 @@ object MyApp {
       val result = Await.result(fa, 1.second)
       println(result)
       result match {
-        case \/-(b) =>
+        case Right(b) =>
           println(s"Result is $b")
-        case -\/(a) =>
+        case Left(a) =>
           println(s"Result: Failed with $a")
       }
     } finally {
@@ -1319,12 +1334,13 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 :::
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
+import cats._
+import cats.data.EitherT
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.EitherTSupport._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.EitherTSupport._
 
 sealed trait MyError
 object MyError {
@@ -1337,11 +1353,11 @@ object MyError {
   def divideByZero: MyError = DivideByZero
 }
 
-def divide100By(n: Int): MyError \/ Int =
+def divide100By(n: Int): Either[MyError, Int] =
   if (n === 0)
-    MyError.divideByZero.left[Int]
+    MyError.divideByZero.asLeft[Int]
   else
-    (100 / n).right[MyError]
+    (100 / n).asRight[MyError]
 
 def doSomethingBad(n: Int): Int =
   if (n < 0)
@@ -1351,19 +1367,19 @@ def doSomethingBad(n: Int): Int =
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   CanCatch[F].catchNonFatalEitherT(
     for {
       b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
-  )(MyError.nonFatalThrowable).run
+  )(MyError.nonFatalThrowable).value
 
 val fa = doSomething[Id](-1)
 fa match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(a) =>
+  case Left(a) =>
     println(s"Result: Failed with $a")
 }
 ```
@@ -1379,30 +1395,31 @@ fa match {
  
 ## Catching.catchNonFatal
 `catchNonFatal` lets you catch `NonFatal` `Throwable` from `F[B]`
- and returns `F[A \/ B]`.
+ and returns `F[Either[A, B]]`.
 
 ### How to Use
 
 <Tabs
-  groupId="effects"
-  defaultValue="io"
+  groupId="monix"
+  defaultValue="task"
   values={[
-    {label: 'IO', value: 'io'},
+    {label: 'Task', value: 'task'},
     {label: 'Future', value: 'future'},
     {label: 'Id', value: 'id'},
   ]}>
-  <TabItem value="io">
+  <TabItem value="task">
 
 ```scala mdoc:reset-object
-import scalaz.effect._
+import monix.eval._
 
-import effectie.scalaz.Catching._
+import effectie.monix.Catching._
 
 val fa = catchNonFatal(
-    IO((throw new RuntimeException("Something's wrong!")): Int)
+    Task(throw new RuntimeException("Something's wrong!"))
   )(identity)
 
-fa.unsafePerformIO()
+import monix.execution.Scheduler.Implicits.global
+fa.runSyncUnsafe()
 ```
 
   </TabItem>
@@ -1414,9 +1431,9 @@ import java.util.concurrent.{ExecutorService, Executors}
 import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
-import effectie.scalaz.Catching._
+import effectie.monix.Catching._
 
-val executorService: ExecutorService = Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
+implicit val executorService: ExecutorService = Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
 implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(executorService)
 
 val fa = catchNonFatal(
@@ -1436,10 +1453,9 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 :::
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
+import cats._
 
-import effectie.scalaz.Catching._
+import effectie.monix.Catching._
 
 catchNonFatal[Id](
     throw new RuntimeException("Something's wrong!")
@@ -1451,23 +1467,23 @@ catchNonFatal[Id](
 
 ### Happy Path Example
 <Tabs
-  groupId="effects"
-  defaultValue="io"
+  groupId="monix"
+  defaultValue="task"
   values={[
-    {label: 'IO', value: 'io'},
+    {label: 'Task', value: 'task'},
     {label: 'Future', value: 'future'},
     {label: 'Id', value: 'id'},
   ]}>
-  <TabItem value="io">
+  <TabItem value="task">
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
-import scalaz.effect._
+import cats._
+import cats.syntax.all._
+import monix.eval._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.Catching._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.Catching._
 
 sealed trait MyError
 object MyError {
@@ -1484,7 +1500,7 @@ def doSomethingBad(n: Int): Int =
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   catchNonFatal(
     for {
       a <- pureOf(n + 100)
@@ -1492,12 +1508,14 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     } yield b
   )(MyError.nonFatalThrowable)
 
-val fa = doSomething[IO](1)
-val result = fa.unsafePerformIO()
+val fa = doSomething[Task](1)
+
+import monix.execution.Scheduler.Implicits.global
+val result = fa.runSyncUnsafe()
 result match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(MyError.NonFatalThrowable(a)) =>
+  case Left(MyError.NonFatalThrowable(a)) =>
     println(s"Result: Failed with $a")
 }
 ```
@@ -1511,12 +1529,12 @@ import java.util.concurrent.{ExecutorService, Executors}
 import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
-import scalaz._
-import Scalaz._
+import cats._
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.Catching._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.Catching._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -1536,7 +1554,7 @@ object MyApp {
 
   def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     n: Int
-  ): F[MyError \/ Int] =
+  ): F[Either[MyError, Int]] =
     catchNonFatal(
       for {
         a <- pureOf(n + 100)
@@ -1555,9 +1573,9 @@ object MyApp {
       val result = Await.result(fa, 1.second)
       println(result)
       result match {
-        case \/-(b) =>
+        case Right(b) =>
           println(s"Result is $b")
-        case -\/(a) =>
+        case Left(a) =>
           println(s"Result: Failed with $a")
       }
     } finally {
@@ -1577,12 +1595,12 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 :::
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
+import cats._
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.Catching._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.Catching._
 
 sealed trait MyError
 object MyError {
@@ -1599,7 +1617,7 @@ def doSomethingBad(n: Int): Int =
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   catchNonFatal(
     for {
       a <- pureOf(n + 100)
@@ -1609,9 +1627,9 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 
 val fa = doSomething[Id](1)
 fa match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(MyError.NonFatalThrowable(a)) =>
+  case Left(MyError.NonFatalThrowable(a)) =>
     println(s"Result: Failed with $a")
 }
 ```
@@ -1621,23 +1639,23 @@ fa match {
 
 ### Unhappy Path Example
 <Tabs
-  groupId="effects"
-  defaultValue="io"
+  groupId="monix"
+  defaultValue="task"
   values={[
-    {label: 'IO', value: 'io'},
+    {label: 'Task', value: 'task'},
     {label: 'Future', value: 'future'},
     {label: 'Id', value: 'id'},
   ]}>
-  <TabItem value="io">
+  <TabItem value="task">
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
-import scalaz.effect._
+import cats._
+import cats.syntax.all._
+import monix.eval._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.Catching._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.Catching._
 
 sealed trait MyError
 object MyError {
@@ -1655,7 +1673,7 @@ else
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   catchNonFatal(
     for {
       a <- pureOf(n + 100)
@@ -1663,12 +1681,14 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     } yield b
   )(MyError.nonFatalThrowable)
 
-val fa = doSomething[IO](-101)
-val result = fa.unsafePerformIO()
+val fa = doSomething[Task](-101)
+
+import monix.execution.Scheduler.Implicits.global
+val result = fa.runSyncUnsafe()
 result match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(MyError.NonFatalThrowable(a)) =>
+  case Left(MyError.NonFatalThrowable(a)) =>
     println(s"Result: Failed with $a")
 }
 
@@ -1684,12 +1704,12 @@ import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
 
-import scalaz._
-import Scalaz._
+import cats._
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.Catching._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.Catching._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -1708,7 +1728,7 @@ object MyApp {
 
   def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     n: Int
-  ): F[MyError \/ Int] =
+  ): F[Either[MyError, Int]] =
     catchNonFatal(
       for {
         a <- pureOf(n + 100)
@@ -1727,9 +1747,9 @@ object MyApp {
       val result = Await.result(fa, 1.second)
       println(result)
       result match {
-        case \/-(b) =>
+        case Right(b) =>
           println(s"Result is $b")
-        case -\/(a) =>
+        case Left(a) =>
           println(s"Result: Failed with $a")
       }
     } finally {
@@ -1749,12 +1769,12 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 :::
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
+import cats._
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.Catching._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.Catching._
 
 sealed trait MyError
 object MyError {
@@ -1771,7 +1791,7 @@ def doSomethingBad(n: Int): Int =
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   catchNonFatal(
     for {
       a <- pureOf(n + 100)
@@ -1781,9 +1801,9 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 
 val fa = doSomething[Id](-101)
 fa match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(MyError.NonFatalThrowable(a)) =>
+  case Left(MyError.NonFatalThrowable(a)) =>
     println(s"Result: Failed with $a")
 }
 ```
@@ -1793,31 +1813,31 @@ fa match {
 
 ## Catching.catchNonFatalEither
 `Catching.catchNonFatalEither` provides a convenient way to use `CanCatch` 
-to catch `NonFatal` `Throwable` from `F[A \/ B]` and returns `F[A \/ B]`.
+to catch `NonFatal` `Throwable` from `F[Either[A, B]]` and returns `F[Either[A, B]]`.
 
 ### How to Use
 
 <Tabs
-  groupId="effects"
-  defaultValue="io"
+  groupId="monix"
+  defaultValue="task"
   values={[
-    {label: 'IO', value: 'io'},
+    {label: 'Task', value: 'task'},
     {label: 'Future', value: 'future'},
     {label: 'Id', value: 'id'},
   ]}>
-  <TabItem value="io">
+  <TabItem value="task">
 
 ```scala mdoc:reset-object
-import scalaz._
-import scalaz.effect._
+import monix.eval._
 
-import effectie.scalaz.Catching._
+import effectie.monix.Catching._
 
 val fa = catchNonFatalEither(
-    IO((throw new RuntimeException("Something's wrong!")): Throwable \/ Int)
+    Task((throw new RuntimeException("Something's wrong!")): Either[Throwable, Int])
   )(identity)
 
-fa.unsafePerformIO()
+import monix.execution.Scheduler.Implicits.global
+fa.runSyncUnsafe()
 ```
 
   </TabItem>
@@ -1829,15 +1849,13 @@ import java.util.concurrent.{ExecutorService, Executors}
 import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
-import scalaz._
+import effectie.monix.Catching._
 
-import effectie.scalaz.Catching._
-
-val executorService: ExecutorService = Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
+implicit val executorService: ExecutorService = Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
 implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(executorService)
 
 val fa = catchNonFatalEither(
-    Future((throw new RuntimeException("Something's wrong!")): Throwable \/ Int)
+    Future((throw new RuntimeException("Something's wrong!")): Either[Throwable, Int])
   )(identity)
 
 // Just for this example, you wouldn't want to do it in your production code
@@ -1853,13 +1871,12 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 :::
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
+import cats._
 
-import effectie.scalaz.Catching._
+import effectie.monix.Catching._
 
 catchNonFatalEither[Id](
-    (throw new RuntimeException("Something's wrong!")): Throwable \/ Int
+    (throw new RuntimeException("Something's wrong!")): Either[Throwable, Int]
   )(identity)
 ```
 
@@ -1868,23 +1885,23 @@ catchNonFatalEither[Id](
 
 ### Happy Path Example
 <Tabs
-  groupId="effects"
-  defaultValue="io"
+  groupId="monix"
+  defaultValue="task"
   values={[
-    {label: 'IO', value: 'io'},
+    {label: 'Task', value: 'task'},
     {label: 'Future', value: 'future'},
     {label: 'Id', value: 'id'},
   ]}>
-  <TabItem value="io">
+  <TabItem value="task">
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
-import scalaz.effect._
+import cats._
+import cats.syntax.all._
+import monix.eval._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.Catching._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.Catching._
 
 sealed trait MyError
 object MyError {
@@ -1897,11 +1914,11 @@ object MyError {
   def divideByZero: MyError = DivideByZero
 }
 
-def divide100By(n: Int): MyError \/ Int =
+def divide100By(n: Int): Either[MyError, Int] =
   if (n === 0)
-    MyError.divideByZero.left[Int]
+    MyError.divideByZero.asLeft[Int]
   else
-    (100 / n).right[MyError]
+    (100 / n).asRight[MyError]
 
 def doSomethingBad(n: Int): Int =
   if (n < 0)
@@ -1911,7 +1928,7 @@ def doSomethingBad(n: Int): Int =
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   catchNonFatalEither(
     for {
       aOrB <- pureOf(divide100By(n))
@@ -1919,12 +1936,14 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     } yield c
   )(MyError.nonFatalThrowable)
 
-val fa = doSomething[IO](1)
-val result = fa.unsafePerformIO()
+val fa = doSomething[Task](1)
+
+import monix.execution.Scheduler.Implicits.global
+val result = fa.runSyncUnsafe()
 result match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(a) =>
+  case Left(a) =>
     println(s"Result: Failed with $a")
 }
 ```
@@ -1938,12 +1957,12 @@ import java.util.concurrent.{ExecutorService, Executors}
 import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
-import scalaz._
-import Scalaz._
+import cats._
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.Catching._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.Catching._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -1958,11 +1977,11 @@ object MyApp {
     def divideByZero: MyError = DivideByZero
   }
 
-  def divide100By(n: Int): MyError \/ Int =
+  def divide100By(n: Int): Either[MyError, Int] =
     if (n === 0)
-      MyError.divideByZero.left[Int]
+      MyError.divideByZero.asLeft[Int]
     else
-      (100 / n).right[MyError]
+      (100 / n).asRight[MyError]
   
   def doSomethingBad(n: Int): Int =
     if (n < 0)
@@ -1972,7 +1991,7 @@ object MyApp {
 
   def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     n: Int
-  ): F[MyError \/ Int] =
+  ): F[Either[MyError, Int]] =
     catchNonFatalEither(
       for {
         aOrB <- pureOf(divide100By(n))
@@ -1991,9 +2010,9 @@ object MyApp {
       val result = Await.result(fa, 1.second)
       println(result)
       result match {
-        case \/-(b) =>
+        case Right(b) =>
           println(s"Result is $b")
-        case -\/(a) =>
+        case Left(a) =>
           println(s"Result: Failed with $a")
       }
     } finally {
@@ -2013,12 +2032,12 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 :::
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
+import cats._
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.Catching._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.Catching._
 
 sealed trait MyError
 object MyError {
@@ -2031,11 +2050,11 @@ object MyError {
   def divideByZero: MyError = DivideByZero
 }
 
-def divide100By(n: Int): MyError \/ Int =
+def divide100By(n: Int): Either[MyError, Int] =
   if (n === 0)
-    MyError.divideByZero.left[Int]
+    MyError.divideByZero.asLeft[Int]
   else
-    (100 / n).right[MyError]
+    (100 / n).asRight[MyError]
 
 def doSomethingBad(n: Int): Int =
   if (n < 0)
@@ -2045,7 +2064,7 @@ def doSomethingBad(n: Int): Int =
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   catchNonFatalEither(
     for {
       aOrB <- pureOf(divide100By(n))
@@ -2055,9 +2074,9 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 
 val fa = doSomething[Id](1)
 fa match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(a) =>
+  case Left(a) =>
     println(s"Result: Failed with $a")
 }
 ```
@@ -2067,23 +2086,23 @@ fa match {
 
 ### Unhappy Path Example
 <Tabs
-  groupId="effects"
-  defaultValue="io"
+  groupId="monix"
+  defaultValue="task"
   values={[
-    {label: 'IO', value: 'io'},
+    {label: 'Task', value: 'task'},
     {label: 'Future', value: 'future'},
     {label: 'Id', value: 'id'},
   ]}>
-  <TabItem value="io">
+  <TabItem value="task">
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
-import scalaz.effect._
+import cats._
+import cats.syntax.all._
+import monix.eval._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.Catching._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.Catching._
 
 sealed trait MyError
 object MyError {
@@ -2096,11 +2115,11 @@ object MyError {
   def divideByZero: MyError = DivideByZero
 }
 
-def divide100By(n: Int): MyError \/ Int =
+def divide100By(n: Int): Either[MyError, Int] =
   if (n === 0)
-    MyError.divideByZero.left[Int]
+    MyError.divideByZero.asLeft[Int]
   else
-    (100 / n).right[MyError]
+    (100 / n).asRight[MyError]
 
 def doSomethingBad(n: Int): Int =
 if (n < 0)
@@ -2110,7 +2129,7 @@ else
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   catchNonFatalEither(
     for {
       aOrB <- pureOf(divide100By(n))
@@ -2118,12 +2137,14 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     } yield c
   )(MyError.nonFatalThrowable)
 
-val fa = doSomething[IO](-1)
-val result = fa.unsafePerformIO()
+val fa = doSomething[Task](-1)
+
+import monix.execution.Scheduler.Implicits.global
+val result = fa.runSyncUnsafe()
 result match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(a) =>
+  case Left(a) =>
     println(s"Result: Failed with $a")
 }
 
@@ -2138,12 +2159,12 @@ import java.util.concurrent.{ExecutorService, Executors}
 import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
-import scalaz._
-import Scalaz._
+import cats._
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.Catching._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.Catching._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -2158,11 +2179,11 @@ object MyApp {
     def divideByZero: MyError = DivideByZero
   }
 
-  def divide100By(n: Int): MyError \/ Int =
+  def divide100By(n: Int): Either[MyError, Int] =
     if (n === 0)
-      MyError.divideByZero.left[Int]
+      MyError.divideByZero.asLeft[Int]
     else
-      (100 / n).right[MyError]
+      (100 / n).asRight[MyError]
 
   def doSomethingBad(n: Int): Int =
     if (n < 0)
@@ -2172,7 +2193,7 @@ object MyApp {
 
   def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     n: Int
-  ): F[MyError \/ Int] =
+  ): F[Either[MyError, Int]] =
     catchNonFatalEither(
       for {
         aOrB <- pureOf(divide100By(n))
@@ -2191,9 +2212,9 @@ object MyApp {
       val result = Await.result(fa, 1.second)
       println(result)
       result match {
-        case \/-(b) =>
+        case Right(b) =>
           println(s"Result is $b")
-        case -\/(a) =>
+        case Left(a) =>
           println(s"Result: Failed with $a")
       }
     } finally {
@@ -2213,12 +2234,12 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 :::
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
+import cats._
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.Catching._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.Catching._
 
 sealed trait MyError
 object MyError {
@@ -2231,11 +2252,11 @@ object MyError {
   def divideByZero: MyError = DivideByZero
 }
 
-def divide100By(n: Int): MyError \/ Int =
+def divide100By(n: Int): Either[MyError, Int] =
   if (n === 0)
-    MyError.divideByZero.left[Int]
+    MyError.divideByZero.asLeft[Int]
   else
-    (100 / n).right[MyError]
+    (100 / n).asRight[MyError]
 
 def doSomethingBad(n: Int): Int =
   if (n < 0)
@@ -2245,7 +2266,7 @@ def doSomethingBad(n: Int): Int =
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   catchNonFatalEither(
     for {
       aOrB <- pureOf(divide100By(n))
@@ -2255,9 +2276,9 @@ def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
 
 val fa = doSomething[Id](-1)
 fa match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(a) =>
+  case Left(a) =>
     println(s"Result: Failed with $a")
 }
 ```
@@ -2273,26 +2294,27 @@ fa match {
 ### How to Use
 
 <Tabs
-  groupId="effects"
-  defaultValue="io"
+  groupId="monix"
+  defaultValue="task"
   values={[
-    {label: 'IO', value: 'io'},
+    {label: 'Task', value: 'task'},
     {label: 'Future', value: 'future'},
     {label: 'Id', value: 'id'},
   ]}>
-  <TabItem value="io">
+  <TabItem value="task">
 
 ```scala mdoc:reset-object
-import scalaz._
-import scalaz.effect._
+import cats.data.EitherT
+import monix.eval._
 
-import effectie.scalaz.Catching._
+import effectie.monix.Catching._
 
-val fa = catchNonFatalEitherT[IO](
-    EitherT(IO((throw new RuntimeException("Something's wrong!")): Throwable \/ Int))
+val fa = catchNonFatalEitherT[Task](
+    EitherT(Task((throw new RuntimeException("Something's wrong!")): Either[Throwable, Int]))
   )(identity)
 
-fa.run.unsafePerformIO()
+import monix.execution.Scheduler.Implicits.global
+fa.value.runSyncUnsafe()
 ```
 
   </TabItem>
@@ -2304,19 +2326,19 @@ import java.util.concurrent.{ExecutorService, Executors}
 import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
-import scalaz._
+import cats.data.EitherT
 
-import effectie.scalaz.Catching._
+import effectie.monix.Catching._
 
-val executorService: ExecutorService = Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
+implicit val executorService: ExecutorService = Executors.newWorkStealingPool(Runtime.getRuntime.availableProcessors())
 implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(executorService)
 
 val fa = catchNonFatalEitherT[Future](
-    EitherT(Future((throw new RuntimeException("Something's wrong!")): Throwable \/ Int))
+    EitherT(Future((throw new RuntimeException("Something's wrong!")): Either[Throwable, Int]))
   )(identity)
 
 // Just for this example, you wouldn't want to do it in your production code
-Await.result(fa.run, Duration.Inf)
+Await.result(fa.value, Duration.Inf)
 ```
 
   </TabItem>
@@ -2328,16 +2350,16 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 :::
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
+import cats._
+import cats.data.EitherT
 
-import effectie.scalaz.Catching._
+import effectie.monix.Catching._
 
 val fa = catchNonFatalEitherT[Id](
-    EitherT((throw new RuntimeException("Something's wrong!")): Id[Throwable \/ Int])
+    EitherT((throw new RuntimeException("Something's wrong!")): Id[Either[Throwable, Int]])
   )(identity)
 
-fa.run
+fa.value
 ```
 
   </TabItem>
@@ -2345,24 +2367,25 @@ fa.run
 
 ### Happy Path Example
 <Tabs
-  groupId="effects"
-  defaultValue="io"
+  groupId="monix"
+  defaultValue="task"
   values={[
-    {label: 'IO', value: 'io'},
+    {label: 'Task', value: 'task'},
     {label: 'Future', value: 'future'},
     {label: 'Id', value: 'id'},
   ]}>
-  <TabItem value="io">
+  <TabItem value="task">
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
-import scalaz.effect._
+import cats._
+import cats.syntax.all._
+import cats.data.EitherT
+import monix.eval._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.Catching._
-import effectie.scalaz.EitherTSupport._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.Catching._
+import effectie.monix.EitherTSupport._
 
 sealed trait MyError
 object MyError {
@@ -2375,11 +2398,11 @@ object MyError {
   def divideByZero: MyError = DivideByZero
 }
 
-def divide100By(n: Int): MyError \/ Int =
+def divide100By(n: Int): Either[MyError, Int] =
   if (n === 0)
-    MyError.divideByZero.left[Int]
+    MyError.divideByZero.asLeft[Int]
   else
-    (100 / n).right[MyError]
+    (100 / n).asRight[MyError]
 
 def doSomethingBad(n: Int): Int =
   if (n < 0)
@@ -2389,20 +2412,22 @@ def doSomethingBad(n: Int): Int =
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   catchNonFatalEitherT(
     for {
       b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
-  )(MyError.nonFatalThrowable).run
+  )(MyError.nonFatalThrowable).value
 
-val fa = doSomething[IO](1)
-val result = fa.unsafePerformIO()
+val fa = doSomething[Task](1)
+
+import monix.execution.Scheduler.Implicits.global
+val result = fa.runSyncUnsafe()
 result match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(a) =>
+  case Left(a) =>
     println(s"Result: Failed with $a")
 }
 ```
@@ -2416,13 +2441,14 @@ import java.util.concurrent.{ExecutorService, Executors}
 import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
-import scalaz._
-import Scalaz._
+import cats._
+import cats.data.EitherT
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.Catching._
-import effectie.scalaz.EitherTSupport._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.Catching._
+import effectie.monix.EitherTSupport._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -2437,11 +2463,11 @@ object MyApp {
     def divideByZero: MyError = DivideByZero
   }
 
-  def divide100By(n: Int): MyError \/ Int =
+  def divide100By(n: Int): Either[MyError, Int] =
     if (n === 0)
-      MyError.divideByZero.left[Int]
+      MyError.divideByZero.asLeft[Int]
     else
-      (100 / n).right[MyError]
+      (100 / n).asRight[MyError]
 
   def doSomethingBad(n: Int): Int =
     if (n < 0)
@@ -2451,13 +2477,13 @@ object MyApp {
 
   def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     n: Int
-  ): F[MyError \/ Int] =
+  ): F[Either[MyError, Int]] =
     catchNonFatalEitherT(
       for {
         b <- EitherT(pureOf(divide100By(n)))
         c <- eitherTRight[MyError](doSomethingBad(b))
       } yield c
-    )(MyError.nonFatalThrowable).run
+    )(MyError.nonFatalThrowable).value
 
   def main(args: Array[String]): Unit = {
     val executorService: ExecutorService =
@@ -2470,9 +2496,9 @@ object MyApp {
       val result = Await.result(fa, 1.second)
       println(result)
       result match {
-        case \/-(b) =>
+        case Right(b) =>
           println(s"Result is $b")
-        case -\/(a) =>
+        case Left(a) =>
           println(s"Result: Failed with $a")
       }
     } finally {
@@ -2492,13 +2518,14 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 :::
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
+import cats._
+import cats.data.EitherT
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.Catching._
-import effectie.scalaz.EitherTSupport._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.Catching._
+import effectie.monix.EitherTSupport._
 
 sealed trait MyError
 object MyError {
@@ -2511,11 +2538,11 @@ object MyError {
   def divideByZero: MyError = DivideByZero
 }
 
-def divide100By(n: Int): MyError \/ Int =
+def divide100By(n: Int): Either[MyError, Int] =
   if (n === 0)
-    MyError.divideByZero.left[Int]
+    MyError.divideByZero.asLeft[Int]
   else
-    (100 / n).right[MyError]
+    (100 / n).asRight[MyError]
 
 def doSomethingBad(n: Int): Int =
   if (n < 0)
@@ -2525,19 +2552,19 @@ def doSomethingBad(n: Int): Int =
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   catchNonFatalEitherT(
     for {
       b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
-  )(MyError.nonFatalThrowable).run
+  )(MyError.nonFatalThrowable).value
 
 val fa = doSomething[Id](1)
 fa match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(a) =>
+  case Left(a) =>
     println(s"Result: Failed with $a")
 }
 ```
@@ -2547,24 +2574,25 @@ fa match {
 
 ### Unhappy Path Example
 <Tabs
-  groupId="effects"
-  defaultValue="io"
+  groupId="monix"
+  defaultValue="task"
   values={[
-    {label: 'IO', value: 'io'},
+    {label: 'Task', value: 'task'},
     {label: 'Future', value: 'future'},
     {label: 'Id', value: 'id'},
   ]}>
-  <TabItem value="io">
+  <TabItem value="task">
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
-import scalaz.effect._
+import cats._
+import cats.data.EitherT
+import cats.syntax.all._
+import monix.eval._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.Catching._
-import effectie.scalaz.EitherTSupport._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.Catching._
+import effectie.monix.EitherTSupport._
 
 sealed trait MyError
 object MyError {
@@ -2577,11 +2605,11 @@ object MyError {
   def divideByZero: MyError = DivideByZero
 }
 
-def divide100By(n: Int): MyError \/ Int =
+def divide100By(n: Int): Either[MyError, Int] =
   if (n === 0)
-    MyError.divideByZero.left[Int]
+    MyError.divideByZero.asLeft[Int]
   else
-    (100 / n).right[MyError]
+    (100 / n).asRight[MyError]
 
 def doSomethingBad(n: Int): Int =
 if (n < 0)
@@ -2591,20 +2619,22 @@ else
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   catchNonFatalEitherT(
     for {
       b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
-  )(MyError.nonFatalThrowable).run
+  )(MyError.nonFatalThrowable).value
 
-val fa = doSomething[IO](-1)
-val result = fa.unsafePerformIO()
+val fa = doSomething[Task](-1)
+
+import monix.execution.Scheduler.Implicits.global
+val result = fa.runSyncUnsafe()
 result match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(a) =>
+  case Left(a) =>
     println(s"Result: Failed with $a")
 }
 
@@ -2619,13 +2649,14 @@ import java.util.concurrent.{ExecutorService, Executors}
 import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.concurrent.duration._
 
-import scalaz._
-import Scalaz._
+import cats._
+import cats.data.EitherT
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.Catching._
-import effectie.scalaz.EitherTSupport._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.Catching._
+import effectie.monix.EitherTSupport._
 import effectie.concurrent.ExecutorServiceOps
 
 object MyApp {
@@ -2640,11 +2671,11 @@ object MyApp {
     def divideByZero: MyError = DivideByZero
   }
 
-  def divide100By(n: Int): MyError \/ Int =
+  def divide100By(n: Int): Either[MyError, Int] =
     if (n === 0)
-      MyError.divideByZero.left[Int]
+      MyError.divideByZero.asLeft[Int]
     else
-      (100 / n).right[MyError]
+      (100 / n).asRight[MyError]
 
   def doSomethingBad(n: Int): Int =
     if (n < 0)
@@ -2654,13 +2685,13 @@ object MyApp {
 
   def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
     n: Int
-  ): F[MyError \/ Int] =
+  ): F[Either[MyError, Int]] =
     catchNonFatalEitherT(
       for {
         b <- EitherT(pureOf(divide100By(n)))
         c <- eitherTRight[MyError](doSomethingBad(b))
       } yield c
-    )(MyError.nonFatalThrowable).run
+    )(MyError.nonFatalThrowable).value
 
   def main(args: Array[String]): Unit = {
     val executorService: ExecutorService =
@@ -2673,9 +2704,9 @@ object MyApp {
       val result = Await.result(fa, 1.second)
       println(result)
       result match {
-        case \/-(b) =>
+        case Right(b) =>
           println(s"Result is $b")
-        case -\/(a) =>
+        case Left(a) =>
           println(s"Result: Failed with $a")
       }
     } finally {
@@ -2695,13 +2726,14 @@ Use of `Id` is not recommended as `Id` means having no `Effect`. Use it only for
 :::
 
 ```scala mdoc:reset-object
-import scalaz._
-import Scalaz._
+import cats._
+import cats.data.EitherT
+import cats.syntax.all._
 
-import effectie.scalaz._
-import effectie.scalaz.Effectful._
-import effectie.scalaz.Catching._
-import effectie.scalaz.EitherTSupport._
+import effectie.monix._
+import effectie.monix.Effectful._
+import effectie.monix.Catching._
+import effectie.monix.EitherTSupport._
 
 sealed trait MyError
 object MyError {
@@ -2714,11 +2746,11 @@ object MyError {
   def divideByZero: MyError = DivideByZero
 }
 
-def divide100By(n: Int): MyError \/ Int =
+def divide100By(n: Int): Either[MyError, Int] =
   if (n === 0)
-    MyError.divideByZero.left[Int]
+    MyError.divideByZero.asLeft[Int]
   else
-    (100 / n).right[MyError]
+    (100 / n).asRight[MyError]
 
 def doSomethingBad(n: Int): Int =
   if (n < 0)
@@ -2728,19 +2760,19 @@ def doSomethingBad(n: Int): Int =
 
 def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
   n: Int
-): F[MyError \/ Int] =
+): F[Either[MyError, Int]] =
   catchNonFatalEitherT(
     for {
       b <- EitherT(pureOf(divide100By(n)))
       c <- eitherTRight[MyError](doSomethingBad(b))
     } yield c
-  )(MyError.nonFatalThrowable).run
+  )(MyError.nonFatalThrowable).value
 
 val fa = doSomething[Id](-1)
 fa match {
-  case \/-(b) =>
+  case Right(b) =>
     println(s"Result is $b")
-  case -\/(a) =>
+  case Left(a) =>
     println(s"Result: Failed with $a")
 }
 ```

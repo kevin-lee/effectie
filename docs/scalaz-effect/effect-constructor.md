@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: "EffectConstructor - Scalaz"
+title: "EffectConstructor"
 ---
 
 ## EffectConstructor

@@ -38,15 +38,15 @@ trait CanHandleError[F[_]] {
 }
 ```
 
-There are instances available for `cats.effect.IO`, `scala.concurrent.Future` and `cats.Id`.
+There are instances available for `monix.eval.Task`, `scala.concurrent.Future` and `cats.Id`.
 
 ## CanHandleError.handleNonFatal
 ```scala mdoc:reset-object
 import cats._
-import cats.effect._
+import monix.eval._
 
-import effectie.cats._
-import effectie.cats.Effectful._
+import effectie.monix._
+import effectie.monix.Effectful._
 
 import scala.util.control.NonFatal
 
@@ -64,15 +64,17 @@ def bar[F[_]: EffectConstructor: CanHandleError](n: Int): F[Int] =
       pureOf(0)
   }
   
-println(bar[IO](1).unsafeRunSync())
-println(bar[IO](-1).unsafeRunSync())
+import monix.execution.Scheduler.Implicits.global
+  
+println(bar[Task](1).runSyncUnsafe())
+println(bar[Task](-1).runSyncUnsafe())
  
 println(bar[Id](1))
 println(bar[Id](-1))
 ```
 ```scala mdoc:reset-object
-import effectie.cats._
-import effectie.cats.Effectful._
+import effectie.monix._
+import effectie.monix.Effectful._
 
 import scala.util.control.NonFatal
 

@@ -5,10 +5,10 @@ title: "EffectConstructor"
 
 ## EffectConstructor
 
-If you use Cats Effect and write tagless final code, and look for a generic way to construct `F[A]`, `EffectConstructor` can help you.
+If you use Monix and write tagless final code, and look for a generic way to construct `F[A]`, `EffectConstructor` can help you.
 
 ```scala mdoc:reset-object
-import effectie.cats._
+import effectie.monix._
 
 trait Something[F[_]] {
   def get[A](a: => A): F[A]
@@ -29,11 +29,12 @@ object Something {
   }
 }
 
-import cats.effect._
+import monix.eval._
+import monix.execution.Scheduler.Implicits.global
 
-val get1 = Something[IO].get(1)
+val get1 = Something[Task].get(1)
 
-get1.unsafeRunSync()
+get1.runSyncUnsafe()
 ```
 
 If you feel it's too cumbersome to repeat `EffectConstructor[F].effectOf()`, consider using [Effectful](#effectful)
@@ -44,8 +45,8 @@ If you feel it's too cumbersome to repeat `EffectConstructor[F].effectOf()`, con
 If you're sick of repeating `EffectConstructor[F].effectOf()` and looking for more convenient ways?, use `Effectful` instead.
 
 ```scala mdoc:reset-object
-import effectie.cats.Effectful._
-import effectie.cats._
+import effectie.monix.Effectful._
+import effectie.monix._
 
 trait Something[F[_]] {
   def get[A](a: => A): F[A]
@@ -67,9 +68,10 @@ object Something {
   }
 }
 
-import cats.effect._
+import monix.eval._
+import monix.execution.Scheduler.Implicits.global
 
-val get1 = Something[IO].get(1)
+val get1 = Something[Task].get(1)
 
-get1.unsafeRunSync()
+get1.runSyncUnsafe()
 ```

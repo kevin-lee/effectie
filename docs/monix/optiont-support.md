@@ -9,9 +9,9 @@ title: "OptionTSupport"
 import cats._
 import cats.syntax.all._
 
-import effectie.cats.Effectful._
-import effectie.cats._
-import effectie.cats.OptionTSupport._
+import effectie.monix.Effectful._
+import effectie.monix._
+import effectie.monix.OptionTSupport._
 
 trait Something[F[_]] {
   def foo(a: Int): F[Option[Int]]
@@ -42,12 +42,13 @@ object Something {
 
 }
 
-import cats.effect._
+import monix.eval._
+import monix.execution.Scheduler.Implicits.global
 
-Something[IO].foo(1).unsafeRunSync()
-Something[IO].foo(10).unsafeRunSync()
+Something[Task].foo(1).runSyncUnsafe()
+Something[Task].foo(10).runSyncUnsafe()
 
-Something[IO].bar(1.some).unsafeRunSync()
-Something[IO].bar(none[Int]).unsafeRunSync()
+Something[Task].bar(1.some).runSyncUnsafe()
+Something[Task].bar(none[Int]).runSyncUnsafe()
 
 ```
