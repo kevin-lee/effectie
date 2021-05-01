@@ -45,6 +45,27 @@ import effectie.cats._
 For more details, check out [Effectie for Cats Effect](cats-effect/cats-effect).
 
 
+### For Monix
+
+In `build.sbt`,
+
+```scala
+libraryDependencies += "io.kevinlee" %% "effectie-monix" % "@VERSION@"
+```
+then import
+
+```scala
+import effectie.monix.ConsoleEffectful._
+import effectie.monix.Effectful._
+
+import effectie.monix.EitherTSupport._
+import effectie.monix.OptionTSupport._
+import effectie.monix._
+```
+
+For more details, check out [Effectie for Monix](monix/monix).
+
+
 ### For Scalaz Effect
 
 In `build.sbt`,
