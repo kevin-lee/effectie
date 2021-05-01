@@ -1,6 +1,6 @@
 ---
 id: can-catch
-title: "CanCatch - Scalaz"
+title: "CanCatch"
 ---
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';

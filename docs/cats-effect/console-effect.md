@@ -1,13 +1,13 @@
 ---
 id: console-effect
-title: "ConsoleEffect - Cats"
+title: "ConsoleEffect"
 ---
 
 ## ConsoleEffect
 
 ```scala
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats._
 import effectie.YesNo
@@ -65,7 +65,7 @@ Done
 
 ```scala
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats.ConsoleEffectful._
 import effectie.cats._

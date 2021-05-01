@@ -1,13 +1,13 @@
 ---
 id: optiont-support
-title: "OptionTSupport - Cats"
+title: "OptionTSupport"
 ---
 
 ## OptionTSupport
 
 ```scala mdoc:reset-object
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 
 import effectie.cats.Effectful._
 import effectie.cats._

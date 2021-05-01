@@ -8,6 +8,8 @@ title: "For Cats Effect"
 * [EffectConstructor](effect-constructor)
 * [ConsoleEffect](console-effect)
 * [CanCatch](can-catch)
+* [CanHandleError](can-handle-error)
+* [FromFuture](from-future)
 * [OptionTSupport](optiont-support)
 * [EitherTSupport](eithert-support)
 
@@ -16,7 +18,7 @@ title: "For Cats Effect"
 ```scala mdoc:reset-object
 
 import cats._
-import cats.implicits._
+import cats.syntax.all._
 import cats.effect._
 
 import effectie.cats.ConsoleEffectful._

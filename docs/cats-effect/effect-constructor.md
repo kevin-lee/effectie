@@ -1,6 +1,6 @@
 ---
 id: effect-constructor
-title: "EffectConstructor - Cats"
+title: "EffectConstructor"
 ---
 
 ## EffectConstructor

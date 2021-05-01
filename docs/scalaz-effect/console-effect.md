@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: "ConsoleEffect - Scalaz"
+title: "ConsoleEffect"
 ---
 
 ## ConsoleEffect

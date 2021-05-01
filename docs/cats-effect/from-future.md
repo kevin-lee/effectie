@@ -1,6 +1,6 @@
 ---
 id: from-future
-title: "FromFuture - Cats"
+title: "FromFuture"
 ---
 ## FromFuture
 

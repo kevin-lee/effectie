@@ -1,6 +1,6 @@
 ---
 id: can-handle-error
-title: "CanHandleError - Cats"
+title: "CanHandleError"
 ---
 
 ## CanHandleError
