@@ -51,16 +51,6 @@ lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
   .settings(
     description := "Effect Utils - Core",
     libraryDependencies :=
-      crossVersionProps(
-        Seq.empty,
-        SemVer.parseUnsafe(scalaVersion.value),
-      ) {
-        case (Major(2), Minor(10), _) =>
-          libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover")
-        case x                        =>
-          libraryDependencies.value
-      },
-    libraryDependencies :=
       libraryDependenciesPostProcess(isScala3_0(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie._""",
@@ -71,9 +61,6 @@ lazy val catsEffect   = projectCommonSettings("catsEffect", ProjectName("cats-ef
     description := "Effect Utils - Cats Effect",
     libraryDependencies :=
       (SemVer.parseUnsafe(scalaVersion.value) match {
-        case SemVer(Major(2), Minor(10), _, _, _) =>
-          libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover") ++
-            Seq(libs.libCatsCore_2_0_0, libs.libCatsEffect_2_0_0)
         case SemVer(Major(2), Minor(11), _, _, _) =>
           libraryDependencies.value ++ Seq(libs.libCatsCore_2_0_0, libs.libCatsEffect_2_0_0)
         case SemVer(
@@ -107,10 +94,10 @@ lazy val monix        = projectCommonSettings("monix", ProjectName("monix"), fil
         List.empty,
         SemVer.parseUnsafe(scalaVersion.value),
       ) {
-        case (Major(2), Minor(10), _) =>
-          libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover")
+        case (Major(2), Minor(11), _) =>
+          libraryDependencies.value ++ List(libs.libMonix3_3_0)
         case x                        =>
-          libraryDependencies.value ++ Seq(libs.libMonix).map(_.cross(CrossVersion.for3Use2_13))
+          libraryDependencies.value ++ List(libs.libMonix)
       },
     libraryDependencies := libraryDependenciesPostProcess(isScala3_0(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
@@ -121,18 +108,7 @@ lazy val monix        = projectCommonSettings("monix", ProjectName("monix"), fil
 lazy val scalazEffect = projectCommonSettings("scalazEffect", ProjectName("scalaz-effect"), file("scalaz-effect"))
   .settings(
     description := "Effect Utils for Scalaz Effect",
-    libraryDependencies :=
-      crossVersionProps(
-        List.empty,
-        SemVer.parseUnsafe(scalaVersion.value),
-      ) {
-        case (Major(2), Minor(10), _) =>
-          libraryDependencies.value.filterNot(m => m.organization == "org.wartremover" && m.name == "wartremover") ++
-            Seq(libs.libScalazCore, libs.libScalazEffect)
-        case x                        =>
-          libraryDependencies.value ++
-            (Seq(libs.libScalazCore, libs.libScalazEffect).map(_.cross(CrossVersion.for3Use2_13)))
-      },
+    libraryDependencies ++= List(libs.libScalazCore, libs.libScalazEffect).map(_.cross(CrossVersion.for3Use2_13)),
     libraryDependencies := libraryDependenciesPostProcess(isScala3_0(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie.scalaz._""",
@@ -181,7 +157,7 @@ lazy val props =
     val GitHubUsername = "Kevin-Lee"
     val RepoName       = "effectie"
 
-    val DottyVersions = List("3.0.0-RC1", "3.0.0-RC2", "3.0.0-RC3")
+    val DottyVersions = List("3.0.0")
     val DottyVersion  = DottyVersions.last
 
 //    val ProjectScalaVersion = DottyVersion
@@ -216,32 +192,29 @@ lazy val props =
         "implicitConversions",
       ).mkString(",")
 
-    val hedgehogVersion       = "0.6.6"
-    val hedgehogLatestVersion = "0.6.7"
+    val hedgehogLatestVersion = "0.7.0"
 
     val catsVersion              = "2.5.0"
-    val catsLatestVersion        = "2.6.0"
+    val catsLatestVersion        = "2.6.1"
+
     val catsEffect2Version       = "2.4.1"
-    val catsEffect2LatestVersion = "2.5.0"
+    val catsEffect2LatestVersion = "2.5.1"
 //    val catsEffect3Version       = "3.0.2"
 
     val cats2_0_0Version       = "2.0.0"
     val catsEffect2_0_0Version = "2.0.0"
 
-    val monixVersion = "3.3.0"
+    val monixVersion3_3_0 = "3.3.0"
+    val monixVersion = "3.4.0"
 
-    val scalazVersion = "7.2.30"
+    val scalazVersion = "7.2.31"
 
   }
 
 lazy val libs =
   new {
     def hedgehogLibs(scalaVersion: String): List[ModuleID] = {
-      val hedgehogVersion =
-        if (scalaVersion == "3.0.0-RC1")
-          props.hedgehogVersion
-        else
-          props.hedgehogLatestVersion
+      val hedgehogVersion = props.hedgehogLatestVersion
       List(
         "qa.hedgehog" %% "hedgehog-core"   % hedgehogVersion % Test,
         "qa.hedgehog" %% "hedgehog-runner" % hedgehogVersion % Test,
@@ -260,6 +233,7 @@ lazy val libs =
     lazy val libCatsCore_2_0_0: ModuleID   = "org.typelevel" %% "cats-core"   % props.cats2_0_0Version
     lazy val libCatsEffect_2_0_0: ModuleID = "org.typelevel" %% "cats-effect" % props.catsEffect2_0_0Version
 
+    lazy val libMonix3_3_0: ModuleID = "io.monix" %% "monix" % props.monixVersion3_3_0
     lazy val libMonix: ModuleID = "io.monix" %% "monix" % props.monixVersion
   }
 
@@ -361,8 +335,6 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
       /* Ammonite-REPL { */
       libraryDependencies ++=
         (scalaBinaryVersion.value match {
-          case "2.10"          =>
-            Seq.empty[ModuleID]
           case "2.11"          =>
             Seq("com.lihaoyi" % "ammonite" % "1.6.7" % Test cross CrossVersion.full)
           case "2.12" | "2.13" =>
@@ -431,8 +403,6 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
       },
       Test / sourceGenerators +=
         (scalaBinaryVersion.value match {
-          case "2.10"          =>
-            task(Seq.empty[File])
           case "2.12" | "2.13" =>
             task {
               val file = (Test / sourceManaged).value / "amm.scala"
