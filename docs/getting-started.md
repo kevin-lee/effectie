@@ -19,7 +19,7 @@ slug: "/"
 
 * Supported Scala Versions: @SUPPORTED_SCALA_VERSIONS@
 
-A set of type-classes and utils for functional effect libraries (i.e. Scalaz and Cats Effect).
+A set of type-classes and utils for functional effect libraries (i.e.  Cats Effect, Monix and Scalaz's Effect).
 
 Why Effectie? Please read ["Why?"](#why) section.
 
@@ -217,4 +217,5 @@ iou.unsafeRunSync()
 
 Check out
 * [Effectie for Cats Effect](cats-effect/cats-effect)
-* [Effectie for Scalaz Effect](scalaz-effect/scalaz-effect)
+* [Effectie for Monix](monix/monix)
+* [Effectie for Scalaz (v7.2.x) Effect](scalaz-effect/scalaz-effect)
