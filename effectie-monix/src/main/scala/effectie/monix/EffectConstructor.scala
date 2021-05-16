@@ -5,18 +5,20 @@ import monix.eval.Task
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait EffectConstructor[F[_]] extends effectie.CommonEffectConstructor[F]
+trait EffectConstructor[F[_]] extends Eft[F] with effectie.CommonEft[F]
 
 object EffectConstructor {
   def apply[F[_]: EffectConstructor]: EffectConstructor[F] = implicitly[EffectConstructor[F]]
 
-  implicit val ioEffectConstructor: EffectConstructor[Task] = new EffectConstructor[Task] {
+  implicit final val taskEffectConstructor: EffectConstructor[Task] = new EffectConstructor[Task] {
 
-    override def effectOf[A](a: => A): Task[A] = Task(a)
+    private val eft: Eft[Task] = Eft.taskEft
 
-    override def pureOf[A](a: A): Task[A] = Task.now(a)
+    override def effectOf[A](a: => A): Task[A] = eft.effectOf(a)
 
-    override def unitOf: Task[Unit] = Task.unit
+    override def pureOf[A](a: A): Task[A] = eft.pureOf(a)
+
+    override def unitOf: Task[Unit] = eft.unitOf
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
@@ -25,7 +27,8 @@ object EffectConstructor {
 
   final class FutureEffectConstructor(override val EC0: ExecutionContext)
     extends EffectConstructor[Future]
-      with effectie.CommonEffectConstructor.CommonFutureEffectConstructor
+      with Eft[Future]
+      with effectie.CommonEft.CommonFutureEft
 
   implicit final val idEffectConstructor: EffectConstructor[Id] = new EffectConstructor[Id] {
 

@@ -334,16 +334,6 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
           .filterNot(option => option.contains("wartremover") || option.contains("import")),
       /* } WartRemover and scalacOptions */
       testFrameworks ++= (testFrameworks.value ++ Seq(TestFramework("hedgehog.sbt.Framework"))).distinct,
-      /* Ammonite-REPL { */
-      libraryDependencies ++=
-        (scalaBinaryVersion.value match {
-          case "2.11"          =>
-            Seq("com.lihaoyi" % "ammonite" % "1.6.7" % Test cross CrossVersion.full)
-          case "2.12" | "2.13" =>
-            Seq("com.lihaoyi" % "ammonite" % "2.3.8-58-aa8b2ab1" % Test cross CrossVersion.full)
-          case _               =>
-            Seq.empty[ModuleID]
-        }),
       Compile / unmanagedSourceDirectories ++= {
         val sharedSourceDir = baseDirectory.value / "src" / "main"
         if (isScala3_0(scalaVersion.value) || scalaVersion.value.startsWith("3.0"))
@@ -403,18 +393,6 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
         else
           Seq.empty
       },
-      Test / sourceGenerators +=
-        (scalaBinaryVersion.value match {
-          case "2.12" | "2.13" =>
-            task {
-              val file = (Test / sourceManaged).value / "amm.scala"
-              IO.write(file, """object amm extends App { ammonite.Main.main(args) }""")
-              Seq(file)
-            }
-          case _               =>
-            task(Seq.empty[File])
-        }),
-      /* } Ammonite-REPL */
       licenses := props.licenses,
       /* Coveralls { */
       coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {

@@ -2,15 +2,15 @@ package effectie
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait CommonEffectConstructor[F[_]] {
+trait CommonEft[F[_]] {
   def effectOf[A](a: => A): F[A]
   def pureOf[A](a: A): F[A]
   def unitOf: F[Unit]
 }
 
-object CommonEffectConstructor {
+object CommonEft {
 
-  trait CommonFutureEffectConstructor extends CommonEffectConstructor[Future] {
+  trait CommonFutureEft extends CommonEft[Future] {
 
     implicit def EC0: ExecutionContext
 
@@ -22,7 +22,7 @@ object CommonEffectConstructor {
   }
 }
 
-trait OldEffectConstructor[F[_]] extends CommonEffectConstructor[F] {
+trait OldEffectConstructor[F[_]] extends CommonEft[F] {
   @deprecated(message = "Use EffectConstructor[F].pureOf instead", since = "1.4.0")
   @inline def effectOfPure[A](a: A): F[A] = pureOf[A](a)
   @deprecated(message = "Use EffectConstructor[F].unitOf instead", since = "1.4.0")
@@ -32,6 +32,6 @@ trait OldEffectConstructor[F[_]] extends CommonEffectConstructor[F] {
 object OldEffectConstructor {
 
   trait OldFutureEffectConstructor
-    extends CommonEffectConstructor.CommonFutureEffectConstructor
+    extends CommonEft.CommonFutureEft
        with OldEffectConstructor[Future]
 }

@@ -19,25 +19,25 @@ trait ConsoleEffect[F[_]] {
 object ConsoleEffect {
   def apply[F[_]: ConsoleEffect]: ConsoleEffect[F] = implicitly[ConsoleEffect[F]]
 
-  abstract class ConsoleEffectWithoutFlatMap[F[_]: CommonEffectConstructor]
+  abstract class ConsoleEffectWithoutFlatMap[F[_]: CommonEft]
     extends ConsoleEffect[F] {
 
     override def readLn: F[String] =
-      implicitly[CommonEffectConstructor[F]].effectOf(scala.io.StdIn.readLine())
+      implicitly[CommonEft[F]].effectOf(scala.io.StdIn.readLine())
 
     override def readPassword: F[Array[Char]] =
-      implicitly[CommonEffectConstructor[F]].effectOf(System.console().readPassword())
+      implicitly[CommonEft[F]].effectOf(System.console().readPassword())
 
     override def putStr(value: String): F[Unit] =
-      implicitly[CommonEffectConstructor[F]].effectOf(Console.out.print(value))
+      implicitly[CommonEft[F]].effectOf(Console.out.print(value))
 
     override def putStrLn(value: String): F[Unit] =
-      implicitly[CommonEffectConstructor[F]].effectOf(Console.out.println(value))
+      implicitly[CommonEft[F]].effectOf(Console.out.println(value))
 
     override def putErrStr(value: String): F[Unit] =
-      implicitly[CommonEffectConstructor[F]].effectOf(Console.err.print(value))
+      implicitly[CommonEft[F]].effectOf(Console.err.print(value))
 
     override def putErrStrLn(value: String): F[Unit] =
-      implicitly[CommonEffectConstructor[F]].effectOf(Console.err.println(value))
+      implicitly[CommonEft[F]].effectOf(Console.err.println(value))
   }
 }

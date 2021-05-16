@@ -20,8 +20,8 @@ trait OptionTSupport {
   def optionTSomePure[F[_]]: PartiallyAppliedOptionTSomePure[F] =
     new PartiallyAppliedOptionTSomePure[F]
 
-  def optionTNone[F[_]: EffectConstructor, A]: OptionT[F, A] =
-    OptionT[F, A](EffectConstructor[F].pureOf(none[A]))
+  def optionTNone[F[_]: Eft, A]: OptionT[F, A] =
+    OptionT[F, A](Eft[F].pureOf(none[A]))
 
   def optionTSomeF[F[_]: Functor, A](fa: F[A]): OptionT[F, A] =
     OptionT.liftF[F, A](fa)
@@ -34,28 +34,28 @@ object OptionTSupport extends OptionTSupport {
   private[OptionTSupport] final class PartiallyAppliedOptionTOf[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
-    def apply[A](a: => Option[A])(implicit EF: EffectConstructor[F]): OptionT[F, A] =
-      OptionT(EffectConstructor[F].effectOf(a))
+    def apply[A](a: => Option[A])(implicit EF: Eft[F]): OptionT[F, A] =
+      OptionT(Eft[F].effectOf(a))
   }
 
   private[OptionTSupport] final class PartiallyAppliedOptionTOfPure[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
-    def apply[A](a: Option[A])(implicit EF: EffectConstructor[F]): OptionT[F, A] =
-      OptionT(EffectConstructor[F].pureOf(a))
+    def apply[A](a: Option[A])(implicit EF: Eft[F]): OptionT[F, A] =
+      OptionT(Eft[F].pureOf(a))
   }
 
   private[OptionTSupport] final class PartiallyAppliedOptionTSome[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
-    def apply[A](a: => A)(implicit EC: EffectConstructor[F], FT: Functor[F]): OptionT[F, A] =
+    def apply[A](a: => A)(implicit EC: Eft[F], FT: Functor[F]): OptionT[F, A] =
       OptionT.liftF(EC.effectOf(a))
   }
 
   private[OptionTSupport] final class PartiallyAppliedOptionTSomePure[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
-    def apply[A](a: A)(implicit EC: EffectConstructor[F], FT: Functor[F]): OptionT[F, A] =
+    def apply[A](a: A)(implicit EC: Eft[F], FT: Functor[F]): OptionT[F, A] =
       OptionT.liftF(EC.pureOf(a))
   }
 
