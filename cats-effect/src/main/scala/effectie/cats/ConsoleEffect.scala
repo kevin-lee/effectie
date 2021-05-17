@@ -11,11 +11,11 @@ object ConsoleEffect {
   def apply[F[_]: ConsoleEffect]: ConsoleEffect[F] =
     implicitly[ConsoleEffect[F]]
 
-  implicit def consoleEffectF[F[_]: EffectConstructor: FlatMap]
+  implicit def consoleEffectF[F[_]: Eft: FlatMap]
     : ConsoleEffect[F] =
     new ConsoleEffectF[F]
 
-  final class ConsoleEffectF[F[_]: EffectConstructor: FlatMap]
+  final class ConsoleEffectF[F[_]: Eft: FlatMap]
     extends ConsoleEffectWithoutFlatMap[F]
       with ConsoleEffect[F] {
 
@@ -25,9 +25,9 @@ object ConsoleEffect {
       answer <- readLn
       yesOrN <-  answer match {
         case "y" | "Y" =>
-          EffectConstructor[F].effectOf(YesNo.yes)
+          Eft[F].effectOf(YesNo.yes)
         case "n" | "N" =>
-          EffectConstructor[F].effectOf(YesNo.no)
+          Eft[F].effectOf(YesNo.no)
         case _ =>
           readYesNo(prompt)
       }

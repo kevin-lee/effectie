@@ -2,22 +2,24 @@ package effectie.cats
 
 import cats.Id
 import cats.effect.IO
-import effectie.{CommonEffectConstructor, OldEffectConstructor}
+import effectie.{CommonEft, OldEffectConstructor}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait EffectConstructor[F[_]] extends CommonEffectConstructor[F] with OldEffectConstructor[F]
+trait EffectConstructor[F[_]] extends Eft[F] with CommonEft[F] with OldEffectConstructor[F]
 
 object EffectConstructor {
   def apply[F[_]: EffectConstructor]: EffectConstructor[F] = implicitly[EffectConstructor[F]]
 
-  implicit val ioEffectConstructor: EffectConstructor[IO] = new EffectConstructor[IO] {
+  implicit final val ioEffectConstructor: EffectConstructor[IO] = new EffectConstructor[IO] {
 
-    override def effectOf[A](a: => A): IO[A] = IO(a)
+    private val eft: Eft[IO] = Eft.ioEft
 
-    override def pureOf[A](a: A): IO[A] = IO.pure(a)
+    override def effectOf[A](a: => A): IO[A] = eft.effectOf(a)
 
-    override def unitOf: IO[Unit] = IO.unit
+    override def pureOf[A](a: A): IO[A] = eft.pureOf(a)
+
+    override def unitOf: IO[Unit] = eft.unitOf
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
@@ -26,7 +28,8 @@ object EffectConstructor {
 
   final class FutureEffectConstructor(override val EC0: ExecutionContext)
     extends EffectConstructor[Future]
-    with CommonEffectConstructor.CommonFutureEffectConstructor
+    with Eft[Future]
+    with CommonEft.CommonFutureEft
     with OldEffectConstructor.OldFutureEffectConstructor
 
   implicit final val idEffectConstructor: EffectConstructor[Id] = new EffectConstructor[Id] {

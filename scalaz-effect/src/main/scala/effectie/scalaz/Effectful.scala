@@ -12,9 +12,9 @@ trait Effectful {
   def pureOf[F[_]]: CurriedEffectOfPure[F] = new CurriedEffectOfPure[F]
 
   @deprecated(message = "Use unitOf instead", since = "1.4.0")
-  @inline def effectOfUnit[F[_]: EffectConstructor]: F[Unit] = unitOf[F]
+  @inline def effectOfUnit[F[_]: Eft]: F[Unit] = unitOf[F]
 
-  def unitOf[F[_]: EffectConstructor]: F[Unit] = EffectConstructor[F].unitOf
+  def unitOf[F[_]: Eft]: F[Unit] = Eft[F].unitOf
 
 }
 
@@ -24,15 +24,15 @@ object Effectful extends Effectful {
   private[Effectful] final class CurriedEffectOf[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
-    def apply[A](a: => A)(implicit EF: EffectConstructor[F]): F[A] =
-      EffectConstructor[F].effectOf(a)
+    def apply[A](a: => A)(implicit EF: Eft[F]): F[A] =
+      Eft[F].effectOf(a)
   }
 
   private[Effectful] final class CurriedEffectOfPure[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
-    def apply[A](a: A)(implicit EF: EffectConstructor[F]): F[A] =
-      EffectConstructor[F].pureOf(a)
+    def apply[A](a: A)(implicit EF: Eft[F]): F[A] =
+      Eft[F].pureOf(a)
   }
 
 }

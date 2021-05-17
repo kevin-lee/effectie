@@ -40,43 +40,43 @@ object EitherTSupport extends EitherTSupport {
   private[EitherTSupport] final class PartiallyAppliedEitherTEffectOf[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
-    def apply[A, B](ab: => Either[A, B])(implicit EF: EffectConstructor[F]): EitherT[F, A, B] =
-      EitherT(EffectConstructor[F].effectOf(ab))
+    def apply[A, B](ab: => Either[A, B])(implicit EF: Eft[F]): EitherT[F, A, B] =
+      EitherT(Eft[F].effectOf(ab))
   }
 
   private[EitherTSupport] final class PartiallyAppliedEitherTEffectOfPure[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
-    def apply[A, B](ab: Either[A, B])(implicit EF: EffectConstructor[F]): EitherT[F, A, B] =
-      EitherT(EffectConstructor[F].pureOf(ab))
+    def apply[A, B](ab: Either[A, B])(implicit EF: Eft[F]): EitherT[F, A, B] =
+      EitherT(Eft[F].pureOf(ab))
   }
 
   private[EitherTSupport] final class PartiallyAppliedEitherTRightEffectOf[A](
     private val dummy: Boolean = true
   ) extends AnyVal {
-    def apply[F[_], B](b: => B)(implicit EC: EffectConstructor[F], FT: Functor[F]): EitherT[F, A, B] =
-      EitherT.liftF(EffectConstructor[F].effectOf(b))
+    def apply[F[_], B](b: => B)(implicit EC: Eft[F], FT: Functor[F]): EitherT[F, A, B] =
+      EitherT.liftF(Eft[F].effectOf(b))
   }
 
   private[EitherTSupport] final class PartiallyAppliedEitherTRightEffectOfPure[A](
     private val dummy: Boolean = true
   ) extends AnyVal {
-    def apply[F[_], B](b: B)(implicit EC: EffectConstructor[F], FT: Functor[F]): EitherT[F, A, B] =
-      EitherT.liftF(EffectConstructor[F].pureOf(b))
+    def apply[F[_], B](b: B)(implicit EC: Eft[F], FT: Functor[F]): EitherT[F, A, B] =
+      EitherT.liftF(Eft[F].pureOf(b))
   }
 
   private[EitherTSupport] final class PartiallyAppliedEitherTLeftEffectOf[B](
     private val dummy: Boolean = true
   ) extends AnyVal {
-    def apply[F[_], A](a: => A)(implicit EC: EffectConstructor[F], FT: Functor[F]): EitherT[F, A, B] =
-      EitherT(EffectConstructor[F].effectOf(a).map(_.asLeft[B]))
+    def apply[F[_], A](a: => A)(implicit EC: Eft[F], FT: Functor[F]): EitherT[F, A, B] =
+      EitherT(Eft[F].effectOf(a).map(_.asLeft[B]))
   }
 
   private[EitherTSupport] final class PartiallyAppliedEitherTLeftEffectOfPure[B](
     private val dummy: Boolean = true
   ) extends AnyVal {
-    def apply[F[_], A](a: A)(implicit EC: EffectConstructor[F], FT: Functor[F]): EitherT[F, A, B] =
-      EitherT(EffectConstructor[F].pureOf(a).map(_.asLeft[B]))
+    def apply[F[_], A](a: A)(implicit EC: Eft[F], FT: Functor[F]): EitherT[F, A, B] =
+      EitherT(Eft[F].pureOf(a).map(_.asLeft[B]))
   }
 
   private[EitherTSupport] final class PartiallyAppliedEitherTRightF[A](
