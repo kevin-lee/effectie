@@ -38,11 +38,6 @@ lazy val effectie = (project in file("."))
     description := "Effect Utils",
     libraryDependencies :=
       libraryDependenciesPostProcess(isScala3_0(scalaVersion.value), libraryDependencies.value),
-    /* GitHub Release { */
-    devOopsPackagedArtifacts := List(
-      s"*/target/scala-*/${name.value}*.jar",
-    )
-    /* } GitHub Release */
   )
   .settings(noPublish)
   .aggregate(core, catsEffect, scalazEffect, monix)
@@ -119,11 +114,7 @@ lazy val docs         = (project in file("generated-docs"))
   .enablePlugins(MdocPlugin, DocusaurPlugin)
   .settings(
     name := prefixedProjectName("docs"),
-    scalacOptions := scalacOptionsPostProcess(
-      SemVer.parseUnsafe(scalaVersion.value),
-      isScala3_0(scalaVersion.value),
-      scalacOptions.value,
-    ),
+    scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
     libraryDependencies := libraryDependenciesPostProcess(
       isScala3_0(scalaVersion.value),
       libraryDependencies.value
@@ -174,6 +165,9 @@ lazy val props =
           m.name == "kind-projector" ||
           m.name == "better-monadic-for" ||
           m.name == "mdoc"
+
+    val isScala3IncompatibleScalacOption: String => Boolean =
+      _.startsWith("-P:wartremover")
 
     val CrossScalaVersions: Seq[String] =
       (List(
@@ -286,34 +280,8 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
                                    compilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
                                  )
                                }),
-      scalacOptions := scalacOptionsPostProcess(
-        SemVer.parseUnsafe(scalaVersion.value),
-        isScala3_0(scalaVersion.value),
-        scalacOptions.value,
-      ),
-      Compile / doc / scalacOptions := ((Compile / doc / scalacOptions)
-        .value
-        .filterNot(
-          if (isScala3_0(scalaVersion.value)) {
-            Set(
-              "-source:3.0-migration",
-              "-scalajs",
-              "-deprecation",
-              "-explain-types",
-              "-explain",
-              "-feature",
-              props.scala3cLanguageOptions,
-              "-unchecked",
-              "-Xfatal-warnings",
-              "-Ykind-projector",
-              "-from-tasty",
-              "-encoding",
-              "utf8",
-            )
-          } else {
-            Set.empty[String]
-          }
-        )),
+//      useAggressiveScalacOptions := true,
+      scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
       libraryDependencies ++= libs.hedgehogLibs(scalaVersion.value),
       /* WartRemover and scalacOptions { */
 //      Compile / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
