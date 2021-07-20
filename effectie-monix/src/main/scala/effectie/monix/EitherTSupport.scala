@@ -1,6 +1,6 @@
 package effectie.monix
 
-import cats.Functor
+import cats.{Applicative, Functor}
 import cats.data.EitherT
 import cats.syntax.all._
 
@@ -91,6 +91,24 @@ object EitherTSupport extends  EitherTSupport {
   ) extends AnyVal {
     def apply[F[_]: Functor, A](a: F[A]): EitherT[F, A, B] =
       EitherT(a.map(_.asLeft[B]))
+  }
+
+  implicit final class EitherTFEitherOps[F[_], A, B](private val fOfEither: F[Either[A, B]]) extends AnyVal {
+    def eitherT: EitherT[F, A, B] = EitherT[F, A, B](fOfEither)
+  }
+
+  implicit final class EitherTEitherOps[A, B](private val either: Either[A, B]) extends AnyVal {
+    def eitherT[F[_]: Applicative]: EitherT[F, A, B] = EitherT.fromEither[F](either)
+  }
+
+  implicit final class EitherTFAOps[F[_], A](private val fa: F[A]) extends AnyVal {
+    def rightT[B](implicit F: Functor[F]): EitherT[F, B, A] = EitherT.right[B](fa)
+    def leftT[B](implicit F: Functor[F]): EitherT[F, A, B]  = EitherT.left[B](fa)
+  }
+
+  implicit final class EitherTAOps[A](private val a: A) extends AnyVal {
+    def rightTF[F[_]: Applicative, B]: EitherT[F, B, A] = EitherT.rightT[F, B](a)
+    def leftTF[F[_]: Applicative, B]: EitherT[F, A, B]  = EitherT.leftT[F, B](a)
   }
 
 }

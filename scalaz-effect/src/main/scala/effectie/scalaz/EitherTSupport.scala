@@ -1,6 +1,6 @@
 package effectie.scalaz
 
-import scalaz.{EitherT, Functor, \/}
+import scalaz.{Applicative, EitherT, Functor, \/}
 
 trait EitherTSupport {
 
@@ -89,6 +89,24 @@ object EitherTSupport extends  EitherTSupport {
   ) extends AnyVal {
     def apply[F[_]: Functor, A](a: F[A]): EitherT[F, A, B] =
       EitherT.leftT(a)
+  }
+
+  implicit final class EitherTFEitherOps[F[_], A, B](private val fOfEither: F[A \/ B]) extends AnyVal {
+    def eitherT: EitherT[F, A, B] = EitherT[F, A, B](fOfEither)
+  }
+
+  implicit final class EitherTEitherOps[A, B](private val either: A \/ B) extends AnyVal {
+    def eitherT[F[_]: Applicative]: EitherT[F, A, B] = EitherT.fromDisjunction[F](either)
+  }
+
+  implicit final class EitherTFAOps[F[_], A](private val fa: F[A]) extends AnyVal {
+    def rightT[B](implicit F: Functor[F]): EitherT[F, B, A] = EitherT.rightT[F, B, A](fa)
+    def leftT[B](implicit F: Functor[F]): EitherT[F, A, B]  = EitherT.leftT[F, A, B](fa)
+  }
+
+  implicit final class EitherTAOps[A](private val a: A) extends AnyVal {
+    def rightTF[F[_]: Applicative, B]: EitherT[F, B, A] = EitherT.pure[F, B, A](a)
+    def leftTF[F[_]: Applicative, B]: EitherT[F, A, B]  = EitherT.pureLeft[F, A, B](a)
   }
 
 }
