@@ -19,8 +19,11 @@ trait OptionTSupport {
   def optionTSomePure[F[_]]: PartiallyAppliedOptionTSomePure[F] =
     new PartiallyAppliedOptionTSomePure[F]
 
-  def optionTNone[F[_]: Eft, A]: OptionT[F, A] =
-    OptionT[F, A](Eft[F].pureOf(none[A]))
+  def optionTNone[F[_]: Applicative, A]: OptionT[F, A] =
+    noneT[F, A]
+
+  def noneT[F[_]: Applicative, A]: OptionT[F, A] =
+    OptionT.none[F, A]
 
   def optionTSomeF[F[_]: Functor, A](fa: F[A]): OptionT[F, A] =
     OptionT[F, A](fa.map(_.some))
@@ -56,6 +59,22 @@ object OptionTSupport extends OptionTSupport {
   ) extends AnyVal {
     def apply[A](a: A)(implicit EC: Eft[F], FT: Functor[F]): OptionT[F, A] =
       OptionT(EC.pureOf(a).map(_.some))
+  }
+
+  implicit final class OptionTFOptionOps[F[_], A](private val fOfOption: F[Option[A]]) extends AnyVal {
+    def optionT: OptionT[F, A] = OptionT[F, A](fOfOption)
+  }
+
+  implicit final class OptionTOptionOps[A](private val option: Option[A]) extends AnyVal {
+    def optionT[F[_]: Applicative]: OptionT[F, A] = OptionT(Applicative[F].pure(option))
+  }
+
+  implicit final class OptionTFAOps[F[_], A](private val fa: F[A]) extends AnyVal {
+    def someT(implicit F: Functor[F]): OptionT[F, A] = OptionT(fa.map(Option(_)))
+  }
+
+  implicit final class OptionTAOps[A](private val a: A) extends AnyVal {
+    def someTF[F[_]: Applicative]: OptionT[F, A] = OptionT.some(a)
   }
 
 }
