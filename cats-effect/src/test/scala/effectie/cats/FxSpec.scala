@@ -1,32 +1,32 @@
-package effectie.scalaz
+package effectie.cats
 
-import scalaz._
-import Scalaz._
+import cats.Id
+import cats.effect._
 import effectie.ConcurrentSupport
+import effectie.cats.compat.CatsEffectIoCompat
 import hedgehog._
 import hedgehog.runner._
-import scalaz.effect._
 
 /**
   * @author Kevin Lee
   * @since 2020-12-06
   */
-object EftSpec extends Properties {
+object FxSpec extends Properties {
   override def tests: List[Test] = List(
-    property("test Eft[IO].effectOf", IoSpec.testEffectOf),
-    property("test Eft[IO].pureOf", IoSpec.testPureOf),
-    example("test Eft[IO].unitOf", IoSpec.testUnitOf),
+    property("test Fx[IO].effectOf", IoSpec.testEffectOf),
+    property("test Fx[IO].pureOf", IoSpec.testPureOf),
+    example("test Fx[IO].unitOf", IoSpec.testUnitOf),
 
-    property("test Eft[Future].effectOf", FutureSpec.testEffectOf),
-    property("test Eft[Future].pureOf", FutureSpec.testPureOf),
-    example("test Eft[Future].unitOf", FutureSpec.testUnitOf),
+    property("test Fx[Future].effectOf", FutureSpec.testEffectOf),
+    property("test Fx[Future].pureOf", FutureSpec.testPureOf),
+    example("test Fx[Future].unitOf", FutureSpec.testUnitOf),
 
-    property("test Eft[Id].effectOf", IdSpec.testEffectOf),
-    property("test Eft[Id].pureOf", IdSpec.testPureOf),
-    example("test Eft[Id].unitOf", IdSpec.testUnitOf)
+    property("test Fx[Id].effectOf", IdSpec.testEffectOf),
+    property("test Fx[Id].pureOf", IdSpec.testPureOf),
+    example("test Fx[Id].unitOf", IdSpec.testUnitOf)
   )
 
-  object IoSpec {
+  object IoSpec extends CatsEffectIoCompat {
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
@@ -35,9 +35,9 @@ object EftSpec extends Properties {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual = before
       val testBefore = actual ==== before
-      val io = Eft[IO].effectOf({ actual = after; ()})
+      val io = Fx[IO].effectOf({ actual = after; ()})
       val testBeforeRun = actual ==== before
-      io.unsafePerformIO()
+      io.unsafeRunSync()
       val testAfterRun = actual ==== after
       Result.all(List(
         testBefore.log("testBefore"),
@@ -53,9 +53,9 @@ object EftSpec extends Properties {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual = before
       val testBefore = actual ==== before
-      val io = Eft[IO].pureOf({ actual = after; ()})
+      val io = Fx[IO].pureOf({ actual = after; ()})
       val testBeforeRun = actual ==== after
-      io.unsafePerformIO()
+      io.unsafeRunSync()
       val testAfterRun = actual ==== after
       Result.all(List(
         testBefore.log("testBefore"),
@@ -65,9 +65,9 @@ object EftSpec extends Properties {
     }
 
     def testUnitOf: Result = {
-      val io = Eft[IO].unitOf
+      val io = Fx[IO].unitOf
       val expected: Unit = ()
-      val actual: Unit = io.unsafePerformIO()
+      val actual: Unit = io.unsafeRunSync()
       actual ==== expected
     }
 
@@ -90,7 +90,7 @@ object EftSpec extends Properties {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual = before
       val testBefore = actual ==== before
-      val future: Future[Unit] = Eft[Future].effectOf({ actual = after; ()})
+      val future: Future[Unit] = Fx[Future].effectOf({ actual = after; () })
       ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
       val testAfterRun = actual ==== after
       Result.all(List(
@@ -109,7 +109,7 @@ object EftSpec extends Properties {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual = before
       val testBefore = actual ==== before
-      val future = Eft[Future].pureOf({ actual = after; ()})
+      val future = Fx[Future].pureOf({ actual = after; ()})
       ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
       val testAfterRun = actual ==== after
       Result.all(List(
@@ -121,7 +121,7 @@ object EftSpec extends Properties {
     def testUnitOf: Result = {
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
       implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
-      val future = Eft[Future].unitOf
+      val future = Fx[Future].unitOf
       val expected: Unit = ()
       val actual: Unit = ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
       actual ==== expected
@@ -138,7 +138,7 @@ object EftSpec extends Properties {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual = before
       val testBefore = actual ==== before
-      Eft[Id].effectOf({ actual = after; ()})
+      Fx[Id].effectOf({ actual = after; ()})
       val testAfter = actual ==== after
       testBefore.log("testBefore") ==== testAfter.log("testAfter")
     }
@@ -150,7 +150,7 @@ object EftSpec extends Properties {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual = before
       val testBefore = actual ==== before
-      Eft[Id].pureOf({ actual = after; ()})
+      Fx[Id].pureOf({ actual = after; ()})
       val testAfter = actual ==== after
       Result.all(List(
         testBefore.log("testBefore"),
@@ -160,7 +160,7 @@ object EftSpec extends Properties {
 
     def testUnitOf: Result = {
       val expected: Unit = ()
-      val actual: Unit = Eft[Id].unitOf
+      val actual = Fx[Id].unitOf
       actual ==== expected
     }
 

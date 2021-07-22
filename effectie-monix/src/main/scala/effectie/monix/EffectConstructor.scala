@@ -6,7 +6,7 @@ import monix.eval.Task
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait EffectConstructor[F[_]] extends Eft[F] with effectie.CommonEft[F]
+trait EffectConstructor[F[_]] extends Fx[F] with effectie.CommonFx[F]
 
 object EffectConstructor {
   def apply[F[_]: EffectConstructor]: EffectConstructor[F] = implicitly[EffectConstructor[F]]
@@ -35,8 +35,8 @@ object EffectConstructor {
 
   final class FutureEffectConstructor(override val EC0: ExecutionContext)
       extends EffectConstructor[Future]
-      with Eft[Future]
-      with effectie.CommonEft.CommonFutureEft
+      with Fx[Future]
+      with effectie.CommonFx.CommonFutureFx
 
   implicit final val idEffectConstructor: EffectConstructor[Id] = new EffectConstructor[Id] {
 

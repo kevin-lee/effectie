@@ -46,7 +46,7 @@ object EitherTSupportSpec extends Properties {
     import effectie.scalaz.EitherTSupport.EitherTFEitherOps
     import scalaz.effect._
 
-    def fab[F[_]: Eft, A, B](ab: A \/ B): F[A \/ B] = Eft[F].effectOf(ab)
+    def fab[F[_]: Fx, A, B](ab: A \/ B): F[A \/ B] = Fx[F].effectOf(ab)
 
     def testEitherT: Property = for {
       n <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")
