@@ -1,6 +1,7 @@
 package effectie.monix
 
 import cats.Id
+import cats.effect.IO
 import monix.eval.Task
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -12,13 +13,20 @@ object EffectConstructor {
 
   implicit final val taskEffectConstructor: EffectConstructor[Task] = new EffectConstructor[Task] {
 
-    private val eft: Eft[Task] = Eft.taskEft
+    override def effectOf[A](a: => A): Task[A] = Task(a)
 
-    override def effectOf[A](a: => A): Task[A] = eft.effectOf(a)
+    override def pureOf[A](a: A): Task[A] = Task.now(a)
 
-    override def pureOf[A](a: A): Task[A] = eft.pureOf(a)
+    override val unitOf: Task[Unit] = Task.unit
+  }
 
-    override def unitOf: Task[Unit] = eft.unitOf
+  implicit final val ioEffectConstructor: EffectConstructor[IO] = new EffectConstructor[IO] {
+
+    override def effectOf[A](a: => A): IO[A] = IO(a)
+
+    override def pureOf[A](a: A): IO[A] = IO.pure(a)
+
+    override val unitOf: IO[Unit] = IO.unit
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
@@ -26,7 +34,7 @@ object EffectConstructor {
     new FutureEffectConstructor(EC)
 
   final class FutureEffectConstructor(override val EC0: ExecutionContext)
-    extends EffectConstructor[Future]
+      extends EffectConstructor[Future]
       with Eft[Future]
       with effectie.CommonEft.CommonFutureEft
 

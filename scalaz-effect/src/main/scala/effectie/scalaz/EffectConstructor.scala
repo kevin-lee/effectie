@@ -1,6 +1,7 @@
 package effectie.scalaz
 
 import effectie.{CommonEft, OldEffectConstructor}
+import scalaz.Applicative
 import scalaz.Scalaz.Id
 import scalaz.effect.IO
 
@@ -13,13 +14,11 @@ object EffectConstructor {
 
   implicit final val ioEffectConstructor: EffectConstructor[IO] = new EffectConstructor[IO] {
 
-    private val eft: Eft[IO] = Eft.ioEft
+    override def effectOf[A](a: => A): IO[A] = IO(a)
 
-    override def effectOf[A](a: => A): IO[A] = eft.effectOf(a)
+    override def pureOf[A](a: A): IO[A] = Applicative[IO].pure(a)
 
-    override def pureOf[A](a: A): IO[A] = eft.pureOf(a)
-
-    override def unitOf: IO[Unit] = eft.unitOf
+    override val unitOf: IO[Unit] = IO.ioUnit
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
