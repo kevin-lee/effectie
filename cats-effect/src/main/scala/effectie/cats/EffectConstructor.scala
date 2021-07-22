@@ -2,11 +2,11 @@ package effectie.cats
 
 import cats.Id
 import cats.effect.IO
-import effectie.{CommonEft, OldEffectConstructor}
+import effectie.{CommonFx, OldEffectConstructor}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait EffectConstructor[F[_]] extends Eft[F] with CommonEft[F] with OldEffectConstructor[F]
+trait EffectConstructor[F[_]] extends Fx[F] with CommonFx[F] with OldEffectConstructor[F]
 
 object EffectConstructor {
   def apply[F[_]: EffectConstructor]: EffectConstructor[F] = implicitly[EffectConstructor[F]]
@@ -26,8 +26,8 @@ object EffectConstructor {
 
   final class FutureEffectConstructor(override val EC0: ExecutionContext)
     extends EffectConstructor[Future]
-    with Eft[Future]
-    with CommonEft.CommonFutureEft
+    with Fx[Future]
+    with CommonFx.CommonFutureFx
     with OldEffectConstructor.OldFutureEffectConstructor
 
   implicit final val idEffectConstructor: EffectConstructor[Id] = new EffectConstructor[Id] {

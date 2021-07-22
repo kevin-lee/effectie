@@ -37,7 +37,7 @@ object OptionTSupportSpec extends Properties {
     import effectie.scalaz.OptionTSupport.OptionTFOptionOps
     import scalaz.effect.IO
 
-    def fab[F[_]: Eft, A](oa: Option[A]): F[Option[A]] = Eft[F].effectOf(oa)
+    def fab[F[_]: Fx, A](oa: Option[A]): F[Option[A]] = Fx[F].effectOf(oa)
 
     def testOptionT: Property = for {
       n <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")
@@ -147,7 +147,7 @@ object OptionTSupportSpec extends Properties {
     import effectie.scalaz.OptionTSupport._
     import scalaz.effect.IO
 
-    def fab[F[_]: Eft, A](oa: Option[A]): F[Option[A]] = Eft[F].effectOf(oa)
+    def fab[F[_]: Fx, A](oa: Option[A]): F[Option[A]] = Fx[F].effectOf(oa)
 
     def testAll: Property = for {
       n <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")
