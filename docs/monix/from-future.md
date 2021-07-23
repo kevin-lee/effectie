@@ -38,10 +38,10 @@ object MyApp {
   def foo(n: Int)(implicit ec: ExecutionContext): Future[Int] =
     Future(n + 100)
 
-  def bar[F[_]: EffectConstructor](n: Int): F[Int] =
+  def bar[F[_]: Fx](n: Int): F[Int] =
     pureOf(n * 2)
 
-  def baz[F[_]: Monad: EffectConstructor: FromFuture](n: Int)(implicit ec: ExecutionContext): F[Int] =
+  def baz[F[_]: Monad: Fx: FromFuture](n: Int)(implicit ec: ExecutionContext): F[Int] =
     for {
       a <- FromFuture[F].toEffect(foo(n))
       b <- bar[F](a)

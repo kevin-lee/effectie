@@ -12,7 +12,7 @@ module.exports = {
       collapsed: false,
       items: [
         'cats-effect/cats-effect',
-        'cats-effect/effect-constructor',
+        'cats-effect/fx',
         'cats-effect/can-catch',
         'cats-effect/can-handle-error',
         'cats-effect/from-future',
@@ -27,7 +27,7 @@ module.exports = {
       collapsed: true,
       items: [
         'monix/monix',
-        'monix/effect-constructor',
+        'monix/fx',
         'monix/can-catch',
         'monix/can-handle-error',
         'monix/from-future',
@@ -42,7 +42,7 @@ module.exports = {
       collapsed: true,
       items: [
         'scalaz-effect/scalaz-effect',
-        'scalaz-effect/effect-constructor',
+        'scalaz-effect/fx',
         'scalaz-effect/can-catch',
         'scalaz-effect/optiont-support',
         'scalaz-effect/eithert-support',

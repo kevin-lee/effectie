@@ -22,21 +22,21 @@ object Something {
   def apply[F[_]: Something]: Something[F] =
     implicitly[Something[F]]
 
-  implicit def something[F[_]: EffectConstructor: Monad]: Something[F] =
+  implicit def something[F[_]: Fx: Monad]: Something[F] =
     new SomethingF[F]
 
-  final class SomethingF[F[_]: EffectConstructor: Monad]
+  final class SomethingF[F[_]: Fx: Monad]
     extends Something[F] {
 
     def foo(a: Int): F[Option[Int]] = (for {
-      x <- optionTSomePure(a) // == OptionT.liftF(pureOf(a))
-      y <- optionTSome(x + 10) // == OptionT.liftF(effectOf(x + 10))
-      z <- optionTSomeF(effectOf(y + 100)) // == OptionT.lieftF(effectOf(y + 100))
+      x <- a.someTF[F] // == OptionT.liftF(Applicative[F].pure(a))
+      y <- (x + 10).someTF[F] // == OptionT.liftF(Applicative[F].pure(x + 10))
+      z <- effectOf(y + 100).someT // == OptionT.lieftF(effectOf(y + 100))
     } yield z).value
 
     def bar(a: Option[Int]): F[Option[Int]] = (for {
-      x <- optionTOfPure(a) // == OptionT(pureOf(a: Option[Int]))
-      y <- optionTOf((x + 999).some)  // == OptionT(effectOf((x + 999).some))
+      x <- a.optionT[F] // == OptionT(pureOf(a: Option[Int]))
+      y <- effectOf((x + 999).some).optionT  // == OptionT(effectOf((x + 999).some)) 
     } yield y).value
   }
 

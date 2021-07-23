@@ -124,7 +124,7 @@ def doSomethingBad(n: Int): Int =
   else
     n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatal(
@@ -174,7 +174,7 @@ object MyApp {
     else
       n * 2
 
-  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+  def doSomething[F[_]: Fx: CanCatch: Monad](
     n: Int
   ): F[MyError \/ Int] =
     CanCatch[F].catchNonFatal(
@@ -236,7 +236,7 @@ def doSomethingBad(n: Int): Int =
   else
     n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatal(
@@ -291,7 +291,7 @@ else
   n * 2
 
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatal(
@@ -343,7 +343,7 @@ object MyApp {
     else
       n * 2
 
-  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+  def doSomething[F[_]: Fx: CanCatch: Monad](
     n: Int
   ): F[MyError \/ Int] =
     CanCatch[F].catchNonFatal(
@@ -405,7 +405,7 @@ def doSomethingBad(n: Int): Int =
   else
     n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatal(
@@ -544,7 +544,7 @@ def doSomethingBad(n: Int): Int =
   else
     n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatalEither(
@@ -604,7 +604,7 @@ object MyApp {
     else
       n * 2
 
-  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+  def doSomething[F[_]: Fx: CanCatch: Monad](
     n: Int
   ): F[MyError \/ Int] =
     CanCatch[F].catchNonFatalEither(
@@ -676,7 +676,7 @@ def doSomethingBad(n: Int): Int =
   else
     n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatalEither(
@@ -740,7 +740,7 @@ if (n < 0)
 else
   n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatalEither(
@@ -801,7 +801,7 @@ object MyApp {
     else
       n * 2
 
-  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+  def doSomething[F[_]: Fx: CanCatch: Monad](
     n: Int
   ): F[MyError \/ Int] =
     CanCatch[F].catchNonFatalEither(
@@ -873,7 +873,7 @@ def doSomethingBad(n: Int): Int =
   else
     n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatalEither(
@@ -1015,7 +1015,7 @@ def doSomethingBad(n: Int): Int =
   else
     n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatalEitherT(
@@ -1076,7 +1076,7 @@ object MyApp {
     else
       n * 2
 
-  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+  def doSomething[F[_]: Fx: CanCatch: Monad](
     n: Int
   ): F[MyError \/ Int] =
     CanCatch[F].catchNonFatalEitherT(
@@ -1149,7 +1149,7 @@ def doSomethingBad(n: Int): Int =
   else
     n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatalEitherT(
@@ -1214,7 +1214,7 @@ if (n < 0)
 else
   n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatalEitherT(
@@ -1276,7 +1276,7 @@ object MyApp {
     else
       n * 2
 
-  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+  def doSomething[F[_]: Fx: CanCatch: Monad](
     n: Int
   ): F[MyError \/ Int] =
     CanCatch[F].catchNonFatalEitherT(
@@ -1349,7 +1349,7 @@ def doSomethingBad(n: Int): Int =
   else
     n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   CanCatch[F].catchNonFatalEitherT(
@@ -1482,7 +1482,7 @@ def doSomethingBad(n: Int): Int =
   else
     n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   catchNonFatal(
@@ -1534,7 +1534,7 @@ object MyApp {
     else
       n * 2
 
-  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+  def doSomething[F[_]: Fx: CanCatch: Monad](
     n: Int
   ): F[MyError \/ Int] =
     catchNonFatal(
@@ -1597,7 +1597,7 @@ def doSomethingBad(n: Int): Int =
   else
     n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   catchNonFatal(
@@ -1653,7 +1653,7 @@ else
   n * 2
 
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   catchNonFatal(
@@ -1706,7 +1706,7 @@ object MyApp {
     else
       n * 2
 
-  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+  def doSomething[F[_]: Fx: CanCatch: Monad](
     n: Int
   ): F[MyError \/ Int] =
     catchNonFatal(
@@ -1769,7 +1769,7 @@ def doSomethingBad(n: Int): Int =
   else
     n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   catchNonFatal(
@@ -1909,7 +1909,7 @@ def doSomethingBad(n: Int): Int =
   else
     n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   catchNonFatalEither(
@@ -1970,7 +1970,7 @@ object MyApp {
     else
       n * 2
 
-  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+  def doSomething[F[_]: Fx: CanCatch: Monad](
     n: Int
   ): F[MyError \/ Int] =
     catchNonFatalEither(
@@ -2043,7 +2043,7 @@ def doSomethingBad(n: Int): Int =
   else
     n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   catchNonFatalEither(
@@ -2108,7 +2108,7 @@ if (n < 0)
 else
   n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   catchNonFatalEither(
@@ -2170,7 +2170,7 @@ object MyApp {
     else
       n * 2
 
-  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+  def doSomething[F[_]: Fx: CanCatch: Monad](
     n: Int
   ): F[MyError \/ Int] =
     catchNonFatalEither(
@@ -2243,7 +2243,7 @@ def doSomethingBad(n: Int): Int =
   else
     n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   catchNonFatalEither(
@@ -2387,7 +2387,7 @@ def doSomethingBad(n: Int): Int =
   else
     n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   catchNonFatalEitherT(
@@ -2449,7 +2449,7 @@ object MyApp {
     else
       n * 2
 
-  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+  def doSomething[F[_]: Fx: CanCatch: Monad](
     n: Int
   ): F[MyError \/ Int] =
     catchNonFatalEitherT(
@@ -2523,7 +2523,7 @@ def doSomethingBad(n: Int): Int =
   else
     n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   catchNonFatalEitherT(
@@ -2589,7 +2589,7 @@ if (n < 0)
 else
   n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   catchNonFatalEitherT(
@@ -2652,7 +2652,7 @@ object MyApp {
     else
       n * 2
 
-  def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+  def doSomething[F[_]: Fx: CanCatch: Monad](
     n: Int
   ): F[MyError \/ Int] =
     catchNonFatalEitherT(
@@ -2726,7 +2726,7 @@ def doSomethingBad(n: Int): Int =
   else
     n * 2
 
-def doSomething[F[_]: EffectConstructor: CanCatch: Monad](
+def doSomething[F[_]: Fx: CanCatch: Monad](
   n: Int
 ): F[MyError \/ Int] =
   catchNonFatalEitherT(

@@ -5,7 +5,7 @@ title: "For Cats Effect"
 
 ## Effectie for Cats Effect
 
-* [EffectConstructor](effect-constructor)
+* [Fx](fx)
 * [ConsoleEffect](console-effect)
 * [CanCatch](can-catch)
 * [CanHandleError](can-handle-error)
@@ -39,10 +39,10 @@ object Something {
   def apply[F[_]: Something]: Something[F] =
     implicitly[Something[F]]
 
-  implicit def something[F[_]: EffectConstructor: ConsoleEffect: Monad]: Something[F] =
+  implicit def something[F[_]: Fx: ConsoleEffect: Monad]: Something[F] =
     new SomethingF[F]
 
-  final class SomethingF[F[_]: EffectConstructor: ConsoleEffect: Monad]
+  final class SomethingF[F[_]: Fx: ConsoleEffect: Monad]
     extends Something[F] {
 
     override def foo[A: Semigroup](a: A): F[A] =
