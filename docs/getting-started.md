@@ -174,9 +174,9 @@ trait Foo[F[_]] {
   def get[A](a: => A): F[A]
 }
 
-class Bar[F[_]: EffectConstructor] extends Foo[F] {
+class Bar[F[_]: Fx] extends Foo[F] {
   def get[A](a: => A): F[A] =
-    EffectConstructor[F].effectOf(a)
+    Fx[F].effectOf(a)
 }
 
 // call-site
@@ -200,9 +200,9 @@ trait Foo[F[_]] {
   def get[A](a: => A): F[A]
 }
 
-class Bar[F[_]: EffectConstructor] extends Foo[F] {
+class Bar[F[_]: Fx] extends Foo[F] {
   def get[A](a: => A): F[A] =
-    effectOf(a) // no more EffectConstructor[F].effectOf
+    effectOf(a) // no more Fx[F].effectOf
 }
 
 // call-site

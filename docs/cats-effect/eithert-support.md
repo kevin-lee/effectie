@@ -22,29 +22,29 @@ object Something {
   def apply[F[_]: Something]: Something[F] =
     implicitly[Something[F]]
 
-  implicit def something[F[_]: EffectConstructor: Monad]: Something[F] =
+  implicit def something[F[_]: Fx: Monad]: Something[F] =
     new SomethingF[F]
 
-  final class SomethingF[F[_]: EffectConstructor: Monad]
+  final class SomethingF[F[_]: Fx: Monad]
     extends Something[F] {
 
     def foo(a: Int): F[Either[String, Int]] = (for {
-      x <- eitherTRightPure(a) // == EitherT.liftF(pureOf(a))
-      y <- eitherTRight(x + 10) // == EitherT.liftF(effectOf(x + 10))
+      x <- a.rightTF[F, String] // == EitherT.liftF(Applicative[F].pure(a))
+      y <- (x + 10).rightTF[F, String] // == EitherT.liftF(Applicative[F].pure(x + 10))
       y2 <- if (y > 100)
-          eitherTLeft("Error - Bigger than 100")
-        else
-          eitherTRightPure(y)
-        // ↑ if (y > 100)
-        //     EitherT(effectOf("Error - Bigger than 100").map(_.asLeft[Int]))
-        //   else
-        //     EitherT(pureOf(y).map(_.asRight[String]))
-      z <- eitherTRightF[String](effectOf(y2 + 100)) // == EitherT.lieftF(effectOf(y + 100))
+              "Error - Bigger than 100".leftTF[F, Int]
+            else
+              y.rightTF[F, String] 
+       // ↑ if (y > 100)
+       //     EitherT(pureOf("Error - Bigger than 100").map(_.asLeft[Int]))
+       //   else
+       //     EitherT(pureOf(y).map(_.asRight[String]))
+      z <- effectOf(y2 + 100).rightT[String] // == EitherT.lieftF(effectOf(y + 100))
     } yield z).value
 
     def bar(a: Either[String, Int]): F[Either[String, Int]] = (for {
-      x <- eitherTOfPure(a) // == EitherT(pureOf(a: Either[String, Int]))
-      y <- eitherTOf((x + 999).asRight[String])  // == EitherT(effectOf((x + 999).asRight[String]))
+      x <- a.eitherT[F] // == EitherT(pureOf(a: Either[String, Int]))
+      y <- effectOf((x + 999).asRight[String]).eitherT  // == EitherT(effectOf((x + 999).asRight[String]))
     } yield y).value
   }
 

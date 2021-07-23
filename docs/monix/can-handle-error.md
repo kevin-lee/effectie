@@ -58,7 +58,7 @@ def foo(n: Int): Int =
   else
      n
 
-def bar[F[_]: EffectConstructor: CanHandleError](n: Int): F[Int] =
+def bar[F[_]: Fx: CanHandleError](n: Int): F[Int] =
   CanHandleError[F].handleNonFatalWith(effectOf(foo(n))) {
     case NonFatal(err) =>
       pureOf(0)
@@ -93,7 +93,7 @@ object MyApp {
     else
        n
   
-  def bar[F[_]: EffectConstructor: CanHandleError](n: Int): F[Int] =
+  def bar[F[_]: Fx: CanHandleError](n: Int): F[Int] =
     CanHandleError[F].handleNonFatalWith(effectOf(foo(n))) {
       case NonFatal(err) =>
         pureOf(0)

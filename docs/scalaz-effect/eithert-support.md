@@ -22,29 +22,29 @@ object Something {
   def apply[F[_]: Something]: Something[F] =
     implicitly[Something[F]]
 
-  implicit def something[F[_]: EffectConstructor: Monad]: Something[F] =
+  implicit def something[F[_]: Fx: Monad]: Something[F] =
     new SomethingF[F]
 
-  final class SomethingF[F[_]: EffectConstructor: Monad]
+  final class SomethingF[F[_]: Fx: Monad]
     extends Something[F] {
 
     def foo(a: Int): F[String \/ Int] = (for {
-      x <- eitherTRightPure(a) // == EitherT(pureOf(a).map(_.right[String]))
-      y <- eitherTRight(x + 10) // == EitherT(effectOf(x + 10).map(_.right[String]))
+      x <- a.rightTF[F, String] // == EitherT(Applicative[F].pure(a).map(_.right[String]))
+      y <- (x + 10).rightTF[F, String] // == EitherT(Applicative[F].pure(x + 10).map(_.right[String]))
       y2 <- if (y > 100)
-          eitherTLeft[Int]("Error - Bigger than 100")
-        else
-          eitherTRightPure[String](y)
-        // ↑ if (y > 100)
-        //     EitherT(effectOf("Error - Bigger than 100").map(_.left[Int]))
-        //   else
-        //     EitherT(pureOf(y).map(_.right[String]))
-      z <- eitherTRightF[String](effectOf(y2 + 100)) // == EitherT(effectOf(y + 100).map(_.right))
+              eitherTLeft[Int]("Error - Bigger than 100")
+            else
+              eitherTRightPure[String](y)
+       // ↑ if (y > 100)
+       //     EitherT(pureOF("Error - Bigger than 100").map(_.left[Int]))
+       //   else
+       //     EitherT(pureOf(y).map(_.right[String]))
+      z <- effectOf(y2 + 100).rightT[String] // == EitherT(effectOf(y + 100).map(_.right))
     } yield z).run
 
     def bar(a: String \/ Int): F[String \/ Int] = (for {
-      x <- eitherTOfPure(a) // == EitherT(pureOf(a: String \/ Int))
-      y <- eitherTOf((x + 999).right[String])  // == EitherT(effectOf((x + 999).right[String]))
+      x <- a.eitherT[F] // == EitherT(pureOf(a: String \/ Int))
+      y <- effectOf((x + 999).right[String]).eitherT  // == EitherT(effectOf((x + 999).right[String]))
     } yield y).run
   }
 

@@ -1,11 +1,12 @@
 ---
 layout: docs
-title: "EffectConstructor"
+id: fx
+title: "Fx"
 ---
 
-## EffectConstructor
+## Fx
 
-If you use Scalaz Effect and write tagless final code, and look for a generic way to construct `F[A]`, `EffectConstructor` can help you.
+If you use Scalaz Effect and write tagless final code, and look for a generic way to construct `F[A]`, `Fx` can help you.
 
 ```scala mdoc:reset-object
 import effectie.scalaz._
@@ -18,14 +19,14 @@ object Something {
   def apply[F[_]: Something]: Something[F] =
     implicitly[Something[F]]
 
-  implicit def something[F[_]: EffectConstructor]: Something[F] =
+  implicit def something[F[_]: Fx]: Something[F] =
     new SomethingF[F]
 
-  final class SomethingF[F[_]: EffectConstructor]
+  final class SomethingF[F[_]: Fx]
     extends Something[F] {
 
     def get[A](a: => A): F[A] =
-      EffectConstructor[F].effectOf(a)
+      Fx[F].effectOf(a)
   }
 }
 
@@ -36,12 +37,12 @@ val get1 = Something[IO].get(1)
 get1.unsafePerformIO()
 ```
 
-If you feel it's too cumbersome to repeat `EffectConstructor[F].effectOf()`, consider using [Effectful](#effectful)
+If you feel it's too cumbersome to repeat `Fx[F].effectOf()`, consider using [Effectful](#effectful)
 
 
 ## Effectful
 
-If you're sick of repeating `EffectConstructor[F].effectOf()` and looking for more convenient ways?, use `Effectful` instead.
+If you're sick of repeating `Fx[F].effectOf()` and looking for more convenient ways?, use `Effectful` instead.
 
 ```scala mdoc:reset-object
 import effectie.scalaz.Effectful._
@@ -55,15 +56,15 @@ object Something {
   def apply[F[_]: Something]: Something[F] =
     implicitly[Something[F]]
 
-  implicit def something[F[_]: EffectConstructor]: Something[F] =
+  implicit def something[F[_]: Fx]: Something[F] =
     new SomethingF[F]
 
-  final class SomethingF[F[_]: EffectConstructor]
+  final class SomethingF[F[_]: Fx]
     extends Something[F] {
 
     def get[A](a: => A): F[A] =
       effectOf(a)
-      // No more EffectConstructor[F].effectOf(a)
+      // No more Fx[F].effectOf(a)
   }
 }
 
