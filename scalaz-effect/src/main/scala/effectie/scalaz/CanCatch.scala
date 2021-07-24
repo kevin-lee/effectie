@@ -2,7 +2,6 @@ package effectie.scalaz
 
 import scalaz._
 import Scalaz._
-import effectie.compat.FutureCompat
 import scalaz.effect._
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,7 +47,7 @@ object CanCatch {
     extends CanCatch[Future] {
     @SuppressWarnings(Array("org.wartremover.warts.Throw"))
     override def catchNonFatal[A, B](fb: => Future[B])(f: Throwable => A): Future[A \/ B] =
-      FutureCompat.transform(fb) {
+      fb.transform {
         case SuccessS(b) =>
           Try(b.right[A])
 

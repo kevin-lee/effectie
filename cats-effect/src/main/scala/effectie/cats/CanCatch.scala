@@ -4,7 +4,6 @@ import cats.Id
 import cats.data.EitherT
 import cats.effect.IO
 import cats.syntax.all._
-import effectie.compat.FutureCompat
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -39,7 +38,7 @@ object CanCatch {
     extends CanCatch[Future] {
     @SuppressWarnings(Array("org.wartremover.warts.Nothing", "org.wartremover.warts.Throw"))
     override def catchNonFatal[A, B](fb: => Future[B])(f: Throwable => A): Future[Either[A, B]] =
-      FutureCompat.transform(fb) {
+      fb.transform {
         case scala.util.Success(b) =>
           scala.util.Try[Either[A, B]](Right(b))
 
