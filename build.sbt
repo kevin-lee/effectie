@@ -40,7 +40,7 @@ lazy val effectie = (project in file("."))
       libraryDependenciesPostProcess(isScala3_0(scalaVersion.value), libraryDependencies.value),
   )
   .settings(noPublish)
-  .aggregate(core, catsEffect, scalazEffect, monix)
+  .aggregate(core, catsEffect, catsEffect3, monix, scalazEffect)
 
 lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
   .settings(
@@ -51,7 +51,7 @@ lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
       """import effectie._""",
   )
 
-lazy val catsEffect   = projectCommonSettings("catsEffect", ProjectName("cats-effect"), file("cats-effect"))
+lazy val catsEffect  = projectCommonSettings("catsEffect", ProjectName("cats-effect"), file("cats-effect"))
   .settings(
     description := "Effect Utils - Cats Effect",
     libraryDependencies :=
@@ -80,6 +80,21 @@ lazy val catsEffect   = projectCommonSettings("catsEffect", ProjectName("cats-ef
       """import effectie.cats._""",
   )
   .dependsOn(core % props.IncludeTest)
+
+lazy val catsEffect3 = projectCommonSettings("catsEffect3", ProjectName("cats-effect3"), file("cats-effect3"))
+  .settings(
+    description := "Effect Utils - Cats Effect 3",
+    libraryDependencies ++= List(
+      libs.libCatsCore(props.catsLatestVersion),
+      libs.libCatsEffect(props.catsEffect3Version)
+    ),
+    libraryDependencies := libraryDependenciesPostProcess(isScala3_0(scalaVersion.value), libraryDependencies.value),
+    console / initialCommands :=
+      """import effectie.cats._""",
+  )
+  .dependsOn(
+    core % props.IncludeTest,
+  )
 
 lazy val monix        = projectCommonSettings("monix", ProjectName("monix"), file(s"${props.RepoName}-monix"))
   .settings(
@@ -193,6 +208,7 @@ lazy val props =
 
     final val catsEffect2Version       = "2.4.1"
     final val catsEffect2LatestVersion = "2.5.1"
+    final val catsEffect3Version       = "3.1.1"
 
     final val cats2_0_0Version       = "2.0.0"
     final val catsEffect2_0_0Version = "2.0.0"
