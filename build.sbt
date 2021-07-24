@@ -120,14 +120,15 @@ lazy val docs         = (project in file("generated-docs"))
       libraryDependencies.value
     ),
     mdocVariables := Map(
-      "VERSION" -> {
+      "VERSION"                  -> {
         import sys.process._
         "git fetch --tags".!
         val tag = "git rev-list --tags --max-count=1".!!.trim
         s"git describe --tags $tag".!!.trim.stripPrefix("v")
       },
       "SUPPORTED_SCALA_VERSIONS" -> {
-        val versions = props.CrossScalaVersions
+        val versions = props
+          .CrossScalaVersions
           .map(CrossVersion.binaryScalaVersion)
           .map(binVer => s"`$binVer`")
         if (versions.length > 1)
@@ -145,14 +146,13 @@ lazy val docs         = (project in file("generated-docs"))
 lazy val props =
   new {
 
-    val GitHubUsername = "Kevin-Lee"
-    val RepoName       = "effectie"
+    final val GitHubUsername = "Kevin-Lee"
+    final val RepoName       = "effectie"
 
-    val DottyVersions = List("3.0.0")
-    val DottyVersion  = DottyVersions.last
+    final val DottyVersions = List("3.0.0")
+    final val DottyVersion  = DottyVersions.head
 
-//    val ProjectScalaVersion = DottyVersion
-    val ProjectScalaVersion = "2.13.5"
+    final val ProjectScalaVersion = "2.13.5"
 
     lazy val licenses = List("MIT" -> url("http://opensource.org/licenses/MIT"))
 
@@ -167,16 +167,16 @@ lazy val props =
     val isScala3IncompatibleScalacOption: String => Boolean =
       _.startsWith("-P:wartremover")
 
-    val CrossScalaVersions: Seq[String] =
-      (List(
-        "2.11.12",
-        "2.12.13",
+    final val CrossScalaVersions =
+      (DottyVersions ++ List(
+        ProjectScalaVersion,
         "2.13.5",
-        ProjectScalaVersion
-      ) ++ DottyVersions).distinct
-    val IncludeTest: String             = "compile->compile;test->test"
+        "2.12.13",
+      )).distinct
 
-    lazy val scala3cLanguageOptions =
+    final val IncludeTest = "compile->compile;test->test"
+
+    final val scala3cLanguageOptions =
       "-language:" + List(
         "dynamics",
         "existentials",
@@ -186,22 +186,21 @@ lazy val props =
         "implicitConversions",
       ).mkString(",")
 
-    val hedgehogLatestVersion = "0.7.0"
+    final val hedgehogLatestVersion = "0.7.0"
 
-    val catsVersion              = "2.5.0"
-    val catsLatestVersion        = "2.6.1"
+    final val catsVersion       = "2.5.0"
+    final val catsLatestVersion = "2.6.1"
 
-    val catsEffect2Version       = "2.4.1"
-    val catsEffect2LatestVersion = "2.5.1"
-//    val catsEffect3Version       = "3.0.2"
+    final val catsEffect2Version       = "2.4.1"
+    final val catsEffect2LatestVersion = "2.5.1"
 
-    val cats2_0_0Version       = "2.0.0"
-    val catsEffect2_0_0Version = "2.0.0"
+    final val cats2_0_0Version       = "2.0.0"
+    final val catsEffect2_0_0Version = "2.0.0"
 
-    val monixVersion3_3_0 = "3.3.0"
-    val monixVersion = "3.4.0"
+    final val monixVersion3_3_0 = "3.3.0"
+    final val monixVersion      = "3.4.0"
 
-    val scalazVersion = "7.2.31"
+    final val scalazVersion = "7.2.31"
 
   }
 
@@ -222,34 +221,19 @@ lazy val libs =
     def libCatsCore(catsVersion: String): ModuleID = "org.typelevel" %% "cats-core" % catsVersion
 
     def libCatsEffect(catsEffectVersion: String): ModuleID = "org.typelevel" %% "cats-effect" % catsEffectVersion
-//    lazy val libCatsEffect3: ModuleID                      = "org.typelevel" %% "cats-effect" % props.catsEffect3Version
 
     lazy val libCatsCore_2_0_0: ModuleID   = "org.typelevel" %% "cats-core"   % props.cats2_0_0Version
     lazy val libCatsEffect_2_0_0: ModuleID = "org.typelevel" %% "cats-effect" % props.catsEffect2_0_0Version
 
     lazy val libMonix3_3_0: ModuleID = "io.monix" %% "monix" % props.monixVersion3_3_0
-    lazy val libMonix: ModuleID = "io.monix" %% "monix" % props.monixVersion
+    lazy val libMonix: ModuleID      = "io.monix" %% "monix" % props.monixVersion
   }
 
-def prefixedProjectName(name: String) = s"${props.RepoName}${if (name.isEmpty)
-  ""
-else
-  s"-$name"}"
+// scalafmt: off
+def prefixedProjectName(name: String) = s"${props.RepoName}${if (name.isEmpty) "" else s"-$name"}"
+// scalafmt: on
 
 def isScala3_0(scalaVersion: String): Boolean = scalaVersion.startsWith("3.0")
-
-def scalacOptionsPostProcess(scalaSemVer: SemVer, isDotty: Boolean, options: Seq[String]): Seq[String] =
-  if (isDotty || (scalaSemVer.major, scalaSemVer.minor) == (SemVer.Major(3), SemVer.Minor(0))) {
-    Seq(
-      "-source:3.0-migration",
-      props.scala3cLanguageOptions,
-      "-Ykind-projector",
-      "-siteroot",
-      "./dotty-docs",
-    )
-  } else {
-    options
-  }
 
 def libraryDependenciesPostProcess(
   isDotty: Boolean,
@@ -259,7 +243,6 @@ def libraryDependenciesPostProcess(
     if (isDotty) {
       libraries
         .filterNot(props.removeDottyIncompatible)
-//      .map(_.cross(CrossVersion.for3Use2_13))
     } else
       libraries
   )
@@ -268,17 +251,6 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
   Project(id, file)
     .settings(
       name := prefixedProjectName(projectName.projectName),
-      libraryDependencies ++= (if (isScala3_0(scalaVersion.value) || scalaVersion.value.startsWith("3.0")) {
-                                 List.empty[ModuleID]
-                               } else {
-                                 List(
-                                   compilerPlugin(
-                                     "org.typelevel"            % "kind-projector"     % "0.11.3" cross CrossVersion.full
-                                   ),
-                                   compilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
-                                 )
-                               }),
-//      useAggressiveScalacOptions := true,
       scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
       libraryDependencies ++= libs.hedgehogLibs(scalaVersion.value),
       /* WartRemover and scalacOptions { */
@@ -302,7 +274,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
       testFrameworks ++= (testFrameworks.value ++ Seq(TestFramework("hedgehog.sbt.Framework"))).distinct,
       Compile / unmanagedSourceDirectories ++= {
         val sharedSourceDir = baseDirectory.value / "src" / "main"
-        if (isScala3_0(scalaVersion.value) || scalaVersion.value.startsWith("3.0"))
+        if (isScala3_0(scalaVersion.value))
           Seq(
             sharedSourceDir / "scala-2.12_3.0",
             sharedSourceDir / "scala-2.13_3.0",
@@ -319,12 +291,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
           Seq(
             sharedSourceDir / "scala-2.12_2.13",
             sharedSourceDir / "scala-2.12_3.0",
-            sharedSourceDir / "scala-2.11_2.12",
-            sharedSourceDir / "scala-2",
-          )
-        else if (scalaVersion.value.startsWith("2.11"))
-          Seq(
-            sharedSourceDir / "scala-2.11_2.12",
+            sharedSourceDir / "scala-2.12",
             sharedSourceDir / "scala-2",
           )
         else
@@ -348,12 +315,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
           Seq(
             sharedSourceDir / "scala-2.12_2.13",
             sharedSourceDir / "scala-2.12_3.0",
-            sharedSourceDir / "scala-2.11_2.12",
-            sharedSourceDir / "scala-2",
-          )
-        else if (scalaVersion.value.startsWith("2.11"))
-          Seq(
-            sharedSourceDir / "scala-2.11_2.12",
+            sharedSourceDir / "scala-2.12",
             sharedSourceDir / "scala-2",
           )
         else
@@ -362,9 +324,9 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
       licenses := props.licenses,
       /* Coveralls { */
       coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, 10)) =>
+        case Some((2, 10)) | Some((2, 11)) =>
           false
-        case _             =>
+        case _                             =>
           true
       })
       /* } Coveralls */

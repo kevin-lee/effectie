@@ -3,7 +3,6 @@ package effectie.monix
 import cats.Id
 import cats.data.EitherT
 import cats.syntax.all._
-import effectie.compat.FutureCompat
 import monix.eval.Task
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -49,7 +48,7 @@ object CanCatch {
     override def catchNonFatal[A, B](
       fb: => Future[B]
     )(f: Throwable => A): Future[Either[A, B]] =
-      FutureCompat.transform(fb) {
+      fb.transform {
         case scala.util.Success(b) =>
           scala.util.Try[Either[A, B]](Right(b))
 
