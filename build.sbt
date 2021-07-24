@@ -191,16 +191,6 @@ lazy val props =
 
     final val IncludeTest = "compile->compile;test->test"
 
-    final val scala3cLanguageOptions =
-      "-language:" + List(
-        "dynamics",
-        "existentials",
-        "higherKinds",
-        "reflectiveCalls",
-        "experimental.macros",
-        "implicitConversions",
-      ).mkString(",")
-
     final val hedgehogLatestVersion = "0.7.0"
 
     final val catsVersion       = "2.5.0"
@@ -255,13 +245,10 @@ def libraryDependenciesPostProcess(
   isDotty: Boolean,
   libraries: Seq[ModuleID]
 ): Seq[ModuleID] =
-  (
-    if (isDotty) {
-      libraries
-        .filterNot(props.removeDottyIncompatible)
-    } else
-      libraries
-  )
+  if (isDotty)
+    libraries.filterNot(props.removeDottyIncompatible)
+  else
+    libraries
 
 def projectCommonSettings(id: String, projectName: ProjectName, file: File): Project =
   Project(id, file)
