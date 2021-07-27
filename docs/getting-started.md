@@ -4,6 +4,9 @@ title: Getting Started
 slug: "/"
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 ## ![Effectie Logo](/img/effectie-logo-96x96.png) Effectie
 
 [![Build Status](https://github.com/Kevin-Lee/effectie/workflows/Build-All/badge.svg)](https://github.com/Kevin-Lee/effectie/actions?workflow=Build-All)
@@ -13,6 +16,7 @@ slug: "/"
 
 | Project | Maven Central |
 | ------: | ------------- |
+| effectie-cats-effect3 | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kevinlee/effectie-cats-effect3_2.13/badge.svg)](https://search.maven.org/artifact/io.kevinlee/effectie-cats-effect3_2.13) |
 | effectie-cats-effect | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kevinlee/effectie-cats-effect_2.13/badge.svg)](https://search.maven.org/artifact/io.kevinlee/effectie-cats-effect_2.13) |
 | effectie-monix | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kevinlee/effectie-monix_2.13/badge.svg)](https://search.maven.org/artifact/io.kevinlee/effectie-monix_2.13) |
 | effectie-scalaz-effect | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kevinlee/effectie-scalaz-effect_2.13/badge.svg)](https://search.maven.org/artifact/io.kevinlee/effectie-scalaz-effect_2.13) |
@@ -28,9 +32,30 @@ Why Effectie? Please read ["Why?"](#why) section.
 
 In `build.sbt`,
 
+<Tabs
+groupId="cats-effect"
+defaultValue="cats-effect"
+values={[
+{label: 'Cats Effect 3', value: 'cats-effect3'},
+{label: 'Cats Effect 2', value: 'cats-effect'},
+]}>
+<TabItem value="cats-effect3">
+
+```scala
+libraryDependencies += "io.kevinlee" %% "effectie-cats-effect3" % "@VERSION@"
+```
+
+  </TabItem>
+
+  <TabItem value="cats-effect">
+
 ```scala
 libraryDependencies += "io.kevinlee" %% "effectie-cats-effect" % "@VERSION@"
 ```
+
+  </TabItem>
+</Tabs>
+
 then import
 
 ```scala
