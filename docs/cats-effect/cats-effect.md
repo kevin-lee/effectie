@@ -47,29 +47,37 @@ object Something {
 
     override def foo[A: Semigroup](a: A): F[A] =
       for {
-        n <- effectOf(a)
+        n    <- effectOf(a)
         blah <- pureOf("blah blah")
-        _ <- effectOf(println(s"n: $n / BLAH: $blah"))
-        x <- effectOf(n |+| n)
-        _ <- putStrLn(s"x: $x")
+        _    <- effectOf(println(s"n: $n / BLAH: $blah"))
+        x    <- effectOf(n |+| n)
+        _    <- putStrLn(s"x: $x")
       } yield x
 
     override def bar[A: Semigroup](a: Option[A]): F[Option[A]] =
       (for {
-        a <- optionTOfPure(a)
-        blah <- optionTOfPure("blah blah".some)
-        _ <- optionTSome(println(s"a: $a / BLAH: $blah"))
-        x <- optionTSomeF(effectOf(a |+| a))
-        _ <- optionTSomeF(putStrLn(s"x: $x"))
+        aa   <- a.optionT[F] // OptionT(Applicative[F].pure(a))
+        blah <- "blah blah".someTF[F] // OptionT(Applicative[F].pure(Some("blah blah")))
+        _    <- effectOf(
+                  println(s"a: $a / BLAH: $blah")
+                ).someT // OptionT(effectOf(Some(println(s"a: $a / BLAH: $blah"))))
+        x    <- effectOf(a |+| a).optionT // OptionT(effectOf(a |+| a))
+        _    <- effectOf(putStrLn(s"x: $x")).someT // OptionT(effectOf(Some(putStrLn(s"x: $x"))))
       } yield x).value
 
     override def baz[A, B: Semigroup](ab: Either[A, B]): F[Either[A, B]] =
       (for {
-        b <- eitherTOf(ab)
-        blah <- eitherTOfPure("blah blah".asRight[A])
-        _ <- eitherTRight(println(s"b: $b / BLAH: $blah"))
-        x <- eitherTRightF(effectOf(b |+| b))
-        _ <- eitherTRightF[A](putStrLn(s"x: $x"))
+        b    <- ab.eitherT[F] // EitherT(Applicative[F].pure(ab))
+        blah <- "blah blah"
+                  .asRight[A]
+                  .eitherT[F] // EitherT(Applicative[F].pure("blah blah".asRight[A]))
+        _    <- effectOf(
+                  println(s"b: $b / BLAH: $blah")
+                ).rightT[A] // EitherT(effectOf(Right(println(s"b: $b / BLAH: $blah"))))
+        x    <- effectOf(ab |+| ab).eitherT // EitherT(effectOf(ab |+| ab))
+        _    <- effectOf(
+                  putStrLn(s"x: $x")
+                ).rightT[A] // EitherT(effectOf(putStrLn(s"x: $x").asRight[A]))
       } yield x).value
   }
 }

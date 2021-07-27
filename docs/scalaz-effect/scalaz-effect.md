@@ -27,7 +27,7 @@ import effectie.scalaz._
 trait Something[F[_]] {
   def foo[A: Semigroup](a: A): F[A]
   def bar[A: Semigroup](a: Option[A]): F[Option[A]]
-  def baz[A, B: Semigroup](a: A \/ B): F[A \/ B]
+  def baz[A: Semigroup, B: Semigroup](a: A \/ B): F[A \/ B]
 }
 
 object Something {
@@ -43,29 +43,37 @@ object Something {
 
     override def foo[A: Semigroup](a: A): F[A] =
       for {
-        n <- effectOf(a)
+        n    <- effectOf(a)
         blah <- pureOf("blah blah")
-        _ <- effectOf(println(s"n: $n / BLAH: $blah"))
-        x <- effectOf(n |+| n)
-        _ <- putStrLn(s"x: $x")
+        _    <- effectOf(println(s"n: $n / BLAH: $blah"))
+        x    <- effectOf(n |+| n)
+        _    <- putStrLn(s"x: $x")
       } yield x
 
     override def bar[A: Semigroup](a: Option[A]): F[Option[A]] =
       (for {
-        a <- optionTOfPure(a)
-        blah <- optionTOfPure("blah blah".some)
-        _ <- optionTSome(println(s"a: $a / BLAH: $blah"))
-        x <- optionTSomeF(effectOf(a |+| a))
-        _ <- optionTSomeF(putStrLn(s"x: $x"))
+        aa   <- a.optionT[F] // OptionT(Applicative[F].pure(a))
+        blah <- "blah blah".someTF[F] // OptionT(Applicative[F].pure(Some("blah blah")))
+        _    <- effectOf(
+                  println(s"a: $a / BLAH: $blah")
+                ).someT // OptionT(effectOf(Some(println(s"a: $a / BLAH: $blah"))))
+        x    <- effectOf(a |+| a).optionT // OptionT(effectOf(a |+| a))
+        _    <- effectOf(putStrLn(s"x: $x")).someT // OptionT(effectOf(Some(putStrLn(s"x: $x"))))
       } yield x).run
 
-    override def baz[A, B: Semigroup](ab: A \/ B): F[A \/ B] =
+    override def baz[A: Semigroup, B: Semigroup](ab: A \/ B): F[A \/ B] =
       (for {
-        b <- eitherTOf(ab)
-        blah <- eitherTOfPure("blah blah".right[A])
-        _ <- eitherTRight(println(s"b: $b / BLAH: $blah"))
-        x <- eitherTRightF(effectOf(b |+| b))
-        _ <- eitherTRightF[A](putStrLn(s"x: $x"))
+        b    <- ab.eitherT[F] // EitherT(Applicative[F].pure(ab))
+        blah <- "blah blah"
+                  .right[A]
+                  .eitherT[F] // EitherT(Applicative[F].pure("blah blah".right[A]))
+        _    <- effectOf(
+                  println(s"b: $b / BLAH: $blah")
+                ).rightT[A] // EitherT(effectOf(\/-(println(s"b: $b / BLAH: $blah"))))
+        x    <- effectOf(ab |+| ab).eitherT // EitherT(effectOf(ab |+| ab))
+        _    <- effectOf(
+                  putStrLn(s"x: $x")
+                ).rightT[A] // EitherT(effectOf(putStrLn(s"x: $x").right[A]))
       } yield x).run
   }
 }
