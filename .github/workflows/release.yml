@@ -9,10 +9,63 @@ on:
 
 env:
   GH_JAVA_VERSION: "adopt@1.11"
+  GH_JVM_OPTS: "-Xss64m -Xms1024m -XX:MaxMetaspaceSize=1G -Xmx2G -XX:MaxInlineLevel=18 -XX:+UnlockExperimentalVMOptions -XX:+UseJVMCICompiler"
 
 
 jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        scala:
+          - { name: "Scala 2", version: "2.12.13",   binary-version: "2.12",      java-version: "adopt@1.11", report: "" }
+          - { name: "Scala 2", version: "2.13.5",    binary-version: "2.13",      java-version: "adopt@1.11", report: "report" }
+          - { name: "Scala 3", version: "3.0.0",     binary-version: "3",         java-version: "adopt@1.11", report: "" }
+
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - uses: olafurpg/setup-scala@v10
+        with:
+          java-version: ${{ matrix.scala.java-version }}
+
+      - name: Cache SBT
+        uses: actions/cache@v2.1.5
+        with:
+          path: |
+            ~/.ivy2/cache
+            ~/.cache/coursier
+            ~/.sbt
+          key: ${{ runner.os }}-sbt-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-sbt-${{ matrix.scala.binary-version }}-
+
+      - name: "[Push] Build All for ${{ matrix.scala.name }} ${{ matrix.scala.version }} - ${{ github.run_number }}"
+        if: github.event_name == 'push'
+        env:
+          CURRENT_BRANCH_NAME: ${{ github.ref }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_NUMBER: ${{ github.run_number }}
+          JVM_OPTS: ${{ env.GH_JVM_OPTS }}
+        run: |
+          echo "[BEFORE]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
+          export CURRENT_BRANCH_NAME="${CURRENT_BRANCH_NAME#refs/heads/}"
+          echo " [AFTER]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
+          echo "RUN_ID=${RUN_ID}"
+          echo "RUN_NUMBER=${RUN_NUMBER}"
+          echo "Push #${PUSH_NUMBER}"
+          echo "JVM_OPTS=${JVM_OPTS}"
+          echo "SBT_OPTS=${SBT_OPTS}"
+          java -version
+          sbt \
+            ++${{ matrix.scala.version }}! \
+            -v \
+            clean \
+            test
+
   gh-release:
+    needs: build
     if: startsWith(github.ref, 'refs/tags/v')
 
     runs-on: ubuntu-latest
@@ -36,12 +89,13 @@ jobs:
     - name: sbt GitHub Release
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_AUTH_TOKEN_GITHUB }}
+        JVM_OPTS: ${{ env.GH_JVM_OPTS }}
       run: |
         echo "Run] sbt GitHub release"
-        echo 'sbt -J-XX:MaxMetaspaceSize=1024m -J-Xmx2048m devOopsGitHubRelease'
+        echo "JVM_OPTS=${JVM_OPTS}"
+        echo "SBT_OPTS=${SBT_OPTS}"
+        echo 'sbt devOopsGitHubRelease'
         sbt \
-          -J-Xmx2048m \
-          -J-XX:MaxMetaspaceSize=1024m \
           devOopsGitHubRelease
 
   publish:
@@ -77,23 +131,24 @@ jobs:
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           GITHUB_TOKEN: ${{ secrets.RELEASE_AUTH_TOKEN_GITHUB }}
+          JVM_OPTS: ${{ env.GH_JVM_OPTS }}
         run: |
           echo "Run] sbt ci-release"
           export SOURCE_DATE_EPOCH=$(date +%s)
           echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH"
-          echo 'sbt -J-XX:MaxMetaspaceSize=1024m -J-Xmx2048m -v clean +test +packagedArtifacts ci-release devOopsGitHubReleaseUploadArtifacts'
+          echo "JVM_OPTS=${JVM_OPTS}"
+          echo "SBT_OPTS=${SBT_OPTS}"
+          echo 'sbt -v clean +packagedArtifacts ci-release devOopsGitHubReleaseUploadArtifacts'
           sbt \
-          -J-XX:MaxMetaspaceSize=1024m \
-          -J-Xmx2048m \
-          -v \
-          clean \
-          +test \
-          +packagedArtifacts \
-          ci-release \
-          devOopsGitHubReleaseUploadArtifacts
+            -v \
+            clean \
+            +packagedArtifacts \
+            ci-release \
+            devOopsGitHubReleaseUploadArtifacts
 
 
   publish-snapshot:
+    needs: build
     if: startsWith(github.ref, 'refs/heads/')
 
     runs-on: ubuntu-latest
@@ -125,17 +180,16 @@ jobs:
           PGP_SECRET: ${{ secrets.PGP_SECRET }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          JVM_OPTS: ${{ env.GH_JVM_OPTS }}
         run: |
           echo "Run] sbt ci-release"
           export SOURCE_DATE_EPOCH=$(date +%s)
           echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH"
-          echo 'sbt -J-XX:MaxMetaspaceSize=1024m -J-Xmx2048m -v clean +test +packagedArtifacts ci-release'
+          echo "JVM_OPTS=${JVM_OPTS}"
+          echo "SBT_OPTS=${SBT_OPTS}"
+          echo 'sbt -v clean +packagedArtifacts ci-release'
           sbt \
-            -J-XX:MaxMetaspaceSize=1024m \
-            -J-Xmx2048m \
             -v \
             clean \
-            +test \
             +packagedArtifacts \
             ci-release
-
