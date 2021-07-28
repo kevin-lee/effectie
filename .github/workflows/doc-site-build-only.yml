@@ -46,7 +46,9 @@ jobs:
 
       - name: Render markdown and build website
         run: |
-          sbt clean \
+          sbt \
+            ++${{ matrix.scala.version }}! \
+            clean \
             docs/mdoc \
             docs/docusaurGenerateAlgoliaConfigFile \
             docs/docusaurGenerateGoogleAnalyticsConfigFile \

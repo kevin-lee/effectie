@@ -164,10 +164,17 @@ lazy val props =
     final val GitHubUsername = "Kevin-Lee"
     final val RepoName       = "effectie"
 
-    final val DottyVersions = List("3.0.0")
-    final val DottyVersion  = DottyVersions.head
+    final val Scala2Versions = List(
+      "2.13.5",
+      "2.12.13",
+    )
+    final val Scala2Version  = Scala2Versions.head
 
-    final val ProjectScalaVersion = "2.13.5"
+    final val Scala3Versions = List("3.0.0")
+    final val Scala3Version  = Scala3Versions.head
+
+//    final val ProjectScalaVersion = Scala2Version
+    final val ProjectScalaVersion = Scala3Version
 
     lazy val licenses = List("MIT" -> url("http://opensource.org/licenses/MIT"))
 
@@ -183,11 +190,7 @@ lazy val props =
       _.startsWith("-P:wartremover")
 
     final val CrossScalaVersions =
-      (DottyVersions ++ List(
-        ProjectScalaVersion,
-        "2.13.5",
-        "2.12.13",
-      )).distinct
+      (Scala3Versions ++ Scala2Versions).distinct
 
     final val IncludeTest = "compile->compile;test->test"
 

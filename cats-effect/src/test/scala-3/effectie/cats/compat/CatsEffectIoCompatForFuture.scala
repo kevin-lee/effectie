@@ -12,9 +12,9 @@ import scala.concurrent.ExecutionContext
 final class CatsEffectIoCompatForFuture {
   // TODO: Use it for Cats Effect 3
   // val es: ExecutorService = ConcurrentSupport.newExecutorService()
-  // implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
+  // given ec: ExecutionContext = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
 
   val es: ExecutorService = ConcurrentSupport.newExecutorService()
-  implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
-  implicit val cs: ContextShift[IO] = IO.contextShift(ec)
+  given ec: ExecutionContext = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
+  given cs: ContextShift[IO] = IO.contextShift(ec)
 }

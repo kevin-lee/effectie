@@ -7,7 +7,6 @@ import cats.effect._
 import cats.instances.all._
 import cats.syntax.all._
 import effectie.cats.Effectful._
-import effectie.cats.compat.CatsEffectIoCompat
 import effectie.{ConcurrentSupport, SomeControlThrowable}
 import hedgehog._
 import hedgehog.runner._
@@ -110,7 +109,7 @@ object CatchingSpec extends Properties {
 
   }
 
-  object IoSpec extends CatsEffectIoCompat {
+  object IoSpec {
     def testCatching_IO_catchNonFatalShouldCatchNonFatal: Result = {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
