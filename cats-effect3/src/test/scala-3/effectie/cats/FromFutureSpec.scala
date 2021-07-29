@@ -1,15 +1,15 @@
 package effectie.cats
 
 import cats.Id
-import cats.effect._
+import cats.effect.*
 import cats.effect.unsafe.IORuntime
 import effectie.ConcurrentSupport
-import effectie.cats.compat.{CatsEffectIoCompat, CatsEffectIoCompatForFuture}
-import hedgehog._
-import hedgehog.runner._
+import effectie.cats.compat.CatsEffectIoCompatForFuture
+import hedgehog.*
+import hedgehog.runner.*
 
 import java.util.concurrent.ExecutorService
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.concurrent.{ExecutionContext, Future}
 
 /**
@@ -23,14 +23,14 @@ object FromFutureSpec extends Properties {
     property("test FromFuture[Id].toEffect", IdSpec.testToEffect)
   )
 
-  object IoSpec extends CatsEffectIoCompat {
+  object IoSpec {
 
     def testToEffect: Property = for {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {
       val compat = new CatsEffectIoCompatForFuture
       import compat.ec
-      implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
       ConcurrentSupport.runAndShutdown(compat.es, 300.milliseconds) {
         lazy val fa = Future(a)
@@ -45,8 +45,8 @@ object FromFutureSpec extends Properties {
     def testToEffect: Property = for {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {
-      implicit val es: ExecutorService = ConcurrentSupport.newExecutorService()
-      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
+      given es: ExecutorService = ConcurrentSupport.newExecutorService()
+      given ec: ExecutionContext = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
 
       ConcurrentSupport.runAndShutdown(es, 300.milliseconds) {
         lazy val fa = Future(a)
@@ -62,10 +62,10 @@ object FromFutureSpec extends Properties {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {
       val es = ConcurrentSupport.newExecutorService()
-      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
+      given ec: ExecutionContext = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
 
       ConcurrentSupport.runAndShutdown(es, 300.milliseconds) {
-        implicit val timeout: FromFuture.FromFutureToIdTimeout =
+        given timeout: FromFuture.FromFutureToIdTimeout =
           FromFuture.FromFutureToIdTimeout(300.milliseconds)
         lazy val fa = Future(a)
         val actual = FromFuture[Id].toEffect(fa)

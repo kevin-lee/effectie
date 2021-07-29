@@ -8,7 +8,7 @@ import cats.effect.unsafe.IORuntime
 import cats.instances.all._
 import cats.syntax.all._
 import effectie.cats.Effectful._
-import effectie.cats.compat.{CatsEffectIoCompat, CatsEffectIoCompatForFuture}
+import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.{ConcurrentSupport, SomeControlThrowable}
 import hedgehog._
 import hedgehog.runner._
@@ -111,7 +111,7 @@ object CatchingSpec extends Properties {
 
   }
 
-  object IoSpec extends CatsEffectIoCompat {
+  object IoSpec {
 
     def testCatching_IO_catchNonFatalShouldCatchNonFatal: Result = {
 
