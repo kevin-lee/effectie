@@ -7,7 +7,7 @@ import cats.effect.unsafe.IORuntime
 import cats.instances.all._
 import cats.syntax.all._
 import effectie.cats.Effectful._
-import effectie.cats.compat.{CatsEffectIoCompat, CatsEffectIoCompatForFuture}
+import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.{ConcurrentSupport, SomeControlThrowable}
 import hedgehog._
 import hedgehog.runner._
@@ -129,7 +129,7 @@ object CanRecoverSpec extends Properties {
 
   }
 
-  object IOSpec extends CatsEffectIoCompat {
+  object IOSpec {
 
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {

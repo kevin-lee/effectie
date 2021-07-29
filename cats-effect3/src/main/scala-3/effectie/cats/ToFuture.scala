@@ -1,7 +1,7 @@
 package effectie.cats
 
 import cats.Id
-import cats.effect._
+import cats.effect.*
 
 import scala.concurrent.{ExecutionContext, Future}
 

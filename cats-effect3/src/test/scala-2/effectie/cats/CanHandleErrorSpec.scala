@@ -7,7 +7,6 @@ import cats.effect.unsafe.IORuntime
 import cats.instances.all._
 import cats.syntax.all._
 import effectie.cats.Effectful._
-import effectie.cats.compat.CatsEffectIoCompat
 import effectie.{ConcurrentSupport, SomeControlThrowable}
 import hedgehog._
 import hedgehog.runner._
@@ -127,7 +126,7 @@ object CanHandleErrorSpec extends Properties {
 
   }
 
-  object IoSpec extends CatsEffectIoCompat {
+  object IoSpec {
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 

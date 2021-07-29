@@ -4,7 +4,7 @@ import cats.Id
 import cats.effect._
 import cats.effect.unsafe.IORuntime
 import effectie.ConcurrentSupport
-import effectie.cats.compat.{CatsEffectIoCompat, CatsEffectIoCompatForFuture}
+import effectie.cats.compat.CatsEffectIoCompatForFuture
 import hedgehog._
 import hedgehog.runner._
 
@@ -27,7 +27,7 @@ object EffectConstructorSpec extends Properties {
     example("test EffectConstructor[Id].unitOf", IdSpec.testUnitOf)
   )
 
-  object IoSpec extends CatsEffectIoCompat {
+  object IoSpec {
 
     val compat = new CatsEffectIoCompatForFuture
     implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
