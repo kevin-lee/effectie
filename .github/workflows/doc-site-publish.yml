@@ -51,7 +51,9 @@ jobs:
           GA_ANONYMIZE_IP: ${{ secrets.GA_ANONYMIZE_IP }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          sbt clean \
+          sbt \
+            ++${{ matrix.scala.version }}! \
+            clean \
             docs/mdoc \
             docs/docusaurGenerateAlgoliaConfigFile \
             docs/docusaurGenerateGoogleAnalyticsConfigFile \

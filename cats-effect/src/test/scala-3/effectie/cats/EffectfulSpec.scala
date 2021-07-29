@@ -3,7 +3,6 @@ package effectie.cats
 import cats.Id
 import cats.effect.IO
 import effectie.ConcurrentSupport
-import effectie.cats.compat.CatsEffectIoCompat
 import effectie.testing.tools._
 import hedgehog._
 import hedgehog.runner._
@@ -35,9 +34,8 @@ object EffectfulSpec extends Properties {
     def unit: F[Unit]
   }
   object FxClient      {
-    def apply[F[_]: FxClient]: FxClient[F]         = implicitly[FxClient[F]]
-    implicit def eftClientF[F[_]: Fx]: FxClient[F] = new FxClientF[F]
-    final class FxClientF[F[_]: Fx] extends FxClient[F] {
+    def apply[F[_]: FxClient]: FxClient[F]         = summon[FxClient[F]]
+    given eftClientF[F[_]: Fx]: FxClient[F] with {
       override def eftOf[A](a: A): F[A] = effectOf(a)
       override def of[A](a: A): F[A]    = pureOf(a)
       override def unit: F[Unit]        = unitOf
@@ -51,25 +49,21 @@ object EffectfulSpec extends Properties {
   }
   object EffectConstructorClient      {
     def apply[F[_]: EffectConstructorClient]: EffectConstructorClient[F]         =
-      implicitly[EffectConstructorClient[F]]
-    implicit def eftClientF[F[_]: EffectConstructor]: EffectConstructorClient[F] = new EffectConstructorClientF[F]
-    final class EffectConstructorClientF[F[_]: EffectConstructor] extends EffectConstructorClient[F] {
+      summon[EffectConstructorClient[F]]
+    given eftClientF[F[_]: EffectConstructor]: EffectConstructorClient[F] with {
       override def eftOf[A](a: A): F[A] = effectOf(a)
       override def of[A](a: A): F[A]    = pureOf(a)
       override def unit: F[Unit]        = unitOf
     }
   }
 
-  object IoSpec extends CatsEffectIoCompat {
+  object IoSpec {
 
-    @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
     def testAll: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual                  = before
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual2                 = before
       val testBefore              = actual ==== before
       val testBefore2             = actual2 ==== before
@@ -103,12 +97,10 @@ object EffectfulSpec extends Properties {
       )
     }
 
-    @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual        = before
       val testBefore    = actual ==== before
       val io            = EffectConstructor[IO].effectOf({ actual = after; () })
@@ -128,7 +120,6 @@ object EffectfulSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual        = before
       val testBefore    = actual ==== before
       val io            = pureOf[IO]({ actual = after; () })
@@ -165,12 +156,10 @@ object EffectfulSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      given ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
 
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual                  = before
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual2                 = before
       val testBefore              = actual ==== before
       val testBefore2             = actual2 ==== before
@@ -204,10 +193,9 @@ object EffectfulSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      given ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
 
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual               = before
       val testBefore           = actual ==== before
       val future: Future[Unit] = effectOf[Future]({ actual = after; () })
@@ -225,10 +213,9 @@ object EffectfulSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      given ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
 
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual       = before
       val testBefore   = actual ==== before
       val future       = pureOf[Future]({ actual = after; () })
@@ -243,8 +230,8 @@ object EffectfulSpec extends Properties {
     }
 
     def testUnitOf: Result = {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      given ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
       val future                                    = unitOf[Future]
       val expected: Unit                            = ()
       val actual: Unit                              = ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
@@ -259,9 +246,7 @@ object EffectfulSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual                  = before
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual2                 = before
       val testBefore              = actual ==== before
       val testBefore2             = actual2 ==== before
@@ -292,7 +277,6 @@ object EffectfulSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual     = before
       val testBefore = actual ==== before
       effectOf[Id]({ actual = after; () })
@@ -304,7 +288,6 @@ object EffectfulSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual     = before
       val testBefore = actual ==== before
       pureOf[Id]({ actual = after; () })

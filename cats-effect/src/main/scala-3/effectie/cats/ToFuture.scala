@@ -17,22 +17,21 @@ trait ToFuture[F[_]] {
 
 object ToFuture {
 
-  def apply[F[_]: ToFuture]: ToFuture[F] = implicitly[ToFuture[F]]
+  def apply[F[_]: ToFuture]: ToFuture[F] = summon[ToFuture[F]]
 
-  implicit val ioToFuture: ToFuture[IO] = new ToFuture[IO] {
+  given ioToFuture: ToFuture[IO] with {
 
     override def unsafeToFuture[A](fa: IO[A]): Future[A] =
       fa.unsafeToFuture()
   }
 
-  implicit val futureToFuture: ToFuture[Future] = new ToFuture[Future] {
+  given futureToFuture: ToFuture[Future] with {
 
     override def unsafeToFuture[A](fa: Future[A]): Future[A] =
       fa
   }
 
-  implicit def idToFuture(implicit executionContext: ExecutionContext): ToFuture[Id] =
-    new ToFuture[Id] {
+  given idToFuture(using executionContext: ExecutionContext): ToFuture[Id] with {
       override def unsafeToFuture[A](fa: Id[A]): Future[A] =
         Future(fa)
     }

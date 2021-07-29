@@ -3,7 +3,6 @@ package effectie.cats
 import cats.Id
 import cats.effect._
 import effectie.ConcurrentSupport
-import effectie.cats.compat.CatsEffectIoCompat
 import hedgehog._
 import hedgehog.runner._
 
@@ -11,31 +10,30 @@ import hedgehog.runner._
   * @author Kevin Lee
   * @since 2020-12-06
   */
-object FxSpec extends Properties {
+object EffectConstructorSpec extends Properties {
   override def tests: List[Test] = List(
-    property("test Fx[IO].effectOf", IoSpec.testEffectOf),
-    property("test Fx[IO].pureOf", IoSpec.testPureOf),
-    example("test Fx[IO].unitOf", IoSpec.testUnitOf),
+    property("test EffectConstructor[IO].effectOf", IoSpec.testEffectOf),
+    property("test EffectConstructor[IO].pureOf", IoSpec.testPureOf),
+    example("test EffectConstructor[IO].unitOf", IoSpec.testUnitOf),
 
-    property("test Fx[Future].effectOf", FutureSpec.testEffectOf),
-    property("test Fx[Future].pureOf", FutureSpec.testPureOf),
-    example("test Fx[Future].unitOf", FutureSpec.testUnitOf),
+    property("test EffectConstructor[Future].effectOf", FutureSpec.testEffectOf),
+    property("test EffectConstructor[Future].pureOf", FutureSpec.testPureOf),
+    example("test EffectConstructor[Future].unitOf", FutureSpec.testUnitOf),
 
-    property("test Fx[Id].effectOf", IdSpec.testEffectOf),
-    property("test Fx[Id].pureOf", IdSpec.testPureOf),
-    example("test Fx[Id].unitOf", IdSpec.testUnitOf)
+    property("test EffectConstructor[Id].effectOf", IdSpec.testEffectOf),
+    property("test EffectConstructor[Id].pureOf", IdSpec.testPureOf),
+    example("test EffectConstructor[Id].unitOf", IdSpec.testUnitOf)
   )
 
-  object IoSpec extends CatsEffectIoCompat {
+  object IoSpec {
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual = before
       val testBefore = actual ==== before
-      val io = Fx[IO].effectOf({ actual = after; ()})
+      val io = EffectConstructor[IO].effectOf({ actual = after; ()})
       val testBeforeRun = actual ==== before
       io.unsafeRunSync()
       val testAfterRun = actual ==== after
@@ -50,10 +48,9 @@ object FxSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual = before
       val testBefore = actual ==== before
-      val io = Fx[IO].pureOf({ actual = after; ()})
+      val io = EffectConstructor[IO].pureOf({ actual = after; ()})
       val testBeforeRun = actual ==== after
       io.unsafeRunSync()
       val testAfterRun = actual ==== after
@@ -65,7 +62,7 @@ object FxSpec extends Properties {
     }
 
     def testUnitOf: Result = {
-      val io = Fx[IO].unitOf
+      val io = EffectConstructor[IO].unitOf
       val expected: Unit = ()
       val actual: Unit = io.unsafeRunSync()
       actual ==== expected
@@ -84,13 +81,12 @@ object FxSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      given ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
 
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual = before
       val testBefore = actual ==== before
-      val future: Future[Unit] = Fx[Future].effectOf({ actual = after; () })
+      val future: Future[Unit] = EffectConstructor[Future].effectOf({ actual = after; () })
       ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
       val testAfterRun = actual ==== after
       Result.all(List(
@@ -103,13 +99,12 @@ object FxSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      given ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
 
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual = before
       val testBefore = actual ==== before
-      val future = Fx[Future].pureOf({ actual = after; ()})
+      val future = EffectConstructor[Future].pureOf({ actual = after; ()})
       ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
       val testAfterRun = actual ==== after
       Result.all(List(
@@ -119,9 +114,9 @@ object FxSpec extends Properties {
     }
 
     def testUnitOf: Result = {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
-      val future = Fx[Future].unitOf
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      given ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
+      val future = EffectConstructor[Future].unitOf
       val expected: Unit = ()
       val actual: Unit = ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
       actual ==== expected
@@ -135,10 +130,9 @@ object FxSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual = before
       val testBefore = actual ==== before
-      Fx[Id].effectOf({ actual = after; ()})
+      EffectConstructor[Id].effectOf({ actual = after; ()})
       val testAfter = actual ==== after
       testBefore.log("testBefore") ==== testAfter.log("testAfter")
     }
@@ -147,10 +141,9 @@ object FxSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual = before
       val testBefore = actual ==== before
-      Fx[Id].pureOf({ actual = after; ()})
+      EffectConstructor[Id].pureOf({ actual = after; ()})
       val testAfter = actual ==== after
       Result.all(List(
         testBefore.log("testBefore"),
@@ -160,7 +153,7 @@ object FxSpec extends Properties {
 
     def testUnitOf: Result = {
       val expected: Unit = ()
-      val actual = Fx[Id].unitOf
+      val actual = EffectConstructor[Id].unitOf
       actual ==== expected
     }
 

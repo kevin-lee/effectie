@@ -3,7 +3,7 @@ package effectie.cats
 import cats.Id
 import cats.effect._
 import effectie.ConcurrentSupport
-import effectie.cats.compat.{CatsEffectIoCompat, CatsEffectIoCompatForFuture}
+import effectie.cats.compat.CatsEffectIoCompatForFuture
 import hedgehog._
 import hedgehog.runner._
 
@@ -22,7 +22,7 @@ object FromFutureSpec extends Properties {
     property("test FromFuture[Id].toEffect", IdSpec.testToEffect)
   )
 
-  object IoSpec extends CatsEffectIoCompat {
+  object IoSpec {
     def testToEffect: Property = for {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {

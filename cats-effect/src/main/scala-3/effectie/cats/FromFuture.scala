@@ -16,24 +16,21 @@ trait FromFuture[F[_]] {
 
 object FromFuture {
 
-  def apply[F[_]: FromFuture]: FromFuture[F] = implicitly[FromFuture[F]]
+  def apply[F[_]: FromFuture]: FromFuture[F] = summon[FromFuture[F]]
 
-  implicit def fromFutureToIo(implicit cs: ContextShift[IO]): FromFuture[IO] =
-    new FromFuture[IO] {
+  given fromFutureToIo(using cs: ContextShift[IO]): FromFuture[IO] with {
       override def toEffect[A](future: => Future[A]): IO[A] =
         IO.fromFuture[A](IO(future))
     }
 
-  implicit val fromFutureToFuture: FromFuture[Future] =
-    new FromFuture[Future] {
+  given fromFutureToFuture: FromFuture[Future] with {
       override def toEffect[A](future: => Future[A]): Future[A] =
         future
     }
 
   final case class FromFutureToIdTimeout(fromFutureToIdTimeout: Duration)
 
-  implicit def fromFutureToId(implicit timeout: FromFutureToIdTimeout): FromFuture[Id] =
-    new FromFuture[Id] {
+  given fromFutureToId(using timeout: FromFutureToIdTimeout): FromFuture[Id] with {
       override def toEffect[A](future: => Future[A]): Id[A] =
         Await.result[A](future, timeout.fromFutureToIdTimeout)
     }
