@@ -114,16 +114,13 @@ object CanRecoverSpec extends Properties {
   def run[F[_]: EffectConstructor: Functor, A](a: => A): F[A] =
     effectOf[F](a)
 
-  sealed trait SomeError
+  enum SomeError {
+    case SomeThrowable(throwable: Throwable)
+    case Message(message: String)
+  }
   object SomeError {
-
-    final case class SomeThrowable(throwable: Throwable) extends SomeError
-    final case class Message(message: String) extends SomeError
-
     def someThrowable(throwable: Throwable): SomeError = SomeThrowable(throwable)
-
     def message(message: String): SomeError = Message(message)
-
   }
 
   object IOSpec {
