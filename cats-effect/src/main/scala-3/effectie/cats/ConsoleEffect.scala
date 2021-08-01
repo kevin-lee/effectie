@@ -1,7 +1,7 @@
 package effectie.cats
 
-import cats._
-import cats.syntax.all._
+import cats.*
+import cats.syntax.all.*
 import effectie.ConsoleEffect.ConsoleEffectWithoutFlatMap
 import effectie.YesNo
 
