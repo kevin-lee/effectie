@@ -14,11 +14,11 @@ object CommonFx {
 
     implicit def EC0: ExecutionContext
 
-    override def effectOf[A](a: => A): Future[A] = Future(a)
+    @inline override def effectOf[A](a: => A): Future[A] = Future(a)
 
-    override def pureOf[A](a: A): Future[A] = effectOf(a)
+    @inline override def pureOf[A](a: A): Future[A] = Future.successful(a)
 
-    override def unitOf: Future[Unit] = Future(())
+    @inline override def unitOf: Future[Unit] = pureOf(())
   }
 }
 
