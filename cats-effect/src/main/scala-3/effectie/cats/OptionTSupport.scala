@@ -5,7 +5,7 @@ import cats.data.OptionT
 
 trait OptionTSupport {
 
-  import OptionTSupport._
+  import OptionTSupport.*
 
   def optionTOf[F[_]]: PartiallyAppliedOptionTOf[F] =
     new PartiallyAppliedOptionTOf[F]

@@ -2,11 +2,11 @@ package effectie.cats
 
 import cats.{Applicative, Functor}
 import cats.data.EitherT
-import cats.syntax.all._
+import cats.syntax.all.*
 
 trait EitherTSupport {
 
-  import EitherTSupport._
+  import EitherTSupport.*
 
   def eitherTOf[F[_]]: PartiallyAppliedEitherTEffectOf[F] =
     new PartiallyAppliedEitherTEffectOf[F]

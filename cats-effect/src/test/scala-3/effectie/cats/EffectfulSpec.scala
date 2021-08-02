@@ -3,9 +3,9 @@ package effectie.cats
 import cats.Id
 import cats.effect.IO
 import effectie.ConcurrentSupport
-import effectie.testing.tools._
-import hedgehog._
-import hedgehog.runner._
+import effectie.testing.tools.*
+import hedgehog.*
+import hedgehog.runner.*
 
 /** @author Kevin Lee
   * @since 2021-05-16
@@ -26,7 +26,7 @@ object EffectfulSpec extends Properties {
     example("test Effectful.unitOf[Id]", IdSpec.testUnitOf)
   )
 
-  import Effectful._
+  import Effectful.*
 
   trait FxClient[F[_]] {
     def eftOf[A](a: A): F[A]
@@ -147,7 +147,7 @@ object EffectfulSpec extends Properties {
   object FutureSpec {
 
     import java.util.concurrent.{ExecutorService, Executors}
-    import scala.concurrent.duration._
+    import scala.concurrent.duration.*
     import scala.concurrent.{ExecutionContext, Future}
 
     val waitFor: FiniteDuration = 1.second

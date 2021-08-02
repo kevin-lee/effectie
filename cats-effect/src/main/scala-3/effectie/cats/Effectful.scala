@@ -1,6 +1,6 @@
 package effectie.cats
 
-import effectie.cats.Effectful._
+import effectie.cats.Effectful.*
 
 trait Effectful {
 

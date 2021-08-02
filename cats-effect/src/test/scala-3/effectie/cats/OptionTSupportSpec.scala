@@ -1,7 +1,7 @@
 package effectie.cats
 
-import hedgehog._
-import hedgehog.runner._
+import hedgehog.*
+import hedgehog.runner.*
 
 /** @author Kevin Lee
   * @since 2021-07-20
@@ -32,9 +32,9 @@ object OptionTSupportSpec extends Properties {
 
   object OptionTFOptionOpsSpec {
 
-    import cats.data._
-    import cats.effect._
-    import cats.syntax.option._
+    import cats.data.*
+    import cats.effect.*
+    import cats.syntax.option.*
     import effectie.cats.OptionTSupport.optionT
 
     def fab[F[_]: Fx, A](oa: Option[A]): F[Option[A]] = Fx[F].effectOf(oa)
@@ -64,7 +64,7 @@ object OptionTSupportSpec extends Properties {
     import cats.Applicative
     import cats.data.OptionT
     import cats.effect.IO
-    import cats.syntax.option._
+    import cats.syntax.option.*
     import effectie.cats.OptionTSupport.optionT
 
     def testOptionT: Property = for {
@@ -119,7 +119,7 @@ object OptionTSupportSpec extends Properties {
     import cats.Applicative
     import cats.data.OptionT
     import cats.effect.IO
-    import cats.syntax.option._
+    import cats.syntax.option.*
     import effectie.cats.OptionTSupport.someTF
 
     def testOptionTF: Property = for {
@@ -145,10 +145,10 @@ object OptionTSupportSpec extends Properties {
   object OptionTSupportAllSpec {
 
     import cats.Applicative
-    import cats.data._
-    import cats.effect._
-    import cats.syntax.option._
-    import effectie.cats.OptionTSupport._
+    import cats.data.*
+    import cats.effect.*
+    import cats.syntax.option.*
+    import effectie.cats.OptionTSupport.*
 
     def fab[F[_]: Fx, A](oa: Option[A]): F[Option[A]] = Fx[F].effectOf(oa)
 

@@ -7,7 +7,7 @@ import cats.data.EitherT
   */
 trait Catching {
 
-  import Catching._
+  import Catching.*
 
   final def catchNonFatal[F[_]]: CurriedCanCatch1[F] =
     new CurriedCanCatch1[F]

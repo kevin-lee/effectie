@@ -1,10 +1,10 @@
 package effectie.cats
 
 import cats.Id
-import cats.effect._
+import cats.effect.*
 import effectie.ConcurrentSupport
-import hedgehog._
-import hedgehog.runner._
+import hedgehog.*
+import hedgehog.runner.*
 
 /**
   * @author Kevin Lee
@@ -72,7 +72,7 @@ object FxSpec extends Properties {
 
   object FutureSpec {
     import java.util.concurrent.{ExecutorService, Executors}
-    import scala.concurrent.duration._
+    import scala.concurrent.duration.*
     import scala.concurrent.{ExecutionContext, Future}
 
     val waitFor: FiniteDuration = 1.second

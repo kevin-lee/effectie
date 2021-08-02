@@ -1,14 +1,14 @@
 package effectie.cats
 
-import cats._
+import cats.*
 import cats.data.EitherT
 import cats.effect.IO
-import cats.instances.all._
-import cats.syntax.all._
-import effectie.cats.Effectful._
+import cats.instances.all.*
+import cats.syntax.all.*
+import effectie.cats.Effectful.*
 import effectie.{ConcurrentSupport, SomeControlThrowable}
-import hedgehog._
-import hedgehog.runner._
+import hedgehog.*
+import hedgehog.runner.*
 
 import scala.util.control.{ControlThrowable, NonFatal}
 
@@ -588,7 +588,7 @@ object CanHandleErrorSpec extends Properties {
 
   object FutureSpec {
     import java.util.concurrent.{ExecutorService, Executors}
-    import scala.concurrent.duration._
+    import scala.concurrent.duration.*
     import scala.concurrent.{ExecutionContext, Future}
 
     val waitFor: FiniteDuration = 1.second

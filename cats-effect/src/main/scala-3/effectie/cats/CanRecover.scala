@@ -1,8 +1,8 @@
 package effectie.cats
 
-import cats._
+import cats.*
 import cats.data.EitherT
-import cats.effect._
+import cats.effect.*
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal

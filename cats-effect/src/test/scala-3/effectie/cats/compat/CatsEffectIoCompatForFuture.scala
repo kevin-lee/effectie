@@ -1,6 +1,6 @@
 package effectie.cats.compat
 
-import cats.effect._
+import cats.effect.*
 import effectie.ConcurrentSupport
 
 import java.util.concurrent.ExecutorService
