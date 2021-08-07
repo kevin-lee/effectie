@@ -40,7 +40,7 @@ lazy val effectie = (project in file("."))
       libraryDependenciesPostProcess(isScala3_0(scalaVersion.value), libraryDependencies.value),
   )
   .settings(noPublish)
-  .aggregate(core, catsEffect, catsEffect3, monix, scalazEffect)
+  .aggregate(core, testing4Cats, catsEffect, catsEffect3, monix, scalazEffect)
 
 lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
   .settings(
@@ -51,7 +51,20 @@ lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
       """import effectie._""",
   )
 
-lazy val catsEffect  = projectCommonSettings("catsEffect", ProjectName("cats-effect"), file("cats-effect"))
+lazy val testing4Cats = projectCommonSettings("test4cats", ProjectName("test4cats"), file("test4cats"))
+  .settings(
+    description := "Effect's test utils for Cats",
+    libraryDependencies :=
+          libraryDependencies.value ++ List(
+            libs.libCatsCore(props.catsLatestVersion),
+          ) ++ libs.hedgehogLibs
+      ,
+    libraryDependencies := libraryDependenciesPostProcess(isScala3_0(scalaVersion.value), libraryDependencies.value),
+    console / initialCommands :=
+      """import effectie.testing.cats._""",
+  )
+
+lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effect"), file("cats-effect"))
   .settings(
     description := "Effect Utils - Cats Effect",
     libraryDependencies :=
@@ -79,24 +92,29 @@ lazy val catsEffect  = projectCommonSettings("catsEffect", ProjectName("cats-eff
     console / initialCommands :=
       """import effectie.cats._""",
   )
-  .dependsOn(core % props.IncludeTest)
+  .dependsOn(
+    core         % props.IncludeTest,
+    testing4Cats % Test,
+  )
 
 lazy val catsEffect3 = projectCommonSettings("catsEffect3", ProjectName("cats-effect3"), file("cats-effect3"))
   .settings(
     description := "Effect Utils - Cats Effect 3",
     libraryDependencies ++= List(
       libs.libCatsCore(props.catsLatestVersion),
-      libs.libCatsEffect(props.catsEffect3Version)
+      libs.libCatsEffect(props.catsEffect3Version),
+      libs.libCatsEffectTestKit % Test
     ),
     libraryDependencies := libraryDependenciesPostProcess(isScala3_0(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie.cats._""",
   )
   .dependsOn(
-    core % props.IncludeTest,
+    core         % props.IncludeTest,
+    testing4Cats % Test,
   )
 
-lazy val monix        = projectCommonSettings("monix", ProjectName("monix"), file(s"${props.RepoName}-monix"))
+lazy val monix = projectCommonSettings("monix", ProjectName("monix"), file(s"${props.RepoName}-monix"))
   .settings(
     description := "Effect Utils - Monix",
     libraryDependencies :=
@@ -113,7 +131,10 @@ lazy val monix        = projectCommonSettings("monix", ProjectName("monix"), fil
     console / initialCommands :=
       """import effectie.monix._""",
   )
-  .dependsOn(core % props.IncludeTest)
+  .dependsOn(
+    core         % props.IncludeTest,
+    testing4Cats % Test,
+  )
 
 lazy val scalazEffect = projectCommonSettings("scalazEffect", ProjectName("scalaz-effect"), file("scalaz-effect"))
   .settings(
@@ -215,12 +236,12 @@ lazy val props =
 
 lazy val libs =
   new {
-    def hedgehogLibs(scalaVersion: String): List[ModuleID] = {
+    lazy val hedgehogLibs: List[ModuleID] = {
       val hedgehogVersion = props.hedgehogLatestVersion
       List(
-        "qa.hedgehog" %% "hedgehog-core"   % hedgehogVersion % Test,
-        "qa.hedgehog" %% "hedgehog-runner" % hedgehogVersion % Test,
-        "qa.hedgehog" %% "hedgehog-sbt"    % hedgehogVersion % Test,
+        "qa.hedgehog" %% "hedgehog-core"   % hedgehogVersion,
+        "qa.hedgehog" %% "hedgehog-runner" % hedgehogVersion,
+        "qa.hedgehog" %% "hedgehog-sbt"    % hedgehogVersion,
       )
     }
 
@@ -230,6 +251,8 @@ lazy val libs =
     def libCatsCore(catsVersion: String): ModuleID = "org.typelevel" %% "cats-core" % catsVersion
 
     def libCatsEffect(catsEffectVersion: String): ModuleID = "org.typelevel" %% "cats-effect" % catsEffectVersion
+
+    lazy val libCatsEffectTestKit = "org.typelevel" %% "cats-effect-testkit" % props.catsEffect3Version
 
     lazy val libCatsCore_2_0_0: ModuleID   = "org.typelevel" %% "cats-core"   % props.cats2_0_0Version
     lazy val libCatsEffect_2_0_0: ModuleID = "org.typelevel" %% "cats-effect" % props.catsEffect2_0_0Version
@@ -258,7 +281,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
     .settings(
       name := prefixedProjectName(projectName.projectName),
       scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
-      libraryDependencies ++= libs.hedgehogLibs(scalaVersion.value),
+      libraryDependencies ++= libs.hedgehogLibs.map(_ % Test),
       /* WartRemover and scalacOptions { */
 //      Compile / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
 //      Test / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
