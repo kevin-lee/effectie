@@ -7,6 +7,8 @@ import hedgehog._
 import hedgehog.runner._
 import scalaz.effect._
 
+import scala.concurrent.Await
+
 /** @author Kevin Lee
   * @since 2020-12-06
   */
@@ -15,12 +17,15 @@ object FxSpec extends Properties {
     property("test Fx[IO].effectOf", IoSpec.testEffectOf),
     property("test Fx[IO].pureOf", IoSpec.testPureOf),
     example("test Fx[IO].unitOf", IoSpec.testUnitOf),
+    property("test Fx[IO] Monad laws", IoSpec.testMonadLaws),
     property("test Fx[Future].effectOf", FutureSpec.testEffectOf),
     property("test Fx[Future].pureOf", FutureSpec.testPureOf),
     example("test Fx[Future].unitOf", FutureSpec.testUnitOf),
+    property("test Fx[Future] Monad laws", FutureSpec.testMonadLaws),
     property("test Fx[Id].effectOf", IdSpec.testEffectOf),
     property("test Fx[Id].pureOf", IdSpec.testPureOf),
     example("test Fx[Id].unitOf", IdSpec.testUnitOf),
+    property("test Fx[Id] Monad laws", IdSpec.testMonadLaws),
   )
 
   object IoSpec {
@@ -70,6 +75,16 @@ object FxSpec extends Properties {
       val expected: Unit = ()
       val actual: Unit   = io.unsafePerformIO()
       actual ==== expected
+    }
+
+    def testMonadLaws: Property = {
+
+      implicit val eqIo: Equal[IO[Int]] =
+        (x, y) => x.flatMap(xx => y.map(_ === xx)).unsafePerformIO()
+
+      implicit val ioFx: Fx[IO] = Fx.IoFx
+
+      MonadSpec.testMonadLaws[IO]
     }
 
   }
@@ -132,6 +147,21 @@ object FxSpec extends Properties {
       actual ==== expected
     }
 
+    def testMonadLaws: Property = {
+
+      implicit val ec: scala.concurrent.ExecutionContext                   = scala.concurrent.ExecutionContext.global
+      implicit def futureEqual[A](implicit EQ: Equal[A]): Equal[Future[A]] =
+        (x, y) => Await.result(x.flatMap(a => y.map(b => EQ.equal(a, b))), 1.second)
+
+      implicit val eqFuture: Equal[Future[Int]] =
+        (x, y) => {
+          val future = x.flatMap(xx => y.map(_ === xx))
+          Await.result(future, waitFor)
+        }
+
+      MonadSpec.testMonadLaws[Future]
+    }
+
   }
 
   object IdSpec {
@@ -170,6 +200,8 @@ object FxSpec extends Properties {
       val actual         = Fx[Id].unitOf
       actual ==== expected
     }
+
+    def testMonadLaws: Property = MonadSpec.testMonadLaws[Id]
 
   }
 

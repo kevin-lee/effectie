@@ -1,11 +1,13 @@
 package effectie.monix
 
-import cats.Id
+import cats.{Id, Eq}
 import cats.effect.IO
 import effectie.ConcurrentSupport
 import hedgehog._
 import hedgehog.runner._
 import monix.eval.Task
+
+import scala.concurrent.Await
 
 /** @author Kevin Lee
   * @since 2020-12-06
@@ -15,15 +17,19 @@ object FxSpec extends Properties {
     property("test Fx[Task].effectOf", TaskSpec.testEffectOf),
     property("test Fx[Task].pureOf", TaskSpec.testPureOf),
     example("test Fx[Task].unitOf", TaskSpec.testUnitOf),
+    property("test Fx[Task] Monad laws", TaskSpec.testMonadLaws),
     property("test Fx[IO].effectOf", IoSpec.testEffectOf),
     property("test Fx[IO].pureOf", IoSpec.testPureOf),
     example("test Fx[IO].unitOf", IoSpec.testUnitOf),
+    property("test Fx[IO] Monad laws", IoSpec.testMonadLaws),
     property("test Fx[Future].effectOf", FutureSpec.testEffectOf),
     property("test Fx[Future].pureOf", FutureSpec.testPureOf),
     example("test Fx[Future].unitOf", FutureSpec.testUnitOf),
+    property("test Fx[Future] Monad laws", FutureSpec.testMonadLaws),
     property("test Fx[Id].effectOf", IdSpec.testEffectOf),
     property("test Fx[Id].pureOf", IdSpec.testPureOf),
     example("test Fx[Id].unitOf", IdSpec.testUnitOf),
+    property("test Fx[Id] Monad laws", IdSpec.testMonadLaws),
   )
 
   object TaskSpec {
@@ -76,6 +82,17 @@ object FxSpec extends Properties {
       actual ==== expected
     }
 
+    def testMonadLaws: Property = {
+      import cats.syntax.eq._
+
+      implicit val eqIo: Eq[Task[Int]] =
+        (x, y) => x.flatMap(xx => y.map(_ === xx)).runSyncUnsafe()
+
+      implicit val ioFx: Fx[Task] = Fx.TaskFx
+
+      MonadSpec.testMonadLaws[Task]
+    }
+
   }
 
   object IoSpec {
@@ -125,6 +142,17 @@ object FxSpec extends Properties {
       val expected: Unit = ()
       val actual: Unit   = io.unsafeRunSync()
       actual ==== expected
+    }
+
+    def testMonadLaws: Property = {
+      import cats.syntax.eq._
+
+      implicit val eqIo: Eq[IO[Int]] =
+        (x, y) => x.flatMap(xx => y.map(_ === xx)).unsafeRunSync()
+
+      implicit val ioFx: Fx[IO] = Fx.IoFx
+
+      MonadSpec.testMonadLaws[IO]
     }
 
   }
@@ -187,6 +215,23 @@ object FxSpec extends Properties {
       actual ==== expected
     }
 
+    def testMonadLaws: Property = {
+      import cats.syntax.eq._
+
+      implicit val ec: scala.concurrent.ExecutionContext             = scala.concurrent.ExecutionContext.global
+      implicit def futureEqual[A](implicit EQ: Eq[A]): Eq[Future[A]] = new Eq[Future[A]] {
+        override def eqv(x: Future[A], y: Future[A]): Boolean =
+          Await.result(x.flatMap(a => y.map(b => EQ.eqv(a, b))), 1.second)
+      }
+      implicit val eqFuture: Eq[Future[Int]]                         =
+        (x, y) => {
+          val future = x.flatMap(xx => y.map(_ === xx))
+          Await.result(future, waitFor)
+        }
+
+      MonadSpec.testMonadLaws[Future]
+    }
+
   }
 
   object IdSpec {
@@ -225,6 +270,8 @@ object FxSpec extends Properties {
       val actual         = Fx[Id].unitOf
       actual ==== expected
     }
+
+    def testMonadLaws: Property = MonadSpec.testMonadLaws[Id]
 
   }
 
