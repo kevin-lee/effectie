@@ -28,14 +28,14 @@ object EffectfulSpec extends Properties {
 
   import Effectful.*
 
-  trait FxClient[F[_]] {
+  trait FxCtorClient[F[_]] {
     def eftOf[A](a: A): F[A]
     def of[A](a: A): F[A]
     def unit: F[Unit]
   }
-  object FxClient      {
-    def apply[F[_]: FxClient]: FxClient[F] = summon[FxClient[F]]
-    given eftClientF[F[_]: Fx]: FxClient[F] with {
+  object FxCtorClient      {
+    def apply[F[_]: FxCtorClient]: FxCtorClient[F] = summon[FxCtorClient[F]]
+    given eftClientF[F[_]: FxCtor]: FxCtorClient[F] with {
       override def eftOf[A](a: A): F[A] = effectOf(a)
       override def of[A](a: A): F[A]    = pureOf(a)
       override def unit: F[Unit]        = unitOf
@@ -67,7 +67,7 @@ object EffectfulSpec extends Properties {
       var actual2                 = before
       val testBefore              = actual ==== before
       val testBefore2             = actual2 ==== before
-      val eftClient               = FxClient[IO]
+      val eftClient               = FxCtorClient[IO]
       val effectConstructorClient = EffectConstructorClient[IO]
       val io                      =
         for {
@@ -163,7 +163,7 @@ object EffectfulSpec extends Properties {
       var actual2                 = before
       val testBefore              = actual ==== before
       val testBefore2             = actual2 ==== before
-      val eftClient               = FxClient[Future]
+      val eftClient               = FxCtorClient[Future]
       val effectConstructorClient = EffectConstructorClient[Future]
       val future                  =
         for {
@@ -250,7 +250,7 @@ object EffectfulSpec extends Properties {
       var actual2                 = before
       val testBefore              = actual ==== before
       val testBefore2             = actual2 ==== before
-      val eftClient               = FxClient[Id]
+      val eftClient               = FxCtorClient[Id]
       val effectConstructorClient = EffectConstructorClient[Id]
       effectOf[Id]({ actual = after; () })
       pureOf[Id]({ actual2 = after; () })

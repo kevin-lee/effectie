@@ -1,7 +1,7 @@
 package effectie.monix
 
-import cats.Id
 import cats.effect.IO
+import cats.Id
 import monix.eval.Task
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -9,19 +9,45 @@ import scala.concurrent.{ExecutionContext, Future}
 /** @author Kevin Lee
   * @since 2021-05-16
   */
-trait Fx[F[_]] extends effectie.CommonFx[F]
+trait Fx[F[_]] extends EffectConstructor[F] with FxCtor[F] with effectie.CommonFx[F]
 
 object Fx {
   def apply[F[_]: Fx]: Fx[F] = implicitly[Fx[F]]
 
-  implicit final val taskFx: Fx[Task] = EffectConstructor.taskEffectConstructor
+  implicit object TaskFx extends Fx[Task] {
 
-  implicit final val ioFx: Fx[IO] = EffectConstructor.ioEffectConstructor
+    @inline override def effectOf[A](a: => A): Task[A] = Task(a)
+
+    @inline override def pureOf[A](a: A): Task[A] = Task.now(a)
+
+    @inline override val unitOf: Task[Unit] = Task.unit
+  }
+
+  implicit object IoFx extends Fx[IO] {
+
+    @inline override def effectOf[A](a: => A): IO[A] = IO(a)
+
+    @inline override def pureOf[A](a: A): IO[A] = IO.pure(a)
+
+    @inline override val unitOf: IO[Unit] = IO.unit
+  }
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
-  implicit def futureFx(implicit EC: ExecutionContext): Fx[Future] =
-    EffectConstructor.futureEffectConstructor(EC)
+  implicit def futureFx(implicit EC: ExecutionContext): Fx[Future] = new FutureFx
 
-  implicit final val idFx: Fx[Id] = EffectConstructor.idEffectConstructor
+  final class FutureFx(implicit override val EC0: ExecutionContext)
+      extends Fx[Future]
+      with EffectConstructor[Future]
+      with FxCtor[Future]
+      with effectie.CommonFx.CommonFutureFx
+
+  implicit object IdFx extends Fx[Id] {
+
+    @inline override def effectOf[A](a: => A): Id[A] = a
+
+    @inline override def pureOf[A](a: A): Id[A] = a
+
+    @inline override val unitOf: Id[Unit] = ()
+  }
 
 }

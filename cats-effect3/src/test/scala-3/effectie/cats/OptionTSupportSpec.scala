@@ -41,7 +41,7 @@ object OptionTSupportSpec extends Properties {
     import cats.syntax.option.*
     import effectie.cats.OptionTSupport.optionT
 
-    def fab[F[_]: Fx, A](oa: Option[A]): F[Option[A]] = Fx[F].effectOf(oa)
+    def fab[F[_]: FxCtor, A](oa: Option[A]): F[Option[A]] = FxCtor[F].effectOf(oa)
 
     def testOptionT: Property = for {
       n <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")
@@ -162,7 +162,7 @@ object OptionTSupportSpec extends Properties {
     import cats.syntax.option.*
     import effectie.cats.OptionTSupport.*
 
-    def fab[F[_]: Fx, A](oa: Option[A]): F[Option[A]] = Fx[F].effectOf(oa)
+    def fab[F[_]: FxCtor, A](oa: Option[A]): F[Option[A]] = FxCtor[F].effectOf(oa)
 
     def testAll: Property = for {
       n <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")

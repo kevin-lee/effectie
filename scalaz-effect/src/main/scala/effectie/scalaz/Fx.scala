@@ -3,20 +3,43 @@ package effectie.scalaz
 import effectie.{CommonFx, OldEffectConstructor}
 import scalaz.Scalaz.Id
 import scalaz.effect.IO
+import scalaz.Applicative
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait Fx[F[_]] extends CommonFx[F] with OldEffectConstructor[F]
+trait Fx[F[_]] extends EffectConstructor[F] with FxCtor[F] with CommonFx[F] with OldEffectConstructor[F]
 
 object Fx {
   def apply[F[_]: Fx]: Fx[F] = implicitly[Fx[F]]
 
-  implicit val ioFx: Fx[IO] = EffectConstructor.ioEffectConstructor
+  implicit object IoFx extends Fx[IO] {
+
+    @inline override def effectOf[A](a: => A): IO[A] = IO(a)
+
+    @inline override def pureOf[A](a: A): IO[A] = Applicative[IO].pure(a)
+
+    @inline override val unitOf: IO[Unit] = IO.ioUnit
+  }
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
   implicit def futureFx(implicit EC: ExecutionContext): Fx[Future] =
-    EffectConstructor.futureEffectConstructor(EC)
+    new FutureFx
 
-  implicit final val idFx: Fx[Id] = EffectConstructor.idEffectConstructor
+  final class FutureFx(implicit override val EC0: ExecutionContext)
+      extends Fx[Future]
+      with EffectConstructor[Future]
+      with FxCtor[Future]
+      with CommonFx.CommonFutureFx
+      with OldEffectConstructor.OldFutureEffectConstructor
+
+  implicit object IdFx extends Fx[Id] {
+
+    @inline override def effectOf[A](a: => A): Id[A] = a
+
+    @inline override def pureOf[A](a: A): Id[A] = a
+
+    @inline override val unitOf: Id[Unit] = ()
+
+  }
 
 }

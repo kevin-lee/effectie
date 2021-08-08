@@ -1,6 +1,7 @@
 package effectie.monix
 
 import cats.Id
+import cats.effect.IO
 import effectie.ConcurrentSupport
 import hedgehog._
 import hedgehog.runner._
@@ -14,12 +15,15 @@ object FxSpec extends Properties {
     property("test Fx[Task].effectOf", TaskSpec.testEffectOf),
     property("test Fx[Task].pureOf", TaskSpec.testPureOf),
     example("test Fx[Task].unitOf", TaskSpec.testUnitOf),
+    property("test Fx[IO].effectOf", IoSpec.testEffectOf),
+    property("test Fx[IO].pureOf", IoSpec.testPureOf),
+    example("test Fx[IO].unitOf", IoSpec.testUnitOf),
     property("test Fx[Future].effectOf", FutureSpec.testEffectOf),
     property("test Fx[Future].pureOf", FutureSpec.testPureOf),
     example("test Fx[Future].unitOf", FutureSpec.testUnitOf),
     property("test Fx[Id].effectOf", IdSpec.testEffectOf),
     property("test Fx[Id].pureOf", IdSpec.testPureOf),
-    example("test Fx[Id].unitOf", IdSpec.testUnitOf)
+    example("test Fx[Id].unitOf", IdSpec.testUnitOf),
   )
 
   object TaskSpec {
@@ -69,6 +73,57 @@ object FxSpec extends Properties {
       val task           = Fx[Task].unitOf
       val expected: Unit = ()
       val actual: Unit   = task.runSyncUnsafe()
+      actual ==== expected
+    }
+
+  }
+
+  object IoSpec {
+
+    def testEffectOf: Property = for {
+      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+    } yield {
+      @SuppressWarnings(Array("org.wartremover.warts.Var"))
+      var actual        = before
+      val testBefore    = actual ==== before
+      val io            = Fx[IO].effectOf({ actual = after; () })
+      val testBeforeRun = actual ==== before
+      io.unsafeRunSync()
+      val testAfterRun  = actual ==== after
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testBeforeRun.log("testBeforeRun"),
+          testAfterRun.log("testAfterRun")
+        )
+      )
+    }
+
+    def testPureOf: Property = for {
+      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+    } yield {
+      @SuppressWarnings(Array("org.wartremover.warts.Var"))
+      var actual        = before
+      val testBefore    = actual ==== before
+      val io            = Fx[IO].pureOf({ actual = after; () })
+      val testBeforeRun = actual ==== after
+      io.unsafeRunSync()
+      val testAfterRun  = actual ==== after
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testBeforeRun.log("testBeforeRun"),
+          testAfterRun.log("testAfterRun")
+        )
+      )
+    }
+
+    def testUnitOf: Result = {
+      val io             = Fx[IO].unitOf
+      val expected: Unit = ()
+      val actual: Unit   = io.unsafeRunSync()
       actual ==== expected
     }
 

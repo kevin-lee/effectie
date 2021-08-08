@@ -30,15 +30,15 @@ object EffectfulSpec extends Properties {
 
   import Effectful._
 
-  trait FxClient[F[_]] {
+  trait FxCtorClient[F[_]] {
     def eftOf[A](a: A): F[A]
     def of[A](a: A): F[A]
     def unit: F[Unit]
   }
-  object FxClient      {
-    def apply[F[_]: FxClient]: FxClient[F]         = implicitly[FxClient[F]]
-    implicit def eftClientF[F[_]: Fx]: FxClient[F] = new FxClientF[F]
-    final class FxClientF[F[_]: Fx] extends FxClient[F] {
+  object FxCtorClient      {
+    def apply[F[_]: FxCtorClient]: FxCtorClient[F]         = implicitly[FxCtorClient[F]]
+    implicit def eftClientF[F[_]: FxCtor]: FxCtorClient[F] = new FxCtorClientF[F]
+    final class FxCtorClientF[F[_]: FxCtor] extends FxCtorClient[F] {
       override def eftOf[A](a: A): F[A] = effectOf(a)
       override def of[A](a: A): F[A]    = pureOf(a)
       override def unit: F[Unit]        = unitOf
@@ -77,7 +77,7 @@ object EffectfulSpec extends Properties {
       var actual2                 = before
       val testBefore              = actual ==== before
       val testBefore2             = actual2 ==== before
-      val eftClient               = FxClient[IO]
+      val eftClient               = FxCtorClient[IO]
       val effectConstructorClient = EffectConstructorClient[IO]
       val io                      =
         for {
@@ -178,7 +178,7 @@ object EffectfulSpec extends Properties {
       var actual2                 = before
       val testBefore              = actual ==== before
       val testBefore2             = actual2 ==== before
-      val eftClient               = FxClient[Future]
+      val eftClient               = FxCtorClient[Future]
       val effectConstructorClient = EffectConstructorClient[Future]
       val future                  =
         for {
@@ -269,7 +269,7 @@ object EffectfulSpec extends Properties {
       var actual2                 = before
       val testBefore              = actual ==== before
       val testBefore2             = actual2 ==== before
-      val eftClient               = FxClient[Id]
+      val eftClient               = FxCtorClient[Id]
       val effectConstructorClient = EffectConstructorClient[Id]
       effectOf[Id]({ actual = after; () })
       pureOf[Id]({ actual2 = after; () })

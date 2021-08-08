@@ -52,7 +52,7 @@ object EitherTSupportSpec extends Properties {
     import cats.syntax.either._
     import effectie.cats.EitherTSupport.EitherTFEitherOps
 
-    def fab[F[_]: Fx, A, B](ab: Either[A, B]): F[Either[A, B]] = Fx[F].effectOf(ab)
+    def fab[F[_]: FxCtor, A, B](ab: Either[A, B]): F[Either[A, B]] = FxCtor[F].effectOf(ab)
 
     def testEitherT: Property = for {
       n <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")
