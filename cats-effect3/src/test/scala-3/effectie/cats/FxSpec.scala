@@ -1,12 +1,14 @@
 package effectie.cats
 
-import cats.Id
 import cats.effect.*
+import cats.effect.testkit.TestContext
 import cats.effect.unsafe.IORuntime
+import cats.{Eq, Id}
 import effectie.ConcurrentSupport
-import effectie.cats.compat.CatsEffectIoCompatForFuture
 import hedgehog.*
 import hedgehog.runner.*
+
+import scala.concurrent.Await
 
 /** @author Kevin Lee
   * @since 2020-12-06
@@ -21,25 +23,30 @@ object FxSpec extends Properties {
     example("test Fx[Future].unitOf", FutureSpec.testUnitOf),
     property("test Fx[Id].effectOf", IdSpec.testEffectOf),
     property("test Fx[Id].pureOf", IdSpec.testPureOf),
-    example("test Fx[Id].unitOf", IdSpec.testUnitOf)
+    example("test Fx[Id].unitOf", IdSpec.testUnitOf),
   )
 
   object IoSpec {
-    val compat          = new CatsEffectIoCompatForFuture
-    given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
+      import CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
+
+      @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual        = before
       val testBefore    = actual ==== before
       val io            = Fx[IO].effectOf({ actual = after; () })
       val testBeforeRun = actual ==== before
-      io.unsafeRunSync()
-      val testAfterRun  = actual ==== after
+
+      val done         = io.completeAs(())
+      val testAfterRun = actual ==== after
+
       Result.all(
         List(
+          done,
           testBefore.log("testBefore"),
           testBeforeRun.log("testBeforeRun"),
           testAfterRun.log("testAfterRun")
@@ -51,14 +58,19 @@ object FxSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
+      import CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
+
       var actual        = before
       val testBefore    = actual ==== before
       val io            = Fx[IO].pureOf({ actual = after; () })
       val testBeforeRun = actual ==== after
-      io.unsafeRunSync()
-      val testAfterRun  = actual ==== after
+
+      val done         = io.completeAs(())
+      val testAfterRun = actual ==== after
       Result.all(
         List(
+          done,
           testBefore.log("testBefore"),
           testBeforeRun.log("testBeforeRun"),
           testAfterRun.log("testAfterRun")
@@ -67,10 +79,11 @@ object FxSpec extends Properties {
     }
 
     def testUnitOf: Result = {
-      val io             = Fx[IO].unitOf
-      val expected: Unit = ()
-      val actual: Unit   = io.unsafeRunSync()
-      actual ==== expected
+      import CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
+      val io               = Fx[IO].unitOf
+      val expected: Unit   = ()
+      io.completeAs(expected)
     }
 
   }
@@ -81,6 +94,11 @@ object FxSpec extends Properties {
     import scala.concurrent.{ExecutionContext, Future}
 
     val waitFor: FiniteDuration = 1.second
+
+    implicit def futureEqual[A: Eq](
+      implicit ec: scala.concurrent.ExecutionContext
+    ): Eq[Future[A]] =
+      (x: Future[A], y: Future[A]) => Await.result(x.flatMap(a => y.map(b => Eq[A].eqv(a, b))), waitFor)
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

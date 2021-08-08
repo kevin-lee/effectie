@@ -10,19 +10,19 @@ trait ConsoleEffect[F[_]] extends effectie.ConsoleEffect[F]
 object ConsoleEffect {
   def apply[F[_]: ConsoleEffect]: ConsoleEffect[F] = summon[ConsoleEffect[F]]
 
-  given consoleEffectF[F[_]: Fx: FlatMap]: ConsoleEffect[F] =
+  given consoleEffectF[F[_]: FxCtor: FlatMap]: ConsoleEffect[F] =
     new ConsoleEffectF[F]
 
-  final class ConsoleEffectF[F[_]: Fx: FlatMap] extends ConsoleEffectWithoutFlatMap[F] with ConsoleEffect[F] {
+  final class ConsoleEffectF[F[_]: FxCtor: FlatMap] extends ConsoleEffectWithoutFlatMap[F] with ConsoleEffect[F] {
 
     override def readYesNo(prompt: String): F[YesNo] = for {
       _      <- putStrLn(prompt)
       answer <- readLn
       yesOrN <- answer match {
                   case "y" | "Y" =>
-                    Fx[F].effectOf(YesNo.yes)
+                    FxCtor[F].effectOf(YesNo.yes)
                   case "n" | "N" =>
-                    Fx[F].effectOf(YesNo.no)
+                    FxCtor[F].effectOf(YesNo.no)
                   case _         =>
                     readYesNo(prompt)
                 }

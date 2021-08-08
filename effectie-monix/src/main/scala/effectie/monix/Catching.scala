@@ -56,8 +56,8 @@ object Catching extends Catching {
   private[Catching] final class CurriedCanCatchF2[F[_], B](
     private val b: () => B
   ) extends AnyVal {
-    def apply[A](f: Throwable => A)(implicit EC: Fx[F], CC: CanCatch[F]): F[Either[A, B]] =
-      CanCatch[F].catchNonFatal(Fx[F].effectOf(b()))(f)
+    def apply[A](f: Throwable => A)(implicit EC: FxCtor[F], CC: CanCatch[F]): F[Either[A, B]] =
+      CanCatch[F].catchNonFatal(FxCtor[F].effectOf(b()))(f)
   }
 
   private[Catching] final class CurriedCanCatchEither1[F[_]](
@@ -85,8 +85,8 @@ object Catching extends Catching {
   private[Catching] final class CurriedCanCatchEitherF2[F[_], A, B](
     private val ab: () => Either[A, B]
   ) extends AnyVal {
-    def apply(f: Throwable => A)(implicit EC: Fx[F], CC: CanCatch[F]): F[Either[A, B]] =
-      CanCatch[F].catchNonFatalEither(Fx[F].effectOf(ab()))(f)
+    def apply(f: Throwable => A)(implicit EC: FxCtor[F], CC: CanCatch[F]): F[Either[A, B]] =
+      CanCatch[F].catchNonFatalEither(FxCtor[F].effectOf(ab()))(f)
   }
 
   private[Catching] final class CurriedCanCatchEitherT1[F[_]](

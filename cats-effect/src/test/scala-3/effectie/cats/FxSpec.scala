@@ -1,10 +1,12 @@
 package effectie.cats
 
-import cats.Id
 import cats.effect.*
+import cats.{Eq, Id}
 import effectie.ConcurrentSupport
 import hedgehog.*
 import hedgehog.runner.*
+
+import scala.concurrent.Await
 
 /** @author Kevin Lee
   * @since 2020-12-06
@@ -19,7 +21,7 @@ object FxSpec extends Properties {
     example("test Fx[Future].unitOf", FutureSpec.testUnitOf),
     property("test Fx[Id].effectOf", IdSpec.testEffectOf),
     property("test Fx[Id].pureOf", IdSpec.testPureOf),
-    example("test Fx[Id].unitOf", IdSpec.testUnitOf)
+    example("test Fx[Id].unitOf", IdSpec.testUnitOf),
   )
 
   object IoSpec {

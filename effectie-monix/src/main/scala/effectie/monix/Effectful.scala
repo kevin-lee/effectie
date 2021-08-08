@@ -8,7 +8,7 @@ trait Effectful {
 
   def pureOf[F[_]]: CurriedEffectOfPure[F] = new CurriedEffectOfPure[F]
 
-  def unitOf[F[_]: Fx]: F[Unit] = Fx[F].unitOf
+  def unitOf[F[_]: FxCtor]: F[Unit] = FxCtor[F].unitOf
 
 }
 
@@ -18,15 +18,15 @@ object Effectful extends Effectful {
   private[Effectful] final class CurriedEffectOf[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
-    def apply[A](a: => A)(implicit EF: Fx[F]): F[A] =
-      Fx[F].effectOf(a)
+    def apply[A](a: => A)(implicit EF: FxCtor[F]): F[A] =
+      FxCtor[F].effectOf(a)
   }
 
   private[Effectful] final class CurriedEffectOfPure[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
-    def apply[A](a: A)(implicit EF: Fx[F]): F[A] =
-      Fx[F].pureOf(a)
+    def apply[A](a: A)(implicit EF: FxCtor[F]): F[A] =
+      FxCtor[F].pureOf(a)
   }
 
 }

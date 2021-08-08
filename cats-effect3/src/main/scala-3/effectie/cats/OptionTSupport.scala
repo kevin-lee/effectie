@@ -1,7 +1,7 @@
 package effectie.cats
 
-import cats.{Applicative, Functor}
 import cats.data.OptionT
+import cats.{Applicative, Functor}
 
 trait OptionTSupport {
 
@@ -35,28 +35,28 @@ object OptionTSupport extends OptionTSupport {
   private[OptionTSupport] final class PartiallyAppliedOptionTOf[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
-    def apply[A](a: => Option[A])(using EF: Fx[F]): OptionT[F, A] =
-      OptionT(Fx[F].effectOf(a))
+    def apply[A](a: => Option[A])(using EF: FxCtor[F]): OptionT[F, A] =
+      OptionT(FxCtor[F].effectOf(a))
   }
 
   private[OptionTSupport] final class PartiallyAppliedOptionTOfPure[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
-    def apply[A](a: Option[A])(using EF: Fx[F]): OptionT[F, A] =
-      OptionT(Fx[F].pureOf(a))
+    def apply[A](a: Option[A])(using EF: FxCtor[F]): OptionT[F, A] =
+      OptionT(FxCtor[F].pureOf(a))
   }
 
   private[OptionTSupport] final class PartiallyAppliedOptionTSome[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
-    def apply[A](a: => A)(using EC: Fx[F], FT: Functor[F]): OptionT[F, A] =
+    def apply[A](a: => A)(using EC: FxCtor[F], FT: Functor[F]): OptionT[F, A] =
       OptionT.liftF(EC.effectOf(a))
   }
 
   private[OptionTSupport] final class PartiallyAppliedOptionTSomePure[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
-    def apply[A](a: A)(using EC: Fx[F], FT: Functor[F]): OptionT[F, A] =
+    def apply[A](a: A)(using EC: FxCtor[F], FT: Functor[F]): OptionT[F, A] =
       OptionT.liftF(EC.pureOf(a))
   }
 
