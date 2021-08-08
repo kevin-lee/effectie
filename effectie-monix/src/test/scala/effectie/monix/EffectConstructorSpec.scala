@@ -9,8 +9,7 @@ import hedgehog.runner._
 
 import monix.eval.Task
 
-/**
-  * @author Kevin Lee
+/** @author Kevin Lee
   * @since 2020-12-06
   */
 object EffectConstructorSpec extends Properties {
@@ -18,11 +17,9 @@ object EffectConstructorSpec extends Properties {
     property("test EffectConstructor[Task].effectOf", TaskSpec.testEffectOf),
     property("test EffectConstructor[Task].pureOf", TaskSpec.testPureOf),
     example("test EffectConstructor[Task].unitOf", TaskSpec.testUnitOf),
-
     property("test EffectConstructor[Future].effectOf", FutureSpec.testEffectOf),
     property("test EffectConstructor[Future].pureOf", FutureSpec.testPureOf),
     example("test EffectConstructor[Future].unitOf", FutureSpec.testUnitOf),
-
     property("test EffectConstructor[Id].effectOf", IdSpec.testEffectOf),
     property("test EffectConstructor[Id].pureOf", IdSpec.testPureOf),
     example("test EffectConstructor[Id].unitOf", IdSpec.testUnitOf)
@@ -33,44 +30,48 @@ object EffectConstructorSpec extends Properties {
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual = before
-      val testBefore = actual ==== before
-      val task = EffectConstructor[Task].effectOf({ actual = after; ()})
+      var actual        = before
+      val testBefore    = actual ==== before
+      val task          = EffectConstructor[Task].effectOf({ actual = after; () })
       val testBeforeRun = actual ==== before
       task.runSyncUnsafe()
-      val testAfterRun = actual ==== after
-      Result.all(List(
-        testBefore.log("testBefore"),
-        testBeforeRun.log("testBeforeRun"),
-        testAfterRun.log("testAfterRun")
-      ))
+      val testAfterRun  = actual ==== after
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testBeforeRun.log("testBeforeRun"),
+          testAfterRun.log("testAfterRun")
+        )
+      )
     }
 
     def testPureOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual = before
-      val testBefore = actual ==== before
-      val task = EffectConstructor[Task].pureOf({ actual = after; ()})
+      var actual        = before
+      val testBefore    = actual ==== before
+      val task          = EffectConstructor[Task].pureOf({ actual = after; () })
       val testBeforeRun = actual ==== after
       task.runSyncUnsafe()
-      val testAfterRun = actual ==== after
-      Result.all(List(
-        testBefore.log("testBefore"),
-        testBeforeRun.log("testBeforeRun"),
-        testAfterRun.log("testAfterRun")
-      ))
+      val testAfterRun  = actual ==== after
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testBeforeRun.log("testBeforeRun"),
+          testAfterRun.log("testAfterRun")
+        )
+      )
     }
 
     def testUnitOf: Result = {
-      val task = EffectConstructor[Task].unitOf
+      val task           = EffectConstructor[Task].unitOf
       val expected: Unit = ()
-      val actual: Unit = task.runSyncUnsafe()
+      val actual: Unit   = task.runSyncUnsafe()
       actual ==== expected
     }
 
@@ -85,48 +86,52 @@ object EffectConstructorSpec extends Properties {
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual = before
-      val testBefore = actual ==== before
-      val future: Future[Unit] = EffectConstructor[Future].effectOf({ actual = after; ()})
+      var actual               = before
+      val testBefore           = actual ==== before
+      val future: Future[Unit] = EffectConstructor[Future].effectOf({ actual = after; () })
       ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
-      val testAfterRun = actual ==== after
-      Result.all(List(
-        testBefore.log("testBefore"),
-        testAfterRun.log("testAfterRun")
-      ))
+      val testAfterRun         = actual ==== after
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testAfterRun.log("testAfterRun")
+        )
+      )
     }
 
     def testPureOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual = before
-      val testBefore = actual ==== before
-      val future = EffectConstructor[Future].pureOf({ actual = after; ()})
+      var actual       = before
+      val testBefore   = actual ==== before
+      val future       = EffectConstructor[Future].pureOf({ actual = after; () })
       ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
       val testAfterRun = actual ==== after
-      Result.all(List(
-        testBefore.log("testBefore"),
-        testAfterRun.log("testAfterRun")
-      ))
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testAfterRun.log("testAfterRun")
+        )
+      )
     }
 
     def testUnitOf: Result = {
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContext(executorService)
-      val future = EffectConstructor[Future].unitOf
-      val expected: Unit = ()
-      val actual: Unit = ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
+      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      val future                                    = EffectConstructor[Future].unitOf
+      val expected: Unit                            = ()
+      val actual: Unit                              = ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
       actual ==== expected
     }
 
@@ -136,34 +141,36 @@ object EffectConstructorSpec extends Properties {
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual = before
+      var actual     = before
       val testBefore = actual ==== before
-      EffectConstructor[Id].effectOf({ actual = after; ()})
-      val testAfter = actual ==== after
+      EffectConstructor[Id].effectOf({ actual = after; () })
+      val testAfter  = actual ==== after
       testBefore.log("testBefore") ==== testAfter.log("testAfter")
     }
 
     def testPureOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual = before
+      var actual     = before
       val testBefore = actual ==== before
-      EffectConstructor[Id].pureOf({ actual = after; ()})
-      val testAfter = actual ==== after
-      Result.all(List(
-        testBefore.log("testBefore"),
-        testAfter.log("testAfter")
-      ))
+      EffectConstructor[Id].pureOf({ actual = after; () })
+      val testAfter  = actual ==== after
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testAfter.log("testAfter")
+        )
+      )
     }
 
     def testUnitOf: Result = {
       val expected: Unit = ()
-      val actual = EffectConstructor[Id].unitOf
+      val actual         = EffectConstructor[Id].unitOf
       actual ==== expected
     }
 

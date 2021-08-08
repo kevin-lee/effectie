@@ -10,10 +10,9 @@ import effectie.testing.tools._
 import hedgehog._
 import hedgehog.runner._
 
-/**
- * @author Kevin Lee
- * @since 2021-05-16
- */
+/** @author Kevin Lee
+  * @since 2021-05-16
+  */
 object EffectfulSpec extends Properties {
   override def tests: List[Test] = List(
     property("test Effectful.{effectOf, pureOf, unitOf} for IO", IoSpec.testAll),

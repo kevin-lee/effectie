@@ -44,7 +44,7 @@ object EitherTSupportSpec extends Properties {
 
   object EitherTFEitherOpsSpec {
 
-    val compat = new CatsEffectIoCompatForFuture
+    val compat                 = new CatsEffectIoCompatForFuture
     implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
     import cats.data._
@@ -73,7 +73,7 @@ object EitherTSupportSpec extends Properties {
 
   object EitherTEitherOpsSpec {
 
-    val es = ConcurrentSupport.newExecutorService()
+    val es                     = ConcurrentSupport.newExecutorService()
     implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
     import cats._
@@ -102,7 +102,7 @@ object EitherTSupportSpec extends Properties {
 
   object EitherTFAOpsSpec {
 
-    val es = ConcurrentSupport.newExecutorService()
+    val es                     = ConcurrentSupport.newExecutorService()
     implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
     import cats.data.EitherT
@@ -150,7 +150,7 @@ object EitherTSupportSpec extends Properties {
 
   object EitherTAOpsSpec {
 
-    val es = ConcurrentSupport.newExecutorService()
+    val es                     = ConcurrentSupport.newExecutorService()
     implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
     import cats.data.EitherT
@@ -198,7 +198,7 @@ object EitherTSupportSpec extends Properties {
 
   object EitherTSupportAllSpec {
 
-    val es = ConcurrentSupport.newExecutorService()
+    val es                     = ConcurrentSupport.newExecutorService()
     implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
     def testAll: Property = for {

@@ -5,10 +5,9 @@ import cats.effect.*
 
 import scala.concurrent.{ExecutionContext, Future}
 
-/**
- * @author Kevin Lee
- * @since 2020-09-23
- */
+/** @author Kevin Lee
+  * @since 2020-09-23
+  */
 trait ToFuture[F[_]] {
 
   def unsafeToFuture[A](fa: F[A]): Future[A]
@@ -30,7 +29,7 @@ object ToFuture {
   }
 
   given idToFuture(using executionContext: ExecutionContext): ToFuture[Id] with {
-      override def unsafeToFuture[A](fa: Id[A]): Future[A] = Future(fa)
-    }
+    override def unsafeToFuture[A](fa: Id[A]): Future[A] = Future(fa)
+  }
 
 }

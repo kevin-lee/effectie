@@ -34,7 +34,7 @@ object EffectfulSpec extends Properties {
     def unit: F[Unit]
   }
   object FxClient      {
-    def apply[F[_]: FxClient]: FxClient[F]         = summon[FxClient[F]]
+    def apply[F[_]: FxClient]: FxClient[F] = summon[FxClient[F]]
     given eftClientF[F[_]: Fx]: FxClient[F] with {
       override def eftOf[A](a: A): F[A] = effectOf(a)
       override def of[A](a: A): F[A]    = pureOf(a)
@@ -48,7 +48,7 @@ object EffectfulSpec extends Properties {
     def unit: F[Unit]
   }
   object EffectConstructorClient      {
-    def apply[F[_]: EffectConstructorClient]: EffectConstructorClient[F]         =
+    def apply[F[_]: EffectConstructorClient]: EffectConstructorClient[F] =
       summon[EffectConstructorClient[F]]
     given eftClientF[F[_]: EffectConstructor]: EffectConstructorClient[F] with {
       override def eftOf[A](a: A): F[A] = effectOf(a)
@@ -232,9 +232,9 @@ object EffectfulSpec extends Properties {
     def testUnitOf: Result = {
       given executorService: ExecutorService = Executors.newFixedThreadPool(1)
       given ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
-      val future                                    = unitOf[Future]
-      val expected: Unit                            = ()
-      val actual: Unit                              = ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
+      val future                             = unitOf[Future]
+      val expected: Unit                     = ()
+      val actual: Unit                       = ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
       actual ==== expected
     }
 

@@ -63,7 +63,7 @@ object EffectfulSpec extends Properties {
 
   object IoSpec {
 
-    val compat = new CatsEffectIoCompatForFuture
+    val compat          = new CatsEffectIoCompatForFuture
     given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
     def testAll: Property = for {
@@ -239,9 +239,9 @@ object EffectfulSpec extends Properties {
     def testUnitOf: Result = {
       given executorService: ExecutorService = Executors.newFixedThreadPool(1)
       given ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
-      val future                                    = unitOf[Future]
-      val expected: Unit                            = ()
-      val actual: Unit                              = ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
+      val future                             = unitOf[Future]
+      val expected: Unit                     = ()
+      val actual: Unit                       = ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
       actual ==== expected
     }
 

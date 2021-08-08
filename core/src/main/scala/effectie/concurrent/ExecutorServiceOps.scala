@@ -4,10 +4,9 @@ import java.util.concurrent.{ExecutorService, TimeUnit}
 
 import scala.concurrent.duration.FiniteDuration
 
-/**
- * @author Kevin Lee
- * @since 2020-07-31
- */
+/** @author Kevin Lee
+  * @since 2020-07-31
+  */
 trait ExecutorServiceOps {
 
   private def noLogger(s: => String): Unit = ()
@@ -18,7 +17,6 @@ trait ExecutorServiceOps {
   ): Unit = {
     shutdownAndAwaitTerminationWithLogger(executorService, waitFor)(noLogger)
   }
-
 
   @SuppressWarnings(Array("org.wartremover.warts.StringPlusAny"))
   def shutdownAndAwaitTerminationWithLogger(
@@ -33,20 +31,20 @@ trait ExecutorServiceOps {
     try {
       logger(
         "executorService.shutdown() has been called " +
-        s"and await termination for ${waitFor.toMillis} ms (${waitFor.toSeconds} s)"
+          s"and await termination for ${waitFor.toMillis} ms (${waitFor.toSeconds} s)"
       )
       if (!executorService.awaitTermination(waitFor.toMillis, TimeUnit.MILLISECONDS)) {
         logger(s"calling executorService.shutdownNow()")
         val _ = executorService.shutdownNow()
 
         logger(
-            "executorService.shutdownNow() has been called " +
+          "executorService.shutdownNow() has been called " +
             s"and await termination for ${waitFor.toMillis} ms (${waitFor.toSeconds} s)"
         )
         if (!executorService.awaitTermination(waitFor.toMillis, TimeUnit.MILLISECONDS)) {
           logger(
             "ExecutorService did not terminate " +
-            s"after awaiting for ${waitFor.toMillis} ms (${waitFor.toSeconds} s)."
+              s"after awaiting for ${waitFor.toMillis} ms (${waitFor.toSeconds} s)."
           )
         } else {
           logger("ExecutorService has been terminated.")
@@ -63,7 +61,7 @@ trait ExecutorServiceOps {
         val _ = executorService.shutdownNow()
         logger(
           "executorService.shutdownNow() has been called" +
-          " and calling Thread.currentThread.interrupt()"
+            " and calling Thread.currentThread.interrupt()"
         )
         Thread.currentThread.interrupt()
     }

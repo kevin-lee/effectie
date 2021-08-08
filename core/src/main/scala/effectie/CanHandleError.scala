@@ -2,10 +2,9 @@ package effectie
 
 import scala.concurrent.{ExecutionContext, Future}
 
-/**
- * @author Kevin Lee
- * @since 2020-08-17
- */
+/** @author Kevin Lee
+  * @since 2020-08-17
+  */
 trait CanHandleError[F[_]] {
   type Xor[A, B]
   type XorT[A, B]
@@ -13,18 +12,18 @@ trait CanHandleError[F[_]] {
   def handleNonFatalWith[A, AA >: A](fa: => F[A])(handleError: Throwable => F[AA]): F[AA]
 
   def handleEitherTNonFatalWith[A, AA >: A, B, BB >: B](
-      efab: => XorT[A, B]
-    )(
-      handleError: Throwable => F[Xor[AA, BB]]
-    ): XorT[AA, BB]
+    efab: => XorT[A, B]
+  )(
+    handleError: Throwable => F[Xor[AA, BB]]
+  ): XorT[AA, BB]
 
   def handleNonFatal[A, AA >: A](fa: => F[A])(handleError: Throwable => AA): F[AA]
 
   def handleEitherTNonFatal[A, AA >: A, B, BB >: B](
-      efab: => XorT[A, B]
-    )(
-      handleError: Throwable => Xor[AA, BB]
-    ): XorT[AA, BB]
+    efab: => XorT[A, B]
+  )(
+    handleError: Throwable => Xor[AA, BB]
+  ): XorT[AA, BB]
 
 }
 

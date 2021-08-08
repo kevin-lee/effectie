@@ -7,13 +7,11 @@ import cats.effect.*
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
-
-/**
- * @author Kevin Lee
- * @since 2020-08-17
- */
+/** @author Kevin Lee
+  * @since 2020-08-17
+  */
 trait CanRecover[F[_]] extends effectie.CanRecover[F] {
-  type Xor[A, B] = Either[A, B]
+  type Xor[A, B]  = Either[A, B]
   type XorT[A, B] = EitherT[F, A, B]
 }
 
@@ -22,7 +20,9 @@ object CanRecover {
   def apply[F[_]: CanRecover]: CanRecover[F] = summon[CanRecover[F]]
 
   given ioCanRecover: CanRecover[IO] with {
-    override def recoverFromNonFatalWith[A, AA >: A](fa: => IO[A])(handleError: PartialFunction[Throwable, IO[AA]]): IO[AA] =
+    override def recoverFromNonFatalWith[A, AA >: A](fa: => IO[A])(
+      handleError: PartialFunction[Throwable, IO[AA]]
+    ): IO[AA] =
       fa.handleErrorWith(err => handleError.applyOrElse(err, ApplicativeError[IO, Throwable].raiseError[AA]))
 
     override def recoverEitherTFromNonFatalWith[A, AA >: A, B, BB >: B](
@@ -45,8 +45,8 @@ object CanRecover {
   }
 
   final class FutureCanRecover(override val ec: ExecutionContext)
-    extends effectie.CanRecover.FutureCanRecover(ec)
-       with CanRecover[Future] {
+      extends effectie.CanRecover.FutureCanRecover(ec)
+      with CanRecover[Future] {
 
     override def recoverEitherTFromNonFatalWith[A, AA >: A, B, BB >: B](
       efab: => EitherT[Future, A, B]
@@ -73,10 +73,12 @@ object CanRecover {
 
   given idCanRecover: CanRecover[Id] with {
 
-    override def recoverFromNonFatalWith[A, AA >: A](fa: => Id[A])(handleError: PartialFunction[Throwable, Id[AA]]): Id[AA] =
+    override def recoverFromNonFatalWith[A, AA >: A](fa: => Id[A])(
+      handleError: PartialFunction[Throwable, Id[AA]]
+    ): Id[AA] =
       try (fa)
       catch {
-        case NonFatal(ex) =>
+        case NonFatal(ex)  =>
           handleError.applyOrElse(ex, (err: Throwable) => throw err)
         case ex: Throwable =>
           throw ex

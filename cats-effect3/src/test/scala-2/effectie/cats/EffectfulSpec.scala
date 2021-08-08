@@ -63,7 +63,7 @@ object EffectfulSpec extends Properties {
 
   object IoSpec {
 
-    val compat = new CatsEffectIoCompatForFuture
+    val compat                 = new CatsEffectIoCompatForFuture
     implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
     @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))

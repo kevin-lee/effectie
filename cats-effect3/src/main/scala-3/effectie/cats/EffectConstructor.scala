@@ -24,10 +24,10 @@ object EffectConstructor {
     new FutureEffectConstructor(EC)
 
   final class FutureEffectConstructor(override val EC0: ExecutionContext)
-    extends EffectConstructor[Future]
-    with Fx[Future]
-    with CommonFx.CommonFutureFx
-    with OldEffectConstructor.OldFutureEffectConstructor
+      extends EffectConstructor[Future]
+      with Fx[Future]
+      with CommonFx.CommonFutureFx
+      with OldEffectConstructor.OldFutureEffectConstructor
 
   given idEffectConstructor: EffectConstructor[Id] with {
 

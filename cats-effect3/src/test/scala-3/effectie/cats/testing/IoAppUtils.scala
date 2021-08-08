@@ -5,10 +5,9 @@ import effectie.ConcurrentSupport
 
 import java.util.concurrent.ExecutorService
 
-/**
- * @author Kevin Lee
- * @since 2021-07-22
- */
+/** @author Kevin Lee
+  * @since 2021-07-22
+  */
 object IoAppUtils {
 
   def runtime(es: ExecutorService): IORuntime = {

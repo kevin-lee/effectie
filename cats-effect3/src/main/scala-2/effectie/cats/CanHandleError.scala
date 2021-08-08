@@ -7,13 +7,11 @@ import cats.effect.IO
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
-
-/**
- * @author Kevin Lee
- * @since 2020-08-17
- */
+/** @author Kevin Lee
+  * @since 2020-08-17
+  */
 trait CanHandleError[F[_]] extends effectie.CanHandleError[F] {
-  type Xor[A, B] = Either[A, B]
+  type Xor[A, B]  = Either[A, B]
   type XorT[A, B] = EitherT[F, A, B]
 }
 
@@ -45,7 +43,7 @@ object CanHandleError {
   }
 
   final class FutureCanHandleError(override val ec: ExecutionContext)
-    extends effectie.CanHandleError.FutureCanHandleError(ec)
+      extends effectie.CanHandleError.FutureCanHandleError(ec)
       with CanHandleError[Future] {
 
     override def handleEitherTNonFatalWith[A, AA >: A, B, BB >: B](
@@ -54,10 +52,12 @@ object CanHandleError {
       handleError: Throwable => Future[Either[AA, BB]]
     ): EitherT[Future, AA, BB] =
       EitherT(
-        efab.value.recoverWith {
-          case throwable: Throwable =>
-            handleError(throwable)
-        }(ec)
+        efab
+          .value
+          .recoverWith {
+            case throwable: Throwable =>
+              handleError(throwable)
+          }(ec)
       )
 
     override def handleEitherTNonFatal[A, AA >: A, B, BB >: B](

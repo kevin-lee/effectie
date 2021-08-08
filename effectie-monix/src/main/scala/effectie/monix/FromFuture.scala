@@ -1,16 +1,14 @@
 package effectie.monix
 
-
 import cats.Id
 import monix.eval.Task
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
-/**
- * @author Kevin Lee
- * @since 2020-09-22
- */
+/** @author Kevin Lee
+  * @since 2020-09-22
+  */
 trait FromFuture[F[_]] {
   def toEffect[A](future: => Future[A]): F[A]
 }
