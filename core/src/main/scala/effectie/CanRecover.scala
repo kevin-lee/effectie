@@ -2,10 +2,9 @@ package effectie
 
 import scala.concurrent.{ExecutionContext, Future}
 
-/**
- * @author Kevin Lee
- * @since 2020-08-17
- */
+/** @author Kevin Lee
+  * @since 2020-08-17
+  */
 trait CanRecover[F[_]] {
   type Xor[A, B]
   type XorT[A, B]

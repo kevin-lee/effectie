@@ -19,8 +19,7 @@ trait ConsoleEffect[F[_]] {
 object ConsoleEffect {
   def apply[F[_]: ConsoleEffect]: ConsoleEffect[F] = implicitly[ConsoleEffect[F]]
 
-  abstract class ConsoleEffectWithoutFlatMap[F[_]: CommonFx]
-    extends ConsoleEffect[F] {
+  abstract class ConsoleEffectWithoutFlatMap[F[_]: CommonFx] extends ConsoleEffect[F] {
 
     override def readLn: F[String] =
       implicitly[CommonFx[F]].effectOf(scala.io.StdIn.readLine())

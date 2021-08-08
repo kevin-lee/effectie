@@ -11,26 +11,23 @@ object ConsoleEffect {
   def apply[F[_]: ConsoleEffect]: ConsoleEffect[F] =
     implicitly[ConsoleEffect[F]]
 
-  implicit def consoleEffectF[F[_]: Fx: FlatMap]
-    : ConsoleEffect[F] =
+  implicit def consoleEffectF[F[_]: Fx: FlatMap]: ConsoleEffect[F] =
     new ConsoleEffectF[F]
 
-  final class ConsoleEffectF[F[_]: Fx: FlatMap]
-    extends ConsoleEffectWithoutFlatMap[F]
-      with ConsoleEffect[F] {
+  final class ConsoleEffectF[F[_]: Fx: FlatMap] extends ConsoleEffectWithoutFlatMap[F] with ConsoleEffect[F] {
 
     @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
     override def readYesNo(prompt: String): F[YesNo] = for {
-      _ <- putStrLn(prompt)
+      _      <- putStrLn(prompt)
       answer <- readLn
-      yesOrN <-  answer match {
-        case "y" | "Y" =>
-          Fx[F].effectOf(YesNo.yes)
-        case "n" | "N" =>
-          Fx[F].effectOf(YesNo.no)
-        case _ =>
-          readYesNo(prompt)
-      }
+      yesOrN <- answer match {
+                  case "y" | "Y" =>
+                    Fx[F].effectOf(YesNo.yes)
+                  case "n" | "N" =>
+                    Fx[F].effectOf(YesNo.no)
+                  case _         =>
+                    readYesNo(prompt)
+                }
     } yield yesOrN
 
   }

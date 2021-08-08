@@ -7,13 +7,11 @@ import scalaz.effect._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
-
-/**
- * @author Kevin Lee
- * @since 2020-08-17
- */
+/** @author Kevin Lee
+  * @since 2020-08-17
+  */
 trait CanRecover[F[_]] extends effectie.CanRecover[F] {
-  override type Xor[A, B] = A \/ B
+  override type Xor[A, B]  = A \/ B
   override type XorT[A, B] = EitherT[F, A, B]
 }
 
@@ -31,9 +29,9 @@ object CanRecover {
       fa.attempt.flatMap {
         case -\/(NonFatal(ex)) =>
           handleError.applyOrElse(ex, (err: Throwable) => throw err)
-        case -\/(ex) =>
+        case -\/(ex)           =>
           IO(throw ex)
-        case \/-(a) =>
+        case \/-(a)            =>
           IO[AA](a)
       }
 
@@ -63,8 +61,8 @@ object CanRecover {
   }
 
   final class FutureCanRecover(override val ec: ExecutionContext)
-    extends effectie.CanRecover.FutureCanRecover(ec)
-       with CanRecover[Future] {
+      extends effectie.CanRecover.FutureCanRecover(ec)
+      with CanRecover[Future] {
 
     override def recoverEitherTFromNonFatalWith[A, AA >: A, B, BB >: B](
       efab: => EitherT[Future, A, B]
@@ -100,7 +98,7 @@ object CanRecover {
     ): Id[AA] =
       try (fa)
       catch {
-        case NonFatal(ex) =>
+        case NonFatal(ex)  =>
           handleError.applyOrElse(ex, (err: Throwable) => throw err)
         case ex: Throwable =>
           throw ex

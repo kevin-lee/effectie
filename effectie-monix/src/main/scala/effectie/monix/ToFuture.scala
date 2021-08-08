@@ -1,16 +1,14 @@
 package effectie.monix
 
-
 import cats.Id
 import monix.eval.Task
 import monix.execution.Scheduler
 
 import scala.concurrent.{ExecutionContext, Future}
 
-/**
- * @author Kevin Lee
- * @since 2020-09-23
- */
+/** @author Kevin Lee
+  * @since 2020-09-23
+  */
 trait ToFuture[F[_]] {
 
   def unsafeToFuture[A](fa: F[A]): Future[A]

@@ -12,10 +12,9 @@ import java.util.concurrent.ExecutorService
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.*
 
-/**
- * @author Kevin Lee
- * @since 2020-09-23
- */
+/** @author Kevin Lee
+  * @since 2020-09-23
+  */
 object ToFutureSpec extends Properties {
   override def tests: List[Test] = List(
     property(
@@ -33,7 +32,7 @@ object ToFutureSpec extends Properties {
   )
 
   object IoSpec {
-    val compat = new CatsEffectIoCompatForFuture
+    val compat          = new CatsEffectIoCompatForFuture
     given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
     def testUnsafeToFuture: Property = for {
@@ -41,16 +40,17 @@ object ToFutureSpec extends Properties {
     } yield {
       val fa = IO(a)
 
-      given es: ExecutorService = ConcurrentSupport.newExecutorService()
+      given es: ExecutorService  = ConcurrentSupport.newExecutorService()
       given ec: ExecutionContext = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
       ConcurrentSupport.runAndShutdown(es, 800.milliseconds) {
-        val future = ToFuture[IO].unsafeToFuture(fa)
+        val future   = ToFuture[IO].unsafeToFuture(fa)
         val expected = a
-        val actual = ConcurrentSupport.futureToValueAndTerminate(future, 500.milliseconds)
+        val actual   = ConcurrentSupport.futureToValueAndTerminate(future, 500.milliseconds)
 
         Result.all(
           List(
-            Result.assert(future.isInstanceOf[Future[Int]])
+            Result
+              .assert(future.isInstanceOf[Future[Int]])
               .log(s"future is not an instance of Future[Int]. future.getClass: ${future.getClass.toString}"),
             actual ==== expected
           )
@@ -64,18 +64,19 @@ object ToFutureSpec extends Properties {
     def testUnsafeToFuture: Property = for {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {
-      given es: ExecutorService = ConcurrentSupport.newExecutorService()
+      given es: ExecutorService  = ConcurrentSupport.newExecutorService()
       given ec: ExecutionContext = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
       ConcurrentSupport.runAndShutdown(es, 300.milliseconds) {
         val expected = Future(a)
-        val fa = Future(a)
+        val fa       = Future(a)
 
         val future = ToFuture[Future].unsafeToFuture(fa)
         val actual = ConcurrentSupport.futureToValueAndTerminate(future, 300.milliseconds)
 
         Result.all(
           List(
-            Result.assert(future.isInstanceOf[Future[Int]])
+            Result
+              .assert(future.isInstanceOf[Future[Int]])
               .log(s"future is not an instance of Future[Int]. future.getClass: ${future.getClass.toString}"),
             actual ==== ConcurrentSupport.futureToValueAndTerminate(expected, 300.milliseconds),
             actual ==== a
@@ -92,7 +93,7 @@ object ToFutureSpec extends Properties {
     } yield {
       given es: ExecutorService = ConcurrentSupport.newExecutorService()
 
-      val fa = a
+      val fa                     = a
       given ec: ExecutionContext = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
       ConcurrentSupport.runAndShutdown(es, 300.milliseconds) {
         val expected = Future(a)
@@ -102,7 +103,8 @@ object ToFutureSpec extends Properties {
 
         Result.all(
           List(
-            Result.assert(future.isInstanceOf[Future[Int]])
+            Result
+              .assert(future.isInstanceOf[Future[Int]])
               .log(s"future is not an instance of Future[Int]. future.getClass: ${future.getClass.toString}"),
             actual ==== ConcurrentSupport.futureToValueAndTerminate(expected, 300.milliseconds),
             actual ==== a

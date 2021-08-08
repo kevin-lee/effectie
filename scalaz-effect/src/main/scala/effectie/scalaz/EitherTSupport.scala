@@ -33,7 +33,7 @@ trait EitherTSupport {
 }
 
 @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
-object EitherTSupport extends  EitherTSupport {
+object EitherTSupport extends EitherTSupport {
 
   private[EitherTSupport] final class PartiallyAppliedEitherTEffectOf[F[_]](
     private val dummy: Boolean = true

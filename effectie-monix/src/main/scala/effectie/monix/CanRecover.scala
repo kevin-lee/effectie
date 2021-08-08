@@ -7,12 +7,11 @@ import monix.eval.Task
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
-/**
-  * @author Kevin Lee
+/** @author Kevin Lee
   * @since 2020-08-17
   */
 trait CanRecover[F[_]] extends effectie.CanRecover[F] {
-  type Xor[A, B] = Either[A, B]
+  type Xor[A, B]  = Either[A, B]
   type XorT[A, B] = EitherT[F, A, B]
 }
 
@@ -94,7 +93,7 @@ object CanRecover {
     )(handleError: PartialFunction[Throwable, Id[AA]]): Id[AA] =
       try (fa)
       catch {
-        case NonFatal(ex) =>
+        case NonFatal(ex)  =>
           handleError.applyOrElse(ex, (err: Throwable) => throw err)
         case ex: Throwable =>
           throw ex

@@ -7,12 +7,11 @@ import monix.eval.Task
 
 import scala.concurrent.{ExecutionContext, Future}
 
-/**
-  * @author Kevin Lee
+/** @author Kevin Lee
   * @since 2020-06-07
   */
 trait CanCatch[F[_]] extends effectie.CanCatch[F] {
-  override type Xor[A, B] = Either[A, B]
+  override type Xor[A, B]  = Either[A, B]
   override type XorT[A, B] = EitherT[F, A, B]
 
   override def catchNonFatalEitherT[A, B](
@@ -40,8 +39,7 @@ object CanCatch {
   implicit def canCatchFuture(implicit EC: ExecutionContext): CanCatch[Future] =
     new CanCatchFuture(EC)
 
-  final class CanCatchFuture(val EC0: ExecutionContext)
-      extends CanCatch[Future] {
+  final class CanCatchFuture(val EC0: ExecutionContext) extends CanCatch[Future] {
     @SuppressWarnings(
       Array("org.wartremover.warts.Nothing", "org.wartremover.warts.Throw")
     )

@@ -2,10 +2,9 @@ package effectie.scalaz
 
 import scalaz._
 
-/**
- * @author Kevin Lee
- * @since 2020-06-07
- */
+/** @author Kevin Lee
+  * @since 2020-06-07
+  */
 trait Catching {
 
   import Catching._
@@ -16,13 +15,11 @@ trait Catching {
   final def catchNonFatalF[F[_]]: CurriedCanCatchF1[F] =
     new CurriedCanCatchF1[F]
 
-
   def catchNonFatalEither[F[_]]: CurriedCanCatchEither1[F] =
     new CurriedCanCatchEither1[F]
 
   def catchNonFatalEitherF[F[_]]: CurriedCanCatchEitherF1[F] =
     new CurriedCanCatchEitherF1[F]
-
 
   def catchNonFatalEitherT[F[_]]: CurriedCanCatchEitherT1[F] =
     new CurriedCanCatchEitherT1[F]

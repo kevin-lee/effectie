@@ -26,12 +26,10 @@ trait OldEffectConstructor[F[_]] extends CommonFx[F] {
   @deprecated(message = "Use EffectConstructor[F].pureOf instead", since = "1.4.0")
   @inline def effectOfPure[A](a: A): F[A] = pureOf[A](a)
   @deprecated(message = "Use EffectConstructor[F].unitOf instead", since = "1.4.0")
-  @inline def effectOfUnit: F[Unit] = unitOf
+  @inline def effectOfUnit: F[Unit]       = unitOf
 }
 
 object OldEffectConstructor {
 
-  trait OldFutureEffectConstructor
-    extends CommonFx.CommonFutureFx
-       with OldEffectConstructor[Future]
+  trait OldFutureEffectConstructor extends CommonFx.CommonFutureFx with OldEffectConstructor[Future]
 }

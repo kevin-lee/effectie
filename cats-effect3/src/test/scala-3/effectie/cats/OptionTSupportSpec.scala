@@ -33,7 +33,7 @@ object OptionTSupportSpec extends Properties {
   )
 
   object OptionTFOptionOpsSpec {
-    val compat = new CatsEffectIoCompatForFuture
+    val compat          = new CatsEffectIoCompatForFuture
     given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
     import cats.data.*
@@ -64,7 +64,7 @@ object OptionTSupportSpec extends Properties {
   }
 
   object OptionTOptionOpsSpec {
-    val compat = new CatsEffectIoCompatForFuture
+    val compat          = new CatsEffectIoCompatForFuture
     given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
     import cats.Applicative
@@ -94,7 +94,7 @@ object OptionTSupportSpec extends Properties {
   }
 
   object OptionTFAOpsSpec {
-    val compat = new CatsEffectIoCompatForFuture
+    val compat          = new CatsEffectIoCompatForFuture
     given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
     import cats.Applicative
@@ -123,7 +123,7 @@ object OptionTSupportSpec extends Properties {
   }
 
   object OptionTAOpsSpec {
-    val compat = new CatsEffectIoCompatForFuture
+    val compat          = new CatsEffectIoCompatForFuture
     given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
     import cats.Applicative
@@ -153,7 +153,7 @@ object OptionTSupportSpec extends Properties {
   }
 
   object OptionTSupportAllSpec {
-    val compat = new CatsEffectIoCompatForFuture
+    val compat          = new CatsEffectIoCompatForFuture
     given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
     import cats.Applicative

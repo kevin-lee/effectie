@@ -7,12 +7,11 @@ import cats.syntax.all.*
 
 import scala.concurrent.{ExecutionContext, Future}
 
-/**
- * @author Kevin Lee
- * @since 2020-06-07
- */
+/** @author Kevin Lee
+  * @since 2020-06-07
+  */
 trait CanCatch[F[_]] extends effectie.CanCatch[F] {
-  override type Xor[A, B] = Either[A, B]
+  override type Xor[A, B]  = Either[A, B]
   override type XorT[A, B] = EitherT[F, A, B]
 
   override def catchNonFatalEitherT[A, B](fab: => EitherT[F, A, B])(f: Throwable => A): EitherT[F, A, B] =
@@ -33,8 +32,7 @@ object CanCatch {
   given canCatchFuture(using EC: ExecutionContext): CanCatch[Future] =
     new CanCatchFuture(EC)
 
-  final class CanCatchFuture(val EC0: ExecutionContext)
-    extends CanCatch[Future] {
+  final class CanCatchFuture(val EC0: ExecutionContext) extends CanCatch[Future] {
     override def catchNonFatal[A, B](fb: => Future[B])(f: Throwable => A): Future[Either[A, B]] =
       fb.transform {
         case scala.util.Success(b) =>
