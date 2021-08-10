@@ -16,16 +16,20 @@ object FxSpec extends Properties {
     property("test Fx[IO].effectOf", IoSpec.testEffectOf),
     property("test Fx[IO].pureOf", IoSpec.testPureOf),
     example("test Fx[IO].unitOf", IoSpec.testUnitOf),
-    property("test Fx[IO] Monad laws", IoSpec.testMonadLaws),
-    property("test Fx[Future].effectOf", FutureSpec.testEffectOf),
-    property("test Fx[Future].pureOf", FutureSpec.testPureOf),
-    example("test Fx[Future].unitOf", FutureSpec.testUnitOf),
-    property("test Fx[Future] Monad laws", FutureSpec.testMonadLaws),
-    property("test Fx[Id].effectOf", IdSpec.testEffectOf),
-    property("test Fx[Id].pureOf", IdSpec.testPureOf),
-    example("test Fx[Id].unitOf", IdSpec.testUnitOf),
-    property("test Fx[Id] Monad laws", IdSpec.testMonadLaws),
-  )
+  ) ++
+    IoSpec.testMonadLaws ++
+    List(
+      property("test Fx[Future].effectOf", FutureSpec.testEffectOf),
+      property("test Fx[Future].pureOf", FutureSpec.testPureOf),
+      example("test Fx[Future].unitOf", FutureSpec.testUnitOf),
+    ) ++
+    FutureSpec.testMonadLaws ++
+    List(
+      property("test Fx[Id].effectOf", IdSpec.testEffectOf),
+      property("test Fx[Id].pureOf", IdSpec.testPureOf),
+      example("test Fx[Id].unitOf", IdSpec.testUnitOf),
+    ) ++
+    IdSpec.testMonadLaws
 
   object IoSpec {
 
@@ -74,7 +78,7 @@ object FxSpec extends Properties {
       actual ==== expected
     }
 
-    def testMonadLaws: Property = {
+    def testMonadLaws: List[Test] = {
       import cats.syntax.eq.*
 
       implicit val eqIo: Eq[IO[Int]] =
@@ -143,7 +147,7 @@ object FxSpec extends Properties {
       actual ==== expected
     }
 
-    def testMonadLaws: Property = {
+    def testMonadLaws: List[Test] = {
       import cats.syntax.eq.*
 
       implicit val ec: scala.concurrent.ExecutionContext             = scala.concurrent.ExecutionContext.global
@@ -197,7 +201,7 @@ object FxSpec extends Properties {
       actual ==== expected
     }
 
-    def testMonadLaws: Property = MonadSpec.testMonadLaws[Id]
+    def testMonadLaws: List[Test] = MonadSpec.testMonadLaws[Id]
 
   }
 

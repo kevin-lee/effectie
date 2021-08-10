@@ -1,20 +1,20 @@
 package effectie.cats
 
 import cats.Eq
-import effectie.testing.cats.Gens
+import effectie.testing.cats.{Specs, Gens}
 import hedgehog.Property
 
 object MonadSpec {
   def test1_Identity[F[_]: Fx](implicit eqF: Eq[F[Int]]): Property =
     Specs
-      .monadLaws
+      .MonadLaws
       .identity[F](
         Gens.genFA[F, Int](Gens.genInt(Int.MinValue, Int.MaxValue)),
       )
 
   def test2_Composition[F[_]: Fx](implicit eqF: Eq[F[Int]]): Property =
     Specs
-      .monadLaws
+      .MonadLaws
       .composition[F](
         Gens.genFA[F, Int](Gens.genInt(Int.MinValue, Int.MaxValue)),
         Gens.genIntToInt,
@@ -22,14 +22,14 @@ object MonadSpec {
 
   def test3_IdentityAp[F[_]: Fx](implicit eqF: Eq[F[Int]]): Property =
     Specs
-      .monadLaws
+      .MonadLaws
       .identityAp[F](
         Gens.genFA[F, Int](Gens.genInt(Int.MinValue, Int.MaxValue)),
       )
 
   def test4_Homomorphism[F[_]: Fx](implicit eqF: Eq[F[Int]]): Property =
     Specs
-      .monadLaws
+      .MonadLaws
       .homomorphism[F](
         Gens.genIntFromMinToMax,
         Gens.genIntToInt,
@@ -37,7 +37,7 @@ object MonadSpec {
 
   def test5_Interchange[F[_]: Fx](implicit eqF: Eq[F[Int]]): Property =
     Specs
-      .monadLaws
+      .MonadLaws
       .interchange[F](
         Gens.genIntFromMinToMax,
         Gens.genIntToInt,
@@ -45,7 +45,7 @@ object MonadSpec {
 
   def test6_CompositionAp[F[_]: Fx](implicit eqF: Eq[F[Int]]): Property =
     Specs
-      .monadLaws
+      .MonadLaws
       .compositionAp[F](
         Gens.genFA[F, Int](Gens.genInt(Int.MinValue, Int.MaxValue)),
         Gens.genIntToInt,
@@ -53,7 +53,7 @@ object MonadSpec {
 
   def test7_LeftIdentity[F[_]: Fx](implicit eqF: Eq[F[Int]]): Property =
     Specs
-      .monadLaws
+      .MonadLaws
       .leftIdentity[F](
         Gens.genIntFromMinToMax,
         Gens.genAToMonadA(Gens.genIntToInt)
@@ -61,14 +61,14 @@ object MonadSpec {
 
   def test8_RightIdentity[F[_]: Fx](implicit eqF: Eq[F[Int]]): Property =
     Specs
-      .monadLaws
+      .MonadLaws
       .rightIdentity[F](
         Gens.genFA[F, Int](Gens.genInt(Int.MinValue, Int.MaxValue)),
       )
 
   def test9_Associativity[F[_]: Fx](implicit eqF: Eq[F[Int]]): Property =
     Specs
-      .monadLaws
+      .MonadLaws
       .associativity[F](
         Gens.genFA[F, Int](Gens.genInt(Int.MinValue, Int.MaxValue)),
         Gens.genAToMonadA(Gens.genIntToInt)
