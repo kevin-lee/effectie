@@ -1,6 +1,6 @@
 package effectie.monix
 
-import cats.{Id, Eq}
+import cats.{Eq, Id, Monad}
 import cats.effect.IO
 import effectie.ConcurrentSupport
 import hedgehog._
@@ -96,7 +96,7 @@ object FxSpec extends Properties {
 
       implicit val ioFx: Fx[Task] = Fx.TaskFx
 
-      MonadSpec.testMonadLaws[Task]
+      MonadSpec.testMonadLaws[Task]("Task")
     }
 
   }
@@ -158,7 +158,7 @@ object FxSpec extends Properties {
 
       implicit val ioFx: Fx[IO] = Fx.IoFx
 
-      MonadSpec.testMonadLaws[IO]
+      MonadSpec.testMonadLaws[IO]("IO")
     }
 
   }
@@ -235,7 +235,7 @@ object FxSpec extends Properties {
           Await.result(future, waitFor)
         }
 
-      MonadSpec.testMonadLaws[Future]
+      MonadSpec.testMonadLaws[Future]("Future")
     }
 
   }
@@ -277,7 +277,10 @@ object FxSpec extends Properties {
       actual ==== expected
     }
 
-    def testMonadLaws: List[Test] = MonadSpec.testMonadLaws[Id]
+    def testMonadLaws: List[Test] = {
+      implicit val idInstance: Monad[Id] = cats.catsInstancesForId
+      MonadSpec.testMonadLaws[Id]("Id")
+    }
 
   }
 
