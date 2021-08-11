@@ -8,17 +8,17 @@ import hedgehog.runner._
   * @since 2021-08-04
   */
 object MonadSpec {
-  def testAllLaws[F[_]: Monad](implicit eqF: Eq[F[Int]]): List[Test] =
+  def testAllLaws[F[_]: Monad](fName: String)(implicit eqF: Eq[F[Int]]): List[Test] =
     List(
-      property("test Monad laws - Identity", test1_Identity),
-      property("test Monad laws - Composition", test2_Composition),
-      property("test Monad laws - IdentityAp", test3_IdentityAp),
-      property("test Monad laws - Homomorphism", test4_Homomorphism),
-      property("test Monad laws - Interchange", test5_Interchange),
-      property("test Monad laws - CompositionAp", test6_CompositionAp),
-      property("test Monad laws - LeftIdentity", test7_LeftIdentity),
-      property("test Monad laws - RightIdentity", test8_RightIdentity),
-      property("test Monad laws - Associativity", test9_Associativity),
+      property(s"test Monad laws for $fName - Identity", test1_Identity),
+      property(s"test Monad laws for $fName - Composition", test2_Composition),
+      property(s"test Monad laws for $fName - IdentityAp", test3_IdentityAp),
+      property(s"test Monad laws for $fName - Homomorphism", test4_Homomorphism),
+      property(s"test Monad laws for $fName - Interchange", test5_Interchange),
+      property(s"test Monad laws for $fName - CompositionAp", test6_CompositionAp),
+      property(s"test Monad laws for $fName - LeftIdentity", test7_LeftIdentity),
+      property(s"test Monad laws for $fName - RightIdentity", test8_RightIdentity),
+      property(s"test Monad laws for $fName - Associativity", test9_Associativity),
     )
 
   def test1_Identity[F[_]: Monad](implicit eqF: Eq[F[Int]]): Property =

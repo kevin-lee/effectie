@@ -201,7 +201,10 @@ object FxSpec extends Properties {
       actual ==== expected
     }
 
-    def testMonadLaws: Property = MonadSpec.testMonadLaws[Id]
+    def testMonadLaws: Property = {
+      implicit val idInstance: Monad[Id] = scalaz.Scalaz.id
+      MonadSpec.testMonadLaws[Id]
+    }
 
   }
 

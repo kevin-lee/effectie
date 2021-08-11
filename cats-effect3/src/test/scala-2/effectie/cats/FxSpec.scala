@@ -2,7 +2,7 @@ package effectie.cats
 
 import cats.effect._
 import cats.effect.testkit.TestContext
-import cats.{Eq, Id}
+import cats.{Eq, Id, Monad}
 import effectie.ConcurrentSupport
 import hedgehog._
 import hedgehog.runner._
@@ -387,6 +387,8 @@ object FxSpec extends Properties {
       val actual         = Fx[Id].unitOf
       actual ==== expected
     }
+
+    implicit val idInstance: Monad[Id] = cats.catsInstancesForId
 
     def testMonadLaws1_Identity: Property =
       MonadSpec.test1_Identity[Id]
