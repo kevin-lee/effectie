@@ -15,8 +15,8 @@ trait CanCatch[F[_]] extends effectie.CanCatch[F] {
   override type Xor[A, B]  = A \/ B
   override type XorT[A, B] = EitherT[F, A, B]
 
-  override def catchNonFatalEitherT[A, B](fab: => EitherT[F, A, B])(f: Throwable => A): EitherT[F, A, B] =
-    EitherT(catchNonFatalEither(fab.run)(f))
+  override def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(f: Throwable => AA): EitherT[F, AA, B] =
+    EitherT(catchNonFatalEither[A, AA, B](fab.run)(f))
 }
 
 object CanCatch {
@@ -43,7 +43,7 @@ object CanCatch {
             throw ex
         })
 
-    override def catchNonFatalEither[A, B](fab: => IO[A \/ B])(f: Throwable => A): IO[A \/ B] =
+    override def catchNonFatalEither[A, AA >: A, B](fab: => IO[A \/ B])(f: Throwable => AA): IO[AA \/ B] =
       catchNonFatal(fab)(f).map(_.flatMap(identity))
 
   }
@@ -79,7 +79,7 @@ object CanCatch {
           throw ex
       }(EC0)
 
-    override def catchNonFatalEither[A, B](fab: => Future[A \/ B])(f: Throwable => A): Future[A \/ B] =
+    override def catchNonFatalEither[A, AA >: A, B](fab: => Future[A \/ B])(f: Throwable => AA): Future[AA \/ B] =
       catchNonFatal(fab)(f).map(_.flatMap(identity))(EC0)
   }
 
@@ -110,7 +110,7 @@ object CanCatch {
           throw ex
       }
 
-    override def catchNonFatalEither[A, B](fab: => Id[A \/ B])(f: Throwable => A): Id[A \/ B] =
+    override def catchNonFatalEither[A, AA >: A, B](fab: => Id[A \/ B])(f: Throwable => AA): Id[AA \/ B] =
       catchNonFatal(fab)(f).flatMap(identity)
   }
 

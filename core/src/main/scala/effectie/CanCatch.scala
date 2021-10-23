@@ -8,9 +8,9 @@ trait CanCatch[F[_]] {
 
   def catchNonFatal[A, B](fb: => F[B])(f: Throwable => A): F[Xor[A, B]]
 
-  def catchNonFatalEither[A, B](fab: => F[Xor[A, B]])(f: Throwable => A): F[Xor[A, B]]
+  def catchNonFatalEither[A, AA >: A, B](fab: => F[Xor[A, B]])(f: Throwable => AA): F[Xor[AA, B]]
 
-  def catchNonFatalEitherT[A, B](fab: => XorT[A, B])(f: Throwable => A): XorT[A, B]
+  def catchNonFatalEitherT[A, AA >: A, B](fab: => XorT[A, B])(f: Throwable => AA): XorT[AA, B]
 }
 
 object CanCatch {
