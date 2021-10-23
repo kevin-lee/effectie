@@ -20,8 +20,16 @@ object CanCatchSpec extends Properties {
   override def tests: List[Test] = List(
     /* Task */
     example(
-      "test CanCatch[Task].catchNonFatalThrowable should catch NonFatal Throwable",
-      TaskSpec.testCanCatch_Task_catchNonFatalShouldCatchNonFatalThrowable
+      "test CanCatch[Task].catchNonFatalThrowable should catch NonFatal",
+      TaskSpec.testCanCatch_Task_catchNonFatalThrowableShouldCatchNonFatal
+    ),
+    example(
+      "test CanCatch[Task].catchNonFatalThrowable should not catch Fatal",
+      TaskSpec.testCanCatch_Task_catchNonFatalThrowableShouldNotCatchFatal
+    ),
+    example(
+      "test CanCatch[Task].catchNonFatalThrowable should return the successful result",
+      TaskSpec.testCanCatch_Task_catchNonFatalThrowableShouldReturnSuccessfulResult
     ),
     example(
       "test CanCatch[Task].catchNonFatal should catch NonFatal",
@@ -70,8 +78,12 @@ object CanCatchSpec extends Properties {
 
     /* Future */
     example(
-      "test CanCatch[Future].catchNonFatalThrowable should catch NonFatal Throwable",
-      FutureSpec.testCanCatch_Future_catchNonFatalShouldCatchNonFatalThrowable
+      "test CanCatch[Future].catchNonFatalThrowable should catch NonFatal",
+      FutureSpec.testCanCatch_Future_catchNonFatalThrowableShouldCatchNonFatal
+    ),
+    example(
+      "test CanCatch[Future].catchNonFatalThrowable should return the successful result",
+      FutureSpec.testCanCatch_Future_catchNonFatalThrowableShouldReturnSuccessfulResult
     ),
     example(
       "test CanCatch[Future].catchNonFatal should catch NonFatal",
@@ -108,8 +120,16 @@ object CanCatchSpec extends Properties {
 
     /* Id */
     example(
-      "test CanCatch[Id].catchNonFatalThrowable should catch NonFatal Throwable",
-      IdSpec.testCanCatch_Id_catchNonFatalShouldCatchNonFatalThrowable
+      "test CanCatch[Id].catchNonFatalThrowable should catch NonFatal",
+      IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal
+    ),
+    example(
+      "test CanCatch[Id].catchNonFatalThrowable should not catch Fatal",
+      IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldNotCatchFatal
+    ),
+    example(
+      "test CanCatch[Id].catchNonFatalThrowable should return the successful result",
+      IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldReturnSuccessfulResult
     ),
     example(
       "test CanCatch[Id].catchNonFatal should catch NonFatal",
@@ -179,12 +199,40 @@ object CanCatchSpec extends Properties {
   object TaskSpec {
     import monix.execution.Scheduler.Implicits.global
 
-    def testCanCatch_Task_catchNonFatalShouldCatchNonFatalThrowable: Result = {
+    def testCanCatch_Task_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = expectedExpcetion.asLeft[Int]
       val actual            = CanCatch[Task].catchNonFatalThrowable(fa).runSyncUnsafe()
+
+      actual ==== expected
+    }
+
+    @SuppressWarnings(Array("org.wartremover.warts.ToString"))
+    def testCanCatch_Task_catchNonFatalThrowableShouldNotCatchFatal: Result = {
+
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
+      val fa             = run[Task, Int](throwThrowable[Int](fatalExpcetion))
+
+      try {
+        val actual = CanCatch[Task].catchNonFatalThrowable(fa).runSyncUnsafe()
+        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+      } catch {
+        case ex: ControlThrowable =>
+          ex ==== fatalExpcetion
+
+        case ex: Throwable =>
+          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+      }
+
+    }
+
+    def testCanCatch_Task_catchNonFatalThrowableShouldReturnSuccessfulResult: Result = {
+
+      val fa       = run[Task, Int](1)
+      val expected = 1.asRight[Throwable]
+      val actual   = CanCatch[Task].catchNonFatalThrowable(fa).runSyncUnsafe()
 
       actual ==== expected
     }
@@ -202,7 +250,7 @@ object CanCatchSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanCatch_Task_catchNonFatalShouldNotCatchFatal: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = run[Task, Int](throwThrowable[Int](fatalExpcetion))
 
       try {
@@ -240,7 +288,7 @@ object CanCatchSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanCatch_Task_catchNonFatalEitherShouldNotCatchFatal: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
 
       try {
@@ -288,7 +336,7 @@ object CanCatchSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanCatch_Task_catchNonFatalEitherTShouldNotCatchFatal: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
 
       try {
@@ -332,7 +380,7 @@ object CanCatchSpec extends Properties {
 
     val waitFor: FiniteDuration = 1.second
 
-    def testCanCatch_Future_catchNonFatalShouldCatchNonFatalThrowable: Result = {
+    def testCanCatch_Future_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
       implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
@@ -341,6 +389,21 @@ object CanCatchSpec extends Properties {
       val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = expectedExpcetion.asLeft[Int]
       val actual            = ConcurrentSupport.futureToValueAndTerminate(
+        CanCatch[Future].catchNonFatalThrowable(fa),
+        waitFor
+      )
+
+      actual ==== expected
+    }
+
+    def testCanCatch_Future_catchNonFatalThrowableShouldReturnSuccessfulResult: Result = {
+
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+
+      val fa       = run[Future, Int](1)
+      val expected = 1.asRight[Throwable]
+      val actual   = ConcurrentSupport.futureToValueAndTerminate(
         CanCatch[Future].catchNonFatalThrowable(fa),
         waitFor
       )
@@ -476,12 +539,40 @@ object CanCatchSpec extends Properties {
 
   object IdSpec {
 
-    def testCanCatch_Id_catchNonFatalShouldCatchNonFatalThrowable: Result = {
+    def testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       lazy val fa           = run[Id, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = expectedExpcetion.asLeft[Int]
       val actual            = CanCatch[Id].catchNonFatalThrowable(fa)
+
+      actual ==== expected
+    }
+
+    @SuppressWarnings(Array("org.wartremover.warts.ToString"))
+    def testCanCatch_Id_catchNonFatalThrowableShouldNotCatchFatal: Result = {
+
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
+      lazy val fa        = run[Id, Int](throwThrowable[Int](fatalExpcetion))
+
+      try {
+        val actual = CanCatch[Id].catchNonFatalThrowable(fa)
+        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+      } catch {
+        case ex: ControlThrowable =>
+          ex ==== fatalExpcetion
+
+        case ex: Throwable =>
+          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+      }
+
+    }
+
+    def testCanCatch_Id_catchNonFatalThrowableShouldReturnSuccessfulResult: Result = {
+
+      val fa       = run[Id, Int](1)
+      val expected = 1.asRight[Throwable]
+      val actual   = CanCatch[Id].catchNonFatalThrowable(fa)
 
       actual ==== expected
     }
@@ -499,7 +590,7 @@ object CanCatchSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanCatch_Id_catchNonFatalShouldNotCatchFatal: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       lazy val fa        = run[Id, Int](throwThrowable[Int](fatalExpcetion))
 
       try {
@@ -537,7 +628,7 @@ object CanCatchSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanCatch_Id_catchNonFatalEitherShouldNotCatchFatal: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       lazy val fa        = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
 
       try {
@@ -585,7 +676,7 @@ object CanCatchSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanCatch_Id_catchNonFatalEitherTShouldNotCatchFatal: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       lazy val fa        = EitherT(run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
 
       try {
