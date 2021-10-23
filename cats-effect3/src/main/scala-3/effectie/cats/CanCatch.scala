@@ -22,6 +22,10 @@ object CanCatch {
   def apply[F[_]: CanCatch]: CanCatch[F] = summon[CanCatch[F]]
 
   given canCatchIo: CanCatch[IO] with {
+
+    override def catchNonFatalThrowable[A](fa: => IO[A]): IO[Either[Throwable, A]] =
+      fa.attempt
+
     override def catchNonFatal[A, B](fb: => IO[B])(f: Throwable => A): IO[Either[A, B]] =
       fb.attempt.map(_.leftMap(f))
 
@@ -30,6 +34,19 @@ object CanCatch {
   }
 
   given canCatchFuture(using EC0: ExecutionContext): CanCatch[Future] with {
+
+    override def catchNonFatalThrowable[A](fa: => Future[A]): Future[canCatchFuture.this.Xor[Throwable, A]] =
+      fa.transform {
+        case scala.util.Success(a) =>
+          scala.util.Try[Either[Throwable, A]](Right(a))
+
+        case scala.util.Failure(scala.util.control.NonFatal(ex)) =>
+          scala.util.Try[Either[Throwable, A]](Left(ex))
+
+        case scala.util.Failure(ex) =>
+          throw ex
+      }(EC0)
+
     override def catchNonFatal[A, B](fb: => Future[B])(f: Throwable => A): Future[Either[A, B]] =
       fb.transform {
         case scala.util.Success(b) =>
@@ -48,6 +65,19 @@ object CanCatch {
   }
 
   given canCatchId: CanCatch[Id] with {
+
+    override def catchNonFatalThrowable[A](fa: => Id[A]): Id[Either[Throwable, A]] =
+      scala.util.Try(fa) match {
+        case scala.util.Success(a) =>
+          a.asRight[Throwable]
+
+        case scala.util.Failure(scala.util.control.NonFatal(ex)) =>
+          ex.asLeft[A]
+
+        case scala.util.Failure(ex) =>
+          throw ex
+      }
+
     override def catchNonFatal[A, B](fb: => Id[B])(f: Throwable => A): Id[Either[A, B]] =
       scala.util.Try(fb) match {
         case scala.util.Success(b) =>
