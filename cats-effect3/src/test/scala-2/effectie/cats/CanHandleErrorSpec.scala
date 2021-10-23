@@ -311,7 +311,7 @@ object CanHandleErrorSpec extends Properties {
       val es: ExecutorService    = ConcurrentSupport.newExecutorService()
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = run[IO, Int](throwThrowable[Int](fatalExpcetion))
 
       try {
@@ -363,7 +363,7 @@ object CanHandleErrorSpec extends Properties {
       val es: ExecutorService    = ConcurrentSupport.newExecutorService()
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
 
       try {
@@ -429,7 +429,7 @@ object CanHandleErrorSpec extends Properties {
       val es: ExecutorService    = ConcurrentSupport.newExecutorService()
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
 
       try {
@@ -500,7 +500,7 @@ object CanHandleErrorSpec extends Properties {
       val es: ExecutorService    = ConcurrentSupport.newExecutorService()
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = run[IO, Int](throwThrowable[Int](fatalExpcetion))
 
       try {
@@ -550,7 +550,7 @@ object CanHandleErrorSpec extends Properties {
       val es: ExecutorService    = ConcurrentSupport.newExecutorService()
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
 
       try {
@@ -616,7 +616,7 @@ object CanHandleErrorSpec extends Properties {
       val es: ExecutorService    = ConcurrentSupport.newExecutorService()
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
 
       try {
@@ -978,7 +978,7 @@ object CanHandleErrorSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanHandleError_Id_handleNonFatalWithShouldNotHandleFatalWith: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       lazy val fa        = run[Id, Int](throwThrowable[Int](fatalExpcetion))
 
       try {
@@ -1021,7 +1021,7 @@ object CanHandleErrorSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanHandleError_Id_handleNonFatalWithEitherShouldNotHandleFatalWith: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       lazy val fa        = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
 
       try {
@@ -1074,7 +1074,7 @@ object CanHandleErrorSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanHandleError_Id_handleEitherTNonFatalWithShouldNotHandleFatalWith: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       lazy val fa        = EitherT(run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
 
       try {
@@ -1123,7 +1123,7 @@ object CanHandleErrorSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanHandleError_Id_handleNonFatalShouldNotHandleFatal: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       lazy val fa        = run[Id, Int](throwThrowable[Int](fatalExpcetion))
 
       try {
@@ -1165,7 +1165,7 @@ object CanHandleErrorSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanHandleError_Id_handleNonFatalEitherShouldNotHandleFatal: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       lazy val fa        = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
 
       try {
@@ -1218,7 +1218,7 @@ object CanHandleErrorSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanHandleError_Id_handleEitherTNonFatalShouldNotHandleFatal: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       lazy val fa        = EitherT(run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
 
       try {
