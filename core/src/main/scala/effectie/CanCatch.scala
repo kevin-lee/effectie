@@ -4,6 +4,8 @@ trait CanCatch[F[_]] {
   type Xor[A, B]
   type XorT[A, B]
 
+  def catchNonFatalThrowable[A](fa: => F[A]): F[Xor[Throwable, A]]
+
   def catchNonFatal[A, B](fb: => F[B])(f: Throwable => A): F[Xor[A, B]]
 
   def catchNonFatalEither[A, B](fab: => F[Xor[A, B]])(f: Throwable => A): F[Xor[A, B]]

@@ -37,7 +37,7 @@ lazy val effectie = (project in file("."))
     name := prefixedProjectName(""),
     description := "Effect Utils",
     libraryDependencies :=
-      libraryDependenciesPostProcess(isScala3_0(scalaVersion.value), libraryDependencies.value),
+      libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
   )
   .settings(noPublish)
   .aggregate(core, testing4Cats, catsEffect, catsEffect3, monix, scalazEffect)
@@ -46,7 +46,7 @@ lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
   .settings(
     description := "Effect Utils - Core",
     libraryDependencies :=
-      libraryDependenciesPostProcess(isScala3_0(scalaVersion.value), libraryDependencies.value),
+      libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie._""",
   )
@@ -59,7 +59,7 @@ lazy val testing4Cats = projectCommonSettings("test4cats", ProjectName("test4cat
             libs.libCatsCore(props.catsLatestVersion),
           ) ++ libs.hedgehogLibs
       ,
-    libraryDependencies := libraryDependenciesPostProcess(isScala3_0(scalaVersion.value), libraryDependencies.value),
+    libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie.testing.cats._""",
   )
@@ -88,7 +88,7 @@ lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effe
             libs.libCatsEffect(props.catsEffect2LatestVersion)
           )
       }),
-    libraryDependencies := libraryDependenciesPostProcess(isScala3_0(scalaVersion.value), libraryDependencies.value),
+    libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie.cats._""",
   )
@@ -105,7 +105,7 @@ lazy val catsEffect3 = projectCommonSettings("catsEffect3", ProjectName("cats-ef
       libs.libCatsEffect(props.catsEffect3Version),
       libs.libCatsEffectTestKit % Test
     ),
-    libraryDependencies := libraryDependenciesPostProcess(isScala3_0(scalaVersion.value), libraryDependencies.value),
+    libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie.cats._""",
   )
@@ -127,7 +127,7 @@ lazy val monix = projectCommonSettings("monix", ProjectName("monix"), file(s"${p
         case x                        =>
           libraryDependencies.value ++ List(libs.libMonix)
       },
-    libraryDependencies := libraryDependenciesPostProcess(isScala3_0(scalaVersion.value), libraryDependencies.value),
+    libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie.monix._""",
   )
@@ -140,7 +140,7 @@ lazy val scalazEffect = projectCommonSettings("scalazEffect", ProjectName("scala
   .settings(
     description := "Effect Utils for Scalaz Effect",
     libraryDependencies ++= List(libs.libScalazCore, libs.libScalazEffect).map(_.cross(CrossVersion.for3Use2_13)),
-    libraryDependencies := libraryDependenciesPostProcess(isScala3_0(scalaVersion.value), libraryDependencies.value),
+    libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie.scalaz._""",
   )
@@ -152,7 +152,7 @@ lazy val docs         = (project in file("generated-docs"))
     name := prefixedProjectName("docs"),
     scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
     libraryDependencies := libraryDependenciesPostProcess(
-      isScala3_0(scalaVersion.value),
+      isScala3(scalaVersion.value),
       libraryDependencies.value
     ),
     mdocVariables := Map(
@@ -265,7 +265,7 @@ lazy val libs =
 def prefixedProjectName(name: String) = s"${props.RepoName}${if (name.isEmpty) "" else s"-$name"}"
 // scalafmt: on
 
-def isScala3_0(scalaVersion: String): Boolean = scalaVersion.startsWith("3.0")
+def isScala3(scalaVersion: String): Boolean = scalaVersion.startsWith("3")
 
 def libraryDependenciesPostProcess(
   isDotty: Boolean,
@@ -303,7 +303,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
       testFrameworks ++= (testFrameworks.value ++ Seq(TestFramework("hedgehog.sbt.Framework"))).distinct,
       Compile / unmanagedSourceDirectories ++= {
         val sharedSourceDir = baseDirectory.value / "src" / "main"
-        if (isScala3_0(scalaVersion.value))
+        if (isScala3(scalaVersion.value))
           Seq(
             sharedSourceDir / "scala-2.12_3.0",
             sharedSourceDir / "scala-2.13_3.0",
@@ -328,7 +328,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
       },
       Test / unmanagedSourceDirectories ++= {
         val sharedSourceDir = baseDirectory.value / "src" / "test"
-        if (isScala3_0(scalaVersion.value) || scalaVersion.value.startsWith("3.0"))
+        if (isScala3(scalaVersion.value) || scalaVersion.value.startsWith("3.0"))
           Seq(
             sharedSourceDir / "scala-2.12_3.0",
             sharedSourceDir / "scala-2.13_3.0",
