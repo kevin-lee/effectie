@@ -259,7 +259,7 @@ object CatchingSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCatching_Task_catchNonFatalShouldNotCatchFatal: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = run[Task, Int](throwThrowable[Int](fatalExpcetion))
 
       try {
@@ -296,7 +296,7 @@ object CatchingSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCatching_Task_catchNonFatalFShouldNotCatchFatal: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
 
       try {
         val actual = catchNonFatalF[Task](throwThrowable[Int](fatalExpcetion))(SomeError.someThrowable).runSyncUnsafe()
@@ -332,7 +332,7 @@ object CatchingSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCatching_Task_catchNonFatalEitherShouldNotCatchFatal: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
 
       try {
@@ -381,7 +381,7 @@ object CatchingSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCatching_Task_catchNonFatalEitherFShouldNotCatchFatal: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
 
       try {
         val actual =
@@ -429,7 +429,7 @@ object CatchingSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCatching_Task_catchNonFatalEitherTShouldNotCatchFatal: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
 
       try {
@@ -680,7 +680,7 @@ object CatchingSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCatching_Id_catchNonFatalShouldNotCatchFatal: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       lazy val fa        = run[Id, Int](throwThrowable[Int](fatalExpcetion))
 
       try {
@@ -717,7 +717,7 @@ object CatchingSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCatching_Id_catchNonFatalFShouldNotCatchFatal: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
 
       try {
         val actual = catchNonFatalF[Id](throwThrowable[Int](fatalExpcetion))(SomeError.someThrowable)
@@ -753,7 +753,7 @@ object CatchingSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCatching_Id_catchNonFatalEitherShouldNotCatchFatal: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       lazy val fa        = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
 
       try {
@@ -801,7 +801,7 @@ object CatchingSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCatching_Id_catchNonFatalEitherFShouldNotCatchFatal: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
 
       try {
         val actual =
@@ -847,7 +847,7 @@ object CatchingSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCatching_Id_catchNonFatalEitherTShouldNotCatchFatal: Result = {
 
-      val fatalExpcetion = new SomeControlThrowable("Something's wrong")
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
       lazy val fa        = EitherT(run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
 
       try {

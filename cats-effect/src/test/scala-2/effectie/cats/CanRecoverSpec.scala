@@ -303,7 +303,7 @@ object CanRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_IO_recoverFromNonFatalWithShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = new SomeControlThrowable("Something's wrong")
+      val expectedExpcetion = SomeControlThrowable("Something's wrong")
       val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
 
       val io = CanRecover[IO].recoverFromNonFatalWith(fa) { case NonFatal(`expectedExpcetion`) => IO.pure(123) }
@@ -357,7 +357,7 @@ object CanRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_IO_recoverFromNonFatalWithEitherShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = new SomeControlThrowable("Something's wrong")
+      val expectedExpcetion = SomeControlThrowable("Something's wrong")
       val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
 
       val io = CanRecover[IO].recoverFromNonFatalWith(fa) {
@@ -428,7 +428,7 @@ object CanRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = new SomeControlThrowable("Something's wrong")
+      val expectedExpcetion = SomeControlThrowable("Something's wrong")
       val fa                = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
 
       val io = CanRecover[IO].recoverEitherTFromNonFatalWith(fa) {
@@ -497,7 +497,7 @@ object CanRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_IO_recoverFromNonFatalShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = new SomeControlThrowable("Something's wrong")
+      val expectedExpcetion = SomeControlThrowable("Something's wrong")
       val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
 
       val io = CanRecover[IO].recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 123 }
@@ -543,7 +543,7 @@ object CanRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_IO_recoverFromNonFatalEitherShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = new SomeControlThrowable("Something's wrong")
+      val expectedExpcetion = SomeControlThrowable("Something's wrong")
       val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
 
       val io = CanRecover[IO].recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError] }
@@ -604,7 +604,7 @@ object CanRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_IO_recoverEitherTFromNonFatalShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = new SomeControlThrowable("Something's wrong")
+      val expectedExpcetion = SomeControlThrowable("Something's wrong")
       val fa                = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
 
       val io =
@@ -1009,7 +1009,7 @@ object CanRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_Id_recoverFromNonFatalWithShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = new SomeControlThrowable("Something's wrong")
+      val expectedExpcetion = SomeControlThrowable("Something's wrong")
       lazy val fa           = run[Id, Int](throwThrowable[Int](expectedExpcetion))
 
       try {
@@ -1052,7 +1052,7 @@ object CanRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_Id_recoverFromNonFatalWithEitherShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = new SomeControlThrowable("Something's wrong")
+      val expectedExpcetion = SomeControlThrowable("Something's wrong")
       lazy val fa           = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
 
       try {
@@ -1114,7 +1114,7 @@ object CanRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_Id_recoverEitherTFromNonFatalWithShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = new SomeControlThrowable("Something's wrong")
+      val expectedExpcetion = SomeControlThrowable("Something's wrong")
       lazy val fa           = EitherT(run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
 
       try {
@@ -1171,7 +1171,7 @@ object CanRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_Id_recoverFromNonFatalShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = new SomeControlThrowable("Something's wrong")
+      val expectedExpcetion = SomeControlThrowable("Something's wrong")
       lazy val fa           = run[Id, Int](throwThrowable[Int](expectedExpcetion))
 
       try {
@@ -1215,7 +1215,7 @@ object CanRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_Id_recoverFromNonFatalEitherShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = new SomeControlThrowable("Something's wrong")
+      val expectedExpcetion = SomeControlThrowable("Something's wrong")
       lazy val fa           = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
 
       try {
@@ -1277,7 +1277,7 @@ object CanRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_Id_recoverEitherTFromNonFatalShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = new SomeControlThrowable("Something's wrong")
+      val expectedExpcetion = SomeControlThrowable("Something's wrong")
       lazy val fa           = EitherT(run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
 
       try {
