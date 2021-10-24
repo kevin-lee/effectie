@@ -11,6 +11,12 @@ trait CanHandleError[F[_]] {
 
   def handleNonFatalWith[A, AA >: A](fa: => F[A])(handleError: Throwable => F[AA]): F[AA]
 
+  def handleEitherNonFatalWith[A, AA >: A, B, BB >: B](
+    fab: => F[Xor[A, B]]
+  )(
+    handleError: Throwable => F[Xor[AA, BB]]
+  ): F[Xor[AA, BB]]
+
   def handleEitherTNonFatalWith[A, AA >: A, B, BB >: B](
     efab: => XorT[A, B]
   )(
@@ -18,6 +24,12 @@ trait CanHandleError[F[_]] {
   ): XorT[AA, BB]
 
   def handleNonFatal[A, AA >: A](fa: => F[A])(handleError: Throwable => AA): F[AA]
+
+  def handleEitherNonFatal[A, AA >: A, B, BB >: B](
+    fab: => F[Xor[A, B]]
+  )(
+    handleError: Throwable => Xor[AA, BB]
+  ): F[Xor[AA, BB]]
 
   def handleEitherTNonFatal[A, AA >: A, B, BB >: B](
     efab: => XorT[A, B]

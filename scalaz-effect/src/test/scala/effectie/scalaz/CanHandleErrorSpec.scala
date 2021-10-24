@@ -49,6 +49,22 @@ object CanHandleErrorSpec extends Properties {
       IoSpec.testCanHandleError_IO_handleNonFatalWithEitherShouldReturnFailedResult
     ),
     example(
+      "test CanHandleError[IO].handleEitherNonFatalWith should handle NonFatal",
+      IoSpec.testCanHandleError_IO_handleEitherNonFatalWithShouldHandleNonFatalWith
+    ),
+    example(
+      "test CanHandleError[IO].handleEitherNonFatalWith should not handle Fatal",
+      IoSpec.testCanHandleError_IO_handleEitherNonFatalWithShouldNotHandleFatalWith
+    ),
+    example(
+      "test CanHandleError[IO].handleEitherNonFatalWith should return the successful result",
+      IoSpec.testCanHandleError_IO_handleEitherNonFatalWithShouldReturnSuccessfulResult
+    ),
+    example(
+      "test CanHandleError[IO].handleEitherNonFatalWith should return the failed result",
+      IoSpec.testCanHandleError_IO_handleEitherNonFatalWithShouldReturnFailedResult
+    ),
+    example(
       "test CanHandleError[IO].handleEitherTNonFatalWith should handle NonFatal",
       IoSpec.testCanHandleError_IO_handleEitherTNonFatalWithShouldHandleNonFatalWith
     ),
@@ -93,6 +109,22 @@ object CanHandleErrorSpec extends Properties {
       IoSpec.testCanHandleError_IO_handleNonFatalEitherShouldReturnFailedResult
     ),
     example(
+      "test CanHandleError[IO].handleEitherNonFatal should handle NonFatal",
+      IoSpec.testCanHandleError_IO_handleEitherNonFatalShouldHandleNonFatal
+    ),
+    example(
+      "test CanHandleError[IO].handleEitherNonFatal should not handle Fatal",
+      IoSpec.testCanHandleError_IO_handleEitherNonFatalShouldNotHandleFatal
+    ),
+    example(
+      "test CanHandleError[IO].handleEitherNonFatal should return the successful result",
+      IoSpec.testCanHandleError_IO_handleEitherNonFatalShouldReturnSuccessfulResult
+    ),
+    example(
+      "test CanHandleError[IO].handleEitherNonFatal should return the failed result",
+      IoSpec.testCanHandleError_IO_handleEitherNonFatalShouldReturnFailedResult
+    ),
+    example(
       "test CanHandleError[IO].handleEitherTNonFatal should handle NonFatal",
       IoSpec.testCanHandleError_IO_handleEitherTNonFatalShouldHandleNonFatal
     ),
@@ -108,8 +140,8 @@ object CanHandleErrorSpec extends Properties {
       "test CanHandleError[IO].handleEitherTNonFatal should return the failed result",
       IoSpec.testCanHandleError_IO_handleEitherTNonFatalShouldReturnFailedResult
     ),
-    /* Future */
 
+    /* Future */
     example(
       "test CanHandleError[Future].handleNonFatalWith should handle NonFatal",
       FutureSpec.testCanHandleError_Future_handleNonFatalWithShouldHandleNonFatalWith
@@ -129,6 +161,18 @@ object CanHandleErrorSpec extends Properties {
     example(
       "test CanHandleError[Future].handleNonFatalWithEither should return the failed result",
       FutureSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldReturnFailedResult
+    ),
+    example(
+      "test CanHandleError[Future].handleEitherNonFatalWith should handle NonFatal",
+      FutureSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldHandleNonFatalWith
+    ),
+    example(
+      "test CanHandleError[Future].handleEitherNonFatalWith should return the successful result",
+      FutureSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnSuccessfulResult
+    ),
+    example(
+      "test CanHandleError[Future].handleEitherNonFatalWith should return the failed result",
+      FutureSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnFailedResult
     ),
     example(
       "test CanHandleError[Future].handleEitherTNonFatalWith should handle NonFatal",
@@ -161,6 +205,18 @@ object CanHandleErrorSpec extends Properties {
     example(
       "test CanHandleError[Future].handleNonFatalEither should return the failed result",
       FutureSpec.testCanHandleError_Future_handleNonFatalEitherShouldReturnFailedResult
+    ),
+    example(
+      "test CanHandleError[Future].handleEitherNonFatal should handle NonFatal",
+      FutureSpec.testCanHandleError_Future_handleEitherNonFatalShouldHandleNonFatal
+    ),
+    example(
+      "test CanHandleError[Future].handleEitherNonFatal should return the successful result",
+      FutureSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnSuccessfulResult
+    ),
+    example(
+      "test CanHandleError[Future].handleEitherNonFatal should return the failed result",
+      FutureSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnFailedResult
     ),
     example(
       "test CanHandleError[Future].handleEitherTNonFatal should handle NonFatal",
@@ -202,6 +258,22 @@ object CanHandleErrorSpec extends Properties {
     example(
       "test CanHandleError[Id].handleNonFatalWithEither should return the failed result",
       IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldReturnFailedResult
+    ),
+    example(
+      "test CanHandleError[Id].handleEitherNonFatalWith should handle NonFatal",
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldHandleNonFatalWith
+    ),
+    example(
+      "test CanHandleError[Id].handleEitherNonFatalWith should not handle Fatal",
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldNotHandleFatalWith
+    ),
+    example(
+      "test CanHandleError[Id].handleEitherNonFatalWith should return the successful result",
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldReturnSuccessfulResult
+    ),
+    example(
+      "test CanHandleError[Id].handleEitherNonFatalWith should return the failed result",
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldReturnFailedResult
     ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatalWith should handle NonFatal",
@@ -246,6 +318,22 @@ object CanHandleErrorSpec extends Properties {
     example(
       "test CanHandleError[Id].handleNonFatalEither should return the failed result",
       IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldReturnFailedResult
+    ),
+    example(
+      "test CanHandleError[Id].handleEitherNonFatal should handle NonFatal",
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldHandleNonFatal
+    ),
+    example(
+      "test CanHandleError[Id].handleEitherNonFatal should not handle Fatal",
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldNotHandleFatal
+    ),
+    example(
+      "test CanHandleError[Id].handleEitherNonFatal should return the successful result",
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldReturnSuccessfulResult
+    ),
+    example(
+      "test CanHandleError[Id].handleEitherNonFatal should return the failed result",
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldReturnFailedResult
     ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatal should handle NonFatal",
@@ -377,6 +465,63 @@ object CanHandleErrorSpec extends Properties {
       val fa              = run[IO, SomeError \/ Int](expectedFailure.left[Int])
       val expected        = expectedFailure.left[Int]
       val actual          = CanHandleError[IO].handleNonFatalWith(fa)(_ => IO(123.right[SomeError])).unsafePerformIO()
+
+      actual ==== expected
+    }
+
+    def testCanHandleError_IO_handleEitherNonFatalWithShouldHandleNonFatalWith: Result = {
+
+      val expectedExpcetion     = new RuntimeException("Something's wrong")
+      val fa                    = run[IO, SomeError \/ Int](throwThrowable[SomeError \/ Int](expectedExpcetion))
+      val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).left[Int]
+      val actualFailedResult    = CanHandleError[IO]
+        .handleEitherNonFatalWith(fa)(err => IO(SomeError.someThrowable(err).left[Int]))
+        .unsafePerformIO()
+      val expectedSuccessResult = 123.right[SomeError]
+      val actualSuccessResult   =
+        CanHandleError[IO].handleEitherNonFatalWith(fa)(_ => IO(123.right[SomeError])).unsafePerformIO()
+
+      actualFailedResult ==== expectedFailedResult and actualSuccessResult ==== expectedSuccessResult
+    }
+
+    @SuppressWarnings(Array("org.wartremover.warts.ToString"))
+    def testCanHandleError_IO_handleEitherNonFatalWithShouldNotHandleFatalWith: Result = {
+
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
+      val fa             = run[IO, SomeError \/ Int](throwThrowable[SomeError \/ Int](fatalExpcetion))
+
+      try {
+        val actual =
+          CanHandleError[IO]
+            .handleEitherNonFatalWith(fa)(err => IO(SomeError.someThrowable(err).left[Int]))
+            .unsafePerformIO()
+        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+      } catch {
+        case ex: ControlThrowable =>
+          ex ==== fatalExpcetion
+
+        case ex: Throwable =>
+          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+      }
+
+    }
+
+    def testCanHandleError_IO_handleEitherNonFatalWithShouldReturnSuccessfulResult: Result = {
+
+      val fa       = run[IO, SomeError \/ Int](1.right[SomeError])
+      val expected = 1.right[SomeError]
+      val actual   = CanHandleError[IO].handleEitherNonFatalWith(fa)(_ => IO(123.right[SomeError])).unsafePerformIO()
+
+      actual ==== expected
+    }
+
+    def testCanHandleError_IO_handleEitherNonFatalWithShouldReturnFailedResult: Result = {
+
+      val expectedFailure = SomeError.message("Failed")
+      val fa              = run[IO, SomeError \/ Int](expectedFailure.left[Int])
+      val expected        = expectedFailure.left[Int]
+      val actual          =
+        CanHandleError[IO].handleEitherNonFatalWith(fa)(_ => IO(123.right[SomeError])).unsafePerformIO()
 
       actual ==== expected
     }
@@ -530,6 +675,63 @@ object CanHandleErrorSpec extends Properties {
       val fa              = run[IO, SomeError \/ Int](expectedFailure.left[Int])
       val expected        = expectedFailure.left[Int]
       val actual          = CanHandleError[IO].handleNonFatal(fa)(_ => 123.right[SomeError]).unsafePerformIO()
+
+      actual ==== expected
+    }
+
+    def testCanHandleError_IO_handleEitherNonFatalShouldHandleNonFatal: Result = {
+
+      val expectedExpcetion     = new RuntimeException("Something's wrong")
+      val fa                    = run[IO, SomeError \/ Int](throwThrowable[SomeError \/ Int](expectedExpcetion))
+      val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).left[Int]
+      val actualFailedResult    = CanHandleError[IO]
+        .handleEitherNonFatal(fa)(err => SomeError.someThrowable(err).left[Int])
+        .unsafePerformIO()
+      val expectedSuccessResult = 123.right[SomeError]
+      val actualSuccessResult   =
+        CanHandleError[IO].handleEitherNonFatal(fa)(_ => 123.right[SomeError]).unsafePerformIO()
+
+      actualFailedResult ==== expectedFailedResult and actualSuccessResult ==== expectedSuccessResult
+    }
+
+    @SuppressWarnings(Array("org.wartremover.warts.ToString"))
+    def testCanHandleError_IO_handleEitherNonFatalShouldNotHandleFatal: Result = {
+
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
+      val fa             = run[IO, SomeError \/ Int](throwThrowable[SomeError \/ Int](fatalExpcetion))
+
+      try {
+        val actual =
+          CanHandleError[IO]
+            .handleEitherNonFatal(fa)(err => SomeError.someThrowable(err).left[Int])
+            .unsafePerformIO()
+        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+      } catch {
+        case ex: ControlThrowable =>
+          ex ==== fatalExpcetion
+
+        case ex: Throwable =>
+          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+      }
+
+    }
+
+    def testCanHandleError_IO_handleEitherNonFatalShouldReturnSuccessfulResult: Result = {
+
+      val fa       = run[IO, SomeError \/ Int](1.right[SomeError])
+      val expected = 1.right[SomeError]
+      val actual   = CanHandleError[IO].handleEitherNonFatal(fa)(_ => 123.right[SomeError]).unsafePerformIO()
+
+      actual ==== expected
+    }
+
+    def testCanHandleError_IO_handleEitherNonFatalShouldReturnFailedResult: Result = {
+
+      val expectedFailure = SomeError.message("Failed")
+      val fa              = run[IO, SomeError \/ Int](expectedFailure.left[Int])
+      val expected        = expectedFailure.left[Int]
+      val actual          =
+        CanHandleError[IO].handleEitherNonFatal(fa)(_ => 123.right[SomeError]).unsafePerformIO()
 
       actual ==== expected
     }
@@ -689,6 +891,62 @@ object CanHandleErrorSpec extends Properties {
       actual ==== expected
     }
 
+    def testCanHandleError_Future_handleEitherNonFatalWithShouldHandleNonFatalWith: Result = {
+
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+
+      val expectedExpcetion    = new RuntimeException("Something's wrong")
+      val fa                   = run[Future, SomeError \/ Int](throwThrowable[SomeError \/ Int](expectedExpcetion))
+      val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).left[Int]
+      val actualFailedResult   = ConcurrentSupport.futureToValue(
+        CanHandleError[Future].handleEitherNonFatalWith(fa)(err => Future(SomeError.someThrowable(err).left[Int])),
+        waitFor
+      )
+
+      val fa2      = run[Future, SomeError \/ Int](throwThrowable[SomeError \/ Int](expectedExpcetion))
+      val expected = 1.right[SomeError]
+      val actual   =
+        ConcurrentSupport.futureToValueAndTerminate(
+          CanHandleError[Future].handleEitherNonFatalWith(fa2)(err => Future(expected)),
+          waitFor
+        )
+
+      actualFailedResult ==== expectedFailedResult and actual ==== expected
+    }
+
+    def testCanHandleError_Future_handleEitherNonFatalWithShouldReturnSuccessfulResult: Result = {
+
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+
+      val fa       = run[Future, SomeError \/ Int](1.right[SomeError])
+      val expected = 1.right[SomeError]
+      val actual   = ConcurrentSupport.futureToValueAndTerminate(
+        CanHandleError[Future].handleEitherNonFatalWith(fa)(err => Future(SomeError.someThrowable(err).left[Int])),
+        waitFor
+      )
+
+      actual ==== expected
+    }
+
+    def testCanHandleError_Future_handleEitherNonFatalWithShouldReturnFailedResult: Result = {
+
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+
+      val expectedFailure = SomeError.message("Failed")
+      val fa              = run[Future, SomeError \/ Int](expectedFailure.left[Int])
+      val expected        = expectedFailure.left[Int]
+      val actual          =
+        ConcurrentSupport.futureToValueAndTerminate(
+          CanHandleError[Future].handleEitherNonFatalWith(fa)(_ => Future(expected)),
+          waitFor
+        )
+
+      actual ==== expected
+    }
+
     def testCanHandleError_Future_handleEitherTNonFatalWithShouldHandleNonFatalWith: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
@@ -828,6 +1086,62 @@ object CanHandleErrorSpec extends Properties {
         CanHandleError[Future].handleNonFatal(fa)(_ => 1.right[SomeError]),
         waitFor
       )
+
+      actual ==== expected
+    }
+
+    def testCanHandleError_Future_handleEitherNonFatalShouldHandleNonFatal: Result = {
+
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+
+      val expectedExpcetion    = new RuntimeException("Something's wrong")
+      val fa                   = run[Future, SomeError \/ Int](throwThrowable[SomeError \/ Int](expectedExpcetion))
+      val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).left[Int]
+      val actualFailedResult   = ConcurrentSupport.futureToValue(
+        CanHandleError[Future].handleEitherNonFatal(fa)(err => SomeError.someThrowable(err).left[Int]),
+        waitFor
+      )
+
+      val fa2      = run[Future, SomeError \/ Int](throwThrowable[SomeError \/ Int](expectedExpcetion))
+      val expected = 1.right[SomeError]
+      val actual   =
+        ConcurrentSupport.futureToValueAndTerminate(
+          CanHandleError[Future].handleEitherNonFatal(fa2)(err => expected),
+          waitFor
+        )
+
+      actualFailedResult ==== expectedFailedResult and actual ==== expected
+    }
+
+    def testCanHandleError_Future_handleEitherNonFatalShouldReturnSuccessfulResult: Result = {
+
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+
+      val fa       = run[Future, SomeError \/ Int](1.right[SomeError])
+      val expected = 1.right[SomeError]
+      val actual   = ConcurrentSupport.futureToValueAndTerminate(
+        CanHandleError[Future].handleEitherNonFatal(fa)(err => SomeError.someThrowable(err).left[Int]),
+        waitFor
+      )
+
+      actual ==== expected
+    }
+
+    def testCanHandleError_Future_handleEitherNonFatalShouldReturnFailedResult: Result = {
+
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+
+      val expectedFailure = SomeError.message("Failed")
+      val fa              = run[Future, SomeError \/ Int](expectedFailure.left[Int])
+      val expected        = expectedFailure.left[Int]
+      val actual          =
+        ConcurrentSupport.futureToValueAndTerminate(
+          CanHandleError[Future].handleEitherNonFatal(fa)(_ => expected),
+          waitFor
+        )
 
       actual ==== expected
     }
@@ -982,6 +1296,59 @@ object CanHandleErrorSpec extends Properties {
       actual ==== expected
     }
 
+    def testCanHandleError_Id_handleEitherNonFatalWithShouldHandleNonFatalWith: Result = {
+
+      val expectedExpcetion    = new RuntimeException("Something's wrong")
+      lazy val fa              = run[Id, SomeError \/ Int](throwThrowable[SomeError \/ Int](expectedExpcetion))
+      val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).left[Int]
+      val actualFailedResult   =
+        CanHandleError[Id].handleEitherNonFatalWith(fa)(err => SomeError.someThrowable(err).left[Int])
+
+      lazy val fa2 = run[Id, SomeError \/ Int](throwThrowable[SomeError \/ Int](expectedExpcetion))
+      val expected = 1.right[SomeError]
+      val actual   = CanHandleError[Id].handleEitherNonFatalWith(fa2)(_ => expected)
+
+      actualFailedResult ==== expectedFailedResult and actual ==== expected
+    }
+
+    @SuppressWarnings(Array("org.wartremover.warts.ToString"))
+    def testCanHandleError_Id_handleEitherNonFatalWithShouldNotHandleFatalWith: Result = {
+
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
+      lazy val fa        = run[Id, SomeError \/ Int](throwThrowable[SomeError \/ Int](fatalExpcetion))
+
+      try {
+        val actual = CanHandleError[Id].handleEitherNonFatalWith(fa)(_ => 1.right[SomeError])
+        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+      } catch {
+        case ex: ControlThrowable =>
+          ex ==== fatalExpcetion
+
+        case ex: Throwable =>
+          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+      }
+
+    }
+
+    def testCanHandleError_Id_handleEitherNonFatalWithShouldReturnSuccessfulResult: Result = {
+
+      val fa       = run[Id, SomeError \/ Int](1.right[SomeError])
+      val expected = 1.right[SomeError]
+      val actual   = CanHandleError[Id].handleEitherNonFatalWith(fa)(err => SomeError.someThrowable(err).left[Int])
+
+      actual ==== expected
+    }
+
+    def testCanHandleError_Id_handleEitherNonFatalWithShouldReturnFailedResult: Result = {
+
+      val expectedFailure = SomeError.message("Failed")
+      val fa              = run[Id, SomeError \/ Int](expectedFailure.left[Int])
+      val expected        = expectedFailure.left[Int]
+      val actual          = CanHandleError[Id].handleEitherNonFatalWith(fa)(_ => 1.right[SomeError])
+
+      actual ==== expected
+    }
+
     def testCanHandleError_Id_handleEitherTNonFatalWithShouldHandleNonFatalWith: Result = {
 
       val expectedExpcetion    = new RuntimeException("Something's wrong")
@@ -1121,6 +1488,59 @@ object CanHandleErrorSpec extends Properties {
       val fa              = run[Id, SomeError \/ Int](expectedFailure.left[Int])
       val expected        = expectedFailure.left[Int]
       val actual          = CanHandleError[Id].handleNonFatal(fa)(_ => 1.right[SomeError])
+
+      actual ==== expected
+    }
+
+    def testCanHandleError_Id_handleEitherNonFatalShouldHandleNonFatal: Result = {
+
+      val expectedExpcetion    = new RuntimeException("Something's wrong")
+      lazy val fa              = run[Id, SomeError \/ Int](throwThrowable[SomeError \/ Int](expectedExpcetion))
+      val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).left[Int]
+      val actualFailedResult   =
+        CanHandleError[Id].handleEitherNonFatal(fa)(err => SomeError.someThrowable(err).left[Int])
+
+      lazy val fa2 = run[Id, SomeError \/ Int](throwThrowable[SomeError \/ Int](expectedExpcetion))
+      val expected = 1.right[SomeError]
+      val actual   = CanHandleError[Id].handleEitherNonFatal(fa2)(_ => expected)
+
+      actualFailedResult ==== expectedFailedResult and actual ==== expected
+    }
+
+    @SuppressWarnings(Array("org.wartremover.warts.ToString"))
+    def testCanHandleError_Id_handleEitherNonFatalShouldNotHandleFatal: Result = {
+
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
+      lazy val fa        = run[Id, SomeError \/ Int](throwThrowable[SomeError \/ Int](fatalExpcetion))
+
+      try {
+        val actual = CanHandleError[Id].handleEitherNonFatal(fa)(_ => 1.right[SomeError])
+        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+      } catch {
+        case ex: ControlThrowable =>
+          ex ==== fatalExpcetion
+
+        case ex: Throwable =>
+          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+      }
+
+    }
+
+    def testCanHandleError_Id_handleEitherNonFatalShouldReturnSuccessfulResult: Result = {
+
+      val fa       = run[Id, SomeError \/ Int](1.right[SomeError])
+      val expected = 1.right[SomeError]
+      val actual   = CanHandleError[Id].handleEitherNonFatal(fa)(err => SomeError.someThrowable(err).left[Int])
+
+      actual ==== expected
+    }
+
+    def testCanHandleError_Id_handleEitherNonFatalShouldReturnFailedResult: Result = {
+
+      val expectedFailure = SomeError.message("Failed")
+      val fa              = run[Id, SomeError \/ Int](expectedFailure.left[Int])
+      val expected        = expectedFailure.left[Int]
+      val actual          = CanHandleError[Id].handleEitherNonFatal(fa)(_ => 1.right[SomeError])
 
       actual ==== expected
     }
