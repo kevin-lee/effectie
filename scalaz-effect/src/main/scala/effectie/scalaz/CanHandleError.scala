@@ -1,6 +1,6 @@
 package effectie.scalaz
 
-import scalaz._
+import scalaz.{Scalaz, _}
 import Scalaz._
 import scalaz.effect._
 
@@ -31,6 +31,13 @@ object CanHandleError {
           IO[AA](a)
       }
 
+    override def handleEitherNonFatalWith[A, AA >: A, B, BB >: B](
+      fab: => IO[A \/ B]
+    )(
+      handleError: Throwable => IO[AA \/ BB]
+    ): IO[AA \/ BB] =
+      handleNonFatalWith[A \/ B, AA \/ BB](fab)(handleError)
+
     override def handleEitherTNonFatalWith[A, AA >: A, B, BB >: B](
       efab: => EitherT[IO, A, B]
     )(
@@ -40,6 +47,13 @@ object CanHandleError {
 
     override def handleNonFatal[A, AA >: A](fa: => IO[A])(handleError: Throwable => AA): IO[AA] =
       handleNonFatalWith[A, AA](fa)(err => IO(handleError(err)))
+
+    override def handleEitherNonFatal[A, AA >: A, B, BB >: B](
+      fab: => IO[A \/ B]
+    )(
+      handleError: Throwable => AA \/ BB
+    ): IO[AA \/ BB] =
+      handleNonFatal[A \/ B, AA \/ BB](fab)(handleError)
 
     override def handleEitherTNonFatal[A, AA >: A, B, BB >: B](
       efab: => EitherT[IO, A, B]
@@ -53,6 +67,13 @@ object CanHandleError {
   final class FutureCanHandleError(override val ec: ExecutionContext)
       extends effectie.CanHandleError.FutureCanHandleError(ec)
       with CanHandleError[Future] {
+
+    override def handleEitherNonFatalWith[A, AA >: A, B, BB >: B](
+      fab: => Future[A \/ B]
+    )(
+      handleError: Throwable => Future[AA \/ BB]
+    ): Future[AA \/ BB] =
+      handleNonFatalWith[A \/ B, AA \/ BB](fab)(handleError)
 
     override def handleEitherTNonFatalWith[A, AA >: A, B, BB >: B](
       efab: => EitherT[Future, A, B]
@@ -68,6 +89,13 @@ object CanHandleError {
           }(ec)
       )
 
+    override def handleEitherNonFatal[A, AA >: A, B, BB >: B](
+      fab: => Future[A \/ B]
+    )(
+      handleError: Throwable => AA \/ BB
+    ): Future[AA \/ BB] =
+      handleNonFatal[A \/ B, AA \/ BB](fab)(handleError)
+
     override def handleEitherTNonFatal[A, AA >: A, B, BB >: B](
       efab: => EitherT[Future, A, B]
     )(
@@ -82,12 +110,20 @@ object CanHandleError {
     new FutureCanHandleError(ec)
 
   implicit val idCanHandleError: CanHandleError[Id] = new CanHandleError[Id] {
+
     override def handleNonFatalWith[A, AA >: A](fa: => Id[A])(handleError: Throwable => Id[AA]): Id[AA] =
       try (fa)
       catch {
         case NonFatal(ex) =>
           handleError(ex)
       }
+
+    override def handleEitherNonFatalWith[A, AA >: A, B, BB >: B](
+      fab: => Id[A \/ B]
+    )(
+      handleError: Throwable => Id[AA \/ BB]
+    ): Id[AA \/ BB] =
+      handleNonFatalWith[A \/ B, AA \/ BB](fab)(handleError)
 
     override def handleEitherTNonFatalWith[A, AA >: A, B, BB >: B](
       efab: => EitherT[Id, A, B]
@@ -104,6 +140,12 @@ object CanHandleError {
 
     override def handleNonFatal[A, AA >: A](fa: => Id[A])(handleError: Throwable => AA): Id[AA] =
       handleNonFatalWith[A, AA](fa)(err => handleError(err))
+
+    override def handleEitherNonFatal[A, AA >: A, B, BB >: B](
+      fab: => Id[A \/ B]
+    )(
+      handleError: Throwable => AA \/ BB): Id[AA \/ BB] =
+      handleNonFatal[A \/ B, AA \/ BB](fab)(handleError)
 
     override def handleEitherTNonFatal[A, AA >: A, B, BB >: B](
       efab: => EitherT[Id, A, B]
