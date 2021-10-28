@@ -11,7 +11,7 @@ import scala.util.control.NonFatal
   * @since 2020-08-17
   */
 trait CanRecover[F[_]] extends effectie.CanRecover[F] {
-  override type Xor[A, B]  = A \/ B
+  override type Xor[+A, +B]  = A \/ B
   override type XorT[A, B] = EitherT[F, A, B]
 }
 
