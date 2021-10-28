@@ -9,35 +9,40 @@ trait CanRecover[F[_]] {
   type Xor[+A, +B]
   type XorT[A, B]
 
+  protected def xorT[A, B](fab: => F[Xor[A, B]]): XorT[A, B]
+  protected def xorT2FXor[A, B](efab: => XorT[A, B]): F[Xor[A, B]]
+
   def recoverFromNonFatalWith[A, AA >: A](fa: => F[A])(handleError: PartialFunction[Throwable, F[AA]]): F[AA]
 
-  def recoverEitherFromNonFatalWith[A, AA >: A, B, BB >: B](
+  final def recoverEitherFromNonFatalWith[A, AA >: A, B, BB >: B](
     fab: => F[Xor[A, B]]
   )(
     handleError: PartialFunction[Throwable, F[Xor[AA, BB]]]
   ): F[Xor[AA, BB]] =
     recoverFromNonFatalWith[Xor[A, B], Xor[AA, BB]](fab)(handleError)
 
-  def recoverEitherTFromNonFatalWith[A, AA >: A, B, BB >: B](
+  final def recoverEitherTFromNonFatalWith[A, AA >: A, B, BB >: B](
     efab: => XorT[A, B]
   )(
     handleError: PartialFunction[Throwable, F[Xor[AA, BB]]]
-  ): XorT[AA, BB]
+  ): XorT[AA, BB] =
+    xorT(recoverFromNonFatalWith[Xor[A, B], Xor[AA, BB]](xorT2FXor(efab))(handleError))
 
   def recoverFromNonFatal[A, AA >: A](fa: => F[A])(handleError: PartialFunction[Throwable, AA]): F[AA]
 
-  def recoverEitherFromNonFatal[A, AA >: A, B, BB >: B](
+  final def recoverEitherFromNonFatal[A, AA >: A, B, BB >: B](
     fab: => F[Xor[A, B]]
   )(
     handleError: PartialFunction[Throwable, Xor[AA, BB]]
   ): F[Xor[AA, BB]] =
     recoverFromNonFatal[Xor[A, B], Xor[AA, BB]](fab)(handleError)
 
-  def recoverEitherTFromNonFatal[A, AA >: A, B, BB >: B](
+  final def recoverEitherTFromNonFatal[A, AA >: A, B, BB >: B](
     efab: => XorT[A, B]
   )(
     handleError: PartialFunction[Throwable, Xor[AA, BB]]
-  ): XorT[AA, BB]
+  ): XorT[AA, BB] =
+    xorT(recoverFromNonFatal[Xor[A, B], Xor[AA, BB]](xorT2FXor(efab))(handleError))
 
 }
 
