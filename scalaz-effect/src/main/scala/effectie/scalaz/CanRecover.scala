@@ -13,12 +13,18 @@ import scala.util.control.NonFatal
 trait CanRecover[F[_]] extends effectie.CanRecover[F] {
   override type Xor[+A, +B]  = A \/ B
   override type XorT[A, B] = EitherT[F, A, B]
+
+  @inline override protected def xorT[A, B](fab: => F[A \/ B]): DisjunctionT[F, A, B] =
+    EitherT(fab)
+
+  @inline override protected def xorT2FXor[A, B](efab: => DisjunctionT[F, A, B]): F[A \/ B] =
+    efab.run
 }
 
 object CanRecover {
   def apply[F[_]: CanRecover]: CanRecover[F] = implicitly[CanRecover[F]]
 
-  implicit val ioRecoverable: CanRecover[IO] = new CanRecover[IO] {
+  implicit object IoRecoverable extends CanRecover[IO] {
 
     @SuppressWarnings(Array("org.wartremover.warts.Throw"))
     override def recoverFromNonFatalWith[A, AA >: A](
@@ -35,15 +41,6 @@ object CanRecover {
           IO[AA](a)
       }
 
-    override def recoverEitherTFromNonFatalWith[A, AA >: A, B, BB >: B](
-      efab: => EitherT[IO, A, B]
-    )(
-      handleError: PartialFunction[Throwable, IO[AA \/ BB]]
-    ): EitherT[IO, AA, BB] =
-      EitherT(
-        recoverFromNonFatalWith[A \/ B, AA \/ BB](efab.run)(handleError)
-      )
-
     override def recoverFromNonFatal[A, AA >: A](
       fa: => IO[A]
     )(
@@ -51,44 +48,13 @@ object CanRecover {
     ): IO[AA] =
       recoverFromNonFatalWith[A, AA](fa)(handleError.andThen(IO(_)))
 
-    override def recoverEitherTFromNonFatal[A, AA >: A, B, BB >: B](
-      efab: => EitherT[IO, A, B]
-    )(
-      handleError: PartialFunction[Throwable, AA \/ BB]
-    ): EitherT[IO, AA, BB] =
-      recoverEitherTFromNonFatalWith[A, AA, B, BB](efab)(handleError.andThen(IO(_)))
-
-  }
-
-  final class FutureCanRecover(override val ec: ExecutionContext)
-      extends effectie.CanRecover.FutureCanRecover(ec)
-      with CanRecover[Future] {
-
-    override def recoverEitherTFromNonFatalWith[A, AA >: A, B, BB >: B](
-      efab: => EitherT[Future, A, B]
-    )(
-      handleError: PartialFunction[Throwable, Future[AA \/ BB]]
-    ): EitherT[Future, AA, BB] =
-      EitherT(
-        recoverFromNonFatalWith[A \/ B, AA \/ BB](efab.run)(handleError)
-      )
-
-    override def recoverEitherTFromNonFatal[A, AA >: A, B, BB >: B](
-      efab: => EitherT[Future, A, B]
-    )(
-      handleError: PartialFunction[Throwable, AA \/ BB]
-    ): EitherT[Future, AA, BB] =
-      recoverEitherTFromNonFatalWith[A, AA, B, BB](efab)(
-        handleError.andThen(Future(_)(ec))
-      )
-
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
   implicit def futureRecoverable(implicit ec: ExecutionContext): CanRecover[Future] =
-    new FutureCanRecover(ec)
+    new effectie.CanRecover.FutureCanRecover(ec) with CanRecover[Future]
 
-  implicit val idRecoverable: CanRecover[Id] = new CanRecover[Id] {
+  implicit object IdRecoverable extends CanRecover[Id] {
 
     @SuppressWarnings(Array("org.wartremover.warts.Throw"))
     override def recoverFromNonFatalWith[A, AA >: A](
@@ -104,28 +70,12 @@ object CanRecover {
           throw ex
       }
 
-    override def recoverEitherTFromNonFatalWith[A, AA >: A, B, BB >: B](
-      efab: => EitherT[Scalaz.Id, A, B]
-    )(
-      handleError: PartialFunction[Throwable, Scalaz.Id[AA \/ BB]]
-    ): EitherT[Scalaz.Id, AA, BB] =
-      EitherT(
-        recoverFromNonFatalWith[A \/ B, AA \/ BB](efab.run)(handleError)
-      )
-
     override def recoverFromNonFatal[A, AA >: A](
       fa: => Scalaz.Id[A]
     )(
       handleError: PartialFunction[Throwable, AA]
     ): Scalaz.Id[AA] =
       recoverFromNonFatalWith[A, AA](fa)(handleError)
-
-    override def recoverEitherTFromNonFatal[A, AA >: A, B, BB >: B](
-      efab: => EitherT[Scalaz.Id, A, B]
-    )(
-      handleError: PartialFunction[Throwable, AA \/ BB]
-    ): EitherT[Scalaz.Id, AA, BB] =
-      recoverEitherTFromNonFatalWith[A, AA, B, BB](efab)(handleError)
 
   }
 
