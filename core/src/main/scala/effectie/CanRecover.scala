@@ -6,10 +6,17 @@ import scala.concurrent.{ExecutionContext, Future}
   * @since 2020-08-17
   */
 trait CanRecover[F[_]] {
-  type Xor[A, B]
+  type Xor[+A, +B]
   type XorT[A, B]
 
   def recoverFromNonFatalWith[A, AA >: A](fa: => F[A])(handleError: PartialFunction[Throwable, F[AA]]): F[AA]
+
+  def recoverEitherFromNonFatalWith[A, AA >: A, B, BB >: B](
+    fab: => F[Xor[A, B]]
+  )(
+    handleError: PartialFunction[Throwable, F[Xor[AA, BB]]]
+  ): F[Xor[AA, BB]] =
+    recoverFromNonFatalWith[Xor[A, B], Xor[AA, BB]](fab)(handleError)
 
   def recoverEitherTFromNonFatalWith[A, AA >: A, B, BB >: B](
     efab: => XorT[A, B]
@@ -18,6 +25,13 @@ trait CanRecover[F[_]] {
   ): XorT[AA, BB]
 
   def recoverFromNonFatal[A, AA >: A](fa: => F[A])(handleError: PartialFunction[Throwable, AA]): F[AA]
+
+  def recoverEitherFromNonFatal[A, AA >: A, B, BB >: B](
+    fab: => F[Xor[A, B]]
+  )(
+    handleError: PartialFunction[Throwable, Xor[AA, BB]]
+  ): F[Xor[AA, BB]] =
+    recoverFromNonFatal[Xor[A, B], Xor[AA, BB]](fab)(handleError)
 
   def recoverEitherTFromNonFatal[A, AA >: A, B, BB >: B](
     efab: => XorT[A, B]
