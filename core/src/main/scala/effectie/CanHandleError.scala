@@ -6,36 +6,44 @@ import scala.concurrent.{ExecutionContext, Future}
   * @since 2020-08-17
   */
 trait CanHandleError[F[_]] {
-  type Xor[A, B]
+
+  type Xor[+A, +B]
   type XorT[A, B]
+
+  protected def xorT[A, B](fab: F[Xor[A, B]]): XorT[A, B]
+  protected def xorT2FXor[A, B](efab: XorT[A, B]): F[Xor[A, B]]
 
   def handleNonFatalWith[A, AA >: A](fa: => F[A])(handleError: Throwable => F[AA]): F[AA]
 
-  def handleEitherNonFatalWith[A, AA >: A, B, BB >: B](
+  final def handleEitherNonFatalWith[A, AA >: A, B, BB >: B](
     fab: => F[Xor[A, B]]
   )(
     handleError: Throwable => F[Xor[AA, BB]]
-  ): F[Xor[AA, BB]]
+  ): F[Xor[AA, BB]] =
+    handleNonFatalWith[Xor[A, B], Xor[AA, BB]](fab)(handleError)
 
-  def handleEitherTNonFatalWith[A, AA >: A, B, BB >: B](
+  final def handleEitherTNonFatalWith[A, AA >: A, B, BB >: B](
     efab: => XorT[A, B]
   )(
     handleError: Throwable => F[Xor[AA, BB]]
-  ): XorT[AA, BB]
+  ): XorT[AA, BB] =
+    xorT(handleNonFatalWith[Xor[A, B], Xor[AA, BB]](xorT2FXor(efab))(handleError))
 
   def handleNonFatal[A, AA >: A](fa: => F[A])(handleError: Throwable => AA): F[AA]
 
-  def handleEitherNonFatal[A, AA >: A, B, BB >: B](
+  final def handleEitherNonFatal[A, AA >: A, B, BB >: B](
     fab: => F[Xor[A, B]]
   )(
     handleError: Throwable => Xor[AA, BB]
-  ): F[Xor[AA, BB]]
+  ): F[Xor[AA, BB]] =
+    handleNonFatal[Xor[A, B], Xor[AA, BB]](fab)(handleError)
 
-  def handleEitherTNonFatal[A, AA >: A, B, BB >: B](
+  final def handleEitherTNonFatal[A, AA >: A, B, BB >: B](
     efab: => XorT[A, B]
   )(
     handleError: Throwable => Xor[AA, BB]
-  ): XorT[AA, BB]
+  ): XorT[AA, BB] =
+    xorT(handleNonFatal[Xor[A, B], Xor[AA, BB]](xorT2FXor(efab))(handleError))
 
 }
 
