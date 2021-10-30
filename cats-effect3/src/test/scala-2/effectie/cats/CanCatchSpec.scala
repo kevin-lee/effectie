@@ -7,6 +7,7 @@ import cats.effect.unsafe.IORuntime
 import cats.instances.all._
 import cats.syntax.all._
 import effectie.cats.Effectful._
+import effectie.testing.types.SomeError
 import effectie.{ConcurrentSupport, SomeControlThrowable}
 import hedgehog._
 import hedgehog.runner._
@@ -185,18 +186,6 @@ object CanCatchSpec extends Properties {
 
   def run[F[_]: EffectConstructor: Functor, A](a: => A): F[A] =
     effectOf[F](a)
-
-  sealed trait SomeError
-  object SomeError {
-
-    final case class SomeThrowable(throwable: Throwable) extends SomeError
-    final case class Message(message: String)            extends SomeError
-
-    def someThrowable(throwable: Throwable): SomeError = SomeThrowable(throwable)
-
-    def message(message: String): SomeError = Message(message)
-
-  }
 
   object IoSpec {
 

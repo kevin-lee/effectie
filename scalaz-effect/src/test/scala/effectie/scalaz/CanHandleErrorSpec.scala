@@ -2,13 +2,11 @@ package effectie.scalaz
 
 import scalaz._
 import Scalaz._
-
 import effectie.scalaz.Effectful._
+import effectie.testing.types.SomeError
 import effectie.{ConcurrentSupport, SomeControlThrowable}
-
 import hedgehog._
 import hedgehog.runner._
-
 import scalaz.effect._
 
 import scala.util.control.{ControlThrowable, NonFatal}
@@ -359,18 +357,6 @@ object CanHandleErrorSpec extends Properties {
 
   def run[F[_]: EffectConstructor: Functor, A](a: => A): F[A] =
     effectOf[F](a)
-
-  sealed trait SomeError
-  object SomeError {
-
-    final case class SomeThrowable(throwable: Throwable) extends SomeError
-    final case class Message(message: String)            extends SomeError
-
-    def someThrowable(throwable: Throwable): SomeError = SomeThrowable(throwable)
-
-    def message(message: String): SomeError = Message(message)
-
-  }
 
   object IoSpec {
 
