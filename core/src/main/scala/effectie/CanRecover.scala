@@ -9,8 +9,8 @@ trait CanRecover[F[_]] {
   type Xor[+A, +B]
   type XorT[A, B]
 
-  protected def xorT[A, B](fab: => F[Xor[A, B]]): XorT[A, B]
-  protected def xorT2FXor[A, B](efab: => XorT[A, B]): F[Xor[A, B]]
+  protected def xorT[A, B](fab: F[Xor[A, B]]): XorT[A, B]
+  protected def xorT2FXor[A, B](efab: XorT[A, B]): F[Xor[A, B]]
 
   def recoverFromNonFatalWith[A, AA >: A](fa: => F[A])(handleError: PartialFunction[Throwable, F[AA]]): F[AA]
 

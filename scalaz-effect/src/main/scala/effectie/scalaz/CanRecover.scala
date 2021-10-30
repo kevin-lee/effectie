@@ -14,10 +14,10 @@ trait CanRecover[F[_]] extends effectie.CanRecover[F] {
   override type Xor[+A, +B]  = A \/ B
   override type XorT[A, B] = EitherT[F, A, B]
 
-  @inline override protected def xorT[A, B](fab: => F[A \/ B]): DisjunctionT[F, A, B] =
+  @inline override protected def xorT[A, B](fab: F[A \/ B]): EitherT[F, A, B] =
     EitherT(fab)
 
-  @inline override protected def xorT2FXor[A, B](efab: => DisjunctionT[F, A, B]): F[A \/ B] =
+  @inline override protected def xorT2FXor[A, B](efab: EitherT[F, A, B]): F[A \/ B] =
     efab.run
 }
 
