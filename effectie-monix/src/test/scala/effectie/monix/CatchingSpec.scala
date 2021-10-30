@@ -5,13 +5,11 @@ import cats._
 import cats.data.EitherT
 import cats.instances.all._
 import cats.syntax.all._
-
 import effectie.monix.Effectful._
+import effectie.testing.types.SomeError
 import effectie.{ConcurrentSupport, SomeControlThrowable}
-
 import hedgehog._
 import hedgehog.runner._
-
 import monix.eval.Task
 
 import scala.util.control.ControlThrowable
@@ -230,18 +228,6 @@ object CatchingSpec extends Properties {
 
   def run[F[_]: EffectConstructor: Functor, A](a: => A): F[A] =
     effectOf[F](a)
-
-  sealed trait SomeError
-  object SomeError {
-
-    final case class SomeThrowable(throwable: Throwable) extends SomeError
-    final case class Message(message: String)            extends SomeError
-
-    def someThrowable(throwable: Throwable): SomeError = SomeThrowable(throwable)
-
-    def message(message: String): SomeError = Message(message)
-
-  }
 
   object TaskSpec {
     import monix.execution.Scheduler.Implicits.global

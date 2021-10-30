@@ -6,6 +6,7 @@ import cats.effect.IO
 import cats.instances.all.*
 import cats.syntax.all.*
 import effectie.cats.Effectful.*
+import effectie.testing.types.SomeError
 import effectie.{ConcurrentSupport, SomeControlThrowable}
 import hedgehog.*
 import hedgehog.runner.*
@@ -357,15 +358,6 @@ object CanHandleErrorSpec extends Properties {
 
   def run[F[_]: EffectConstructor: Functor, A](a: => A): F[A] =
     effectOf[F](a)
-
-  enum SomeError   {
-    case SomeThrowable(throwable: Throwable)
-    case Message(message: String)
-  }
-  object SomeError {
-    def someThrowable(throwable: Throwable): SomeError = SomeError.SomeThrowable(throwable)
-    def message(message: String): SomeError            = SomeError.Message(message)
-  }
 
   object IoSpec {
 
