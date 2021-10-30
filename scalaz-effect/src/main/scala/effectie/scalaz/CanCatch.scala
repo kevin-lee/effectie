@@ -12,80 +12,71 @@ import scala.util.{Try, Failure => FailureS, Success => SuccessS}
   * @since 2020-06-07
   */
 trait CanCatch[F[_]] extends effectie.CanCatch[F] {
-  override type Xor[A, B]  = A \/ B
-  override type XorT[A, B] = EitherT[F, A, B]
+  override type Xor[+A, +B] = A \/ B
+  override type XorT[A, B]  = EitherT[F, A, B]
 
-  override def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(f: Throwable => AA): EitherT[F, AA, B] =
-    EitherT(catchNonFatalEither[A, AA, B](fab.run)(f))
+  @inline override final protected def xorT[A, B](fab: F[A \/ B]): EitherT[F, A, B] = EitherT(fab)
+
+  @inline override final protected def xorT2FXor[A, B](efab: EitherT[F, A, B]): F[A \/ B] = efab.run
+
+  @inline override final protected def leftMapXor[A, AA, B](aOrB: A \/ B)(f: A => AA): AA \/ B =
+    aOrB.leftMap(f)
+
+  @inline override final protected def xorJoinRight[A, AA >: A, B](
+    aOrB: AA \/ (A \/ B)
+  ): AA \/ B =
+    aOrB match {
+      case \/-(b) =>
+        b
+      case -\/(_) =>
+        aOrB.asInstanceOf[AA \/ B]
+    }
+
 }
 
 object CanCatch {
   def apply[F[_]: CanCatch]: CanCatch[F] = implicitly[CanCatch[F]]
 
-  implicit val canCatchIo: CanCatch[IO] = new CanCatch[IO] {
+  implicit object CanCatchIo extends CanCatch[IO] {
+
+    @inline override final protected def mapFa[A, B](fa: IO[A])(f: A => B): IO[B] = fa.map(f)
 
     override def catchNonFatalThrowable[A](fa: => IO[A]): IO[Throwable \/ A] =
       fa.attempt
         .map(_.leftMap {
           case NonFatal(ex) =>
             ex
-          case ex           =>
+
+          case ex =>
             throw ex
         })
-
-    @SuppressWarnings(Array("org.wartremover.warts.Throw"))
-    override def catchNonFatal[A, B](fb: => IO[B])(f: Throwable => A): IO[A \/ B] =
-      fb.attempt
-        .map(_.leftMap {
-          case NonFatal(ex) =>
-            f(ex)
-          case ex           =>
-            throw ex
-        })
-
-    override def catchNonFatalEither[A, AA >: A, B](fab: => IO[A \/ B])(f: Throwable => AA): IO[AA \/ B] =
-      catchNonFatal(fab)(f).map(_.flatMap(identity))
 
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
   implicit def canCatchFuture(implicit EC: ExecutionContext): CanCatch[Future] =
-    new CanCatchFuture(EC)
+    new effectie.CanCatch.CanCatchFuture(EC) with CanCatch[Future] {
 
-  final class CanCatchFuture(val EC0: ExecutionContext) extends CanCatch[Future] {
+      override def catchNonFatalThrowable[A](fa: => Future[A]): Future[Throwable \/ A] =
+        fa.transform {
+          case SuccessS(a) =>
+            Try(a.right[Throwable])
 
-    override def catchNonFatalThrowable[A](fa: => Future[A]): Future[Throwable \/ A] =
-      fa.transform {
-        case SuccessS(a) =>
-          Try(a.right[Throwable])
+          case FailureS(NonFatal(ex)) =>
+            Try(ex.left[A])
 
-        case FailureS(NonFatal(ex)) =>
-          Try(ex.left[A])
+          case FailureS(ex) =>
+            throw ex
+        }(EC0)
 
-        case FailureS(ex) =>
-          throw ex
-      }(EC0)
+    }
 
-    @SuppressWarnings(Array("org.wartremover.warts.Throw"))
-    override def catchNonFatal[A, B](fb: => Future[B])(f: Throwable => A): Future[A \/ B] =
-      fb.transform {
-        case SuccessS(b) =>
-          Try(b.right[A])
+  implicit object CanCatchId extends CanCatch[Id] {
 
-        case FailureS(NonFatal(ex)) =>
-          Try(f(ex).left[B])
+    @inline override final protected def mapFa[A, B](fa: Id[A])(f: A => B): Id[B] =
+      f(fa)
 
-        case FailureS(ex) =>
-          throw ex
-      }(EC0)
-
-    override def catchNonFatalEither[A, AA >: A, B](fab: => Future[A \/ B])(f: Throwable => AA): Future[AA \/ B] =
-      catchNonFatal(fab)(f).map(_.flatMap(identity))(EC0)
-  }
-
-  implicit val canCatchId: CanCatch[Id] = new CanCatch[Id] {
-
-    override def catchNonFatalThrowable[A](fa: => Scalaz.Id[A]): Scalaz.Id[Throwable \/ A] =
+    override def catchNonFatalThrowable[A](fa: => Id[A]): Scalaz.Id[Throwable \/ A] =
       Try(fa) match {
         case SuccessS(a) =>
           a.right[Throwable]
@@ -97,21 +88,6 @@ object CanCatch {
           throw ex
       }
 
-    @SuppressWarnings(Array("org.wartremover.warts.Throw"))
-    override def catchNonFatal[A, B](fb: => Id[B])(f: Throwable => A): Id[A \/ B] =
-      Try(fb) match {
-        case SuccessS(b) =>
-          b.right[A]
-
-        case FailureS(NonFatal(ex)) =>
-          f(ex).left[B]
-
-        case FailureS(ex) =>
-          throw ex
-      }
-
-    override def catchNonFatalEither[A, AA >: A, B](fab: => Id[A \/ B])(f: Throwable => AA): Id[AA \/ B] =
-      catchNonFatal(fab)(f).flatMap(identity)
   }
 
 }
