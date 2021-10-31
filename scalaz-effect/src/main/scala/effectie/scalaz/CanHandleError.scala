@@ -15,10 +15,10 @@ trait CanHandleError[F[_]] extends effectie.CanHandleError[F] {
   type Xor[+A, +B]  = A \/ B
   type XorT[A, B] = EitherT[F, A, B]
 
-  @inline override protected def xorT[A, B](fab: F[A \/ B]): DisjunctionT[F, A, B] =
+  @inline override final protected def xorT[A, B](fab: F[A \/ B]): DisjunctionT[F, A, B] =
     EitherT(fab)
 
-  @inline override protected def xorT2FXor[A, B](efab: DisjunctionT[F, A, B]): F[A \/ B] =
+  @inline override final protected def xorT2FXor[A, B](efab: DisjunctionT[F, A, B]): F[A \/ B] =
     efab.run
 
 }
