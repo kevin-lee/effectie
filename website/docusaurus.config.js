@@ -23,7 +23,6 @@ const websiteConfig = {
   organizationName: 'Kevin-Lee', // Usually your GitHub org/user name.
   projectName: 'effectie', // Usually your repo name.
   themeConfig: {
-    sidebarCollapsible: true,
     prism: {
       theme: lightCodeTheme,
       darkTheme: darkCodeTheme,
