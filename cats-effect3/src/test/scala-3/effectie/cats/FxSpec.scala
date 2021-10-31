@@ -5,10 +5,13 @@ import cats.effect.testkit.TestContext
 import cats.effect.unsafe.IORuntime
 import cats.{Eq, Id, Monad}
 import effectie.ConcurrentSupport
+import effectie.testing.types.SomeThrowableError
 import hedgehog.*
 import hedgehog.runner.*
 
 import scala.concurrent.Await
+
+import effectie.testing.tools.*
 
 /** @author Kevin Lee
   * @since 2020-12-06
@@ -18,6 +21,7 @@ object FxSpec extends Properties {
     property("test Fx[IO].effectOf", IoSpec.testEffectOf),
     property("test Fx[IO].pureOf", IoSpec.testPureOf),
     example("test Fx[IO].unitOf", IoSpec.testUnitOf),
+    example("test Fx[IO].errorOf", IoSpec.testErrorOf),
     property("test Fx[IO] Monad laws - Identity", IoSpec.testMonadLaws1_Identity),
     property("test Fx[IO] Monad laws - Composition", IoSpec.testMonadLaws2_Composition),
     property("test Fx[IO] Monad laws - IdentityAp", IoSpec.testMonadLaws3_IdentityAp),
@@ -30,6 +34,7 @@ object FxSpec extends Properties {
     property("test Fx[Future].effectOf", FutureSpec.testEffectOf),
     property("test Fx[Future].pureOf", FutureSpec.testPureOf),
     example("test Fx[Future].unitOf", FutureSpec.testUnitOf),
+    example("test Fx[Future].errorOf", FutureSpec.testErrorOf),
     property("test Fx[Future] Monad laws - Identity", FutureSpec.testMonadLaws1_Identity),
     property("test Fx[Future] Monad laws - Composition", FutureSpec.testMonadLaws2_Composition),
     property("test Fx[Future] Monad laws - IdentityAp", FutureSpec.testMonadLaws3_IdentityAp),
@@ -42,6 +47,7 @@ object FxSpec extends Properties {
     property("test Fx[Id].effectOf", IdSpec.testEffectOf),
     property("test Fx[Id].pureOf", IdSpec.testPureOf),
     example("test Fx[Id].unitOf", IdSpec.testUnitOf),
+    example("test Fx[Id].errorOf", IdSpec.testErrorOf),
     property("test Fx[Id] Monad laws - Identity", IdSpec.testMonadLaws1_Identity),
     property("test Fx[Id] Monad laws - Composition", IdSpec.testMonadLaws2_Composition),
     property("test Fx[Id] Monad laws - IdentityAp", IdSpec.testMonadLaws3_IdentityAp),
@@ -111,6 +117,19 @@ object FxSpec extends Properties {
       val io               = Fx[IO].unitOf
       val expected: Unit   = ()
       io.completeAs(expected)
+    }
+
+    def testErrorOf: Result = {
+      import CatsEffectRunner.*
+
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      given ticket: Ticker = Ticker(TestContext())
+
+      val io = Fx[IO].errorOf(expectedError)
+
+      io.expectError(expectedError)
     }
 
     def testMonadLaws1_Identity: Property = {
@@ -293,6 +312,17 @@ object FxSpec extends Properties {
       actual ==== expected
     }
 
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      given ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+
+      val future = Fx[Future].errorOf[Unit](expectedError)
+      expectThrowable(ConcurrentSupport.futureToValueAndTerminate(future, waitFor), expectedError)
+    }
+
     def testMonadLaws1_Identity: Property = {
       given ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
 
@@ -382,6 +412,14 @@ object FxSpec extends Properties {
       val expected: Unit = ()
       val actual         = Fx[Id].unitOf
       actual ==== expected
+    }
+
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      lazy val actual = Fx[Id].errorOf[Unit](expectedError)
+      expectThrowable(actual, expectedError)
     }
 
     given idInstance: Monad[Id] = cats.catsInstancesForId

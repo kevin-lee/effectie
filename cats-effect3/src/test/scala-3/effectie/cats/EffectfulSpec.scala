@@ -2,10 +2,12 @@ package effectie.cats
 
 import cats.Id
 import cats.effect.IO
+import cats.effect.testkit.TestContext
 import cats.effect.unsafe.IORuntime
 import effectie.ConcurrentSupport
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.testing.tools.*
+import effectie.testing.types.*
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -18,14 +20,17 @@ object EffectfulSpec extends Properties {
     property("test Effectful.effectOf[IO]", IoSpec.testEffectOf),
     property("test Effectful.pureOf[IO]", IoSpec.testPureOf),
     example("test Effectful.unitOf[IO]", IoSpec.testUnitOf),
+    example("test Effectful.errorOf[IO]", IoSpec.testErrorOf),
     property("test Effectful.{effectOf, pureOf, unitOf} for Future", FutureSpec.testAll),
     property("test Effectful.effectOf[Future]", FutureSpec.testEffectOf),
     property("test Effectful.pureOf[Future]", FutureSpec.testPureOf),
     example("test Effectful.unitOf[Future]", FutureSpec.testUnitOf),
+    example("test Effectful.errorOf[Future]", FutureSpec.testErrorOf),
     property("test Effectful.{effectOf, pureOf, unitOf} for Id", IdSpec.testAll),
     property("test Effectful.effectOf[Id]", IdSpec.testEffectOf),
     property("test Effectful.pureOf[Id]", IdSpec.testPureOf),
-    example("test Effectful.unitOf[Id]", IdSpec.testUnitOf)
+    example("test Effectful.unitOf[Id]", IdSpec.testUnitOf),
+    example("test Effectful.errorOf[Id]", IdSpec.testErrorOf)
   )
 
   import Effectful.*
@@ -72,8 +77,8 @@ object EffectfulSpec extends Properties {
     } yield {
       var actual                  = before
       var actual2                 = before
-      val testBefore              = actual ==== before
-      val testBefore2             = actual2 ==== before
+      val testBefore              = (actual ==== before).log(s"actual testBefore should be $before but was $actual")
+      val testBefore2             = (actual2 ==== before).log(s"actual2 testBefore2 should be $before but was $actual2")
       val eftClient               = FxCtorClient[IO]
       val effectConstructorClient = EffectConstructorClient[IO]
       val io                      =
@@ -87,18 +92,23 @@ object EffectfulSpec extends Properties {
           _  <- eftClient.unit
           _  <- effectConstructorClient.unit
         } yield ()
-      val testBeforeRun           = actual ==== before
-      val testBeforeRun2          = actual2 ==== before
-      io.unsafeRunSync()
-      val testAfterRun            = actual ==== after
-      val testAfterRun2           = actual2 ==== after
+      val testBeforeRun           = (actual ==== before).log(s"actual testBeforeRun should be $before but was $actual")
+      val testBeforeRun2          = (actual2 ==== before).log(s"actual2 testBeforeRun2 should be $before but was $actual2")
+
+      import CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
+
+      val runResult     = io.completeAs(())
+      val testAfterRun  = (actual ==== after).log(s"actual testAfterRun should be $after but was $actual")
+      val testAfterRun2 = (actual2 ==== after).log(s"actual2 testAfterRun2 should be $after but was $actual2")
       Result.all(
         List(
           testBefore.log("testBefore"),
-          testBeforeRun.log("testBeforeRun"),
-          testAfterRun.log("testAfterRun"),
           testBefore2.log("testBefore2"),
+          testBeforeRun.log("testBeforeRun"),
           testBeforeRun2.log("testBeforeRun2"),
+          runResult,
+          testAfterRun.log("testAfterRun"),
           testAfterRun2.log("testAfterRun2")
         )
       )
@@ -109,15 +119,20 @@ object EffectfulSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       var actual        = before
-      val testBefore    = actual ==== before
-      val io            = EffectConstructor[IO].effectOf({ actual = after; () })
-      val testBeforeRun = actual ==== before
-      io.unsafeRunSync()
-      val testAfterRun  = actual ==== after
+      val testBefore    = (actual ==== before).log(s"actual before should be $before but was $actual")
+      val io            = effectOf[IO]({ actual = after; () })
+      val testBeforeRun = (actual ==== before).log(s"actual beforeRun should be $before but was $actual")
+
+      import CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
+
+      val runResult    = io.completeAs(())
+      val testAfterRun = (actual ==== after).log(s"actual afterRun should be $after but was $actual")
       Result.all(
         List(
           testBefore.log("testBefore"),
           testBeforeRun.log("testBeforeRun"),
+          runResult,
           testAfterRun.log("testAfterRun")
         )
       )
@@ -127,26 +142,45 @@ object EffectfulSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
+      import CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
+
       var actual        = before
-      val testBefore    = actual ==== before
+      val testBefore    = (actual ==== before).log(s"actual before should be $before but was $actual")
       val io            = pureOf[IO]({ actual = after; () })
-      val testBeforeRun = actual ==== after
-      io.unsafeRunSync()
-      val testAfterRun  = actual ==== after
+      val testBeforeRun = (actual ==== after).log(s"actual beforeRun should be $after but was $actual")
+
+      val runResult = io.completeAs(())
+
+      val testAfterRun = (actual ==== after).log(s"actual afterRun should be $after but was $actual")
       Result.all(
         List(
           testBefore.log("testBefore"),
           testBeforeRun.log("testBeforeRun"),
+          runResult,
           testAfterRun.log("testAfterRun")
         )
       )
     }
 
     def testUnitOf: Result = {
+      import CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
+
       val io             = unitOf[IO]
       val expected: Unit = ()
-      val actual: Unit   = io.unsafeRunSync()
-      actual ==== expected
+      io.completeAs(expected)
+    }
+
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      import CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
+
+      val io = errorOf[IO][Unit](expectedError)
+      io.expectError(expectedError)
     }
 
   }
@@ -164,7 +198,7 @@ object EffectfulSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       given executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      given ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      given ExecutionContext                 = ConcurrentSupport.newExecutionContext(executorService)
 
       var actual                  = before
       var actual2                 = before
@@ -201,7 +235,7 @@ object EffectfulSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       given executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      given ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      given ExecutionContext                 = ConcurrentSupport.newExecutionContext(executorService)
 
       var actual               = before
       val testBefore           = actual ==== before
@@ -221,7 +255,7 @@ object EffectfulSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       given executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      given ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      given ExecutionContext                 = ConcurrentSupport.newExecutionContext(executorService)
 
       var actual       = before
       val testBefore   = actual ==== before
@@ -238,11 +272,22 @@ object EffectfulSpec extends Properties {
 
     def testUnitOf: Result = {
       given executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      given ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      given ExecutionContext                 = ConcurrentSupport.newExecutionContext(executorService)
       val future                             = unitOf[Future]
       val expected: Unit                     = ()
       val actual: Unit                       = ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
       actual ==== expected
+    }
+
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      given ExecutionContext                 = ConcurrentSupport.newExecutionContext(executorService)
+
+      val future = errorOf[Future][Unit](expectedError)
+      expectThrowable(ConcurrentSupport.futureToValueAndTerminate(future, waitFor), expectedError)
     }
 
   }
@@ -311,6 +356,15 @@ object EffectfulSpec extends Properties {
       val expected: Unit = ()
       val actual         = unitOf[Id]
       actual ==== expected
+    }
+
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      lazy val actual = errorOf[Id][Unit](expectedError)
+
+      expectThrowable(actual, expectedError)
     }
 
   }

@@ -9,6 +9,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait Fx[F[_]] extends EffectConstructor[F] with FxCtor[F] with CommonFx[F] with OldEffectConstructor[F]
 
 object Fx {
+
   def apply[F[_]: Fx]: Fx[F] = summon[Fx[F]]
 
   given ioFx: Fx[IO] with {
@@ -18,6 +19,9 @@ object Fx {
     inline override def pureOf[A](a: A): IO[A] = IO.pure(a)
 
     inline override def unitOf: IO[Unit] = IO.unit
+
+    inline override def errorOf[A](throwable: Throwable): IO[A] = IO.raiseError(throwable)
+
   }
 
   given futureFx(using EC: ExecutionContext): Fx[Future] =
@@ -37,6 +41,8 @@ object Fx {
     inline override def pureOf[A](a: A): Id[A] = a
 
     inline override def unitOf: Id[Unit] = ()
+
+    inline override def errorOf[A](throwable: Throwable): Id[A] = throw throwable
   }
 
 }

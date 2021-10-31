@@ -3,10 +3,9 @@ package effectie.scalaz
 import scalaz._
 import Scalaz._
 import scalaz.effect._
-
 import effectie.ConcurrentSupport
 import effectie.testing.tools._
-
+import effectie.testing.types.SomeThrowableError
 import hedgehog._
 import hedgehog.runner._
 
@@ -19,14 +18,17 @@ object EffectfulSpec extends Properties {
     property("test Effectful.effectOf[IO]", IoSpec.testEffectOf),
     property("test Effectful.pureOf[IO]", IoSpec.testPureOf),
     example("test Effectful.unitOf[IO]", IoSpec.testUnitOf),
+    example("test Effectful.errorOf[IO]", IoSpec.testErrorOf),
     property("test Effectful.{effectOf, pureOf, unitOf} for Future", FutureSpec.testAll),
     property("test Effectful.effectOf[Future]", FutureSpec.testEffectOf),
     property("test Effectful.pureOf[Future]", FutureSpec.testPureOf),
     example("test Effectful.unitOf[Future]", FutureSpec.testUnitOf),
+    example("test Effectful.errorOf[Future]", FutureSpec.testErrorOf),
     property("test Effectful.{effectOf, pureOf, unitOf} for Id", IdSpec.testAll),
     property("test Effectful.effectOf[Id]", IdSpec.testEffectOf),
     property("test Effectful.pureOf[Id]", IdSpec.testPureOf),
-    example("test Effectful.unitOf[Id]", IdSpec.testUnitOf)
+    example("test Effectful.unitOf[Id]", IdSpec.testUnitOf),
+    example("test Effectful.errorOf[Id]", IdSpec.testErrorOf)
   )
 
   import Effectful._
@@ -113,7 +115,7 @@ object EffectfulSpec extends Properties {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual        = before
       val testBefore    = actual ==== before
-      val io            = EffectConstructor[IO].effectOf({ actual = after; () })
+      val io            = effectOf[IO]({ actual = after; () })
       val testBeforeRun = actual ==== before
       io.unsafePerformIO()
       val testAfterRun  = actual ==== after
@@ -151,6 +153,14 @@ object EffectfulSpec extends Properties {
       val expected: Unit = ()
       val actual: Unit   = io.unsafePerformIO()
       actual ==== expected
+    }
+
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      val io = errorOf[IO][Unit](expectedError)
+      expectThrowable(io.unsafePerformIO(), expectedError)
     }
 
   }
@@ -253,6 +263,17 @@ object EffectfulSpec extends Properties {
       actual ==== expected
     }
 
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+
+      val future = errorOf[Future][Unit](expectedError)
+      expectThrowable(ConcurrentSupport.futureToValueAndTerminate(future, waitFor), expectedError)
+    }
+
   }
 
   object IdSpec {
@@ -323,6 +344,14 @@ object EffectfulSpec extends Properties {
       val expected: Unit = ()
       val actual         = unitOf[Id]
       actual ==== expected
+    }
+
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      lazy val actual = errorOf[Id][Unit](expectedError)
+      expectThrowable(actual, expectedError)
     }
 
   }
