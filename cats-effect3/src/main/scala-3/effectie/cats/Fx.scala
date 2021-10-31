@@ -14,13 +14,13 @@ object Fx {
 
   given ioFx: Fx[IO] with {
 
-    inline override def effectOf[A](a: => A): IO[A] = IO(a)
+    inline override final def effectOf[A](a: => A): IO[A] = IO(a)
 
-    inline override def pureOf[A](a: A): IO[A] = IO.pure(a)
+    inline override final def pureOf[A](a: A): IO[A] = IO.pure(a)
 
-    inline override def unitOf: IO[Unit] = IO.unit
+    inline override final def unitOf: IO[Unit] = IO.unit
 
-    inline override def errorOf[A](throwable: Throwable): IO[A] = IO.raiseError(throwable)
+    inline override final def errorOf[A](throwable: Throwable): IO[A] = IO.raiseError(throwable)
 
   }
 
@@ -36,13 +36,13 @@ object Fx {
 
   given idFx: Fx[Id] with {
 
-    inline override def effectOf[A](a: => A): Id[A] = a
+    inline override final def effectOf[A](a: => A): Id[A] = a
 
-    inline override def pureOf[A](a: A): Id[A] = a
+    inline override final def pureOf[A](a: A): Id[A] = a
 
-    inline override def unitOf: Id[Unit] = ()
+    inline override final def unitOf: Id[Unit] = ()
 
-    inline override def errorOf[A](throwable: Throwable): Id[A] = throw throwable
+    inline override final def errorOf[A](throwable: Throwable): Id[A] = throw throwable
   }
 
 }

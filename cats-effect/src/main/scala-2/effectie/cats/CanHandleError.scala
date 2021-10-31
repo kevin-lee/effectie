@@ -15,10 +15,10 @@ trait CanHandleError[F[_]] extends effectie.CanHandleError[F] {
   type Xor[+A, +B]  = Either[A, B]
   type XorT[A, B] = EitherT[F, A, B]
 
-  @inline override protected def xorT[A, B](fab: F[Either[A, B]]): EitherT[F, A, B] =
+  @inline override final protected def xorT[A, B](fab: F[Either[A, B]]): EitherT[F, A, B] =
     EitherT(fab)
 
-  @inline override protected def xorT2FXor[A, B](efab: EitherT[F, A, B]): F[Either[A, B]] =
+  @inline override final protected def xorT2FXor[A, B](efab: EitherT[F, A, B]): F[Either[A, B]] =
     efab.value
 
 }

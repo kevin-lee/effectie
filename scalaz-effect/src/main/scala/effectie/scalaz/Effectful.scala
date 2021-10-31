@@ -13,10 +13,10 @@ trait Effectful {
   def errorOf[F[_]]: CurriedErrorOf[F] = new CurriedErrorOf[F]
 
   @deprecated(message = "Use pureOf instead.", since = "1.4.0")
-  @inline def effectOfPure[F[_]]: CurriedEffectOfPure[F] = pureOf[F]
+  @inline final def effectOfPure[F[_]]: CurriedEffectOfPure[F] = pureOf[F]
 
   @deprecated(message = "Use unitOf instead", since = "1.4.0")
-  @inline def effectOfUnit[F[_]: FxCtor]: F[Unit] = unitOf[F]
+  @inline final def effectOfUnit[F[_]: FxCtor]: F[Unit] = unitOf[F]
 
 }
 

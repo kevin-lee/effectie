@@ -16,25 +16,25 @@ object Fx {
 
   implicit object TaskFx extends Fx[Task] {
 
-    @inline override def effectOf[A](a: => A): Task[A] = Task(a)
+    @inline override final def effectOf[A](a: => A): Task[A] = Task(a)
 
-    @inline override def pureOf[A](a: A): Task[A] = Task.now(a)
+    @inline override final def pureOf[A](a: A): Task[A] = Task.now(a)
 
-    @inline override val unitOf: Task[Unit] = Task.unit
+    @inline override final val unitOf: Task[Unit] = Task.unit
 
-    @inline override def errorOf[A](throwable: Throwable): Task[A] = Task.raiseError(throwable)
+    @inline override final def errorOf[A](throwable: Throwable): Task[A] = Task.raiseError(throwable)
 
   }
 
   implicit object IoFx extends Fx[IO] {
 
-    @inline override def effectOf[A](a: => A): IO[A] = IO(a)
+    @inline override final def effectOf[A](a: => A): IO[A] = IO(a)
 
-    @inline override def pureOf[A](a: A): IO[A] = IO.pure(a)
+    @inline override final def pureOf[A](a: A): IO[A] = IO.pure(a)
 
-    @inline override val unitOf: IO[Unit] = IO.unit
+    @inline override final val unitOf: IO[Unit] = IO.unit
 
-    @inline override def errorOf[A](throwable: Throwable): IO[A] = IO.raiseError(throwable)
+    @inline override final def errorOf[A](throwable: Throwable): IO[A] = IO.raiseError(throwable)
 
   }
 
@@ -49,13 +49,13 @@ object Fx {
 
   implicit object IdFx extends Fx[Id] {
 
-    @inline override def effectOf[A](a: => A): Id[A] = a
+    @inline override final def effectOf[A](a: => A): Id[A] = a
 
-    @inline override def pureOf[A](a: A): Id[A] = a
+    @inline override final def pureOf[A](a: A): Id[A] = a
 
-    @inline override val unitOf: Id[Unit] = ()
+    @inline override final val unitOf: Id[Unit] = ()
 
-    @inline override def errorOf[A](throwable: Throwable): Id[A] = throw throwable
+    @inline override final def errorOf[A](throwable: Throwable): Id[A] = throw throwable
 
   }
 
