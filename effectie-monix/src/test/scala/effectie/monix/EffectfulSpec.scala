@@ -3,6 +3,7 @@ package effectie.monix
 import cats.Id
 import effectie.ConcurrentSupport
 import effectie.testing.tools._
+import effectie.testing.types.SomeThrowableError
 import hedgehog._
 import hedgehog.runner._
 import monix.eval.Task
@@ -12,18 +13,26 @@ import monix.eval.Task
   */
 object EffectfulSpec extends Properties {
   override def tests: List[Test] = List(
-    property("test Effectful.{effectOf, pureOf, unitOf} for IO", TaskSpec.testAll),
+    property("test Effectful.{effectOf, pureOf, unitOf} for Task", TaskSpec.testAll),
     property("test Effectful.effectOf[Task]", TaskSpec.testEffectOf),
     property("test Effectful.pureOf[Task]", TaskSpec.testPureOf),
     example("test Effectful.unitOf[Task]", TaskSpec.testUnitOf),
+    example("test Effectful.errorOf[Task]", TaskSpec.testErrorOf),
+    property("test Effectful.{effectOf, pureOf, unitOf} for IO", TaskSpec.testAll),
+    property("test Effectful.effectOf[IO]", IoSpec.testEffectOf),
+    property("test Effectful.pureOf[IO]", IoSpec.testPureOf),
+    example("test Effectful.unitOf[IO]", IoSpec.testUnitOf),
+    example("test Effectful.errorOf[IO]", IoSpec.testErrorOf),
     property("test Effectful.{effectOf, pureOf, unitOf} for Future", FutureSpec.testAll),
     property("test Effectful.effectOf[Future]", FutureSpec.testEffectOf),
     property("test Effectful.pureOf[Future]", FutureSpec.testPureOf),
     example("test Effectful.unitOf[Future]", FutureSpec.testUnitOf),
+    example("test Effectful.errorOf[Future]", FutureSpec.testErrorOf),
     property("test Effectful.{effectOf, pureOf, unitOf} for Id", IdSpec.testAll),
     property("test Effectful.effectOf[Id]", IdSpec.testEffectOf),
     property("test Effectful.pureOf[Id]", IdSpec.testPureOf),
-    example("test Effectful.unitOf[Id]", IdSpec.testUnitOf)
+    example("test Effectful.unitOf[Id]", IdSpec.testUnitOf),
+    example("test Effectful.errorOf[Id]", IdSpec.testErrorOf)
   )
 
   import Effectful._
@@ -111,7 +120,7 @@ object EffectfulSpec extends Properties {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual        = before
       val testBefore    = actual ==== before
-      val io            = EffectConstructor[Task].effectOf({ actual = after; () })
+      val io            = effectOf[Task]({ actual = after; () })
       val testBeforeRun = actual ==== before
       io.runSyncUnsafe()
       val testAfterRun  = actual ==== after
@@ -149,6 +158,118 @@ object EffectfulSpec extends Properties {
       val expected: Unit = ()
       val actual: Unit   = io.runSyncUnsafe()
       actual ==== expected
+    }
+
+    @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      val io = errorOf[Task][Unit](expectedError)
+      expectThrowable(io.runSyncUnsafe(), expectedError)
+    }
+
+  }
+
+  object IoSpec {
+    import cats.effect.IO
+
+    @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
+    def testAll: Property = for {
+      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+    } yield {
+      @SuppressWarnings(Array("org.wartremover.warts.Var"))
+      var actual                  = before
+      @SuppressWarnings(Array("org.wartremover.warts.Var"))
+      var actual2                 = before
+      val testBefore              = actual ==== before
+      val testBefore2             = actual2 ==== before
+      val eftClient               = FxCtorClient[IO]
+      val effectConstructorClient = EffectConstructorClient[IO]
+      val io                      =
+        for {
+          _  <- effectOf[IO]({ actual = after; () })
+          _  <- pureOf[IO]({ actual2 = after; () })
+          n  <- eftClient.eftOf(1)
+          n2 <- eftClient.of(n)
+          i  <- effectConstructorClient.eftOf(1)
+          i2 <- effectConstructorClient.of(1)
+          _  <- eftClient.unit
+          _  <- effectConstructorClient.unit
+        } yield ()
+      val testBeforeRun           = actual ==== before
+      val testBeforeRun2          = actual2 ==== before
+      io.unsafeRunSync()
+      val testAfterRun            = actual ==== after
+      val testAfterRun2           = actual2 ==== after
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testBefore2.log("testBefore2"),
+          testBeforeRun.log("testBeforeRun"),
+          testBeforeRun2.log("testBeforeRun2"),
+          testAfterRun.log("testAfterRun"),
+          testAfterRun2.log("testAfterRun2")
+        )
+      )
+    }
+
+    @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
+    def testEffectOf: Property = for {
+      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+    } yield {
+      @SuppressWarnings(Array("org.wartremover.warts.Var"))
+      var actual        = before
+      val testBefore    = actual ==== before
+      val io            = effectOf[IO]({ actual = after; () })
+      val testBeforeRun = actual ==== before
+      io.unsafeRunSync()
+      val testAfterRun  = actual ==== after
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testBeforeRun.log("testBeforeRun"),
+          testAfterRun.log("testAfterRun")
+        )
+      )
+    }
+
+    def testPureOf: Property = for {
+      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+    } yield {
+      @SuppressWarnings(Array("org.wartremover.warts.Var"))
+      var actual        = before
+      val testBefore    = actual ==== before
+      val io            = pureOf[IO]({ actual = after; () })
+      val testBeforeRun = actual ==== after
+      io.unsafeRunSync()
+      val testAfterRun  = actual ==== after
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testBeforeRun.log("testBeforeRun"),
+          testAfterRun.log("testAfterRun")
+        )
+      )
+    }
+
+    def testUnitOf: Result = {
+      val io             = unitOf[IO]
+      val expected: Unit = ()
+      val actual: Unit   = io.unsafeRunSync()
+      actual ==== expected
+    }
+
+    @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      val io = errorOf[IO][Unit](expectedError)
+      expectThrowable(io.unsafeRunSync(), expectedError)
     }
 
   }
@@ -251,6 +372,17 @@ object EffectfulSpec extends Properties {
       actual ==== expected
     }
 
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+
+      val future = errorOf[Future][Unit](expectedError)
+      expectThrowable(ConcurrentSupport.futureToValueAndTerminate(future, waitFor), expectedError)
+    }
+
   }
 
   object IdSpec {
@@ -321,6 +453,14 @@ object EffectfulSpec extends Properties {
       val expected: Unit = ()
       val actual         = unitOf[Id]
       actual ==== expected
+    }
+
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      lazy val actual = errorOf[Id][Unit](expectedError)
+      expectThrowable(actual, expectedError)
     }
 
   }

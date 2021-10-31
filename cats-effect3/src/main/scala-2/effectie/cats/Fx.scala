@@ -18,6 +18,9 @@ object Fx {
     @inline override def pureOf[A](a: A): IO[A] = IO.pure(a)
 
     @inline override val unitOf: IO[Unit] = IO.unit
+
+    @inline override def errorOf[A](throwable: Throwable): IO[A] = IO.raiseError(throwable)
+
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
@@ -37,6 +40,9 @@ object Fx {
     @inline override def pureOf[A](a: A): Id[A] = a
 
     @inline override val unitOf: Id[Unit] = ()
+
+    @inline override def errorOf[A](throwable: Throwable): Id[A] = throw throwable
+
   }
 
 }

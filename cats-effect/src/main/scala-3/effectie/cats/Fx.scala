@@ -18,6 +18,9 @@ object Fx {
     inline override def pureOf[A](a: A): IO[A] = IO.pure(a)
 
     inline override def unitOf: IO[Unit] = IO.unit
+
+    inline override def errorOf[A](throwable: Throwable): IO[A] = IO.raiseError(throwable)
+
   }
 
   given futureFx(using EC: ExecutionContext): Fx[Future] =
@@ -37,6 +40,9 @@ object Fx {
     inline override def pureOf[A](a: A): Id[A] = a
 
     inline override def unitOf: Id[Unit] = ()
+
+    inline override def errorOf[A](throwable: Throwable): Id[A] = throw throwable
+
   }
 
 }

@@ -5,6 +5,7 @@ import cats.syntax.all._
 import cats.{Eq, Show}
 import cats.effect.{IO, Outcome, SyncIO}
 import hedgehog._
+import effectie.testing.tools._
 
 /** @author Kevin Lee
   * @since 2021-08-05
@@ -37,6 +38,22 @@ object CatsEffectRunner extends TestInstances {
     def completeAndEqualTo(expected: A)(implicit ticker: Ticker, eq: Eq[A], sh: Show[A]): Boolean =
       tickTo(Outcome.Succeeded(Some(expected)))
 
+    def expectError(expected: Throwable*)(implicit ticker: Ticker): Result = {
+      val moreThanOne              = expected.length > 1
+      val expectedThrowableMessage =
+        s"${if (moreThanOne) "One of " else ""}${expected.map(_.getClass.getName).mkString("[", ", ", "]")} " +
+          s"${if (moreThanOne) "were" else "was"} expected"
+
+      unsafeRun(ioa) match {
+        case Outcome.Errored(e) =>
+          Result
+            .assert(expected.contains(e))
+            .log(expectedThrowableMessage + s" but ${e.getClass.getName} was thrown instead.\n${e.stackTraceString}")
+
+        case _ =>
+          Result.failure.log(expectedThrowableMessage + " but no Throwable was thrown.")
+      }
+    }
   }
 
   implicit final class SyncIoOps[A](private val ioa: SyncIO[A]) extends AnyVal {

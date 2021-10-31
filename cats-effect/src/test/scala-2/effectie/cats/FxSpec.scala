@@ -3,6 +3,8 @@ package effectie.cats
 import cats.effect._
 import cats.{Eq, Id, Monad}
 import effectie.ConcurrentSupport
+import effectie.testing.tools._
+import effectie.testing.types.SomeThrowableError
 import hedgehog._
 import hedgehog.runner._
 
@@ -15,19 +17,22 @@ object FxSpec extends Properties {
   override def tests: List[Test] = List(
     property("test Fx[IO].effectOf", IoSpec.testEffectOf),
     property("test Fx[IO].pureOf", IoSpec.testPureOf),
-    example("test Fx[IO].unitOf", IoSpec.testUnitOf)
+    example("test Fx[IO].unitOf", IoSpec.testUnitOf),
+    example("test Fx[IO].errorOf", IoSpec.testErrorOf),
   ) ++
     IoSpec.testMonadLaws ++
     List(
       property("test Fx[Future].effectOf", FutureSpec.testEffectOf),
       property("test Fx[Future].pureOf", FutureSpec.testPureOf),
       example("test Fx[Future].unitOf", FutureSpec.testUnitOf),
+      example("test Fx[Future].errorOf", FutureSpec.testErrorOf),
     ) ++
     FutureSpec.testMonadLaws ++
     List(
       property("test Fx[Id].effectOf", IdSpec.testEffectOf),
       property("test Fx[Id].pureOf", IdSpec.testPureOf),
       example("test Fx[Id].unitOf", IdSpec.testUnitOf),
+      example("test Fx[Id].errorOf", IdSpec.testErrorOf),
     ) ++
     IdSpec.testMonadLaws
 
@@ -78,6 +83,14 @@ object FxSpec extends Properties {
       val expected: Unit = ()
       val actual: Unit   = io.unsafeRunSync()
       actual ==== expected
+    }
+
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      val io = Fx[IO].errorOf(expectedError)
+      expectThrowable(io.unsafeRunSync(), expectedError)
     }
 
     def testMonadLaws: List[Test] = {
@@ -151,6 +164,17 @@ object FxSpec extends Properties {
       actual ==== expected
     }
 
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+
+      val future = Fx[Future].errorOf[Unit](expectedError)
+      expectThrowable(ConcurrentSupport.futureToValueAndTerminate(future, waitFor), expectedError)
+    }
+
     def testMonadLaws: List[Test] = {
       import cats.syntax.eq._
 
@@ -205,6 +229,14 @@ object FxSpec extends Properties {
       val expected: Unit = ()
       val actual         = Fx[Id].unitOf
       actual ==== expected
+    }
+
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      lazy val actual = Fx[Id].errorOf[Unit](expectedError)
+      expectThrowable(actual, expectedError)
     }
 
     def testMonadLaws: List[Test] = {

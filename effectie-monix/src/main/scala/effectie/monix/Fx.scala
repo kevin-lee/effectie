@@ -21,6 +21,9 @@ object Fx {
     @inline override def pureOf[A](a: A): Task[A] = Task.now(a)
 
     @inline override val unitOf: Task[Unit] = Task.unit
+
+    @inline override def errorOf[A](throwable: Throwable): Task[A] = Task.raiseError(throwable)
+
   }
 
   implicit object IoFx extends Fx[IO] {
@@ -30,6 +33,9 @@ object Fx {
     @inline override def pureOf[A](a: A): IO[A] = IO.pure(a)
 
     @inline override val unitOf: IO[Unit] = IO.unit
+
+    @inline override def errorOf[A](throwable: Throwable): IO[A] = IO.raiseError(throwable)
+
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
@@ -48,6 +54,9 @@ object Fx {
     @inline override def pureOf[A](a: A): Id[A] = a
 
     @inline override val unitOf: Id[Unit] = ()
+
+    @inline override def errorOf[A](throwable: Throwable): Id[A] = throw throwable
+
   }
 
 }

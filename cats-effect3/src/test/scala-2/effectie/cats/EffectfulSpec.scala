@@ -2,10 +2,12 @@ package effectie.cats
 
 import cats.Id
 import cats.effect.IO
+import cats.effect.testkit.TestContext
 import cats.effect.unsafe.IORuntime
 import effectie.ConcurrentSupport
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.testing.tools._
+import effectie.testing.types.SomeThrowableError
 import hedgehog._
 import hedgehog.runner._
 
@@ -18,14 +20,17 @@ object EffectfulSpec extends Properties {
     property("test Effectful.effectOf[IO]", IoSpec.testEffectOf),
     property("test Effectful.pureOf[IO]", IoSpec.testPureOf),
     example("test Effectful.unitOf[IO]", IoSpec.testUnitOf),
+    example("test Effectful.errorOf[IO]", IoSpec.testErrorOf),
     property("test Effectful.{effectOf, pureOf, unitOf} for Future", FutureSpec.testAll),
     property("test Effectful.effectOf[Future]", FutureSpec.testEffectOf),
     property("test Effectful.pureOf[Future]", FutureSpec.testPureOf),
     example("test Effectful.unitOf[Future]", FutureSpec.testUnitOf),
+    example("test Effectful.errorOf[Future]", FutureSpec.testErrorOf),
     property("test Effectful.{effectOf, pureOf, unitOf} for Id", IdSpec.testAll),
     property("test Effectful.effectOf[Id]", IdSpec.testEffectOf),
     property("test Effectful.pureOf[Id]", IdSpec.testPureOf),
-    example("test Effectful.unitOf[Id]", IdSpec.testUnitOf)
+    example("test Effectful.unitOf[Id]", IdSpec.testUnitOf),
+    example("test Effectful.errorOf[Id]", IdSpec.testErrorOf)
   )
 
   import Effectful._
@@ -92,16 +97,19 @@ object EffectfulSpec extends Properties {
         } yield ()
       val testBeforeRun           = actual ==== before
       val testBeforeRun2          = actual2 ==== before
-      io.unsafeRunSync()
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      val runResult = io.completeAs(())
       val testAfterRun            = actual ==== after
       val testAfterRun2           = actual2 ==== after
       Result.all(
         List(
           testBefore.log("testBefore"),
-          testBeforeRun.log("testBeforeRun"),
-          testAfterRun.log("testAfterRun"),
           testBefore2.log("testBefore2"),
+          testBeforeRun.log("testBeforeRun"),
           testBeforeRun2.log("testBeforeRun2"),
+          runResult,
+          testAfterRun.log("testAfterRun"),
           testAfterRun2.log("testAfterRun2")
         )
       )
@@ -115,14 +123,19 @@ object EffectfulSpec extends Properties {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual        = before
       val testBefore    = actual ==== before
-      val io            = EffectConstructor[IO].effectOf({ actual = after; () })
+      val io            = effectOf[IO]({ actual = after; () })
       val testBeforeRun = actual ==== before
-      io.unsafeRunSync()
+
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      val runResult = io.completeAs(())
+
       val testAfterRun  = actual ==== after
       Result.all(
         List(
           testBefore.log("testBefore"),
           testBeforeRun.log("testBeforeRun"),
+          runResult,
           testAfterRun.log("testAfterRun")
         )
       )
@@ -137,12 +150,17 @@ object EffectfulSpec extends Properties {
       val testBefore    = actual ==== before
       val io            = pureOf[IO]({ actual = after; () })
       val testBeforeRun = actual ==== after
-      io.unsafeRunSync()
-      val testAfterRun  = actual ==== after
+
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      val runResult = io.completeAs(())
+
+      val testAfterRun = actual ==== after
       Result.all(
         List(
           testBefore.log("testBefore"),
           testBeforeRun.log("testBeforeRun"),
+          runResult,
           testAfterRun.log("testAfterRun")
         )
       )
@@ -151,8 +169,24 @@ object EffectfulSpec extends Properties {
     def testUnitOf: Result = {
       val io             = unitOf[IO]
       val expected: Unit = ()
-      val actual: Unit   = io.unsafeRunSync()
-      actual ==== expected
+
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+
+      io.completeAs(expected)
+    }
+
+    @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      val io = errorOf[IO][Unit](expectedError)
+
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+
+      io.expectError(expectedError)
     }
 
   }
@@ -255,6 +289,17 @@ object EffectfulSpec extends Properties {
       actual ==== expected
     }
 
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+
+      val future                                    = errorOf[Future][Unit](expectedError)
+      expectThrowable(ConcurrentSupport.futureToValueAndTerminate(future, waitFor), expectedError)
+    }
+
   }
 
   object IdSpec {
@@ -325,6 +370,14 @@ object EffectfulSpec extends Properties {
       val expected: Unit = ()
       val actual         = unitOf[Id]
       actual ==== expected
+    }
+
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      lazy val actual         = errorOf[Id][Unit](expectedError)
+      expectThrowable(actual, expectedError)
     }
 
   }
