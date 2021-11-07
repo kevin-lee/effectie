@@ -4,9 +4,9 @@ import just.semver.{Anh, Dsv, SemVer}
 import SemVer.{Major, Minor, Patch}
 import just.semver.AdditionalInfo.PreRelease
 
-ThisBuild / scalaVersion := props.ProjectScalaVersion
-ThisBuild / organization := "io.kevinlee"
-ThisBuild / organizationName := "Kevin's Code"
+ThisBuild / scalaVersion       := props.ProjectScalaVersion
+ThisBuild / organization       := "io.kevinlee"
+ThisBuild / organizationName   := "Kevin's Code"
 ThisBuild / crossScalaVersions := props.CrossScalaVersions
 
 ThisBuild / testFrameworks ~=
@@ -21,31 +21,31 @@ ThisBuild / developers := List(
   )
 )
 
-ThisBuild / homepage := Some(url(s"https://github.com/${props.GitHubUsername}/${props.RepoName}"))
-ThisBuild / scmInfo :=
+ThisBuild / homepage   := Some(url(s"https://github.com/${props.GitHubUsername}/${props.RepoName}"))
+ThisBuild / scmInfo    :=
   Some(
     ScmInfo(
       url(s"https://github.com/${props.GitHubUsername}/${props.RepoName}"),
       s"git@github.com:${props.GitHubUsername}/${props.RepoName}.git",
     )
   )
-ThisBuild / licenses := props.licenses
+ThisBuild / licenses   := props.licenses
 
 lazy val effectie = (project in file("."))
   .enablePlugins(DevOopsGitHubReleasePlugin)
   .settings(
-    name := prefixedProjectName(""),
-    description := "Effect Utils",
+    name                := prefixedProjectName(""),
+    description         := "Effect Utils",
     libraryDependencies :=
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
   )
   .settings(noPublish)
-  .aggregate(core, testing4Cats, catsEffect, catsEffect3, monix, scalazEffect)
+  .aggregate(core, testing4Cats, catsEffect, catsEffect3, monix)
 
 lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
   .settings(
-    description := "Effect Utils - Core",
-    libraryDependencies :=
+    description               := "Effect Utils - Core",
+    libraryDependencies       :=
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie._""",
@@ -53,21 +53,20 @@ lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
 
 lazy val testing4Cats = projectCommonSettings("test4cats", ProjectName("test4cats"), file("test4cats"))
   .settings(
-    description := "Effect's test utils for Cats",
-    libraryDependencies :=
-          libraryDependencies.value ++ List(
-            libs.libCatsCore(props.catsLatestVersion),
-          ) ++ libs.hedgehogLibs
-      ,
-    libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
+    description               := "Effect's test utils for Cats",
+    libraryDependencies       :=
+      libraryDependencies.value ++ List(
+        libs.libCatsCore(props.catsLatestVersion),
+      ) ++ libs.hedgehogLibs,
+    libraryDependencies       := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie.testing.cats._""",
   )
 
 lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effect"), file("cats-effect"))
   .settings(
-    description := "Effect Utils - Cats Effect",
-    libraryDependencies :=
+    description               := "Effect Utils - Cats Effect",
+    libraryDependencies       :=
       (SemVer.parseUnsafe(scalaVersion.value) match {
         case SemVer(Major(2), Minor(11), _, _, _) =>
           libraryDependencies.value ++ Seq(libs.libCatsCore_2_0_0, libs.libCatsEffect_2_0_0)
@@ -88,7 +87,7 @@ lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effe
             libs.libCatsEffect(props.catsEffect2LatestVersion)
           )
       }),
-    libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
+    libraryDependencies       := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie.cats._""",
   )
@@ -99,13 +98,13 @@ lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effe
 
 lazy val catsEffect3 = projectCommonSettings("catsEffect3", ProjectName("cats-effect3"), file("cats-effect3"))
   .settings(
-    description := "Effect Utils - Cats Effect 3",
+    description               := "Effect Utils - Cats Effect 3",
     libraryDependencies ++= List(
       libs.libCatsCore(props.catsLatestVersion),
       libs.libCatsEffect(props.catsEffect3Version),
       libs.libCatsEffectTestKit % Test
     ),
-    libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
+    libraryDependencies       := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie.cats._""",
   )
@@ -116,8 +115,8 @@ lazy val catsEffect3 = projectCommonSettings("catsEffect3", ProjectName("cats-ef
 
 lazy val monix = projectCommonSettings("monix", ProjectName("monix"), file(s"${props.RepoName}-monix"))
   .settings(
-    description := "Effect Utils - Monix",
-    libraryDependencies :=
+    description               := "Effect Utils - Monix",
+    libraryDependencies       :=
       crossVersionProps(
         List.empty,
         SemVer.parseUnsafe(scalaVersion.value),
@@ -127,7 +126,7 @@ lazy val monix = projectCommonSettings("monix", ProjectName("monix"), file(s"${p
         case x                        =>
           libraryDependencies.value ++ List(libs.libMonix)
       },
-    libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
+    libraryDependencies       := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie.monix._""",
   )
@@ -136,26 +135,21 @@ lazy val monix = projectCommonSettings("monix", ProjectName("monix"), file(s"${p
     testing4Cats % Test,
   )
 
-lazy val scalazEffect = projectCommonSettings("scalazEffect", ProjectName("scalaz-effect"), file("scalaz-effect"))
-  .settings(
-    description := "Effect Utils for Scalaz Effect",
-    libraryDependencies ++= List(libs.libScalazCore, libs.libScalazEffect).map(_.cross(CrossVersion.for3Use2_13)),
-    libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
-    console / initialCommands :=
-      """import effectie.scalaz._""",
-  )
-  .dependsOn(core % props.IncludeTest)
-
-lazy val docs         = (project in file("generated-docs"))
+lazy val docs = (project in file("generated-docs"))
   .enablePlugins(MdocPlugin, DocusaurPlugin)
   .settings(
-    name := prefixedProjectName("docs"),
+    name                := prefixedProjectName("docs"),
     scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
+    libraryDependencies ++= List(
+      "io.kevinlee" %% "effectie-cats-effect"   % "1.16.0",
+      "io.kevinlee" %% "effectie-monix"         % "1.16.0",
+      "io.kevinlee" %% "effectie-scalaz-effect" % "1.16.0",
+    ),
     libraryDependencies := libraryDependenciesPostProcess(
       isScala3(scalaVersion.value),
       libraryDependencies.value
     ),
-    mdocVariables := Map(
+    mdocVariables       := Map(
       "VERSION"                  -> {
         import sys.process._
         "git fetch --tags".!
@@ -173,11 +167,10 @@ lazy val docs         = (project in file("generated-docs"))
           versions.mkString
       },
     ),
-    docusaurDir := (ThisBuild / baseDirectory).value / "website",
-    docusaurBuildDir := docusaurDir.value / "build",
+    docusaurDir         := (ThisBuild / baseDirectory).value / "website",
+    docusaurBuildDir    := docusaurDir.value / "build",
   )
   .settings(noPublish)
-  .dependsOn(core, catsEffect, scalazEffect, monix)
 
 lazy val props =
   new {
@@ -230,8 +223,6 @@ lazy val props =
     final val monixVersion3_3_0 = "3.3.0"
     final val monixVersion      = "3.4.0"
 
-    final val scalazVersion = "7.2.31"
-
   }
 
 lazy val libs =
@@ -244,9 +235,6 @@ lazy val libs =
         "qa.hedgehog" %% "hedgehog-sbt"    % hedgehogVersion,
       )
     }
-
-    lazy val libScalazCore: ModuleID   = "org.scalaz" %% "scalaz-core"   % props.scalazVersion
-    lazy val libScalazEffect: ModuleID = "org.scalaz" %% "scalaz-effect" % props.scalazVersion
 
     def libCatsCore(catsVersion: String): ModuleID = "org.typelevel" %% "cats-core" % catsVersion
 
@@ -279,7 +267,7 @@ def libraryDependenciesPostProcess(
 def projectCommonSettings(id: String, projectName: ProjectName, file: File): Project =
   Project(id, file)
     .settings(
-      name := prefixedProjectName(projectName.projectName),
+      name                                    := prefixedProjectName(projectName.projectName),
       scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
       libraryDependencies ++= libs.hedgehogLibs.map(_ % Test),
       /* WartRemover and scalacOptions { */
@@ -287,15 +275,15 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
 //      Test / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
       wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
       //      , wartremoverErrors ++= Warts.all
-      Compile / console / wartremoverErrors := List.empty,
+      Compile / console / wartremoverErrors   := List.empty,
       Compile / console / wartremoverWarnings := List.empty,
-      Compile / console / scalacOptions :=
+      Compile / console / scalacOptions       :=
         (console / scalacOptions)
           .value
           .filterNot(option => option.contains("wartremover") || option.contains("import")),
-      Test / console / wartremoverErrors := List.empty,
-      Test / console / wartremoverWarnings := List.empty,
-      Test / console / scalacOptions :=
+      Test / console / wartremoverErrors      := List.empty,
+      Test / console / wartremoverWarnings    := List.empty,
+      Test / console / scalacOptions          :=
         (console / scalacOptions)
           .value
           .filterNot(option => option.contains("wartremover") || option.contains("import")),
@@ -350,9 +338,9 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
         else
           Seq.empty
       },
-      licenses := props.licenses,
+      licenses                                := props.licenses,
       /* Coveralls { */
-      coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
+      coverageHighlighting                    := (CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, 10)) | Some((2, 11)) =>
           false
         case _                             =>
