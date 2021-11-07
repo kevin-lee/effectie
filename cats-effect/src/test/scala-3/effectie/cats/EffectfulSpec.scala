@@ -46,15 +46,15 @@ object EffectfulSpec extends Properties {
     }
   }
 
-  trait EffectConstructorClient[F[_]] {
+  trait FxClient[F[_]] {
     def eftOf[A](a: A): F[A]
     def of[A](a: A): F[A]
     def unit: F[Unit]
   }
-  object EffectConstructorClient      {
-    def apply[F[_]: EffectConstructorClient]: EffectConstructorClient[F] =
-      summon[EffectConstructorClient[F]]
-    given eftClientF[F[_]: EffectConstructor]: EffectConstructorClient[F] with {
+  object FxClient      {
+    def apply[F[_]: FxClient]: FxClient[F] =
+      summon[FxClient[F]]
+    given eftClientF[F[_]: Fx]: FxClient[F] with {
       override def eftOf[A](a: A): F[A] = effectOf(a)
       override def of[A](a: A): F[A]    = pureOf(a)
       override def unit: F[Unit]        = unitOf
@@ -72,7 +72,7 @@ object EffectfulSpec extends Properties {
       val testBefore              = actual ==== before
       val testBefore2             = actual2 ==== before
       val eftClient               = FxCtorClient[IO]
-      val effectConstructorClient = EffectConstructorClient[IO]
+      val effectConstructorClient = FxClient[IO]
       val io                      =
         for {
           _  <- effectOf[IO]({ actual = after; () })
@@ -180,7 +180,7 @@ object EffectfulSpec extends Properties {
       val testBefore              = actual ==== before
       val testBefore2             = actual2 ==== before
       val eftClient               = FxCtorClient[Future]
-      val effectConstructorClient = EffectConstructorClient[Future]
+      val effectConstructorClient = FxClient[Future]
       val future                  =
         for {
           _  <- effectOf[Future]({ actual = after; () })
@@ -281,7 +281,7 @@ object EffectfulSpec extends Properties {
       val testBefore              = actual ==== before
       val testBefore2             = actual2 ==== before
       val eftClient               = FxCtorClient[Id]
-      val effectConstructorClient = EffectConstructorClient[Id]
+      val effectConstructorClient = FxClient[Id]
       effectOf[Id]({ actual = after; () })
       pureOf[Id]({ actual2 = after; () })
       val n: Int                  = eftClient.eftOf(1)

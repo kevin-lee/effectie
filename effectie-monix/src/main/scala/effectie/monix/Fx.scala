@@ -9,7 +9,7 @@ import scala.concurrent.{ExecutionContext, Future}
 /** @author Kevin Lee
   * @since 2021-05-16
   */
-trait Fx[F[_]] extends EffectConstructor[F] with FxCtor[F] with effectie.CommonFx[F]
+trait Fx[F[_]] extends effectie.Fx[F] with FxCtor[F] with effectie.FxCtor[F]
 
 object Fx {
   def apply[F[_]: Fx]: Fx[F] = implicitly[Fx[F]]
@@ -43,9 +43,8 @@ object Fx {
 
   final class FutureFx(implicit override val EC0: ExecutionContext)
       extends Fx[Future]
-      with EffectConstructor[Future]
       with FxCtor[Future]
-      with effectie.CommonFx.CommonFutureFx
+      with effectie.FxCtor.FutureFxCtor
 
   implicit object IdFx extends Fx[Id] {
 

@@ -2,7 +2,7 @@ package effectie
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait CommonFx[F[_]] {
+trait FxCtor[F[_]] {
   def effectOf[A](a: => A): F[A]
   def pureOf[A](a: A): F[A]
   def unitOf: F[Unit]
@@ -10,9 +10,9 @@ trait CommonFx[F[_]] {
   def errorOf[A](throwable: Throwable): F[A]
 }
 
-object CommonFx {
+object FxCtor {
 
-  trait CommonFutureFx extends CommonFx[Future] {
+  trait FutureFxCtor extends FxCtor[Future] {
 
     implicit def EC0: ExecutionContext
 
@@ -25,17 +25,4 @@ object CommonFx {
     @inline override final def errorOf[A](throwable: Throwable): Future[A] = Future.failed[A](throwable)
 
   }
-}
-
-trait OldEffectConstructor[F[_]] extends CommonFx[F] {
-  @deprecated(message = "Use EffectConstructor[F].pureOf instead", since = "1.4.0")
-  @inline final def effectOfPure[A](a: A): F[A] = pureOf[A](a)
-
-  @deprecated(message = "Use EffectConstructor[F].unitOf instead", since = "1.4.0")
-  @inline final def effectOfUnit: F[Unit]       = unitOf
-}
-
-object OldEffectConstructor {
-
-  trait OldFutureEffectConstructor extends CommonFx.CommonFutureFx with OldEffectConstructor[Future]
 }

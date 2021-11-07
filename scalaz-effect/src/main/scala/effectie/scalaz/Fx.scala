@@ -1,12 +1,11 @@
 package effectie.scalaz
 
-import effectie.{CommonFx, OldEffectConstructor}
 import scalaz.Scalaz.Id
 import scalaz.effect.IO
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait Fx[F[_]] extends EffectConstructor[F] with FxCtor[F] with CommonFx[F] with OldEffectConstructor[F]
+trait Fx[F[_]] extends effectie.Fx[F] with FxCtor[F] with effectie.FxCtor[F]
 
 object Fx {
   def apply[F[_]: Fx]: Fx[F] = implicitly[Fx[F]]
@@ -29,10 +28,8 @@ object Fx {
 
   final class FutureFx(implicit override val EC0: ExecutionContext)
       extends Fx[Future]
-      with EffectConstructor[Future]
       with FxCtor[Future]
-      with CommonFx.CommonFutureFx
-      with OldEffectConstructor.OldFutureEffectConstructor
+      with effectie.FxCtor.FutureFxCtor
 
   implicit object IdFx extends Fx[Id] {
 
