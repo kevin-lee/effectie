@@ -2,11 +2,10 @@ package effectie.cats
 
 import cats.effect.{IO, Sync}
 import cats.{Applicative, Id, Monad}
-import effectie.{CommonFx, OldEffectConstructor}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait Fx[F[_]] extends EffectConstructor[F] with FxCtor[F] with CommonFx[F] with OldEffectConstructor[F]
+trait Fx[F[_]] extends effectie.Fx[F] with FxCtor[F] with effectie.FxCtor[F]
 
 object Fx {
   def apply[F[_]: Fx]: Fx[F] = summon[Fx[F]]
@@ -28,10 +27,8 @@ object Fx {
 
   final class FutureFx(using override val EC0: ExecutionContext)
       extends Fx[Future]
-      with EffectConstructor[Future]
       with FxCtor[Future]
-      with CommonFx.CommonFutureFx
-      with OldEffectConstructor.OldFutureEffectConstructor
+      with effectie.FxCtor.FutureFxCtor
 
   given idFx: Fx[Id] with {
 

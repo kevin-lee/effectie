@@ -9,7 +9,7 @@ import scala.concurrent.{ExecutionContext, Future}
 /** @author Kevin Lee
   * @since 2021-05-16
   */
-trait FxCtor[F[_]] extends effectie.CommonFx[F]
+trait FxCtor[F[_]] extends effectie.FxCtor[F]
 
 object FxCtor {
   def apply[F[_]: FxCtor]: FxCtor[F] = implicitly[FxCtor[F]]
