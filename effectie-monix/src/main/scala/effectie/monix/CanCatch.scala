@@ -2,6 +2,7 @@ package effectie.monix
 
 import cats.Id
 import cats.data.EitherT
+import cats.effect.IO
 import cats.syntax.all._
 import monix.eval.Task
 
@@ -23,18 +24,29 @@ trait CanCatch[F[_]] extends effectie.CanCatch.EitherBasedCanCatch[F] {
 object CanCatch {
   def apply[F[_]: CanCatch]: CanCatch[F] = implicitly[CanCatch[F]]
 
-  implicit object CanCatchIo extends CanCatch[Task] {
+  implicit object CanCatchTask extends CanCatch[Task] {
 
-    @inline override final protected def mapFa[A, B](fa: Task[A])(f: A => B): Task[B] = fa.map(f)
+    @inline override final def mapFa[A, B](fa: Task[A])(f: A => B): Task[B] = fa.map(f)
 
     override def catchNonFatalThrowable[A](fa: => Task[A]): Task[Either[Throwable, A]] =
       fa.attempt
 
   }
 
+  implicit object CanCatchIo extends CanCatch[IO] {
+
+    @inline override final def mapFa[A, B](fa: IO[A])(f: A => B): IO[B] = fa.map(f)
+
+    override def catchNonFatalThrowable[A](fa: => IO[A]): IO[Either[Throwable, A]] =
+      fa.attempt
+
+  }
+
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
   implicit def canCatchFuture(implicit EC: ExecutionContext): CanCatch[Future] =
-    new effectie.CanCatch.EitherBasedCanCatchFuture(EC) with CanCatch[Future] {
+    new effectie.CanCatch.EitherBasedCanCatchFuture with CanCatch[Future] {
+
+      override val EC0: ExecutionContext = EC
 
       override def catchNonFatalThrowable[A](fa: => Future[A]): Future[Either[Throwable, A]] =
       fa.transform {
@@ -52,7 +64,7 @@ object CanCatch {
 
   implicit object CanCatchId extends CanCatch[Id] {
 
-    @inline override final protected def mapFa[A, B](fa: Id[A])(f: A => B): Id[B] = f(fa)
+    @inline override final def mapFa[A, B](fa: Id[A])(f: A => B): Id[B] = f(fa)
 
     override def catchNonFatalThrowable[A](fa: => Id[A]): Id[Either[Throwable, A]] =
       scala.util.Try(fa) match {
