@@ -61,7 +61,7 @@ object CatsEffectRunner extends TestInstances {
       val a = ioa.unsafeRunSync()
       Result.assert(a eqv expected).log(s"${a.show} !== ${expected.show}")
     }
-    def completeAsEqualToSync(expected: A)(implicit eq: Eq[A], sh: Show[A]): Boolean = {
+    def completeAsEqualToSync(expected: A)(implicit eq: Eq[A]): Boolean = {
       val a = ioa.unsafeRunSync()
       a eqv expected
     }

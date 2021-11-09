@@ -78,8 +78,8 @@ object CanCatchSpec extends Properties {
       "test CanCatch[IO]catchNonFatalEitherT should return the failed result",
       IoSpec.testCanCatch_IO_catchNonFatalEitherTShouldReturnFailedResult
     ),
-    /* Future */
 
+    /* Future */
     example(
       "test CanCatch[Future]catchNonFatalThrowable should catch NonFatal",
       FutureSpec.testCanCatch_Future_catchNonFatalThrowableShouldCatchNonFatal

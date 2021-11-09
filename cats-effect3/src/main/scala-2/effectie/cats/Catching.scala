@@ -9,6 +9,9 @@ trait Catching {
 
   import Catching._
 
+  final def catchNonFatalThrowable[F[_]]: CurriedCanCatchThrowable[F] =
+    new CurriedCanCatchThrowable[F]
+
   final def catchNonFatal[F[_]]: CurriedCanCatch1[F] =
     new CurriedCanCatch1[F]
 
@@ -24,12 +27,17 @@ trait Catching {
   def catchNonFatalEitherT[F[_]]: CurriedCanCatchEitherT1[F] =
     new CurriedCanCatchEitherT1[F]
 
-//  def catchNonFatalEitherT[F[_], A, B](fab: => EitherT[F, A, B])(f: Throwable => A)(implicit CC: CanCatch[F]): EitherT[F, A, B] =
-//    CanCatch[F].catchNonFatalEitherT(fab)(f)
 }
 
 @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
 object Catching extends Catching {
+
+  private[Catching] final class CurriedCanCatchThrowable[F[_]](
+    private val dummy: Boolean = true
+  ) extends AnyVal {
+    def apply[B](fb: => F[B])(implicit CC: CanCatch[F]): F[Either[Throwable, B]] =
+      CanCatch[F].catchNonFatalThrowable[B](fb)
+  }
 
   private[Catching] final class CurriedCanCatch1[F[_]](
     private val dummy: Boolean = true

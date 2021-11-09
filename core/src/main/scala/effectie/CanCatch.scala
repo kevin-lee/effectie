@@ -10,7 +10,7 @@ trait CanCatch[F[_]] {
   protected def xorT[A, B](fab: F[Xor[A, B]]): XorT[A, B]
   protected def xorT2FXor[A, B](efab: XorT[A, B]): F[Xor[A, B]]
 
-  protected def mapFa[A, B](fa: F[A])(f: A => B): F[B]
+  def mapFa[A, B](fa: F[A])(f: A => B): F[B]
 
   protected def leftMapXor[A, AA, B](aOrB: Xor[A, B])(f: A => AA): Xor[AA, B]
 
@@ -44,14 +44,15 @@ object CanCatch {
       aOrB.joinRight
   }
 
-  abstract class CanCatchFuture(val EC0: ExecutionContext) extends CanCatch[Future] {
-    @inline override final protected def mapFa[A, B](fa: Future[A])(f: A => B): Future[B] =
+  trait CanCatchFuture extends CanCatch[Future] {
+    def EC0: ExecutionContext
+    @inline override final def mapFa[A, B](fa: Future[A])(f: A => B): Future[B] =
       fa.map(f)(EC0)
 
   }
 
-  abstract class EitherBasedCanCatchFuture(override val EC0: ExecutionContext)
-      extends CanCatchFuture(EC0)
+  trait EitherBasedCanCatchFuture
+      extends CanCatchFuture
       with EitherBasedCanCatch[Future]
 
 }

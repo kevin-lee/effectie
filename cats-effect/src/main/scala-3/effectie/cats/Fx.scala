@@ -5,7 +5,7 @@ import cats.{Applicative, Id, Monad}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait Fx[F[_]] extends effectie.Fx[F] with FxCtor[F] with effectie.FxCtor[F]
+trait Fx[F[_]] extends effectie.Fx[F] with FxCtor[F] with effectie.FxCtor[F] with CanCatch[F]
 
 object Fx {
   def apply[F[_]: Fx]: Fx[F] = summon[Fx[F]]
@@ -20,6 +20,11 @@ object Fx {
 
     inline override final def errorOf[A](throwable: Throwable): IO[A] = IO.raiseError(throwable)
 
+    inline override final def mapFa[A, B](fa: IO[A])(f: A => B): IO[B] = fa.map(f)
+
+    inline override def catchNonFatalThrowable[A](fa: => IO[A]): IO[Either[Throwable, A]] =
+      fa.attempt
+
   }
 
   given futureFx(using EC: ExecutionContext): Fx[Future] =
@@ -29,6 +34,11 @@ object Fx {
       extends Fx[Future]
       with FxCtor[Future]
       with effectie.FxCtor.FutureFxCtor
+      with effectie.CanCatch.EitherBasedCanCatchFuture {
+
+    override def catchNonFatalThrowable[A](fa: => Future[A]): Future[Either[Throwable, A]] =
+      CanCatch.canCatchFuture.catchNonFatalThrowable(fa)
+  }
 
   given idFx: Fx[Id] with {
 
@@ -39,6 +49,12 @@ object Fx {
     inline override final def unitOf: Id[Unit] = ()
 
     inline override final def errorOf[A](throwable: Throwable): Id[A] = throw throwable
+
+    inline override def mapFa[A, B](fa: Id[A])(f: A => B): Id[B] =
+      CanCatch.canCatchId.mapFa(fa)(f)
+
+    inline override def catchNonFatalThrowable[A](fa: => Id[A]): Id[Either[Throwable, A]] =
+      CanCatch.canCatchId.catchNonFatalThrowable(fa)
 
   }
 
