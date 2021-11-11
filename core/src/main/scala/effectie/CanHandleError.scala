@@ -7,43 +7,42 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 trait CanHandleError[F[_]] {
 
-  type Xor[+A, +B]
   type XorT[A, B]
 
-  protected def xorT[A, B](fab: F[Xor[A, B]]): XorT[A, B]
-  protected def xorT2FXor[A, B](efab: XorT[A, B]): F[Xor[A, B]]
+  protected def xorT[A, B](fab: F[Either[A, B]]): XorT[A, B]
+  protected def xorT2FEither[A, B](efab: XorT[A, B]): F[Either[A, B]]
 
   def handleNonFatalWith[A, AA >: A](fa: => F[A])(handleError: Throwable => F[AA]): F[AA]
 
   final def handleEitherNonFatalWith[A, AA >: A, B, BB >: B](
-    fab: => F[Xor[A, B]]
+    fab: => F[Either[A, B]]
   )(
-    handleError: Throwable => F[Xor[AA, BB]]
-  ): F[Xor[AA, BB]] =
-    handleNonFatalWith[Xor[A, B], Xor[AA, BB]](fab)(handleError)
+    handleError: Throwable => F[Either[AA, BB]]
+  ): F[Either[AA, BB]] =
+    handleNonFatalWith[Either[A, B], Either[AA, BB]](fab)(handleError)
 
   final def handleEitherTNonFatalWith[A, AA >: A, B, BB >: B](
     efab: => XorT[A, B]
   )(
-    handleError: Throwable => F[Xor[AA, BB]]
+    handleError: Throwable => F[Either[AA, BB]]
   ): XorT[AA, BB] =
-    xorT(handleNonFatalWith[Xor[A, B], Xor[AA, BB]](xorT2FXor(efab))(handleError))
+    xorT(handleNonFatalWith[Either[A, B], Either[AA, BB]](xorT2FEither(efab))(handleError))
 
   def handleNonFatal[A, AA >: A](fa: => F[A])(handleError: Throwable => AA): F[AA]
 
   final def handleEitherNonFatal[A, AA >: A, B, BB >: B](
-    fab: => F[Xor[A, B]]
+    fab: => F[Either[A, B]]
   )(
-    handleError: Throwable => Xor[AA, BB]
-  ): F[Xor[AA, BB]] =
-    handleNonFatal[Xor[A, B], Xor[AA, BB]](fab)(handleError)
+    handleError: Throwable => Either[AA, BB]
+  ): F[Either[AA, BB]] =
+    handleNonFatal[Either[A, B], Either[AA, BB]](fab)(handleError)
 
   final def handleEitherTNonFatal[A, AA >: A, B, BB >: B](
     efab: => XorT[A, B]
   )(
-    handleError: Throwable => Xor[AA, BB]
+    handleError: Throwable => Either[AA, BB]
   ): XorT[AA, BB] =
-    xorT(handleNonFatal[Xor[A, B], Xor[AA, BB]](xorT2FXor(efab))(handleError))
+    xorT(handleNonFatal[Either[A, B], Either[AA, BB]](xorT2FEither(efab))(handleError))
 
 }
 
