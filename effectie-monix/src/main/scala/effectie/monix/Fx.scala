@@ -59,7 +59,7 @@ object Fx {
       extends Fx[Future]
       with FxCtor[Future]
         with effectie.FxCtor.FutureFxCtor
-        with effectie.CanCatch.EitherBasedCanCatchFuture {
+        with effectie.CanCatch.CanCatchFuture {
     override def catchNonFatalThrowable[A](fa: => Future[A]): Future[Either[Throwable, A]] =
       CanCatch.canCatchFuture.catchNonFatalThrowable(fa)
   }

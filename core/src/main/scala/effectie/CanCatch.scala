@@ -4,45 +4,28 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait CanCatch[F[_]] {
 
-  type Xor[+A, +B]
   type XorT[A, B]
 
-  protected def xorT[A, B](fab: F[Xor[A, B]]): XorT[A, B]
-  protected def xorT2FXor[A, B](efab: XorT[A, B]): F[Xor[A, B]]
+  protected def xorT[A, B](fab: F[Either[A, B]]): XorT[A, B]
+  protected def xorT2FEither[A, B](efab: XorT[A, B]): F[Either[A, B]]
 
   def mapFa[A, B](fa: F[A])(f: A => B): F[B]
 
-  protected def leftMapXor[A, AA, B](aOrB: Xor[A, B])(f: A => AA): Xor[AA, B]
+  def catchNonFatalThrowable[A](fa: => F[A]): F[Either[Throwable, A]]
 
-  protected def xorJoinRight[A, AA >: A, B](aOrB: Xor[AA, Xor[A, B]]): Xor[AA, B]
+  final def catchNonFatal[A, B](fb: => F[B])(f: Throwable => A): F[Either[A, B]] =
+    mapFa(catchNonFatalThrowable[B](fb))(ab => ab.left.map(f))
 
-  def catchNonFatalThrowable[A](fa: => F[A]): F[Xor[Throwable, A]]
-
-  final def catchNonFatal[A, B](fb: => F[B])(f: Throwable => A): F[Xor[A, B]] =
-    mapFa(catchNonFatalThrowable[B](fb))(fab => leftMapXor[Throwable, A, B](fab)(f))
-
-  final def catchNonFatalEither[A, AA >: A, B](fab: => F[Xor[A, B]])(f: Throwable => AA): F[Xor[AA, B]] =
-    mapFa(catchNonFatal(fab)(f))(xorJoinRight)
+  final def catchNonFatalEither[A, AA >: A, B](fab: => F[Either[A, B]])(f: Throwable => AA): F[Either[AA, B]] =
+    mapFa(catchNonFatal(fab)(f))(_.joinRight)
 
   final def catchNonFatalEitherT[A, AA >: A, B](fab: => XorT[A, B])(f: Throwable => AA): XorT[AA, B] =
-    xorT(catchNonFatalEither[A, AA, B](xorT2FXor(fab))(f))
+    xorT(catchNonFatalEither[A, AA, B](xorT2FEither(fab))(f))
 
 }
 
 object CanCatch {
   def apply[F[_]: CanCatch]: CanCatch[F] = implicitly[CanCatch[F]]
-
-  trait EitherBasedCanCatch[F[_]] extends CanCatch[F] {
-    final type Xor[+A, +B] = Either[A, B]
-
-    @inline override final protected def leftMapXor[A, AA, B](aOrB: Either[A, B])(f: A => AA): Either[AA, B] =
-      aOrB.left.map(f)
-
-    @inline override final protected def xorJoinRight[A, AA >: A, B](
-      aOrB: Either[AA, Either[A, B]]
-    ): Either[AA, B] =
-      aOrB.joinRight
-  }
 
   trait CanCatchFuture extends CanCatch[Future] {
     def EC0: ExecutionContext
@@ -50,9 +33,5 @@ object CanCatch {
       fa.map(f)(EC0)
 
   }
-
-  trait EitherBasedCanCatchFuture
-      extends CanCatchFuture
-      with EitherBasedCanCatch[Future]
 
 }

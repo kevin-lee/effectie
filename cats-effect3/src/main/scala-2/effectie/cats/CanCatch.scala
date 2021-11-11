@@ -10,14 +10,14 @@ import scala.concurrent.{ExecutionContext, Future}
 /** @author Kevin Lee
   * @since 2020-06-07
   */
-trait CanCatch[F[_]] extends effectie.CanCatch.EitherBasedCanCatch[F] {
+trait CanCatch[F[_]] extends effectie.CanCatch[F] {
 
   override type XorT[A, B] = EitherT[F, A, B]
 
   @inline override final protected def xorT[A, B](fab: F[Either[A, B]]): EitherT[F, A, B] =
     EitherT(fab)
 
-  @inline override final protected def xorT2FXor[A, B](efab: EitherT[F, A, B]): F[Either[A, B]] =
+  @inline override final protected def xorT2FEither[A, B](efab: EitherT[F, A, B]): F[Either[A, B]] =
     efab.value
 
 }
@@ -36,7 +36,7 @@ object CanCatch {
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
   implicit def canCatchFuture(implicit EC: ExecutionContext): CanCatch[Future] =
-    new effectie.CanCatch.EitherBasedCanCatchFuture with CanCatch[Future] {
+    new effectie.CanCatch.CanCatchFuture with CanCatch[Future] {
 
       override val EC0: ExecutionContext = EC
 
