@@ -3,6 +3,8 @@ package effectie.cats
 import cats.Id
 import cats.effect._
 import effectie.ConcurrentSupport
+import effectie.FxCtor
+import effectie.cats.Fx._
 import hedgehog._
 import hedgehog.runner._
 

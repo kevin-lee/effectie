@@ -9,7 +9,7 @@ import cats.syntax.all._
 import effectie.cats.Effectful._
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.testing.types.SomeError
-import effectie.{ConcurrentSupport, SomeControlThrowable}
+import effectie.{ConcurrentSupport, FxCtor, SomeControlThrowable}
 import hedgehog._
 import hedgehog.runner._
 
@@ -364,6 +364,8 @@ object CanRecoverSpec extends Properties {
     effectOf[F](a)
 
   object IOSpec {
+
+    import effectie.cats.Fx.IoFx
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
@@ -1429,6 +1431,7 @@ object CanRecoverSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.cats.Fx._
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

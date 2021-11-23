@@ -3,7 +3,7 @@ package effectie.cats
 import cats._
 import cats.syntax.all._
 import effectie.ConsoleEffect.ConsoleEffectWithoutFlatMap
-import effectie.YesNo
+import effectie.{FxCtor, YesNo}
 
 trait ConsoleEffect[F[_]] extends effectie.ConsoleEffect[F]
 

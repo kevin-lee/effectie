@@ -5,10 +5,10 @@ import cats.data.EitherT
 import cats.effect._
 import cats.syntax.all._
 import effectie.cats.Effectful._
-import effectie.cats.FxCtor
+import effectie.cats.Fx._
 import effectie.cats.syntax.error._
 import effectie.testing.types._
-import effectie.{ConcurrentSupport, SomeControlThrowable}
+import effectie.{ConcurrentSupport, FxCtor, SomeControlThrowable}
 import hedgehog._
 import hedgehog.runner._
 

@@ -2,6 +2,9 @@ package effectie.cats
 
 import effectie.cats.Effectful._
 
+import effectie.FxCtor
+
+
 trait Effectful {
 
   def effectOf[F[_]]: CurriedEffectOf[F] = new CurriedEffectOf[F]

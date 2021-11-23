@@ -8,7 +8,7 @@ import cats.instances.all._
 import cats.syntax.all._
 import effectie.cats.Effectful._
 import effectie.testing.types.SomeError
-import effectie.{ConcurrentSupport, SomeControlThrowable}
+import effectie.{ConcurrentSupport, FxCtor, SomeControlThrowable}
 import hedgehog._
 import hedgehog.runner._
 
@@ -188,6 +188,9 @@ object CanCatchSpec extends Properties {
     effectOf[F](a)
 
   object IoSpec {
+
+    import effectie.cats.Fx.IoFx
+    import effectie.cats.CanCatchOps
 
     def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
@@ -406,6 +409,7 @@ object CanCatchSpec extends Properties {
   }
 
   object FutureSpec {
+
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
@@ -570,6 +574,8 @@ object CanCatchSpec extends Properties {
   }
 
   object IdSpec {
+
+    import effectie.cats.Fx.IdFx
 
     def testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 

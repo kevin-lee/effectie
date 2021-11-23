@@ -8,7 +8,7 @@ import cats.syntax.either.catsSyntaxEitherId
 import cats.{Eq, Functor, Id, Monad}
 import effectie.testing.tools._
 import effectie.testing.types.{SomeError, SomeThrowableError}
-import effectie.{ConcurrentSupport, SomeControlThrowable}
+import effectie.{ConcurrentSupport, Fx, SomeControlThrowable}
 import hedgehog._
 import hedgehog.runner._
 
@@ -233,10 +233,11 @@ object FxSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: FxCtor: Functor, A](a: => A): F[A] =
-    FxCtor[F].effectOf(a)
+  def run[F[_]: Fx: Functor, A](a: => A): F[A] =
+    Fx[F].effectOf(a)
 
   object IoSpec {
+    import effectie.cats.Fx._
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
@@ -316,7 +317,7 @@ object FxSpec extends Properties {
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).completeAndEqualTo(true)
 
-      implicit val ioFx: Fx[IO] = Fx.IoFx
+//      implicit val ioFx: Fx[IO] = Fx.IoFx
 
       MonadSpec.test1_Identity[IO]
     }
@@ -329,7 +330,7 @@ object FxSpec extends Properties {
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).completeAndEqualTo(true)
 
-      implicit val ioFx: Fx[IO] = Fx.IoFx
+//      implicit val ioFx: Fx[IO] = Fx.IoFx
 
       MonadSpec.test2_Composition[IO]
     }
@@ -342,7 +343,7 @@ object FxSpec extends Properties {
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).completeAndEqualTo(true)
 
-      implicit val ioFx: Fx[IO] = Fx.IoFx
+//      implicit val ioFx: Fx[IO] = Fx.IoFx
 
       MonadSpec.test3_IdentityAp[IO]
     }
@@ -355,7 +356,7 @@ object FxSpec extends Properties {
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).completeAndEqualTo(true)
 
-      implicit val ioFx: Fx[IO] = Fx.IoFx
+//      implicit val ioFx: Fx[IO] = Fx.IoFx
 
       MonadSpec.test4_Homomorphism[IO]
     }
@@ -368,7 +369,7 @@ object FxSpec extends Properties {
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).completeAndEqualTo(true)
 
-      implicit val ioFx: Fx[IO] = Fx.IoFx
+//      implicit val ioFx: Fx[IO] = Fx.IoFx
 
       MonadSpec.test5_Interchange[IO]
     }
@@ -381,7 +382,7 @@ object FxSpec extends Properties {
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).completeAndEqualTo(true)
 
-      implicit val ioFx: Fx[IO] = Fx.IoFx
+//      implicit val ioFx: Fx[IO] = Fx.IoFx
 
       MonadSpec.test6_CompositionAp[IO]
     }
@@ -394,7 +395,7 @@ object FxSpec extends Properties {
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).completeAndEqualTo(true)
 
-      implicit val ioFx: Fx[IO] = Fx.IoFx
+//      implicit val ioFx: Fx[IO] = Fx.IoFx
 
       MonadSpec.test7_LeftIdentity[IO]
     }
@@ -407,7 +408,7 @@ object FxSpec extends Properties {
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).completeAndEqualTo(true)
 
-      implicit val ioFx: Fx[IO] = Fx.IoFx
+//      implicit val ioFx: Fx[IO] = Fx.IoFx
 
       MonadSpec.test8_RightIdentity[IO]
     }
@@ -420,7 +421,7 @@ object FxSpec extends Properties {
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).completeAndEqualTo(true)
 
-      implicit val ioFx: Fx[IO] = Fx.IoFx
+//      implicit val ioFx: Fx[IO] = Fx.IoFx
 
       MonadSpec.test9_Associativity[IO]
     }
@@ -583,6 +584,8 @@ object FxSpec extends Properties {
 
       def testCanCatch_IO_catchNonFatalEitherTShouldCatchNonFatal: Result = {
 
+        import effectie.cats.CanCatch._
+
         val es: ExecutorService    = ConcurrentSupport.newExecutorService()
         implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
@@ -596,6 +599,8 @@ object FxSpec extends Properties {
 
       @SuppressWarnings(Array("org.wartremover.warts.ToString"))
       def testCanCatch_IO_catchNonFatalEitherTShouldNotCatchFatal: Result = {
+
+        import effectie.cats.CanCatch._
 
         val es: ExecutorService    = ConcurrentSupport.newExecutorService()
         implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -939,6 +944,8 @@ object FxSpec extends Properties {
   }
 
   object IdSpec {
+
+    import effectie.cats.Fx._
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

@@ -1,6 +1,7 @@
 package effectie.cats
 
 import cats.{Eq, Monad}
+import effectie.Fx
 import effectie.testing.cats.{Gens, Specs}
 import hedgehog.Property
 

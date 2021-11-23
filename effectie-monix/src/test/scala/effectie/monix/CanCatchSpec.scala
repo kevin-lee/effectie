@@ -7,7 +7,8 @@ import cats.instances.all._
 import cats.syntax.all._
 import effectie.monix.Effectful._
 import effectie.testing.types.SomeError
-import effectie.{ConcurrentSupport, SomeControlThrowable}
+import effectie.{ConcurrentSupport, FxCtor, SomeControlThrowable}
+import effectie.CanCatch
 import hedgehog._
 import hedgehog.runner._
 import monix.eval.Task
@@ -247,6 +248,8 @@ object CanCatchSpec extends Properties {
   object TaskSpec {
     import monix.execution.Scheduler.Implicits.global
 
+    import effectie.monix.Fx.TaskFx
+
     def testCanCatch_Task_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -423,6 +426,8 @@ object CanCatchSpec extends Properties {
 
   object IoSpec {
 
+    import effectie.monix.Fx.IoFx
+
     def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -598,6 +603,7 @@ object CanCatchSpec extends Properties {
   }
 
   object FutureSpec {
+
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
@@ -762,6 +768,7 @@ object CanCatchSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.monix.Fx.IdFx
 
     def testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 

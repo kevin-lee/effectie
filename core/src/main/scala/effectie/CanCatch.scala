@@ -4,10 +4,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait CanCatch[F[_]] {
 
-  type XorT[A, B]
+//  type XorT[A, B]
 
-  protected def xorT[A, B](fab: F[Either[A, B]]): XorT[A, B]
-  protected def xorT2FEither[A, B](efab: XorT[A, B]): F[Either[A, B]]
+//  protected def xorT[A, B](fab: F[Either[A, B]]): XorT[A, B]
+//  protected def xorT2FEither[A, B](efab: XorT[A, B]): F[Either[A, B]]
 
   def mapFa[A, B](fa: F[A])(f: A => B): F[B]
 
@@ -19,19 +19,32 @@ trait CanCatch[F[_]] {
   final def catchNonFatalEither[A, AA >: A, B](fab: => F[Either[A, B]])(f: Throwable => AA): F[Either[AA, B]] =
     mapFa(catchNonFatal(fab)(f))(_.joinRight)
 
-  final def catchNonFatalEitherT[A, AA >: A, B](fab: => XorT[A, B])(f: Throwable => AA): XorT[AA, B] =
-    xorT(catchNonFatalEither[A, AA, B](xorT2FEither(fab))(f))
-
 }
 
 object CanCatch {
   def apply[F[_]: CanCatch]: CanCatch[F] = implicitly[CanCatch[F]]
 
-  trait CanCatchFuture extends CanCatch[Future] {
-    def EC0: ExecutionContext
+  trait FutureCanCatch extends CanCatch[Future] {
+    implicit def EC0: ExecutionContext
     @inline override final def mapFa[A, B](fa: Future[A])(f: A => B): Future[B] =
       fa.map(f)(EC0)
 
+    @inline override final def catchNonFatalThrowable[A](fa: => Future[A]): Future[Either[Throwable, A]] =
+      fa.transform {
+        case scala.util.Success(a) =>
+          scala.util.Try[Either[Throwable, A]](Right(a))
+
+        case scala.util.Failure(scala.util.control.NonFatal(ex)) =>
+          scala.util.Try[Either[Throwable, A]](Left(ex))
+
+        case scala.util.Failure(ex) =>
+          throw ex
+      }
+
   }
+
+  final class CanCatchFuture(override implicit val EC0: ExecutionContext) extends FutureCanCatch
+
+  implicit def canCatchFuture(implicit EC: ExecutionContext): CanCatch[Future] = new CanCatchFuture
 
 }

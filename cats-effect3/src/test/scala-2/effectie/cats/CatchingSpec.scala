@@ -10,7 +10,7 @@ import cats.syntax.all._
 import effectie.cats.Effectful._
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.testing.types.SomeError
-import effectie.{ConcurrentSupport, SomeControlThrowable}
+import effectie.{ConcurrentSupport, FxCtor, SomeControlThrowable}
 import hedgehog._
 import hedgehog.runner._
 
@@ -232,6 +232,8 @@ object CatchingSpec extends Properties {
     effectOf[F](a)
 
   object IoSpec {
+
+    import effectie.cats.Fx._
 
     def testCatching_IO_catchNonFatalShouldCatchNonFatal: Result = {
 
@@ -720,6 +722,8 @@ object CatchingSpec extends Properties {
   }
 
   object IdSpec {
+
+    import effectie.cats.Fx._
 
     def testCatching_Id_catchNonFatalShouldCatchNonFatal: Result = {
 

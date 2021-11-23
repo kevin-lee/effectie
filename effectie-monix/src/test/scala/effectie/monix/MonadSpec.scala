@@ -1,6 +1,7 @@
 package effectie.monix
 
 import cats.{Eq, Monad}
+import effectie.Fx
 import hedgehog.runner.Test
 
 object MonadSpec {

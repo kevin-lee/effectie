@@ -2,6 +2,8 @@ package effectie.cats
 
 import cats.data.EitherT
 
+import effectie.{FxCtor, CanCatch}
+
 /** @author Kevin Lee
   * @since 2020-06-07
   */
@@ -106,11 +108,13 @@ object Catching extends Catching {
       new CurriedCanCatchEitherT2[F, A, B](() => fab)
   }
 
+  import effectie.cats.CanCatchOps
+
   private[Catching] final class CurriedCanCatchEitherT2[F[_], A, B](
     private val fab: () => EitherT[F, A, B]
   ) extends AnyVal {
     def apply(f: Throwable => A)(implicit CC: CanCatch[F]): EitherT[F, A, B] =
-      CanCatch[F].catchNonFatalEitherT(fab())(f)
+      CC.catchNonFatalEitherT(fab())(f)
   }
 
 }

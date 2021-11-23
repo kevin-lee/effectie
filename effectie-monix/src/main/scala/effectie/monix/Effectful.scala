@@ -1,5 +1,6 @@
 package effectie.monix
 
+import effectie.FxCtor
 import effectie.monix.Effectful._
 
 trait Effectful {

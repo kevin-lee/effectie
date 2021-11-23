@@ -1,28 +1,29 @@
 package effectie.monix
 
 import cats.Id
-import cats.data.EitherT
 import cats.effect.IO
 import cats.syntax.all._
 import monix.eval.Task
 
-import scala.concurrent.{ExecutionContext, Future}
+//import scala.concurrent.{ExecutionContext, Future}
 
 /** @author Kevin Lee
   * @since 2020-06-07
   */
-trait CanCatch[F[_]] extends effectie.CanCatch[F] {
-
-  override type XorT[A, B] = EitherT[F, A, B]
-
-  @inline override final protected def xorT[A, B](fab: F[Either[A, B]]): EitherT[F, A, B] = EitherT(fab)
-
-  @inline override final protected def xorT2FEither[A, B](efab: EitherT[F, A, B]): F[Either[A, B]] = efab.value
-
-}
+//trait CanCatch[F[_]] extends effectie.CanCatch[F] {
+//
+////  override type XorT[A, B] = EitherT[F, A, B]
+////
+////  @inline override final protected def xorT[A, B](fab: F[Either[A, B]]): EitherT[F, A, B] = EitherT(fab)
+////
+////  @inline override final protected def xorT2FEither[A, B](efab: EitherT[F, A, B]): F[Either[A, B]] = efab.value
+//
+//}
 
 object CanCatch {
-  def apply[F[_]: CanCatch]: CanCatch[F] = implicitly[CanCatch[F]]
+  type CanCatch[F[_]] = effectie.CanCatch[F]
+
+//  def apply[F[_]: CanCatch]: CanCatch[F] = implicitly[CanCatch[F]]
 
   implicit object CanCatchTask extends CanCatch[Task] {
 
@@ -42,25 +43,25 @@ object CanCatch {
 
   }
 
-  @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
-  implicit def canCatchFuture(implicit EC: ExecutionContext): CanCatch[Future] =
-    new effectie.CanCatch.CanCatchFuture with CanCatch[Future] {
-
-      override val EC0: ExecutionContext = EC
-
-      override def catchNonFatalThrowable[A](fa: => Future[A]): Future[Either[Throwable, A]] =
-      fa.transform {
-        case scala.util.Success(a) =>
-          scala.util.Try[Either[Throwable, A]](Right(a))
-
-        case scala.util.Failure(scala.util.control.NonFatal(ex)) =>
-          scala.util.Try[Either[Throwable, A]](Left(ex))
-
-        case scala.util.Failure(ex) =>
-          throw ex
-      }(EC0)
-
-  }
+//  @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
+//  implicit def canCatchFuture(implicit EC: ExecutionContext): CanCatch[Future] =
+//    new effectie.CanCatch.CanCatchFuture with CanCatch[Future] {
+//
+//      override val EC0: ExecutionContext = EC
+//
+//      override def catchNonFatalThrowable[A](fa: => Future[A]): Future[Either[Throwable, A]] =
+//      fa.transform {
+//        case scala.util.Success(a) =>
+//          scala.util.Try[Either[Throwable, A]](Right(a))
+//
+//        case scala.util.Failure(scala.util.control.NonFatal(ex)) =>
+//          scala.util.Try[Either[Throwable, A]](Left(ex))
+//
+//        case scala.util.Failure(ex) =>
+//          throw ex
+//      }(EC0)
+//
+//  }
 
   implicit object CanCatchId extends CanCatch[Id] {
 

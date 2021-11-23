@@ -269,7 +269,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
     .settings(
       name                                    := prefixedProjectName(projectName.projectName),
       scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
-      libraryDependencies ++= libs.hedgehogLibs.map(_ % Test),
+      libraryDependencies ++= libs.hedgehogLibs.map(_ % Test) ++ List("io.kevinlee" %% "extras-cats" % "0.2.0" % Test),
       /* WartRemover and scalacOptions { */
 //      Compile / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
 //      Test / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),

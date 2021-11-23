@@ -3,12 +3,14 @@ package effectie.cats
 import cats.effect.IO
 import cats.Id
 
-import scala.concurrent.{ExecutionContext, Future}
+//import scala.concurrent.{ExecutionContext, Future}
+//import effectie.FxCtor
 
-trait Fx[F[_]] extends effectie.Fx[F] with FxCtor[F] with effectie.FxCtor[F] with CanCatch[F]
+//trait Fx[F[_]] extends effectie.Fx[F] with FxCtor[F] with effectie.FxCtor[F] with CanCatch[F]
 
 object Fx {
-  def apply[F[_]: Fx]: Fx[F] = implicitly[Fx[F]]
+  type Fx[F[_]] = effectie.Fx[F]
+//  def apply[F[_]: Fx]: Fx[F] = implicitly[Fx[F]]
 
   implicit object IoFx extends Fx[IO] {
 
@@ -27,17 +29,11 @@ object Fx {
       CanCatch.CanCatchIo.catchNonFatalThrowable(fa)
   }
 
-  @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
-  implicit def futureFx(implicit EC: ExecutionContext): Fx[Future] = new FutureFx
+//  @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
+//  implicit def futureFx(implicit EC: ExecutionContext): Fx[Future] = new FutureFx
 
-  final class FutureFx(implicit override val EC0: ExecutionContext)
-      extends Fx[Future]
-      with FxCtor[Future]
-      with effectie.FxCtor.FutureFxCtor
-      with effectie.CanCatch.CanCatchFuture {
-    override def catchNonFatalThrowable[A](fa: => Future[A]): Future[Either[Throwable, A]] =
-      CanCatch.canCatchFuture.catchNonFatalThrowable(fa)
-  }
+//  final class FutureFx(implicit override val EC0: ExecutionContext)
+//      extends effectie.Fx.FxFuture
 
   implicit object IdFx extends Fx[Id] {
 

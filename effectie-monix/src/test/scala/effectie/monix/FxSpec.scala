@@ -274,6 +274,9 @@ object FxSpec extends Properties {
   object TaskSpec {
     import monix.execution.Scheduler.Implicits.global
 
+    import effectie.Fx
+    import effectie.monix.Fx._
+
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
@@ -335,7 +338,7 @@ object FxSpec extends Properties {
       implicit val eqIo: Eq[Task[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).runSyncUnsafe()
 
-      implicit val ioFx: Fx[Task] = Fx.TaskFx
+//      implicit val ioFx: Fx[Task] = Fx.TaskFx
 
       MonadSpec.testMonadLaws[Task]("Task")
     }
@@ -520,6 +523,8 @@ object FxSpec extends Properties {
   }
 
   object IoSpec {
+
+    import effectie.monix.Fx._
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
@@ -1019,6 +1024,8 @@ object FxSpec extends Properties {
   }
 
   object IdSpec {
+
+    import effectie.monix.Fx._
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

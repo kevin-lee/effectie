@@ -2,9 +2,10 @@ package effectie.cats
 
 import cats.Id
 import cats.effect.IO
-import effectie.ConcurrentSupport
+import effectie.{ConcurrentSupport, FxCtor}
 import effectie.testing.tools._
 import effectie.testing.types.SomeThrowableError
+import effectie.Fx
 import hedgehog._
 import hedgehog.runner._
 
@@ -64,6 +65,7 @@ object EffectfulSpec extends Properties {
   }
 
   object IoSpec {
+    import effectie.cats.Fx._
 
     @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
     def testAll: Property = for {
@@ -276,6 +278,7 @@ object EffectfulSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.cats.Fx._
 
     def testAll: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

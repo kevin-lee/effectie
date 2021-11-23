@@ -12,6 +12,8 @@ trait FxCtor[F[_]] {
 
 object FxCtor {
 
+  def apply[F[_]: FxCtor]: FxCtor[F] = implicitly[FxCtor[F]]
+
   trait FutureFxCtor extends FxCtor[Future] {
 
     implicit def EC0: ExecutionContext
@@ -25,4 +27,9 @@ object FxCtor {
     @inline override final def errorOf[A](throwable: Throwable): Future[A] = Future.failed[A](throwable)
 
   }
+
+  final class FxCtorFuture(override implicit val EC0: ExecutionContext) extends FutureFxCtor
+
+  implicit def fxCtorFuture(implicit EC: ExecutionContext): FxCtor[Future] = new FxCtorFuture
+
 }

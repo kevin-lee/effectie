@@ -5,6 +5,9 @@ import cats.data.EitherT
 import cats.effect._
 import cats.instances.all._
 import cats.syntax.all._
+import effectie.{FxCtor, CanCatch}
+import effectie.cats._
+import effectie.cats.Fx._
 import effectie.cats.Effectful._
 import effectie.testing.types._
 import effectie.{ConcurrentSupport, SomeControlThrowable}

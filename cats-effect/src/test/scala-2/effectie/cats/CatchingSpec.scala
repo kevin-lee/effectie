@@ -8,7 +8,8 @@ import cats.instances.all._
 import cats.syntax.all._
 import effectie.cats.Effectful._
 import effectie.testing.types.SomeError
-import effectie.{ConcurrentSupport, SomeControlThrowable}
+import effectie.{ConcurrentSupport, FxCtor, SomeControlThrowable}
+import effectie.cats.Fx._
 import hedgehog._
 import hedgehog.runner._
 

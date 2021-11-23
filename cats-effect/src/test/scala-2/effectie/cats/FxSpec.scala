@@ -4,6 +4,8 @@ import cats.data.EitherT
 import cats.effect._
 import cats.syntax.all._
 import cats.{Eq, Functor, Id, Monad}
+import effectie.Fx
+import effectie.cats.Fx._
 import effectie.testing.tools._
 import effectie.testing.types.{SomeError, SomeThrowableError}
 import effectie.{ConcurrentSupport, SomeControlThrowable}
@@ -269,7 +271,7 @@ object FxSpec extends Properties {
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).unsafeRunSync()
 
-      implicit val ioFx: Fx[IO] = Fx.IoFx
+      implicit val ioFx: Fx[IO] = effectie.cats.Fx.IoFx
 
       MonadSpec.testMonadLaws[IO]("IO")
     }
@@ -403,7 +405,7 @@ object FxSpec extends Properties {
       def testFx_IO_catchNonFatalEitherTShouldCatchNonFatal: Result = {
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa                = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+        val fa: EitherT[IO, SomeError, Int] = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
         val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
         val actual            = Fx[IO].catchNonFatalEitherT(fa)(SomeError.someThrowable).value.unsafeRunSync()
 

@@ -1,5 +1,6 @@
 package effectie.cats
 
+import effectie.FxCtor
 import effectie.cats.Effectful.{CurriedErrorOf, _}
 
 trait Effectful {
