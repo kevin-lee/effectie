@@ -6,7 +6,7 @@ import cats.syntax.all.*
 import cats.{Eq, Functor, Id, Monad}
 import effectie.testing.tools.*
 import effectie.testing.types.{SomeError, SomeThrowableError}
-import effectie.{ConcurrentSupport, SomeControlThrowable}
+import effectie.{ConcurrentSupport, Fx, SomeControlThrowable}
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -203,10 +203,12 @@ object FxSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: FxCtor: Functor, A](a: => A): F[A] =
-    FxCtor[F].effectOf(a)
+  def run[F[*]: Fx: Functor, A](a: => A): F[A] =
+    Fx[F].effectOf(a)
 
   object IoSpec {
+
+    import effectie.cats.Fx.given
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
@@ -264,10 +266,10 @@ object FxSpec extends Properties {
     def testMonadLaws: List[Test] = {
       import cats.syntax.eq.*
 
-      implicit val eqIo: Eq[IO[Int]] =
+      given eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).unsafeRunSync()
 
-      implicit val ioFx: Fx[IO] = Fx.ioFx
+      given ioFx: Fx[IO] = effectie.cats.Fx.ioFx
 
       MonadSpec.testMonadLaws[IO]("IO")
     }
@@ -696,6 +698,8 @@ object FxSpec extends Properties {
   }
 
   object IdSpec {
+
+    import effectie.cats.Fx.given
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

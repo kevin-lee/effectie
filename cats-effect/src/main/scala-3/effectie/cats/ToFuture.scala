@@ -8,7 +8,7 @@ import scala.concurrent.{ExecutionContext, Future}
 /** @author Kevin Lee
   * @since 2020-09-23
   */
-trait ToFuture[F[_]] {
+trait ToFuture[F[*]] {
 
   def unsafeToFuture[A](fa: F[A]): Future[A]
 
@@ -16,7 +16,7 @@ trait ToFuture[F[_]] {
 
 object ToFuture {
 
-  def apply[F[_]: ToFuture]: ToFuture[F] = summon[ToFuture[F]]
+  def apply[F[*]: ToFuture]: ToFuture[F] = summon[ToFuture[F]]
 
   given ioToFuture: ToFuture[IO] with {
 

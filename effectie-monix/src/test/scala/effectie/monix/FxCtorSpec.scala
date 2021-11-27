@@ -25,6 +25,10 @@ object FxCtorSpec extends Properties {
   object TaskSpec {
     import monix.execution.Scheduler.Implicits.global
 
+    import effectie.FxCtor
+
+    import effectie.monix.Fx._
+
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
@@ -78,6 +82,8 @@ object FxCtorSpec extends Properties {
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
+
+    import effectie.FxCtor
 
     val waitFor: FiniteDuration = 1.second
 
@@ -135,6 +141,9 @@ object FxCtorSpec extends Properties {
   }
 
   object IdSpec {
+
+    import effectie.FxCtor
+    import effectie.monix.Fx._
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

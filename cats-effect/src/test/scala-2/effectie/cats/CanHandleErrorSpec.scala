@@ -8,6 +8,7 @@ import cats.syntax.all._
 import effectie.cats.Effectful._
 import effectie.testing.types.SomeError
 import effectie.{ConcurrentSupport, SomeControlThrowable}
+import effectie.cats.FxCtor._
 import hedgehog._
 import hedgehog.runner._
 
@@ -17,6 +18,10 @@ import scala.util.control.{ControlThrowable, NonFatal}
   * @since 2020-08-17
   */
 object CanHandleErrorSpec extends Properties {
+
+  type FxCtor[F[_]] = effectie.FxCtor[F]
+  val FxCtor: effectie.FxCtor.type = effectie.FxCtor
+
 
   override def tests: List[Test] = List(
     /* IO */

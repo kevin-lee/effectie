@@ -8,9 +8,9 @@ import cats.syntax.all._
 import effectie.cats.Effectful._
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.cats.syntax.error._
-import effectie.cats.{FxCtor, testing}
+import effectie.cats.testing
 import effectie.testing.types.SomeError
-import effectie.{ConcurrentSupport, SomeControlThrowable}
+import effectie.{ConcurrentSupport, Fx, SomeControlThrowable}
 import hedgehog._
 import hedgehog.runner._
 
@@ -189,10 +189,12 @@ object CanCatchSyntaxSpec {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[_]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object IoSpec {
+
+    import effectie.cats.Fx._
 
     def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
@@ -575,6 +577,8 @@ object CanCatchSyntaxSpec {
   }
 
   object IdSpec {
+
+    import effectie.cats.Fx._
 
     def testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
@@ -1092,10 +1096,12 @@ object CanHandleErrorSyntaxSpec {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[_]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object IoSpec {
+
+    import effectie.cats.Fx._
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
@@ -2017,6 +2023,7 @@ object CanHandleErrorSyntaxSpec {
   }
 
   object IdSpec {
+    import effectie.cats.Fx._
 
     def testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
@@ -2757,10 +2764,12 @@ object CanRecoverSyntaxSpec {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[_]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object IOSpec {
+
+    import effectie.cats.Fx._
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
@@ -3794,6 +3803,8 @@ object CanRecoverSyntaxSpec {
   }
 
   object IdSpec {
+
+    import effectie.cats.Fx._
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

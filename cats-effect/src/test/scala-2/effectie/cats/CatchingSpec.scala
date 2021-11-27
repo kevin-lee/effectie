@@ -9,6 +9,7 @@ import cats.syntax.all._
 import effectie.cats.Effectful._
 import effectie.testing.types.SomeError
 import effectie.{ConcurrentSupport, SomeControlThrowable}
+import effectie.cats.Fx._
 import hedgehog._
 import hedgehog.runner._
 
@@ -18,6 +19,8 @@ import scala.util.control.ControlThrowable
   * @since 2020-07-31
   */
 object CatchingSpec extends Properties {
+  type FxCtor[F[_]] = effectie.FxCtor[F]
+  val FxCtor: effectie.FxCtor.type = effectie.FxCtor
 
   override def tests: List[Test] = List(
     /* IO */

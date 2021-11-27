@@ -4,17 +4,16 @@ import cats.effect.IO
 import cats.Id
 import monix.eval.Task
 
-import scala.concurrent.{ExecutionContext, Future}
-
 /** @author Kevin Lee
   * @since 2021-05-16
   */
-trait Fx[F[_]] extends effectie.Fx[F] with FxCtor[F] with effectie.FxCtor[F] with CanCatch[F]
-
 object Fx {
+  type Fx[F[_]] = effectie.Fx[F]
+
   def apply[F[_]: Fx]: Fx[F] = implicitly[Fx[F]]
 
   implicit object TaskFx extends Fx[Task] {
+
 
     @inline override final def effectOf[A](a: => A): Task[A] = Task(a)
 
@@ -50,18 +49,6 @@ object Fx {
       CanCatch.CanCatchIo.catchNonFatalThrowable(fa)
 
 
-  }
-
-  @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
-  implicit def futureFx(implicit EC: ExecutionContext): Fx[Future] = new FutureFx
-
-  final class FutureFx(implicit override val EC0: ExecutionContext)
-      extends Fx[Future]
-      with FxCtor[Future]
-        with effectie.FxCtor.FutureFxCtor
-        with effectie.CanCatch.CanCatchFuture {
-    override def catchNonFatalThrowable[A](fa: => Future[A]): Future[Either[Throwable, A]] =
-      CanCatch.canCatchFuture.catchNonFatalThrowable(fa)
   }
 
   implicit object IdFx extends Fx[Id] {

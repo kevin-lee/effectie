@@ -5,9 +5,11 @@ import cats.data.EitherT
 import cats.effect.*
 import cats.instances.all.*
 import cats.syntax.all.*
+import effectie.CanCatch
 import effectie.cats.Effectful.*
+import effectie.cats.CanCatch as *
 import effectie.testing.types.SomeError
-import effectie.{ConcurrentSupport, SomeControlThrowable}
+import effectie.{ConcurrentSupport, Fx, SomeControlThrowable}
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -181,17 +183,19 @@ object CanCatchSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[*]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object IoSpec {
+
+    import effectie.cats.Fx.given
 
     def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = expectedExpcetion.asLeft[Int]
-      val actual            = CanCatch[IO].catchNonFatalThrowable(fa).unsafeRunSync()
+      val actual            = effectie.CanCatch[IO].catchNonFatalThrowable(fa).unsafeRunSync()
 
       actual ==== expected
     }
@@ -357,6 +361,7 @@ object CanCatchSpec extends Properties {
   }
 
   object FutureSpec {
+
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration.*
     import scala.concurrent.{ExecutionContext, Future}
@@ -521,6 +526,8 @@ object CanCatchSpec extends Properties {
   }
 
   object IdSpec {
+
+    import effectie.cats.Fx.given
 
     def testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 

@@ -4,10 +4,9 @@ import cats._
 import cats.data.EitherT
 import cats.syntax.all._
 import effectie.monix.Effectful._
-import effectie.monix.FxCtor
 import effectie.monix.syntax.error._
 import effectie.testing.types._
-import effectie.{ConcurrentSupport, SomeControlThrowable}
+import effectie.{ConcurrentSupport, Fx, SomeControlThrowable}
 import hedgehog._
 import hedgehog.runner._
 import monix.eval.Task
@@ -186,10 +185,11 @@ object CanCatchSyntaxSpec {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[_]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object TaskSpec {
+    import effectie.monix.Fx._
     import monix.execution.Scheduler.Implicits.global
 
     def testCanCatch_Task_catchNonFatalThrowableShouldCatchNonFatal: Result = {
@@ -531,6 +531,8 @@ object CanCatchSyntaxSpec {
   }
 
   object IdSpec {
+
+    import effectie.monix.Fx._
 
     def testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
@@ -1048,10 +1050,12 @@ object CanHandleErrorSyntaxSpec {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[_]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object TaskSpec {
+
+    import effectie.monix.Fx._
     import monix.execution.Scheduler.Implicits.global
 
     def testCanHandleError_Task_handleNonFatalWithShouldHandleNonFatalWith: Result = {
@@ -1887,6 +1891,8 @@ object CanHandleErrorSyntaxSpec {
 
   object IdSpec {
 
+    import effectie.monix.Fx._
+
     def testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -2626,10 +2632,12 @@ object CanRecoverSyntaxSpec {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[_]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object TaskSpec {
+
+    import effectie.monix.Fx._
     import monix.execution.Scheduler.Implicits.global
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
@@ -3581,6 +3589,7 @@ object CanRecoverSyntaxSpec {
   }
 
   object IdSpec {
+    import effectie.monix.Fx._
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

@@ -4,10 +4,10 @@ import cats.Id
 import cats.effect.IO
 import cats.effect.testkit.TestContext
 import cats.effect.unsafe.IORuntime
-import effectie.ConcurrentSupport
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.testing.tools.*
 import effectie.testing.types.*
+import effectie.{ConcurrentSupport, Fx, FxCtor}
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -35,31 +35,31 @@ object EffectfulSpec extends Properties {
 
   import Effectful.*
 
-  trait FxCtorClient[F[_]] {
+  trait FxCtorClient[F[*]] {
     def eftOf[A](a: A): F[A]
     def of[A](a: A): F[A]
     def unit: F[Unit]
   }
   object FxCtorClient      {
-    def apply[F[_]: FxCtorClient]: FxCtorClient[F]         = implicitly[FxCtorClient[F]]
-    implicit def eftClientF[F[_]: FxCtor]: FxCtorClient[F] = new FxCtorClientF[F]
-    final class FxCtorClientF[F[_]: FxCtor] extends FxCtorClient[F] {
+    def apply[F[*]: FxCtorClient]: FxCtorClient[F]         = implicitly[FxCtorClient[F]]
+    implicit def eftClientF[F[*]: FxCtor]: FxCtorClient[F] = new FxCtorClientF[F]
+    final class FxCtorClientF[F[*]: FxCtor] extends FxCtorClient[F] {
       override def eftOf[A](a: A): F[A] = effectOf(a)
       override def of[A](a: A): F[A]    = pureOf(a)
       override def unit: F[Unit]        = unitOf
     }
   }
 
-  trait FxClient[F[_]] {
+  trait FxClient[F[*]] {
     def eftOf[A](a: A): F[A]
     def of[A](a: A): F[A]
     def unit: F[Unit]
   }
   object FxClient      {
-    def apply[F[_]: FxClient]: FxClient[F]         =
+    def apply[F[*]: FxClient]: FxClient[F]         =
       implicitly[FxClient[F]]
-    implicit def eftClientF[F[_]: Fx]: FxClient[F] = new FxClientF[F]
-    final class FxClientF[F[_]: Fx] extends FxClient[F] {
+    implicit def eftClientF[F[*]: Fx]: FxClient[F] = new FxClientF[F]
+    final class FxClientF[F[*]: Fx] extends FxClient[F] {
       override def eftOf[A](a: A): F[A] = effectOf(a)
       override def of[A](a: A): F[A]    = pureOf(a)
       override def unit: F[Unit]        = unitOf
@@ -67,6 +67,7 @@ object EffectfulSpec extends Properties {
   }
 
   object IoSpec {
+    import effectie.cats.Fx.given
 
     val compat          = new CatsEffectIoCompatForFuture
     given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -293,6 +294,7 @@ object EffectfulSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.cats.Fx.given
 
     def testAll: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

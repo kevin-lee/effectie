@@ -2,7 +2,7 @@ package effectie.cats
 
 import cats.Id
 import cats.effect.IO
-import effectie.ConcurrentSupport
+import effectie.{ConcurrentSupport, Fx, FxCtor}
 import effectie.testing.tools.*
 import effectie.testing.types.SomeThrowableError
 import hedgehog.*
@@ -32,29 +32,29 @@ object EffectfulSpec extends Properties {
 
   import Effectful.*
 
-  trait FxCtorClient[F[_]] {
+  trait FxCtorClient[F[*]] {
     def eftOf[A](a: A): F[A]
     def of[A](a: A): F[A]
     def unit: F[Unit]
   }
   object FxCtorClient      {
-    def apply[F[_]: FxCtorClient]: FxCtorClient[F] = summon[FxCtorClient[F]]
-    given eftClientF[F[_]: FxCtor]: FxCtorClient[F] with {
+    def apply[F[*]: FxCtorClient]: FxCtorClient[F] = summon[FxCtorClient[F]]
+    given eftClientF[F[*]: FxCtor]: FxCtorClient[F] with {
       override def eftOf[A](a: A): F[A] = effectOf(a)
       override def of[A](a: A): F[A]    = pureOf(a)
       override def unit: F[Unit]        = unitOf
     }
   }
 
-  trait FxClient[F[_]] {
+  trait FxClient[F[*]] {
     def eftOf[A](a: A): F[A]
     def of[A](a: A): F[A]
     def unit: F[Unit]
   }
   object FxClient      {
-    def apply[F[_]: FxClient]: FxClient[F] =
+    def apply[F[*]: FxClient]: FxClient[F] =
       summon[FxClient[F]]
-    given eftClientF[F[_]: Fx]: FxClient[F] with {
+    given eftClientF[F[*]: Fx]: FxClient[F] with {
       override def eftOf[A](a: A): F[A] = effectOf(a)
       override def of[A](a: A): F[A]    = pureOf(a)
       override def unit: F[Unit]        = unitOf
@@ -62,6 +62,8 @@ object EffectfulSpec extends Properties {
   }
 
   object IoSpec {
+
+    import effectie.cats.Fx.given
 
     def testAll: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
@@ -271,6 +273,8 @@ object EffectfulSpec extends Properties {
   }
 
   object IdSpec {
+
+    import effectie.cats.Fx.given
 
     def testAll: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

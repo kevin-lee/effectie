@@ -1,7 +1,7 @@
 package effectie.monix
 
-import cats.Id
 import effectie.ConcurrentSupport
+import cats.Id
 import effectie.testing.tools._
 import effectie.testing.types.SomeThrowableError
 import hedgehog._
@@ -12,6 +12,10 @@ import monix.eval.Task
   * @since 2021-05-16
   */
 object EffectfulSpec extends Properties {
+
+  type Fx[F[_]] = effectie.Fx[F]
+  type FxCtor[F[_]] = effectie.FxCtor[F]
+
   override def tests: List[Test] = List(
     property("test Effectful.{effectOf, pureOf, unitOf} for Task", TaskSpec.testAll),
     property("test Effectful.effectOf[Task]", TaskSpec.testEffectOf),
@@ -41,14 +45,16 @@ object EffectfulSpec extends Properties {
     def eftOf[A](a: A): F[A]
     def of[A](a: A): F[A]
     def unit: F[Unit]
+    def errOf[A](throwable: Throwable): F[A]
   }
   object FxCtorClient      {
     def apply[F[_]: FxCtorClient]: FxCtorClient[F]         = implicitly[FxCtorClient[F]]
     implicit def eftClientF[F[_]: FxCtor]: FxCtorClient[F] = new FxCtorClientF[F]
     final class FxCtorClientF[F[_]: FxCtor] extends FxCtorClient[F] {
-      override def eftOf[A](a: A): F[A] = effectOf(a)
-      override def of[A](a: A): F[A]    = pureOf(a)
-      override def unit: F[Unit]        = unitOf
+      override def eftOf[A](a: A): F[A]                 = effectOf(a)
+      override def of[A](a: A): F[A]                    = pureOf(a)
+      override def unit: F[Unit]                        = unitOf
+      override def errOf[A](throwable: Throwable): F[A] = errorOf(throwable)
     }
   }
 
@@ -56,20 +62,23 @@ object EffectfulSpec extends Properties {
     def eftOf[A](a: A): F[A]
     def of[A](a: A): F[A]
     def unit: F[Unit]
+    def errOf[A](throwable: Throwable): F[A]
   }
   object FxClient      {
     def apply[F[_]: FxClient]: FxClient[F]         =
       implicitly[FxClient[F]]
     implicit def eftClientF[F[_]: Fx]: FxClient[F] = new FxClientF[F]
     final class FxClientF[F[_]: Fx] extends FxClient[F] {
-      override def eftOf[A](a: A): F[A] = effectOf(a)
-      override def of[A](a: A): F[A]    = pureOf(a)
-      override def unit: F[Unit]        = unitOf
+      override def eftOf[A](a: A): F[A]                 = effectOf(a)
+      override def of[A](a: A): F[A]                    = pureOf(a)
+      override def unit: F[Unit]                        = unitOf
+      override def errOf[A](throwable: Throwable): F[A] = errorOf(throwable)
     }
   }
 
   object TaskSpec {
     import monix.execution.Scheduler.Implicits.global
+    import effectie.monix.Fx._
 
     @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
     def testAll: Property = for {
@@ -173,6 +182,7 @@ object EffectfulSpec extends Properties {
 
   object IoSpec {
     import cats.effect.IO
+    import effectie.monix.Fx._
 
     @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
     def testAll: Property = for {
@@ -386,6 +396,8 @@ object EffectfulSpec extends Properties {
   }
 
   object IdSpec {
+
+    import effectie.monix.Fx._
 
     def testAll: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

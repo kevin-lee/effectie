@@ -18,6 +18,7 @@ import scala.util.control.ControlThrowable
   * @since 2020-07-31
   */
 object CatchingSpec extends Properties {
+  type FxCtor[F[_]] = effectie.FxCtor[F]
 
   override def tests: List[Test] = List(
     /* Task */
@@ -231,6 +232,8 @@ object CatchingSpec extends Properties {
 
   object TaskSpec {
     import monix.execution.Scheduler.Implicits.global
+
+    import effectie.monix.Fx._
 
     def testCatching_Task_catchNonFatalShouldCatchNonFatal: Result = {
 
@@ -652,6 +655,7 @@ object CatchingSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.monix.Fx._
 
     def testCatching_Id_catchNonFatalShouldCatchNonFatal: Result = {
 

@@ -6,6 +6,7 @@ import cats.effect.IO
 import cats.instances.all._
 import cats.syntax.all._
 import effectie.cats.Effectful._
+import effectie.cats.FxCtor._
 import effectie.testing.types.SomeError
 import effectie.{ConcurrentSupport, SomeControlThrowable}
 import hedgehog._
@@ -17,6 +18,8 @@ import scala.util.control.{ControlThrowable, NonFatal}
   * @since 2020-08-17
   */
 object CanRecoverSpec extends Properties {
+  type FxCtor[F[_]] = effectie.FxCtor[F]
+  val FxCtor: effectie.FxCtor.type = effectie.FxCtor
 
   override def tests: List[Test] = List(
     /* IO */

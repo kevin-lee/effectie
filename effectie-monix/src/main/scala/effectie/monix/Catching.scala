@@ -7,7 +7,7 @@ import cats.data.EitherT
   */
 trait Catching {
 
-  import Catching._
+  import effectie.monix.Catching._
 
   final def catchNonFatalThrowable[F[_]]: CurriedCanCatchThrowable[F] =
     new CurriedCanCatchThrowable[F]
@@ -27,8 +27,6 @@ trait Catching {
   def catchNonFatalEitherT[F[_]]: CurriedCanCatchEitherT1[F] =
     new CurriedCanCatchEitherT1[F]
 
-//  def catchNonFatalEitherT[F[_], A, B](fab: => EitherT[F, A, B])(f: Throwable => A)(implicit CC: CanCatch[F]): EitherT[F, A, B] =
-//    CanCatch[F].catchNonFatalEitherT(fab)(f)
 }
 
 @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
@@ -37,8 +35,8 @@ object Catching extends Catching {
   private[Catching] final class CurriedCanCatchThrowable[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
-    def apply[B](fb: => F[B])(implicit CC: CanCatch[F]): F[Either[Throwable, B]] =
-      CanCatch[F].catchNonFatalThrowable[B](fb)
+    def apply[B](fb: => F[B])(implicit CC: effectie.CanCatch[F]): F[Either[Throwable, B]] =
+      effectie.CanCatch[F].catchNonFatalThrowable[B](fb)
   }
 
   private[Catching] final class CurriedCanCatch1[F[_]](
@@ -51,8 +49,8 @@ object Catching extends Catching {
   private[Catching] final class CurriedCanCatch2[F[_], B](
     private val fb: () => F[B]
   ) extends AnyVal {
-    def apply[A](f: Throwable => A)(implicit CC: CanCatch[F]): F[Either[A, B]] =
-      CanCatch[F].catchNonFatal(fb())(f)
+    def apply[A](f: Throwable => A)(implicit CC: effectie.CanCatch[F]): F[Either[A, B]] =
+      effectie.CanCatch[F].catchNonFatal(fb())(f)
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
@@ -66,8 +64,8 @@ object Catching extends Catching {
   private[Catching] final class CurriedCanCatchF2[F[_], B](
     private val b: () => B
   ) extends AnyVal {
-    def apply[A](f: Throwable => A)(implicit EC: FxCtor[F], CC: CanCatch[F]): F[Either[A, B]] =
-      CanCatch[F].catchNonFatal(FxCtor[F].effectOf(b()))(f)
+    def apply[A](f: Throwable => A)(implicit EC: effectie.FxCtor[F], CC: effectie.CanCatch[F]): F[Either[A, B]] =
+      effectie.CanCatch[F].catchNonFatal(effectie.FxCtor[F].effectOf(b()))(f)
   }
 
   private[Catching] final class CurriedCanCatchEither1[F[_]](
@@ -80,8 +78,8 @@ object Catching extends Catching {
   private[Catching] final class CurriedCanCatchEither2[F[_], A, B](
     private val fab: () => F[Either[A, B]]
   ) extends AnyVal {
-    def apply(f: Throwable => A)(implicit CC: CanCatch[F]): F[Either[A, B]] =
-      CanCatch[F].catchNonFatalEither(fab())(f)
+    def apply(f: Throwable => A)(implicit CC: effectie.CanCatch[F]): F[Either[A, B]] =
+      effectie.CanCatch[F].catchNonFatalEither(fab())(f)
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
@@ -95,8 +93,8 @@ object Catching extends Catching {
   private[Catching] final class CurriedCanCatchEitherF2[F[_], A, B](
     private val ab: () => Either[A, B]
   ) extends AnyVal {
-    def apply(f: Throwable => A)(implicit EC: FxCtor[F], CC: CanCatch[F]): F[Either[A, B]] =
-      CanCatch[F].catchNonFatalEither(FxCtor[F].effectOf(ab()))(f)
+    def apply(f: Throwable => A)(implicit EC: effectie.FxCtor[F], CC: effectie.CanCatch[F]): F[Either[A, B]] =
+      effectie.CanCatch[F].catchNonFatalEither(effectie.FxCtor[F].effectOf(ab()))(f)
   }
 
   private[Catching] final class CurriedCanCatchEitherT1[F[_]](
@@ -109,8 +107,8 @@ object Catching extends Catching {
   private[Catching] final class CurriedCanCatchEitherT2[F[_], A, B](
     private val fab: () => EitherT[F, A, B]
   ) extends AnyVal {
-    def apply(f: Throwable => A)(implicit CC: CanCatch[F]): EitherT[F, A, B] =
-      CanCatch[F].catchNonFatalEitherT(fab())(f)
+    def apply(f: Throwable => A)(implicit CC: effectie.CanCatch[F]): EitherT[F, A, B] =
+      effectie.CanCatch[F].catchNonFatalEitherT(fab())(f)
   }
 
 }

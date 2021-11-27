@@ -1,7 +1,8 @@
 package effectie.cats.syntax
 
 import cats.data.EitherT
-import effectie.cats.{CanCatch, CanHandleError, CanRecover}
+import effectie.CanCatch
+import effectie.cats.*
 
 /** @author Kevin Lee
  * @since 2021-10-16
@@ -92,7 +93,7 @@ trait error {
     )(
       using canCatch: CanCatch[F]
     ): EitherT[F, AA, B] =
-      canCatch.catchNonFatalEitherT[A, AA, B](efab)(f)
+      EitherT(canCatch.catchNonFatalEither[A, AA, B](efab.value)(f))
 
     def handleEitherTNonFatalWith[AA >: A, BB >: B](
       handleError: Throwable => F[Either[AA, BB]]

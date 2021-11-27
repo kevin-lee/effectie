@@ -5,10 +5,8 @@ import cats.{Applicative, Id, Monad}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait Fx[F[_]] extends effectie.Fx[F] with FxCtor[F] with effectie.FxCtor[F] with CanCatch[F]
-
 object Fx {
-  def apply[F[_]: Fx]: Fx[F] = summon[Fx[F]]
+  type Fx[F[*]] = effectie.Fx[F]
 
   given ioFx: Fx[IO] with {
 
@@ -25,19 +23,6 @@ object Fx {
     inline override def catchNonFatalThrowable[A](fa: => IO[A]): IO[Either[Throwable, A]] =
       fa.attempt
 
-  }
-
-  given futureFx(using EC: ExecutionContext): Fx[Future] =
-    new FutureFx
-
-  final class FutureFx(using override val EC0: ExecutionContext)
-      extends Fx[Future]
-      with FxCtor[Future]
-      with effectie.FxCtor.FutureFxCtor
-      with effectie.CanCatch.CanCatchFuture {
-
-    override def catchNonFatalThrowable[A](fa: => Future[A]): Future[Either[Throwable, A]] =
-      CanCatch.canCatchFuture.catchNonFatalThrowable(fa)
   }
 
   given idFx: Fx[Id] with {

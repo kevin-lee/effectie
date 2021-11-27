@@ -5,7 +5,7 @@ import cats.data.EitherT
 import cats.syntax.all.*
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
-import effectie.{ConcurrentSupport, SomeControlThrowable}
+import effectie.{ConcurrentSupport, Fx, SomeControlThrowable}
 import effectie.cats.{CanCatch, FxCtor, testing}
 import effectie.testing.types.*
 import effectie.cats.Effectful.*
@@ -189,10 +189,11 @@ object CanCatchSyntaxSpec {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[*]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object IoSpec {
+    import effectie.cats.Fx.given
 
     def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
@@ -571,6 +572,7 @@ object CanCatchSyntaxSpec {
   }
 
   object IdSpec {
+    import effectie.cats.Fx.given
 
     def testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
@@ -1083,10 +1085,11 @@ object CanHandleErrorSyntaxSpec {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[*]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object IoSpec {
+    import effectie.cats.Fx.given
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
@@ -2000,6 +2003,7 @@ object CanHandleErrorSyntaxSpec {
   }
 
   object IdSpec {
+    import effectie.cats.Fx.given
 
     def testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
@@ -2731,10 +2735,11 @@ object CanRecoverSyntaxSpec {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[*]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object IOSpec {
+    import effectie.cats.Fx.given
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
@@ -3761,6 +3766,7 @@ object CanRecoverSyntaxSpec {
   }
 
   object IdSpec {
+    import effectie.cats.Fx.given
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

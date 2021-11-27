@@ -17,6 +17,7 @@ import scala.util.control.{ControlThrowable, NonFatal}
   * @since 2020-08-17
   */
 object CanHandleErrorSpec extends Properties {
+  type FxCtor[F[_]] = effectie.FxCtor[F]
 
   override def tests: List[Test] = List(
     /* Task */
@@ -362,6 +363,8 @@ object CanHandleErrorSpec extends Properties {
 
   object TaskSpec {
     import monix.execution.Scheduler.Implicits.global
+
+    import effectie.monix.Fx.TaskFx
 
     def testCanHandleError_Task_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
@@ -1205,6 +1208,8 @@ object CanHandleErrorSpec extends Properties {
   }
 
   object IdSpec {
+
+    import effectie.monix.Fx.IdFx
 
     def testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
