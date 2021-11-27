@@ -3,6 +3,7 @@ package effectie.cats
 import cats.Id
 import cats.effect.*
 import effectie.ConcurrentSupport
+import effectie.FxCtor
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -23,6 +24,8 @@ object FxCtorSpec extends Properties {
   )
 
   object IoSpec {
+
+    import effectie.cats.FxCtor.given
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
@@ -130,6 +133,8 @@ object FxCtorSpec extends Properties {
   }
 
   object IdSpec {
+
+    import effectie.cats.FxCtor.given
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

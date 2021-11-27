@@ -5,6 +5,9 @@ import effectie.testing.cats.{Gens, Specs}
 import hedgehog.Property
 
 object MonadSpec {
+
+  type Fx[F[_]] = effectie.Fx[F]
+
   def test1_Identity[F[_]: Fx: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws

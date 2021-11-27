@@ -17,6 +17,7 @@ import scala.util.control.{ControlThrowable, NonFatal}
   * @since 2020-08-17
   */
 object CanRecoverSpec extends Properties {
+  type FxCtor[F[_]] = effectie.FxCtor[F]
 
   override def tests: List[Test] = List(
     /* Task */
@@ -362,6 +363,7 @@ object CanRecoverSpec extends Properties {
 
   object TaskSpec {
     import monix.execution.Scheduler.Implicits.global
+    import effectie.monix.Fx.TaskFx
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
@@ -1344,6 +1346,7 @@ object CanRecoverSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.monix.Fx._
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

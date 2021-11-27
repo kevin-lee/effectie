@@ -3,7 +3,7 @@ package effectie.cats
 import cats.Id
 import cats.effect.*
 import cats.effect.unsafe.IORuntime
-import effectie.ConcurrentSupport
+import effectie.{ConcurrentSupport, FxCtor}
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import hedgehog.*
 import hedgehog.runner.*
@@ -25,6 +25,8 @@ object FxCtorSpec extends Properties {
   )
 
   object IoSpec {
+    import effectie.cats.Fx.given
+
     val compat = new CatsEffectIoCompatForFuture
 
     given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -148,6 +150,7 @@ object FxCtorSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.cats.Fx.given
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

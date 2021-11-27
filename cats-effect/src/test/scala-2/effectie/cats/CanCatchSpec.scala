@@ -5,6 +5,7 @@ import cats.data.EitherT
 import cats.effect._
 import cats.instances.all._
 import cats.syntax.all._
+import effectie.cats.Fx._
 import effectie.cats.Effectful._
 import effectie.testing.types._
 import effectie.{ConcurrentSupport, SomeControlThrowable}
@@ -17,6 +18,10 @@ import scala.util.control.ControlThrowable
   * @since 2020-07-31
   */
 object CanCatchSpec extends Properties {
+
+  type FxCtor[F[_]] = effectie.FxCtor[F]
+  type CanCatch[F[_]] = effectie.CanCatch[F]
+  val CanCatch: effectie.CanCatch.type = effectie.CanCatch
 
   override def tests: List[Test] = List(
     /* IO */

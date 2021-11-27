@@ -20,6 +20,9 @@ import scala.util.control.ControlThrowable
   * @since 2020-07-31
   */
 object CatchingSpec extends Properties {
+  type Fx[F[_]] = effectie.Fx[F]
+  type FxCtor[F[_]] = effectie.FxCtor[F]
+
 
   override def tests: List[Test] = List(
     /* IO */
@@ -232,6 +235,8 @@ object CatchingSpec extends Properties {
     effectOf[F](a)
 
   object IoSpec {
+
+    import effectie.cats.Fx._
 
     def testCatching_IO_catchNonFatalShouldCatchNonFatal: Result = {
 
@@ -720,6 +725,8 @@ object CatchingSpec extends Properties {
   }
 
   object IdSpec {
+
+    import effectie.cats.Fx._
 
     def testCatching_Id_catchNonFatalShouldCatchNonFatal: Result = {
 

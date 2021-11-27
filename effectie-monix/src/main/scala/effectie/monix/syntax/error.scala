@@ -1,8 +1,10 @@
 package effectie.monix.syntax
 
 import cats.data.EitherT
+import effectie.CanCatch
 import effectie.monix.syntax.error.{EitherTFABErrorHandlingOps, FAErrorHandlingOps, FEitherABErrorHandlingOps}
-import effectie.monix.{CanCatch, CanHandleError, CanRecover}
+import effectie.monix.{CanHandleError, CanRecover}
+import effectie.monix.CanCatchOps
 
 /** @author Kevin Lee
  * @since 2021-10-16

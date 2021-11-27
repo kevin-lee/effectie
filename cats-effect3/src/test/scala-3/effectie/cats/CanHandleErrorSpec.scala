@@ -8,7 +8,7 @@ import cats.instances.all.*
 import cats.syntax.all.*
 import effectie.cats.Effectful.*
 import effectie.testing.types.SomeError
-import effectie.{ConcurrentSupport, SomeControlThrowable}
+import effectie.{ConcurrentSupport, FxCtor, SomeControlThrowable}
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -358,10 +358,11 @@ object CanHandleErrorSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[*]: FxCtor: Functor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object IoSpec {
+    import effectie.cats.Fx.given
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
@@ -1285,6 +1286,7 @@ object CanHandleErrorSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.cats.Fx.given
 
     def testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 

@@ -1,6 +1,7 @@
 package effectie.cats
 
 import cats.data.EitherT
+import effectie.{CanCatch, FxCtor}
 
 /** @author Kevin Lee
   * @since 2020-06-07

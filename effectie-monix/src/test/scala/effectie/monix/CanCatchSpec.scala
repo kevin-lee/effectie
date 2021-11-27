@@ -19,6 +19,10 @@ import scala.util.control.ControlThrowable
   */
 object CanCatchSpec extends Properties {
 
+  type FxCtor[F[_]] = effectie.FxCtor[F]
+  type CanCatch[F[_]] = effectie.CanCatch[F]
+  val CanCatch: effectie.CanCatch.type = effectie.CanCatch
+
   override def tests: List[Test] = List(
     /* Task */
     example(
@@ -247,6 +251,8 @@ object CanCatchSpec extends Properties {
   object TaskSpec {
     import monix.execution.Scheduler.Implicits.global
 
+    import effectie.monix.Fx.TaskFx
+
     def testCanCatch_Task_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -423,6 +429,8 @@ object CanCatchSpec extends Properties {
 
   object IoSpec {
 
+    import effectie.monix.Fx.IoFx
+
     def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -598,6 +606,7 @@ object CanCatchSpec extends Properties {
   }
 
   object FutureSpec {
+
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
@@ -762,6 +771,7 @@ object CanCatchSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.monix.Fx.IdFx
 
     def testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 

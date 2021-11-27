@@ -7,8 +7,9 @@ import cats.effect.unsafe.IORuntime
 import cats.instances.all.*
 import cats.syntax.all.*
 import effectie.cats.Effectful.*
+import effectie.CanCatch
 import effectie.testing.types.SomeError
-import effectie.{ConcurrentSupport, SomeControlThrowable}
+import effectie.{ConcurrentSupport, FxCtor, SomeControlThrowable}
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -183,10 +184,12 @@ object CanCatchSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[*]: FxCtor
+  : Functor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object IoSpec {
+    import effectie.cats.Fx.given
 
     def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
@@ -565,6 +568,7 @@ object CanCatchSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.cats.Fx.given
 
     def testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 

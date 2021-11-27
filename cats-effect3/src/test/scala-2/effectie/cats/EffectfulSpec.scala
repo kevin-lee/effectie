@@ -15,6 +15,9 @@ import hedgehog.runner._
   * @since 2021-05-16
   */
 object EffectfulSpec extends Properties {
+  type Fx[F[_]] = effectie.Fx[F]
+  type FxCtor[F[_]] = effectie.FxCtor[F]
+
   override def tests: List[Test] = List(
     property("test Effectful.{effectOf, pureOf, unitOf} for IO", IoSpec.testAll),
     property("test Effectful.effectOf[IO]", IoSpec.testEffectOf),
@@ -39,14 +42,16 @@ object EffectfulSpec extends Properties {
     def eftOf[A](a: A): F[A]
     def of[A](a: A): F[A]
     def unit: F[Unit]
+    def errOf[A](throwable: Throwable): F[A]
   }
   object FxCtorClient      {
     def apply[F[_]: FxCtorClient]: FxCtorClient[F]         = implicitly[FxCtorClient[F]]
     implicit def eftClientF[F[_]: FxCtor]: FxCtorClient[F] = new FxCtorClientF[F]
     final class FxCtorClientF[F[_]: FxCtor] extends FxCtorClient[F] {
-      override def eftOf[A](a: A): F[A] = effectOf(a)
-      override def of[A](a: A): F[A]    = pureOf(a)
-      override def unit: F[Unit]        = unitOf
+      override def eftOf[A](a: A): F[A]                 = effectOf(a)
+      override def of[A](a: A): F[A]                    = pureOf(a)
+      override def unit: F[Unit]                        = unitOf
+      override def errOf[A](throwable: Throwable): F[A] = errorOf(throwable)
     }
   }
 
@@ -54,19 +59,23 @@ object EffectfulSpec extends Properties {
     def eftOf[A](a: A): F[A]
     def of[A](a: A): F[A]
     def unit: F[Unit]
+    def errOf[A](throwable: Throwable): F[A]
   }
   object FxClient      {
     def apply[F[_]: FxClient]: FxClient[F]         =
       implicitly[FxClient[F]]
     implicit def eftClientF[F[_]: Fx]: FxClient[F] = new FxClientF[F]
     final class FxClientF[F[_]: Fx] extends FxClient[F] {
-      override def eftOf[A](a: A): F[A] = effectOf(a)
-      override def of[A](a: A): F[A]    = pureOf(a)
-      override def unit: F[Unit]        = unitOf
+      override def eftOf[A](a: A): F[A]                 = effectOf(a)
+      override def of[A](a: A): F[A]                    = pureOf(a)
+      override def unit: F[Unit]                        = unitOf
+      override def errOf[A](throwable: Throwable): F[A] = errorOf(throwable)
     }
   }
 
   object IoSpec {
+
+    import effectie.cats.Fx._
 
     val compat                 = new CatsEffectIoCompatForFuture
     implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -99,7 +108,7 @@ object EffectfulSpec extends Properties {
       val testBeforeRun2          = actual2 ==== before
       import CatsEffectRunner._
       implicit val ticket: Ticker = Ticker(TestContext())
-      val runResult = io.completeAs(())
+      val runResult               = io.completeAs(())
       val testAfterRun            = actual ==== after
       val testAfterRun2           = actual2 ==== after
       Result.all(
@@ -128,9 +137,9 @@ object EffectfulSpec extends Properties {
 
       import CatsEffectRunner._
       implicit val ticket: Ticker = Ticker(TestContext())
-      val runResult = io.completeAs(())
+      val runResult               = io.completeAs(())
 
-      val testAfterRun  = actual ==== after
+      val testAfterRun = actual ==== after
       Result.all(
         List(
           testBefore.log("testBefore"),
@@ -153,7 +162,7 @@ object EffectfulSpec extends Properties {
 
       import CatsEffectRunner._
       implicit val ticket: Ticker = Ticker(TestContext())
-      val runResult = io.completeAs(())
+      val runResult               = io.completeAs(())
 
       val testAfterRun = actual ==== after
       Result.all(
@@ -296,13 +305,15 @@ object EffectfulSpec extends Properties {
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
       implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
 
-      val future                                    = errorOf[Future][Unit](expectedError)
+      val future = errorOf[Future][Unit](expectedError)
       expectThrowable(ConcurrentSupport.futureToValueAndTerminate(future, waitFor), expectedError)
     }
 
   }
 
   object IdSpec {
+
+    import effectie.cats.Fx._
 
     def testAll: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
@@ -376,7 +387,7 @@ object EffectfulSpec extends Properties {
       val expectedMessage = "This is a throwable test error."
       val expectedError   = SomeThrowableError.message(expectedMessage)
 
-      lazy val actual         = errorOf[Id][Unit](expectedError)
+      lazy val actual = errorOf[Id][Unit](expectedError)
       expectThrowable(actual, expectedError)
     }
 

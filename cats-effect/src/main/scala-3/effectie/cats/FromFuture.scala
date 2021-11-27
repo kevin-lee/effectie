@@ -9,13 +9,13 @@ import scala.concurrent.{Await, Future}
 /** @author Kevin Lee
   * @since 2020-09-22
   */
-trait FromFuture[F[_]] {
+trait FromFuture[F[*]] {
   def toEffect[A](future: => Future[A]): F[A]
 }
 
 object FromFuture {
 
-  def apply[F[_]: FromFuture]: FromFuture[F] = summon[FromFuture[F]]
+  def apply[F[*]: FromFuture]: FromFuture[F] = summon[FromFuture[F]]
 
   given fromFutureToIo(using cs: ContextShift[IO]): FromFuture[IO] with {
     override def toEffect[A](future: => Future[A]): IO[A] =

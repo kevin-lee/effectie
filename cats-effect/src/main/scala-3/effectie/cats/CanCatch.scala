@@ -11,18 +11,9 @@ import scala.concurrent.{ExecutionContext, Future}
 /** @author Kevin Lee
   * @since 2020-06-07
   */
-trait CanCatch[F[_]] extends effectie.CanCatch[F] {
-
-  override type XorT[A, B] = EitherT[F, A, B]
-
-  inline override final protected def xorT[A, B](fab: F[Either[A, B]]): EitherT[F, A, B] = EitherT(fab)
-
-  inline override final protected def xorT2FEither[A, B](efab: EitherT[F, A, B]): F[Either[A, B]] = efab.value
-
-}
-
 object CanCatch {
-  def apply[F[_]: CanCatch]: CanCatch[F] = summon[CanCatch[F]]
+
+  type CanCatch[F[*]] = effectie.CanCatch[F]
 
   given canCatchIo: CanCatch[IO] with {
 
@@ -32,25 +23,6 @@ object CanCatch {
       fa.attempt
 
   }
-
-  given canCatchFuture(using EC: ExecutionContext): CanCatch[Future] =
-    new effectie.CanCatch.CanCatchFuture with CanCatch[Future] {
-
-      override val EC0: ExecutionContext = EC
-
-      override def catchNonFatalThrowable[A](fa: => Future[A]): Future[Either[Throwable, A]] =
-        fa.transform {
-          case scala.util.Success(a) =>
-            scala.util.Try[Either[Throwable, A]](Right(a))
-
-          case scala.util.Failure(scala.util.control.NonFatal(ex)) =>
-            scala.util.Try[Either[Throwable, A]](Left(ex))
-
-          case scala.util.Failure(ex) =>
-            throw ex
-        }(EC0)
-
-    }
 
   given canCatchId: CanCatch[Id] with {
 

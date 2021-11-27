@@ -10,7 +10,7 @@ import scala.util.control.NonFatal
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-trait CanHandleError[F[_]] extends effectie.CanHandleError[F] {
+trait CanHandleError[F[*]] extends effectie.CanHandleError[F] {
 
   type XorT[A, B] = EitherT[F, A, B]
 
@@ -24,7 +24,7 @@ trait CanHandleError[F[_]] extends effectie.CanHandleError[F] {
 
 object CanHandleError {
 
-  def apply[F[_]: CanHandleError]: CanHandleError[F] = summon[CanHandleError[F]]
+  def apply[F[*]: CanHandleError]: CanHandleError[F] = summon[CanHandleError[F]]
 
   given ioCanHandleError: CanHandleError[IO] with {
 

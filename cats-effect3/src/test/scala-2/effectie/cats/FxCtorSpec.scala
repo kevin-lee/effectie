@@ -25,6 +25,8 @@ object FxCtorSpec extends Properties {
   )
 
   object IoSpec {
+    import effectie.cats.Fx._
+
     val compat                 = new CatsEffectIoCompatForFuture
     implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
@@ -138,6 +140,8 @@ object FxCtorSpec extends Properties {
   }
 
   object IdSpec {
+
+    import effectie.cats.Fx._
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

@@ -12,6 +12,10 @@ import hedgehog.runner._
   * @since 2021-05-16
   */
 object EffectfulSpec extends Properties {
+  type Fx[F[_]] = effectie.Fx[F]
+  val Fx: effectie.Fx.type = effectie.Fx
+  type FxCtor[F[_]] = effectie.FxCtor[F]
+
   override def tests: List[Test] = List(
     property("test Effectful.{effectOf, pureOf, unitOf} for IO", IoSpec.testAll),
     property("test Effectful.effectOf[IO]", IoSpec.testEffectOf),
@@ -64,6 +68,7 @@ object EffectfulSpec extends Properties {
   }
 
   object IoSpec {
+    import effectie.cats.Fx._
 
     @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
     def testAll: Property = for {
@@ -276,6 +281,7 @@ object EffectfulSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.cats.Fx._
 
     def testAll: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

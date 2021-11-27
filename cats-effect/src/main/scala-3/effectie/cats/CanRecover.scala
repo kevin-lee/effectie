@@ -10,7 +10,7 @@ import scala.util.control.NonFatal
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-trait CanRecover[F[_]] extends effectie.CanRecover[F] {
+trait CanRecover[F[*]] extends effectie.CanRecover[F] {
 
   type XorT[A, B] = EitherT[F, A, B]
 
@@ -23,7 +23,7 @@ trait CanRecover[F[_]] extends effectie.CanRecover[F] {
 
 object CanRecover {
 
-  def apply[F[_]: CanRecover]: CanRecover[F] = summon[CanRecover[F]]
+  def apply[F[*]: CanRecover]: CanRecover[F] = summon[CanRecover[F]]
 
   given ioCanRecover: CanRecover[IO] with {
     override def recoverFromNonFatalWith[A, AA >: A](fa: => IO[A])(
