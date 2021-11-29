@@ -1,10 +1,9 @@
 package effectie.cats.syntax
 
 import cats.data.EitherT
-import effectie.CanCatch
 import effectie.cats.syntax.error.{EitherTFABErrorHandlingOps, FAErrorHandlingOps, FEitherABErrorHandlingOps}
-import effectie.cats.{CanHandleError, CanRecover}
-import effectie.cats._
+import effectie.cats.{CanCatchOps, CanHandleErrorOps, CanRecover}
+import effectie.{CanCatch, CanHandleError}
 
 /** @author Kevin Lee
   * @since 2021-10-16

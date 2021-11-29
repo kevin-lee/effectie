@@ -13,6 +13,24 @@ extension [F[_]](canCatch: effectie.CanCatch[F]) {
 
 }
 
+extension [F[*]](canHandleError: effectie.CanHandleError[F]) {
+
+  def handleEitherTNonFatalWith[A, AA >: A, B, BB >: B](
+    efab: => EitherT[F, A, B]
+  )(
+    handleError: Throwable => F[Either[AA, BB]]
+  ): EitherT[F, AA, BB] =
+    EitherT(canHandleError.handleNonFatalWith[Either[A, B], Either[AA, BB]](efab.value)(handleError))
+
+  def handleEitherTNonFatal[A, AA >: A, B, BB >: B](
+    efab: => EitherT[F, A, B]
+  )(
+    handleError: Throwable => Either[AA, BB]
+  ): EitherT[F, AA, BB] =
+    EitherT(canHandleError.handleNonFatal[Either[A, B], Either[AA, BB]](efab.value)(handleError))
+
+}
+
 extension [F[_]](fx: Fx[F]) {
 
   def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(f: Throwable => AA): EitherT[F, AA, B] =

@@ -1090,6 +1090,7 @@ object CanHandleErrorSyntaxSpec {
 
   object IoSpec {
     import effectie.cats.Fx.given
+    import effectie.cats.CanHandleError.ioCanHandleError
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
@@ -1600,6 +1601,8 @@ object CanHandleErrorSyntaxSpec {
     import scala.concurrent.duration.*
     import scala.concurrent.{ExecutionContext, Future}
 
+    import effectie.cats.CanHandleError.futureCanHandleError
+
     val waitFor: FiniteDuration = 1.second
 
     def testCanHandleError_Future_handleNonFatalWithShouldHandleNonFatalWith: Result = {
@@ -2004,6 +2007,7 @@ object CanHandleErrorSyntaxSpec {
 
   object IdSpec {
     import effectie.cats.Fx.given
+    import effectie.cats.CanHandleError.idCanHandleError
 
     def testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 

@@ -7,11 +7,6 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 trait CanHandleError[F[_]] {
 
-  type XorT[A, B]
-
-  protected def xorT[A, B](fab: F[Either[A, B]]): XorT[A, B]
-  protected def xorT2FEither[A, B](efab: XorT[A, B]): F[Either[A, B]]
-
   def handleNonFatalWith[A, AA >: A](fa: => F[A])(handleError: Throwable => F[AA]): F[AA]
 
   final def handleEitherNonFatalWith[A, AA >: A, B, BB >: B](
@@ -20,13 +15,6 @@ trait CanHandleError[F[_]] {
     handleError: Throwable => F[Either[AA, BB]]
   ): F[Either[AA, BB]] =
     handleNonFatalWith[Either[A, B], Either[AA, BB]](fab)(handleError)
-
-  final def handleEitherTNonFatalWith[A, AA >: A, B, BB >: B](
-    efab: => XorT[A, B]
-  )(
-    handleError: Throwable => F[Either[AA, BB]]
-  ): XorT[AA, BB] =
-    xorT(handleNonFatalWith[Either[A, B], Either[AA, BB]](xorT2FEither(efab))(handleError))
 
   def handleNonFatal[A, AA >: A](fa: => F[A])(handleError: Throwable => AA): F[AA]
 
@@ -37,16 +25,11 @@ trait CanHandleError[F[_]] {
   ): F[Either[AA, BB]] =
     handleNonFatal[Either[A, B], Either[AA, BB]](fab)(handleError)
 
-  final def handleEitherTNonFatal[A, AA >: A, B, BB >: B](
-    efab: => XorT[A, B]
-  )(
-    handleError: Throwable => Either[AA, BB]
-  ): XorT[AA, BB] =
-    xorT(handleNonFatal[Either[A, B], Either[AA, BB]](xorT2FEither(efab))(handleError))
-
 }
 
 object CanHandleError {
+
+  def apply[F[_]: CanHandleError]: CanHandleError[F] = implicitly[CanHandleError[F]]
 
   abstract class FutureCanHandleError(val ec: ExecutionContext) extends CanHandleError[Future] {
 

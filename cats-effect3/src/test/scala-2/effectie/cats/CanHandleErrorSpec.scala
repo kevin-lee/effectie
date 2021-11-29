@@ -6,6 +6,7 @@ import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import cats.instances.all._
 import cats.syntax.all._
+import effectie.cats.CanHandleError._
 import effectie.cats.Effectful._
 import effectie.testing.types.SomeError
 import effectie.{ConcurrentSupport, SomeControlThrowable}
@@ -20,6 +21,8 @@ import scala.util.control.{ControlThrowable, NonFatal}
   */
 object CanHandleErrorSpec extends Properties {
   type FxCtor[F[_]] = effectie.FxCtor[F]
+
+  val CanHandleError: effectie.CanHandleError.type = effectie.CanHandleError
 
   override def tests: List[Test] = List(
     /* IO */

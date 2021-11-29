@@ -4,6 +4,7 @@ import cats._
 import cats.data.EitherT
 import cats.syntax.all._
 import effectie.monix.Effectful._
+import effectie.monix.CanHandleError._
 import effectie.monix.syntax.error._
 import effectie.testing.types._
 import effectie.{ConcurrentSupport, Fx, SomeControlThrowable}

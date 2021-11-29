@@ -1,14 +1,13 @@
 package effectie.monix.syntax
 
 import cats.data.EitherT
-import effectie.CanCatch
+import effectie.monix.{CanCatchOps, CanHandleErrorOps, CanRecover}
 import effectie.monix.syntax.error.{EitherTFABErrorHandlingOps, FAErrorHandlingOps, FEitherABErrorHandlingOps}
-import effectie.monix.{CanHandleError, CanRecover}
-import effectie.monix.CanCatchOps
+import effectie.{CanCatch, CanHandleError}
 
 /** @author Kevin Lee
- * @since 2021-10-16
- */
+  * @since 2021-10-16
+  */
 trait error {
 
   implicit def fAErrorHandlingOps[F[_], B](fb: F[B]): FAErrorHandlingOps[F, B] = new FAErrorHandlingOps(fb)

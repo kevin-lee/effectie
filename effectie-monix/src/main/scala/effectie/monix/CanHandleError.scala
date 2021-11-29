@@ -1,7 +1,6 @@
 package effectie.monix
 
 import cats.Id
-import cats.data.EitherT
 import monix.eval.Task
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -10,21 +9,9 @@ import scala.util.control.NonFatal
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-trait CanHandleError[F[_]] extends effectie.CanHandleError[F] {
-
-  type XorT[A, B] = EitherT[F, A, B]
-
-  @inline override final protected def xorT[A, B](fab: F[Either[A, B]]): EitherT[F, A, B] =
-    EitherT(fab)
-
-  @inline override final protected def xorT2FEither[A, B](efab: EitherT[F, A, B]): F[Either[A, B]] =
-    efab.value
-
-}
-
 object CanHandleError {
 
-  def apply[F[_]: CanHandleError]: CanHandleError[F] = implicitly[CanHandleError[F]]
+  type CanHandleError[F[_]] = effectie.CanHandleError[F]
 
   implicit object IoCanHandleError extends CanHandleError[Task] {
 

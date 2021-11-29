@@ -6,6 +6,7 @@ import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import cats.syntax.all._
 import effectie.cats.Effectful._
+import effectie.cats.CanHandleError._
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.cats.syntax.error._
 import effectie.cats.testing
@@ -26,6 +27,8 @@ object errorSpec extends Properties {
 }
 
 object CanCatchSyntaxSpec {
+
+  val CanHandleError: effectie.CanHandleError.type = effectie.CanHandleError
 
   def tests: List[Test] = List(
     /* IO */

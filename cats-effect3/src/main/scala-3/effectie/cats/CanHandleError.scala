@@ -10,21 +10,9 @@ import scala.util.control.NonFatal
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-trait CanHandleError[F[_]] extends effectie.CanHandleError[F] {
-
-  type XorT[A, B] = EitherT[F, A, B]
-
-  inline override final protected def xorT[A, B](fab: F[Either[A, B]]): EitherT[F, A, B] =
-    EitherT(fab)
-
-  inline override final protected def xorT2FEither[A, B](efab: EitherT[F, A, B]): F[Either[A, B]] =
-    efab.value
-
-}
-
 object CanHandleError {
 
-  def apply[F[_]: CanHandleError]: CanHandleError[F] = summon[CanHandleError[F]]
+  type CanHandleError[F[*]] = effectie.CanHandleError[F]
 
   given ioCanHandleError: CanHandleError[IO] with {
 
