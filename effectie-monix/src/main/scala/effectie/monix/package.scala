@@ -13,6 +13,24 @@ package object monix {
 
   }
 
+  implicit final class CanHandleErrorOps[F[_]](private val canHandleError: effectie.CanHandleError[F]) extends AnyVal {
+
+    def handleEitherTNonFatalWith[A, AA >: A, B, BB >: B](
+      efab: => EitherT[F, A, B]
+    )(
+      handleError: Throwable => F[Either[AA, BB]]
+    ): EitherT[F, AA, BB] =
+      EitherT(canHandleError.handleNonFatalWith[Either[A, B], Either[AA, BB]](efab.value)(handleError))
+
+    def handleEitherTNonFatal[A, AA >: A, B, BB >: B](
+      efab: => EitherT[F, A, B]
+    )(
+      handleError: Throwable => Either[AA, BB]
+    ): EitherT[F, AA, BB] =
+      EitherT(canHandleError.handleNonFatal[Either[A, B], Either[AA, BB]](efab.value)(handleError))
+
+  }
+
   implicit final class FxhOps[F[_]](private val fx: Fx[F]) extends AnyVal {
 
     def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(f: Throwable => AA): EitherT[F, AA, B] =

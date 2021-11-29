@@ -8,7 +8,7 @@ import cats.instances.all.*
 import cats.syntax.all.*
 import effectie.cats.Effectful.*
 import effectie.testing.types.SomeError
-import effectie.{ConcurrentSupport, FxCtor, SomeControlThrowable}
+import effectie.{ConcurrentSupport, CanHandleError, FxCtor, SomeControlThrowable}
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -363,6 +363,7 @@ object CanHandleErrorSpec extends Properties {
 
   object IoSpec {
     import effectie.cats.Fx.given
+    import effectie.cats.CanHandleError.ioCanHandleError
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
@@ -877,6 +878,8 @@ object CanHandleErrorSpec extends Properties {
     import scala.concurrent.duration.*
     import scala.concurrent.{ExecutionContext, Future}
 
+    import effectie.cats.CanHandleError.futureCanHandleError
+
     val waitFor: FiniteDuration = 1.second
 
     def testCanHandleError_Future_handleNonFatalWithShouldHandleNonFatalWith: Result = {
@@ -1287,6 +1290,7 @@ object CanHandleErrorSpec extends Properties {
 
   object IdSpec {
     import effectie.cats.Fx.given
+    import effectie.cats.CanHandleError.idCanHandleError
 
     def testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
