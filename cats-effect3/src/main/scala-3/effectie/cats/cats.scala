@@ -31,6 +31,24 @@ extension [F[*]](canHandleError: effectie.CanHandleError[F]) {
 
 }
 
+extension [F[_]](canRecover: effectie.CanRecover[F]) {
+
+  final def recoverEitherTFromNonFatalWith[A, AA >: A, B, BB >: B](
+    efab: => EitherT[F, A, B]
+  )(
+    handleError: PartialFunction[Throwable, F[Either[AA, BB]]]
+  ): EitherT[F, AA, BB] =
+    EitherT(canRecover.recoverFromNonFatalWith[Either[A, B], Either[AA, BB]](efab.value)(handleError))
+
+  final def recoverEitherTFromNonFatal[A, AA >: A, B, BB >: B](
+    efab: => EitherT[F, A, B]
+  )(
+    handleError: PartialFunction[Throwable, Either[AA, BB]]
+  ): EitherT[F, AA, BB] =
+    EitherT(canRecover.recoverFromNonFatal[Either[A, B], Either[AA, BB]](efab.value)(handleError))
+
+}
+
 extension [F[_]](fx: Fx[F]) {
 
   def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(f: Throwable => AA): EitherT[F, AA, B] =

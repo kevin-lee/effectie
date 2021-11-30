@@ -2,7 +2,7 @@ package effectie.cats.syntax
 
 import cats.data.EitherT
 import effectie.cats.*
-import effectie.{CanCatch, CanHandleError}
+import effectie.{CanCatch, CanHandleError, CanRecover}
 
 /** @author Kevin Lee
  * @since 2021-10-16
@@ -114,14 +114,14 @@ trait error {
     )(
       using canRecover: CanRecover[F]
     ): EitherT[F, AA, BB] =
-      canRecover.recoverEitherTFromNonFatalWith[A, AA, B, BB](efab)(handleError)
+      effectie.cats.recoverEitherTFromNonFatalWith(canRecover)[A, AA, B, BB](efab)(handleError)
 
     def recoverEitherTFromNonFatal[AA >: A, BB >: B](
       handleError: PartialFunction[Throwable, Either[AA, BB]]
     )(
       using canRecover: CanRecover[F]
     ): EitherT[F, AA, BB] =
-      canRecover.recoverEitherTFromNonFatal[A, AA, B, BB](efab)(handleError)
+      effectie.cats.recoverEitherTFromNonFatal(canRecover)[A, AA, B, BB](efab)(handleError)
   }
 
 }

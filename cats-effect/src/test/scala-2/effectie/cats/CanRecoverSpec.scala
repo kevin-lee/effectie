@@ -21,6 +21,8 @@ object CanRecoverSpec extends Properties {
   type FxCtor[F[_]] = effectie.FxCtor[F]
   val FxCtor: effectie.FxCtor.type = effectie.FxCtor
 
+  val CanRecover: effectie.CanRecover.type = effectie.CanRecover
+
   override def tests: List[Test] = List(
     /* IO */
     example(
@@ -365,6 +367,7 @@ object CanRecoverSpec extends Properties {
     effectOf[F](a)
 
   object IOSpec {
+    import effectie.cats.CanRecover._
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
@@ -1342,6 +1345,7 @@ object CanRecoverSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.cats.CanRecover._
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

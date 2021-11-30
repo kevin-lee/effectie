@@ -1,29 +1,16 @@
 package effectie.monix
 
 import cats._
-import cats.data.EitherT
 import monix.eval.Task
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-trait CanRecover[F[_]] extends effectie.CanRecover[F] {
-
-  type XorT[A, B] = EitherT[F, A, B]
-
-  @inline override final protected def xorT[A, B](fab: F[Either[A, B]]): EitherT[F, A, B] =
-    EitherT(fab)
-
-  @inline override final protected def xorT2FEither[A, B](efab: EitherT[F, A, B]): F[Either[A, B]] =
-    efab.value
-}
-
 object CanRecover {
 
-  def apply[F[_]: CanRecover]: CanRecover[F] = implicitly[CanRecover[F]]
+  type CanRecover[F[_]] = effectie.CanRecover[F]
 
   implicit object IoCanRecover extends CanRecover[Task] {
     override def recoverFromNonFatalWith[A, AA >: A](
@@ -37,12 +24,6 @@ object CanRecover {
       recoverFromNonFatalWith[A, AA](fa)(handleError.andThen(Task.pure(_)))
 
   }
-
-  @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
-  implicit def futureCanRecover(
-    implicit ec: ExecutionContext
-  ): CanRecover[Future] =
-    new effectie.CanRecover.FutureCanRecover(ec) with CanRecover[Future]
 
   implicit object IdCanRecover extends CanRecover[Id] {
 

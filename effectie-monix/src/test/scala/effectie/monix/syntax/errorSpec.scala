@@ -23,6 +23,7 @@ object errorSpec extends Properties {
 }
 
 object CanCatchSyntaxSpec {
+  val CanRecover: effectie.CanRecover.type = effectie.CanRecover
 
   def tests: List[Test] = List(
     /* Task */
@@ -2638,8 +2639,9 @@ object CanRecoverSyntaxSpec {
 
   object TaskSpec {
 
-    import effectie.monix.Fx._
     import monix.execution.Scheduler.Implicits.global
+    import effectie.monix.Fx._
+    import effectie.monix.CanRecover._
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
@@ -3591,6 +3593,7 @@ object CanRecoverSyntaxSpec {
 
   object IdSpec {
     import effectie.monix.Fx._
+    import effectie.monix.CanRecover._
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
