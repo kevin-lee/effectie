@@ -539,7 +539,7 @@ object CanCatchSyntaxSpec {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       lazy val fa           = run[Id, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = expectedExpcetion.asLeft[Int]
-      val actual            = fa.catchNonFatalThrowable
+      lazy val actual            = fa.catchNonFatalThrowable
 
       actual ==== expected
     }
@@ -2629,6 +2629,7 @@ object CanRecoverSyntaxSpec {
     effectOf[F](a)
 
   object IOSpec {
+    import effectie.cats.CanRecover._
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
@@ -3574,6 +3575,7 @@ object CanRecoverSyntaxSpec {
   }
 
   object IdSpec {
+    import effectie.cats.CanRecover._
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

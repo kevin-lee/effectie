@@ -21,7 +21,7 @@ import scala.util.control.{ControlThrowable, NonFatal}
 object CanRecoverSpec extends Properties {
 
   type FxCtor[F[_]] = effectie.FxCtor[F]
-
+  val CanRecover: effectie.CanRecover.type = effectie.CanRecover
 
   override def tests: List[Test] = List(
     /* IO */
@@ -369,6 +369,7 @@ object CanRecoverSpec extends Properties {
   object IOSpec {
 
     import effectie.cats.Fx.IoFx
+    import effectie.cats.CanRecover._
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
@@ -1435,6 +1436,7 @@ object CanRecoverSpec extends Properties {
 
   object IdSpec {
     import effectie.cats.Fx._
+    import effectie.cats.CanRecover._
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

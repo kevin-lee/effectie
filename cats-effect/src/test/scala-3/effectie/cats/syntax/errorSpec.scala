@@ -2611,6 +2611,7 @@ object CanRecoverSyntaxSpec {
 
   object IOSpec {
     import effectie.cats.Fx.given
+    import effectie.cats.CanRecover.given
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
@@ -3550,6 +3551,7 @@ object CanRecoverSyntaxSpec {
 
   object IdSpec {
     import effectie.cats.Fx.given
+    import effectie.cats.CanRecover.given
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

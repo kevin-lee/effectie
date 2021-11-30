@@ -20,6 +20,8 @@ import scala.util.control.{ControlThrowable, NonFatal}
   */
 object CanRecoverSpec extends Properties {
 
+  val CanRecover: effectie.CanRecover.type = effectie.CanRecover
+
   override def tests: List[Test] = List(
     /* IO */
     example(
@@ -142,7 +144,6 @@ object CanRecoverSpec extends Properties {
       "test CanRecover[IO].recoverEitherTFromNonFatal should return the failed result",
       IOSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnFailedResult
     ),
-
     /* Future */
     example(
       "test CanRecover[Future].recoverFromNonFatalWith should catch NonFatal",
@@ -232,7 +233,6 @@ object CanRecoverSpec extends Properties {
       "test CanRecover[Future].recoverEitherTFromNonFatal should return the failed result",
       FutureSpec.testCanRecover_Future_recoverEitherTFromNonFatalShouldReturnFailedResult
     ),
-
     /* Id */
     example(
       "test CanRecover[Id].recoverFromNonFatalWith should catch NonFatal",
@@ -364,6 +364,7 @@ object CanRecoverSpec extends Properties {
 
   object IOSpec {
     import effectie.cats.Fx.given
+    import effectie.cats.CanRecover.given
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
@@ -1423,6 +1424,7 @@ object CanRecoverSpec extends Properties {
 
   object IdSpec {
     import effectie.cats.Fx.given
+    import effectie.cats.CanRecover.given
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

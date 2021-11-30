@@ -17,6 +17,7 @@ import scala.util.control.{ControlThrowable, NonFatal}
   * @since 2020-08-17
   */
 object CanRecoverSpec extends Properties {
+  val CanRecover: effectie.CanRecover.type = effectie.CanRecover
 
   override def tests: List[Test] = List(
     /* IO */
@@ -362,6 +363,7 @@ object CanRecoverSpec extends Properties {
 
   object IOSpec {
     import effectie.cats.Fx.given
+    import effectie.cats.CanRecover.given
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
@@ -1333,6 +1335,7 @@ object CanRecoverSpec extends Properties {
 
   object IdSpec {
     import effectie.cats.Fx.given
+    import effectie.cats.CanRecover.given
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
