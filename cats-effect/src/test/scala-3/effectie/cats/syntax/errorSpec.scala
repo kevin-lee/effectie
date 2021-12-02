@@ -1468,8 +1468,6 @@ object CanHandleErrorSyntaxSpec {
     import scala.concurrent.duration.*
     import scala.concurrent.{ExecutionContext, Future}
 
-    import effectie.cats.CanHandleError.futureCanHandleError
-
     val waitFor: FiniteDuration = 1.second
 
     def testCanHandleError_Future_handleNonFatalWithShouldHandleNonFatalWith: Result = {

@@ -16,27 +16,24 @@ object CanHandleError {
 
   given ioCanHandleError: CanHandleError[IO] with {
 
-    override def handleNonFatalWith[A, AA >: A](fa: => IO[A])(handleError: Throwable => IO[AA]): IO[AA] =
+    inline override def handleNonFatalWith[A, AA >: A](fa: => IO[A])(handleError: Throwable => IO[AA]): IO[AA] =
       fa.handleErrorWith(handleError)
 
-    override def handleNonFatal[A, AA >: A](fa: => IO[A])(handleError: Throwable => AA): IO[AA] =
+    inline override def handleNonFatal[A, AA >: A](fa: => IO[A])(handleError: Throwable => AA): IO[AA] =
       handleNonFatalWith[A, AA](fa)(err => IO.pure(handleError(err)))
 
   }
 
-  given futureCanHandleError(using ec: ExecutionContext): CanHandleError[Future] =
-    new effectie.CanHandleError.FutureCanHandleError(ec) with CanHandleError[Future]
-
   given idCanHandleError: CanHandleError[Id] with {
 
-    override def handleNonFatalWith[A, AA >: A](fa: => Id[A])(handleError: Throwable => Id[AA]): Id[AA] =
+    inline override def handleNonFatalWith[A, AA >: A](fa: => Id[A])(handleError: Throwable => Id[AA]): Id[AA] =
       try (fa)
       catch {
         case NonFatal(ex) =>
           handleError(ex)
       }
 
-    override def handleNonFatal[A, AA >: A](fa: => Id[A])(handleError: Throwable => AA): Id[AA] =
+    inline override def handleNonFatal[A, AA >: A](fa: => Id[A])(handleError: Throwable => AA): Id[AA] =
       handleNonFatalWith[A, AA](fa)(err => handleError(err))
 
   }

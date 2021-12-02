@@ -5,11 +5,11 @@ import cats.data.EitherT
 import cats.effect.IO
 import cats.instances.all._
 import cats.syntax.all._
+import effectie.cats.CanHandleError._
 import effectie.cats.Effectful._
+import effectie.cats.FxCtor._
 import effectie.testing.types.SomeError
 import effectie.{ConcurrentSupport, SomeControlThrowable}
-import effectie.cats.FxCtor._
-import effectie.cats.CanHandleError._
 import hedgehog._
 import hedgehog.runner._
 
@@ -26,8 +26,10 @@ object CanHandleErrorSpec extends Properties {
   type CanHandleError[F[_]] = effectie.CanHandleError[F]
   val CanHandleError: effectie.CanHandleError.type = effectie.CanHandleError
 
-  override def tests: List[Test] = List(
-    /* IO */
+  override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
+
+  /* IO */
+  private val ioSpecs = List(
     example(
       "test CanHandleError[IO].handleNonFatalWith should handle NonFatal",
       IoSpec.testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith
@@ -148,7 +150,10 @@ object CanHandleErrorSpec extends Properties {
       "test CanHandleError[IO].handleEitherTNonFatal should return the failed result",
       IoSpec.testCanHandleError_IO_handleEitherTNonFatalShouldReturnFailedResult
     ),
-    /* Future */
+  )
+
+  /* Future */
+  private val futureSpecs = List(
     example(
       "test CanHandleError[Future].handleNonFatalWith should handle NonFatal",
       FutureSpec.testCanHandleError_Future_handleNonFatalWithShouldHandleNonFatalWith
@@ -237,7 +242,10 @@ object CanHandleErrorSpec extends Properties {
       "test CanHandleError[Future].handleEitherTNonFatal should return the failed result",
       FutureSpec.testCanHandleError_Future_handleEitherTNonFatalShouldReturnFailedResult
     ),
-    /* Id */
+  )
+
+  /* Id */
+  private val idSpecs = List(
     example(
       "test CanHandleError[Id].handleNonFatalWith should handle NonFatal",
       IdSpec.testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith

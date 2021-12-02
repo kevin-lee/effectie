@@ -10,10 +10,40 @@ import monix.eval.Task
 object FxCtor {
   type FxCtor[F[_]] = effectie.FxCtor[F]
 
-  implicit final val taskFxCtor: FxCtor[Task] = Fx.TaskFx
+  implicit object TaskFxCtor extends FxCtor[Task] {
 
-  implicit final val ioFxCtor: FxCtor[IO] = Fx.IoFx
+    @inline override final def effectOf[A](a: => A): Task[A] = Task(a)
 
-  implicit final val idFxCtor: FxCtor[Id] = Fx.IdFx
+    @inline override final def pureOf[A](a: A): Task[A] = Task.now(a)
+
+    @inline override final val unitOf: Task[Unit] = Task.unit
+
+    @inline override final def errorOf[A](throwable: Throwable): Task[A] = Task.raiseError(throwable)
+
+  }
+
+  implicit object IoFxCtor extends FxCtor[IO] {
+
+    @inline override final def effectOf[A](a: => A): IO[A] = IO(a)
+
+    @inline override final def pureOf[A](a: A): IO[A] = IO.pure(a)
+
+    @inline override final val unitOf: IO[Unit] = IO.unit
+
+    @inline override final def errorOf[A](throwable: Throwable): IO[A] = IO.raiseError(throwable)
+
+  }
+
+  implicit object IdFxCtor extends FxCtor[Id] {
+
+    @inline override final def effectOf[A](a: => A): Id[A] = a
+
+    @inline override final def pureOf[A](a: A): Id[A] = a
+
+    @inline override final val unitOf: Id[Unit] = ()
+
+    @inline override final def errorOf[A](throwable: Throwable): Id[A] = throw throwable
+
+  }
 
 }
