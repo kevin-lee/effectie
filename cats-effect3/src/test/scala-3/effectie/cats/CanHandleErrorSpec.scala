@@ -20,8 +20,10 @@ import scala.util.control.{ControlThrowable, NonFatal}
   */
 object CanHandleErrorSpec extends Properties {
 
-  override def tests: List[Test] = List(
-    /* IO */
+  override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
+
+  /* IO */
+  private val ioSpecs = List(
     example(
       "test CanHandleError[IO].handleNonFatalWith should handle NonFatal",
       IoSpec.testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith
@@ -142,8 +144,10 @@ object CanHandleErrorSpec extends Properties {
       "test CanHandleError[IO].handleEitherTNonFatal should return the failed result",
       IoSpec.testCanHandleError_IO_handleEitherTNonFatalShouldReturnFailedResult
     ),
+  )
 
-    /* Future */
+  /* Future */
+  private val futureSpecs = List(
     example(
       "test CanHandleError[Future].handleNonFatalWith should handle NonFatal",
       FutureSpec.testCanHandleError_Future_handleNonFatalWithShouldHandleNonFatalWith
@@ -232,7 +236,10 @@ object CanHandleErrorSpec extends Properties {
       "test CanHandleError[Future].handleEitherTNonFatal should return the failed result",
       FutureSpec.testCanHandleError_Future_handleEitherTNonFatalShouldReturnFailedResult
     ),
-    /* Id */
+  )
+
+  /* Id */
+  private val idSpecs = List(
     example(
       "test CanHandleError[Id].handleNonFatalWith should handle NonFatal",
       IdSpec.testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith
@@ -877,8 +884,6 @@ object CanHandleErrorSpec extends Properties {
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration.*
     import scala.concurrent.{ExecutionContext, Future}
-
-    import effectie.cats.CanHandleError.futureCanHandleError
 
     val waitFor: FiniteDuration = 1.second
 

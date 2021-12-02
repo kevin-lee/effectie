@@ -9,7 +9,7 @@ trait CanHandleError[F[_]] {
 
   def handleNonFatalWith[A, AA >: A](fa: => F[A])(handleError: Throwable => F[AA]): F[AA]
 
-  final def handleEitherNonFatalWith[A, AA >: A, B, BB >: B](
+  @inline final def handleEitherNonFatalWith[A, AA >: A, B, BB >: B](
     fab: => F[Either[A, B]]
   )(
     handleError: Throwable => F[Either[AA, BB]]
@@ -18,7 +18,7 @@ trait CanHandleError[F[_]] {
 
   def handleNonFatal[A, AA >: A](fa: => F[A])(handleError: Throwable => AA): F[AA]
 
-  final def handleEitherNonFatal[A, AA >: A, B, BB >: B](
+  @inline final def handleEitherNonFatal[A, AA >: A, B, BB >: B](
     fab: => F[Either[A, B]]
   )(
     handleError: Throwable => Either[AA, BB]
@@ -31,16 +31,22 @@ object CanHandleError {
 
   def apply[F[_]: CanHandleError]: CanHandleError[F] = implicitly[CanHandleError[F]]
 
-  abstract class FutureCanHandleError(val ec: ExecutionContext) extends CanHandleError[Future] {
+  trait FutureCanHandleError extends CanHandleError[Future] {
+    implicit def EC0: ExecutionContext
 
-    override def handleNonFatalWith[A, AA >: A](fa: => Future[A])(handleError: Throwable => Future[AA]): Future[AA] =
+    @inline override def handleNonFatalWith[A, AA >: A](fa: => Future[A])(handleError: Throwable => Future[AA]): Future[AA] =
       fa.recoverWith {
         case throwable: Throwable =>
           handleError(throwable)
-      }(ec)
+      }
 
-    override def handleNonFatal[A, AA >: A](fa: => Future[A])(handleError: Throwable => AA): Future[AA] =
-      handleNonFatalWith[A, AA](fa)(err => Future(handleError(err))(ec))
+    @inline override def handleNonFatal[A, AA >: A](fa: => Future[A])(handleError: Throwable => AA): Future[AA] =
+      handleNonFatalWith[A, AA](fa)(err => Future(handleError(err)))
   }
+
+  final class CanHandleErrorFuture(override implicit val EC0: ExecutionContext) extends FutureCanHandleError
+
+  implicit def canHandleErrorFuture(implicit ec: ExecutionContext): CanHandleError[Future] =
+    new CanHandleErrorFuture
 
 }

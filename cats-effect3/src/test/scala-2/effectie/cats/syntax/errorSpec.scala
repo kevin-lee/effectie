@@ -6,7 +6,7 @@ import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import cats.syntax.all._
 import effectie.cats.Effectful._
-import effectie.cats.CanHandleError._
+import effectie.cats.Fx._
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.cats.syntax.error._
 import effectie.cats.testing
@@ -1103,8 +1103,6 @@ object CanHandleErrorSyntaxSpec {
     effectOf[F](a)
 
   object IoSpec {
-
-    import effectie.cats.Fx._
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 

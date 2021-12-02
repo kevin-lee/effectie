@@ -8,8 +8,28 @@ object FxCtor {
 
   def apply[F[_]: FxCtor]: FxCtor[F] = implicitly[FxCtor[F]]
 
-  implicit final val ioFxCtor: FxCtor[IO] = Fx.IoFx
+  implicit object IoFxCtor extends FxCtor[IO] {
 
-  implicit final val idFxCtor: FxCtor[Id] = Fx.IdFx
+    @inline override final def effectOf[A](a: => A): IO[A] = IO(a)
+
+    @inline override final def pureOf[A](a: A): IO[A] = IO.pure(a)
+
+    @inline override final val unitOf: IO[Unit] = IO.unit
+
+    @inline override final def errorOf[A](throwable: Throwable): IO[A] = IO.raiseError(throwable)
+
+  }
+
+  implicit object IdFxCtor extends FxCtor[Id] {
+
+    @inline override final def effectOf[A](a: => A): Id[A] = a
+
+    @inline override final def pureOf[A](a: A): Id[A] = a
+
+    @inline override final val unitOf: Id[Unit] = ()
+
+    @inline override final def errorOf[A](throwable: Throwable): Id[A] = throw throwable
+
+  }
 
 }

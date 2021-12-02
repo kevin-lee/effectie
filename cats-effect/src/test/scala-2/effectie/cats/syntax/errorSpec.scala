@@ -5,7 +5,6 @@ import cats.data.EitherT
 import cats.effect._
 import cats.syntax.all._
 import effectie.cats.Effectful._
-import effectie.cats.CanHandleError._
 import effectie.cats.Fx._
 import effectie.cats.syntax.error._
 import effectie.testing.types._

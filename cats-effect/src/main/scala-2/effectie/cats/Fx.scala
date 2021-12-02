@@ -8,36 +8,47 @@ object Fx {
 
   implicit object IoFx extends Fx[IO] {
 
-    @inline override final def effectOf[A](a: => A): IO[A] = IO(a)
+    @inline override final def effectOf[A](a: => A): IO[A] = FxCtor.IoFxCtor.effectOf(a)
 
-    @inline override final def pureOf[A](a: A): IO[A] = IO.pure(a)
+    @inline override final def pureOf[A](a: A): IO[A] = FxCtor.IoFxCtor.pureOf(a)
 
-    @inline override final val unitOf: IO[Unit] = IO.unit
+    @inline override final val unitOf: IO[Unit] = FxCtor.IoFxCtor.unitOf
 
-    @inline override final def errorOf[A](throwable: Throwable): IO[A] = IO.raiseError(throwable)
+    @inline override final def errorOf[A](throwable: Throwable): IO[A] = FxCtor.IoFxCtor.errorOf(throwable)
 
-    @inline override final def mapFa[A, B](fa: IO[A])(f: A => B): IO[B] =
-      CanCatch.CanCatchIo.mapFa(fa)(f)
+    @inline override final def mapFa[A, B](fa: IO[A])(f: A => B): IO[B] = fa.map(f)
 
-    override def catchNonFatalThrowable[A](fa: => IO[A]): IO[Either[Throwable, A]] =
+    @inline override final def catchNonFatalThrowable[A](fa: => IO[A]): IO[Either[Throwable, A]] =
       CanCatch.CanCatchIo.catchNonFatalThrowable(fa)
+
+    @inline override final def handleNonFatalWith[A, AA >: A](fa: => IO[A])(handleError: Throwable => IO[AA]): IO[AA] =
+      CanHandleError.IoCanHandleError.handleNonFatalWith[A, AA](fa)(handleError)
+
+    @inline override final def handleNonFatal[A, AA >: A](fa: => IO[A])(handleError: Throwable => AA): IO[AA] =
+      CanHandleError.IoCanHandleError.handleNonFatal[A, AA](fa)(handleError)
   }
 
   implicit object IdFx extends Fx[Id] {
 
-    @inline override final def effectOf[A](a: => A): Id[A] = a
+    @inline override final def effectOf[A](a: => A): Id[A] = FxCtor.IdFxCtor.effectOf(a)
 
-    @inline override final def pureOf[A](a: A): Id[A] = a
+    @inline override final def pureOf[A](a: A): Id[A] = FxCtor.IdFxCtor.pureOf(a)
 
-    @inline override final val unitOf: Id[Unit] = ()
+    @inline override final val unitOf: Id[Unit] = FxCtor.IdFxCtor.unitOf
 
-    @inline override final def errorOf[A](throwable: Throwable): Id[A] = throw throwable
+    @inline override final def errorOf[A](throwable: Throwable): Id[A] = FxCtor.IdFxCtor.errorOf(throwable)
 
-    @inline override def mapFa[A, B](fa: Id[A])(f: A => B): Id[B] =
-      CanCatch.CanCatchId.mapFa(fa)(f)
+    @inline override final def mapFa[A, B](fa: Id[A])(f: A => B): Id[B] = f(fa)
 
-    @inline override def catchNonFatalThrowable[A](fa: => Id[A]): Id[Either[Throwable, A]] =
+    @inline override final def catchNonFatalThrowable[A](fa: => Id[A]): Id[Either[Throwable, A]] =
       CanCatch.CanCatchId.catchNonFatalThrowable(fa)
+
+    @inline override final def handleNonFatalWith[A, AA >: A](fa: => Id[A])(handleError: Throwable => Id[AA]): Id[AA] =
+      CanHandleError.IdCanHandleError.handleNonFatalWith[A, AA](fa)(handleError)
+
+    @inline override final def handleNonFatal[A, AA >: A](fa: => Id[A])(handleError: Throwable => AA): Id[AA] =
+      CanHandleError.IdCanHandleError.handleNonFatal[A, AA](fa)(handleError)
+
   }
 
 }

@@ -10,62 +10,73 @@ import monix.eval.Task
 object Fx {
   type Fx[F[_]] = effectie.Fx[F]
 
-  def apply[F[_]: Fx]: Fx[F] = implicitly[Fx[F]]
-
   implicit object TaskFx extends Fx[Task] {
 
+    @inline override final def effectOf[A](a: => A): Task[A] = FxCtor.TaskFxCtor.effectOf(a)
 
-    @inline override final def effectOf[A](a: => A): Task[A] = Task(a)
+    @inline override final def pureOf[A](a: A): Task[A] = FxCtor.TaskFxCtor.pureOf(a)
 
-    @inline override final def pureOf[A](a: A): Task[A] = Task.now(a)
+    @inline override final val unitOf: Task[Unit] = FxCtor.TaskFxCtor.unitOf
 
-    @inline override final val unitOf: Task[Unit] = Task.unit
+    @inline override final def errorOf[A](throwable: Throwable): Task[A] = FxCtor.TaskFxCtor.errorOf(throwable)
 
-    @inline override final def errorOf[A](throwable: Throwable): Task[A] = Task.raiseError(throwable)
+    @inline override final def mapFa[A, B](fa: Task[A])(f: A => B): Task[B] = fa.map(f)
 
-    @inline override final def mapFa[A, B](fa: Task[A])(f: A => B): Task[B] =
-      CanCatch.CanCatchTask.mapFa(fa)(f)
-
-    override def catchNonFatalThrowable[A](fa: => Task[A]): Task[Either[Throwable, A]] =
+    @inline override final def catchNonFatalThrowable[A](fa: => Task[A]): Task[Either[Throwable, A]] =
       CanCatch.CanCatchTask.catchNonFatalThrowable(fa)
 
+    @inline override final def handleNonFatalWith[A, AA >: A](fa: => Task[A])(
+      handleError: Throwable => Task[AA]
+    ): Task[AA] =
+      CanHandleError.TaskCanHandleError.handleNonFatalWith[A, AA](fa)(handleError)
+
+    @inline override final def handleNonFatal[A, AA >: A](fa: => Task[A])(handleError: Throwable => AA): Task[AA] =
+      CanHandleError.TaskCanHandleError.handleNonFatal[A, AA](fa)(handleError)
   }
 
   implicit object IoFx extends Fx[IO] {
 
-    @inline override final def effectOf[A](a: => A): IO[A] = IO(a)
+    @inline override final def effectOf[A](a: => A): IO[A] = FxCtor.IoFxCtor.effectOf(a)
 
-    @inline override final def pureOf[A](a: A): IO[A] = IO.pure(a)
+    @inline override final def pureOf[A](a: A): IO[A] = FxCtor.IoFxCtor.pureOf(a)
 
-    @inline override final val unitOf: IO[Unit] = IO.unit
+    @inline override final val unitOf: IO[Unit] = FxCtor.IoFxCtor.unitOf
 
-    @inline override final def errorOf[A](throwable: Throwable): IO[A] = IO.raiseError(throwable)
+    @inline override final def errorOf[A](throwable: Throwable): IO[A] = FxCtor.IoFxCtor.errorOf(throwable)
 
+    @inline override final def mapFa[A, B](fa: IO[A])(f: A => B): IO[B] = fa.map(f)
 
-    @inline override final def mapFa[A, B](fa: IO[A])(f: A => B): IO[B] =
-      CanCatch.CanCatchIo.mapFa(fa)(f)
-
-    override def catchNonFatalThrowable[A](fa: => IO[A]): IO[Either[Throwable, A]] =
+    @inline override final def catchNonFatalThrowable[A](fa: => IO[A]): IO[Either[Throwable, A]] =
       CanCatch.CanCatchIo.catchNonFatalThrowable(fa)
 
+    @inline override final def handleNonFatalWith[A, AA >: A](fa: => IO[A])(handleError: Throwable => IO[AA]): IO[AA] =
+      CanHandleError.IoCanHandleError.handleNonFatalWith[A, AA](fa)(handleError)
+
+    @inline override final def handleNonFatal[A, AA >: A](fa: => IO[A])(handleError: Throwable => AA): IO[AA] =
+      CanHandleError.IoCanHandleError.handleNonFatal[A, AA](fa)(handleError)
 
   }
 
   implicit object IdFx extends Fx[Id] {
 
-    @inline override final def effectOf[A](a: => A): Id[A] = a
+    @inline override final def effectOf[A](a: => A): Id[A] = FxCtor.IdFxCtor.effectOf(a)
 
-    @inline override final def pureOf[A](a: A): Id[A] = a
+    @inline override final def pureOf[A](a: A): Id[A] = FxCtor.IdFxCtor.pureOf(a)
 
-    @inline override final val unitOf: Id[Unit] = ()
+    @inline override final val unitOf: Id[Unit] = FxCtor.IdFxCtor.unitOf
 
-    @inline override final def errorOf[A](throwable: Throwable): Id[A] = throw throwable
+    @inline override final def errorOf[A](throwable: Throwable): Id[A] = FxCtor.IdFxCtor.errorOf(throwable)
 
-    override def mapFa[A, B](fa: Id[A])(f: A => B): Id[B] =
-      CanCatch.CanCatchId.mapFa(fa)(f)
+    @inline override final def mapFa[A, B](fa: Id[A])(f: A => B): Id[B] = f(fa)
 
-    override def catchNonFatalThrowable[A](fa: => Id[A]): Id[Either[Throwable, A]] =
+    @inline override final def catchNonFatalThrowable[A](fa: => Id[A]): Id[Either[Throwable, A]] =
       CanCatch.CanCatchId.catchNonFatalThrowable(fa)
+
+    @inline override final def handleNonFatalWith[A, AA >: A](fa: => Id[A])(handleError: Throwable => Id[AA]): Id[AA] =
+      CanHandleError.IdCanHandleError.handleNonFatalWith[A, AA](fa)(handleError)
+
+    @inline override final def handleNonFatal[A, AA >: A](fa: => Id[A])(handleError: Throwable => AA): Id[AA] =
+      CanHandleError.IdCanHandleError.handleNonFatal[A, AA](fa)(handleError)
 
   }
 
