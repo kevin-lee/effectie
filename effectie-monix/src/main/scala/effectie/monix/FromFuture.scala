@@ -1,6 +1,7 @@
 package effectie.monix
 
 import cats.Id
+import cats.effect.{ContextShift, IO}
 import monix.eval.Task
 
 import scala.concurrent.duration.Duration
@@ -18,10 +19,16 @@ object FromFuture {
   def apply[F[_]: FromFuture]: FromFuture[F] = implicitly[FromFuture[F]]
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
-  implicit def fromFutureToTask: FromFuture[Task] =
-    new FromFuture[Task] {
-      override def toEffect[A](future: => Future[A]): Task[A] =
-        Task.fromFuture[A](future)
+  implicit object FromFutureToTask extends FromFuture[Task] {
+    override def toEffect[A](future: => Future[A]): Task[A] =
+      Task.fromFuture[A](future)
+  }
+
+  @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
+  implicit def fromFutureToIo(implicit cs: ContextShift[IO]): FromFuture[IO] =
+    new FromFuture[IO] {
+      override def toEffect[A](future: => Future[A]): IO[A] =
+        IO.fromFuture[A](IO(future))
     }
 
   implicit val fromFutureToFuture: FromFuture[Future] =

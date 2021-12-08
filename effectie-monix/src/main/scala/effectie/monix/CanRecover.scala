@@ -1,6 +1,7 @@
 package effectie.monix
 
 import cats._
+import cats.effect.IO
 import monix.eval.Task
 
 import scala.util.control.NonFatal
@@ -12,7 +13,7 @@ object CanRecover {
 
   type CanRecover[F[_]] = effectie.CanRecover[F]
 
-  implicit object IoCanRecover extends CanRecover[Task] {
+  implicit object TaskCanRecover extends CanRecover[Task] {
     override def recoverFromNonFatalWith[A, AA >: A](
       fa: => Task[A]
     )(handleError: PartialFunction[Throwable, Task[AA]]): Task[AA] =
@@ -22,6 +23,18 @@ object CanRecover {
       fa: => Task[A]
     )(handleError: PartialFunction[Throwable, AA]): Task[AA] =
       recoverFromNonFatalWith[A, AA](fa)(handleError.andThen(Task.pure(_)))
+
+  }
+
+  implicit object IoCanRecover extends CanRecover[IO] {
+
+    override def recoverFromNonFatalWith[A, AA >: A](fa: => IO[A])(
+      handleError: PartialFunction[Throwable, IO[AA]]
+    ): IO[AA] =
+      fa.handleErrorWith(err => handleError.applyOrElse(err, ApplicativeError[IO, Throwable].raiseError[AA]))
+
+    override def recoverFromNonFatal[A, AA >: A](fa: => IO[A])(handleError: PartialFunction[Throwable, AA]): IO[AA] =
+      recoverFromNonFatalWith[A, AA](fa)(handleError.andThen(IO.pure(_)))
 
   }
 

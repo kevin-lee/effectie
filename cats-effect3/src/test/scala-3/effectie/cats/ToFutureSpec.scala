@@ -2,6 +2,7 @@ package effectie.cats
 
 import cats.*
 import cats.effect.*
+import cats.effect.testkit.TestContext
 import cats.effect.unsafe.IORuntime
 import effectie.ConcurrentSupport
 import effectie.cats.compat.CatsEffectIoCompatForFuture
@@ -32,23 +33,26 @@ object ToFutureSpec extends Properties {
   )
 
   object IoSpec {
-    val compat          = new CatsEffectIoCompatForFuture
-    given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
-
     def testUnsafeToFuture: Property = for {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {
-      val fa = IO(a)
+      val expected = a
+      val fa = IO(expected)
 
       given es: ExecutorService  = ConcurrentSupport.newExecutorService()
       given ec: ExecutionContext = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
       ConcurrentSupport.runAndShutdown(es, 800.milliseconds) {
+        import effectie.cats.CatsEffectRunner.*
+        given ticket: Ticker = Ticker(TestContext())
+
         val future   = ToFuture[IO].unsafeToFuture(fa)
-        val expected = a
+        val ioResult = fa.completeAs(expected)
+
         val actual   = ConcurrentSupport.futureToValueAndTerminate(future, 500.milliseconds)
 
         Result.all(
           List(
+            ioResult,
             Result
               .assert(future.isInstanceOf[Future[Int]])
               .log(s"future is not an instance of Future[Int]. future.getClass: ${future.getClass.toString}"),

@@ -3,6 +3,7 @@ package effectie.cats
 import cats.*
 import cats.data.EitherT
 import cats.effect.*
+import cats.effect.testkit.TestContext
 import cats.effect.unsafe.IORuntime
 import cats.instances.all.*
 import cats.syntax.all.*
@@ -21,8 +22,10 @@ import scala.util.control.ControlThrowable
   */
 object CanCatchSpec extends Properties {
 
-  override def tests: List[Test] = List(
-    /* IO */
+  override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
+
+  /* IO */
+  val ioSpecs = List(
     example(
       "test CanCatch[IO]catchNonFatalThrowable should catch NonFatal",
       IoSpec.testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal
@@ -79,8 +82,10 @@ object CanCatchSpec extends Properties {
       "test CanCatch[IO]catchNonFatalEitherT should return the failed result",
       IoSpec.testCanCatch_IO_catchNonFatalEitherTShouldReturnFailedResult
     ),
+  )
 
-    /* Future */
+  /* Future */
+  val futureSpecs = List(
     example(
       "test CanCatch[Future]catchNonFatalThrowable should catch NonFatal",
       FutureSpec.testCanCatch_Future_catchNonFatalThrowableShouldCatchNonFatal
@@ -121,8 +126,10 @@ object CanCatchSpec extends Properties {
       "test CanCatch[Future]catchNonFatalEitherT should return the failed result",
       FutureSpec.testCanCatch_Future_catchNonFatalEitherTShouldReturnFailedResult
     ),
+  )
 
-    /* Id */
+  /* Id */
+  val idSpecs = List(
     example(
       "test CanCatch[Id]catchNonFatalThrowable should catch NonFatal",
       IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal
@@ -184,8 +191,7 @@ object CanCatchSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[*]: FxCtor
-  : Functor, A](a: => A): F[A] =
+  def run[F[*]: FxCtor: Functor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object IoSpec {
@@ -193,15 +199,15 @@ object CanCatchSpec extends Properties {
 
     def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
-      val es: ExecutorService = ConcurrentSupport.newExecutorService()
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = expectedExpcetion.asLeft[Int]
-      val actual            = CanCatch[IO].catchNonFatalThrowable(fa).unsafeRunSync()
+      val actual            = CanCatch[IO].catchNonFatalThrowable(fa)
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCanCatch_IO_catchNonFatalThrowableShouldNotCatchFatal: Result = {
@@ -227,27 +233,27 @@ object CanCatchSpec extends Properties {
 
     def testCanCatch_IO_catchNonFatalThrowableShouldReturnSuccessfulResult: Result = {
 
-      val es: ExecutorService = ConcurrentSupport.newExecutorService()
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val fa: IO[Int] = run[IO, Int](1)
       val expected    = 1.asRight[Throwable]
-      val actual      = CanCatch[IO].catchNonFatalThrowable(fa).unsafeRunSync()
+      val actual      = CanCatch[IO].catchNonFatalThrowable(fa)
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCanCatch_IO_catchNonFatalShouldCatchNonFatal: Result = {
 
-      val es: ExecutorService = ConcurrentSupport.newExecutorService()
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual            = CanCatch[IO].catchNonFatal(fa)(SomeError.someThrowable).unsafeRunSync()
+      val actual            = CanCatch[IO].catchNonFatal(fa)(SomeError.someThrowable)
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCanCatch_IO_catchNonFatalShouldNotCatchFatal: Result = {
@@ -273,27 +279,27 @@ object CanCatchSpec extends Properties {
 
     def testCanCatch_IO_catchNonFatalShouldReturnSuccessfulResult: Result = {
 
-      val es: ExecutorService = ConcurrentSupport.newExecutorService()
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val fa: IO[Int] = run[IO, Int](1)
       val expected    = 1.asRight[SomeError]
-      val actual      = CanCatch[IO].catchNonFatal(fa)(SomeError.someThrowable).unsafeRunSync()
+      val actual      = CanCatch[IO].catchNonFatal(fa)(SomeError.someThrowable)
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCanCatch_IO_catchNonFatalEitherShouldCatchNonFatal: Result = {
 
-      val es: ExecutorService = ConcurrentSupport.newExecutorService()
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual            = CanCatch[IO].catchNonFatalEither(fa)(SomeError.someThrowable).unsafeRunSync()
+      val actual            = CanCatch[IO].catchNonFatalEither(fa)(SomeError.someThrowable)
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCanCatch_IO_catchNonFatalEitherShouldNotCatchFatal: Result = {
@@ -319,40 +325,40 @@ object CanCatchSpec extends Properties {
 
     def testCanCatch_IO_catchNonFatalEitherShouldReturnSuccessfulResult: Result = {
 
-      val es: ExecutorService = ConcurrentSupport.newExecutorService()
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
-      val actual   = CanCatch[IO].catchNonFatalEither(fa)(SomeError.someThrowable).unsafeRunSync()
+      val actual   = CanCatch[IO].catchNonFatalEither(fa)(SomeError.someThrowable)
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCanCatch_IO_catchNonFatalEitherShouldReturnFailedResult: Result = {
 
-      val es: ExecutorService = ConcurrentSupport.newExecutorService()
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
-      val actual          = CanCatch[IO].catchNonFatalEither(fa)(SomeError.someThrowable).unsafeRunSync()
+      val actual          = CanCatch[IO].catchNonFatalEither(fa)(SomeError.someThrowable)
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCanCatch_IO_catchNonFatalEitherTShouldCatchNonFatal: Result = {
 
-      val es: ExecutorService = ConcurrentSupport.newExecutorService()
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
       val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual            = CanCatch[IO].catchNonFatalEitherT(fa)(SomeError.someThrowable).value.unsafeRunSync()
+      val actual            = CanCatch[IO].catchNonFatalEitherT(fa)(SomeError.someThrowable).value
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCanCatch_IO_catchNonFatalEitherTShouldNotCatchFatal: Result = {
@@ -378,27 +384,27 @@ object CanCatchSpec extends Properties {
 
     def testCanCatch_IO_catchNonFatalEitherTShouldReturnSuccessfulResult: Result = {
 
-      val es: ExecutorService = ConcurrentSupport.newExecutorService()
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected = 1.asRight[SomeError]
-      val actual   = CanCatch[IO].catchNonFatalEitherT(fa)(SomeError.someThrowable).value.unsafeRunSync()
+      val actual   = CanCatch[IO].catchNonFatalEitherT(fa)(SomeError.someThrowable).value
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCanCatch_IO_catchNonFatalEitherTShouldReturnFailedResult: Result = {
 
-      val es: ExecutorService = ConcurrentSupport.newExecutorService()
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = EitherT(run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
       val expected        = expectedFailure.asLeft[Int]
-      val actual          = CanCatch[IO].catchNonFatalEitherT(fa)(SomeError.someThrowable).value.unsafeRunSync()
+      val actual          = CanCatch[IO].catchNonFatalEitherT(fa)(SomeError.someThrowable).value
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
   }

@@ -5,11 +5,10 @@ import cats.data.EitherT
 import cats.effect.*
 import cats.instances.all.*
 import cats.syntax.all.*
-import effectie.CanCatch
-import effectie.cats.Effectful.*
 import effectie.cats.CanCatch as *
+import effectie.cats.Effectful.*
 import effectie.testing.types.SomeError
-import effectie.{ConcurrentSupport, Fx, SomeControlThrowable}
+import effectie.{CanCatch, ConcurrentSupport, Fx, SomeControlThrowable}
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -20,7 +19,9 @@ import scala.util.control.ControlThrowable
   */
 object CanCatchSpec extends Properties {
 
-  override def tests: List[Test] = List(
+  override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
+
+  val ioSpecs = List(
     /* IO */
     example(
       "test CanCatch[IO]catchNonFatalThrowable should catch NonFatal",
@@ -77,9 +78,11 @@ object CanCatchSpec extends Properties {
     example(
       "test CanCatch[IO]catchNonFatalEitherT should return the failed result",
       IoSpec.testCanCatch_IO_catchNonFatalEitherTShouldReturnFailedResult
-    ),
+    )
+  )
 
-    /* Future */
+  /* Future */
+  val futureSpecs = List(
     example(
       "test CanCatch[Future]catchNonFatalThrowable should catch NonFatal",
       FutureSpec.testCanCatch_Future_catchNonFatalThrowableShouldCatchNonFatal
@@ -119,8 +122,10 @@ object CanCatchSpec extends Properties {
     example(
       "test CanCatch[Future]catchNonFatalEitherT should return the failed result",
       FutureSpec.testCanCatch_Future_catchNonFatalEitherTShouldReturnFailedResult
-    ),
+    )
+  )
 
+  val idSpecs = List(
     /* Id */
     example(
       "test CanCatch[Id]catchNonFatalThrowable should catch NonFatal",

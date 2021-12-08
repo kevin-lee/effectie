@@ -1,6 +1,7 @@
 package effectie.monix
 
 import cats.Id
+import cats.effect.IO
 import monix.eval.Task
 import monix.execution.Scheduler
 
@@ -20,10 +21,17 @@ object ToFuture {
   def apply[F[_]: ToFuture]: ToFuture[F] = implicitly[ToFuture[F]]
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
-  implicit def ioToFuture(implicit scheduler: Scheduler): ToFuture[Task] = new ToFuture[Task] {
+  implicit def taskToFuture(implicit scheduler: Scheduler): ToFuture[Task] = new ToFuture[Task] {
 
     override def unsafeToFuture[A](fa: Task[A]): Future[A] =
       fa.runToFuture
+  }
+
+  @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
+  implicit object IoToFuture extends ToFuture[IO] {
+
+    override def unsafeToFuture[A](fa: IO[A]): Future[A] =
+      fa.unsafeToFuture()
   }
 
   implicit val futureToFuture: ToFuture[Future] = new ToFuture[Future] {

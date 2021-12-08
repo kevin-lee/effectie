@@ -19,12 +19,17 @@ import scala.util.control.ControlThrowable
   */
 object CanCatchSpec extends Properties {
 
-  type FxCtor[F[_]] = effectie.FxCtor[F]
+  type FxCtor[F[_]]   = effectie.FxCtor[F]
   type CanCatch[F[_]] = effectie.CanCatch[F]
   val CanCatch: effectie.CanCatch.type = effectie.CanCatch
 
-  override def tests: List[Test] = List(
-    /* Task */
+  override def tests: List[Test] = taskSpecs ++
+    ioSpecs ++
+    futureSpecs ++
+    idSpecs
+
+  /* Task */
+  val taskSpecs = List(
     example(
       "test CanCatch[Task].catchNonFatalThrowable should catch NonFatal",
       TaskSpec.testCanCatch_Task_catchNonFatalThrowableShouldCatchNonFatal
@@ -81,8 +86,10 @@ object CanCatchSpec extends Properties {
       "test CanCatch[Task].catchNonFatalEitherT should return the failed result",
       TaskSpec.testCanCatch_Task_catchNonFatalEitherTShouldReturnFailedResult
     ),
+  )
 
-   /* IO */
+  /* IO */
+  val ioSpecs     = List(
     example(
       "test CanCatch[IO].catchNonFatalThrowable should catch NonFatal",
       IoSpec.testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal
@@ -139,7 +146,8 @@ object CanCatchSpec extends Properties {
       "test CanCatch[IO].catchNonFatalEitherT should return the failed result",
       IoSpec.testCanCatch_IO_catchNonFatalEitherTShouldReturnFailedResult
     ),
-
+  )
+  val futureSpecs = List(
     /* Future */
     example(
       "test CanCatch[Future].catchNonFatalThrowable should catch NonFatal",
@@ -181,8 +189,10 @@ object CanCatchSpec extends Properties {
       "test CanCatch[Future].catchNonFatalEitherT should return the failed result",
       FutureSpec.testCanCatch_Future_catchNonFatalEitherTShouldReturnFailedResult
     ),
+  )
 
-    /* Id */
+  /* Id */
+  val idSpecs = List(
     example(
       "test CanCatch[Id].catchNonFatalThrowable should catch NonFatal",
       IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal

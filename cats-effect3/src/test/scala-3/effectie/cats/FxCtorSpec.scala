@@ -2,9 +2,12 @@ package effectie.cats
 
 import cats.Id
 import cats.effect.*
+import cats.effect.testkit.TestContext
 import cats.effect.unsafe.IORuntime
 import effectie.{ConcurrentSupport, FxCtor}
 import effectie.cats.compat.CatsEffectIoCompatForFuture
+import effectie.testing.tools
+import effectie.testing.types.SomeThrowableError
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -16,37 +19,42 @@ object FxCtorSpec extends Properties {
     property("test FxCtor[IO].effectOf", IoSpec.testEffectOf),
     property("test FxCtor[IO].pureOf", IoSpec.testPureOf),
     example("test FxCtor[IO].unitOf", IoSpec.testUnitOf),
+    example("test FxCtor[IO].errorOf", IoSpec.testErrorOf),
     property("test FxCtor[Future].effectOf", FutureSpec.testEffectOf),
     property("test FxCtor[Future].pureOf", FutureSpec.testPureOf),
     example("test FxCtor[Future].unitOf", FutureSpec.testUnitOf),
+    example("test FxCtor[Future].errorOf", FutureSpec.testErrorOf),
     property("test FxCtor[Id].effectOf", IdSpec.testEffectOf),
     property("test FxCtor[Id].pureOf", IdSpec.testPureOf),
-    example("test FxCtor[Id].unitOf", IdSpec.testUnitOf)
+    example("test FxCtor[Id].unitOf", IdSpec.testUnitOf),
+    example("test FxCtor[Id].errorOf", IdSpec.testErrorOf)
   )
 
   object IoSpec {
     import effectie.cats.Fx.given
 
-    val compat = new CatsEffectIoCompatForFuture
-
-    given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
-
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
+
       var actual        = before
       val testBefore    = actual ==== before
       val io            = FxCtor[IO].effectOf({
         actual = after; ()
       })
       val testBeforeRun = actual ==== before
-      io.unsafeRunSync()
+
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
+      val runResult = io.completeAs(())
+
       val testAfterRun  = actual ==== after
       Result.all(
         List(
           testBefore.log("testBefore"),
           testBeforeRun.log("testBeforeRun"),
+          runResult.log("runResult"),
           testAfterRun.log("testAfterRun")
         )
       )
@@ -62,22 +70,43 @@ object FxCtorSpec extends Properties {
         actual = after; ()
       })
       val testBeforeRun = actual ==== after
-      io.unsafeRunSync()
+      import effectie.cats.CatsEffectRunner.*
+
+      given ticket: Ticker = Ticker(TestContext())
+      val runResult = io.completeAs(())
+
       val testAfterRun  = actual ==== after
       Result.all(
         List(
           testBefore.log("testBefore"),
           testBeforeRun.log("testBeforeRun"),
+          runResult.log("runResult"),
           testAfterRun.log("testAfterRun")
         )
       )
     }
 
     def testUnitOf: Result = {
-      val io             = FxCtor[IO].unitOf
+      val actual             = FxCtor[IO].unitOf
       val expected: Unit = ()
-      val actual: Unit   = io.unsafeRunSync()
-      actual ==== expected
+
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
+    }
+
+
+    def testErrorOf: Result = {
+      import CatsEffectRunner.*
+
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      given ticket: Ticker = Ticker(TestContext())
+
+      val io = FxCtor[IO].errorOf(expectedError)
+
+      io.expectError(expectedError)
     }
 
   }
@@ -147,6 +176,17 @@ object FxCtorSpec extends Properties {
       actual ==== expected
     }
 
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      given ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+
+      val future = FxCtor[Future].errorOf[Unit](expectedError)
+      tools.expectThrowable(ConcurrentSupport.futureToValueAndTerminate(future, waitFor), expectedError)
+    }
+
   }
 
   object IdSpec {
@@ -189,6 +229,13 @@ object FxCtorSpec extends Properties {
       actual ==== expected
     }
 
+    def testErrorOf: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      lazy val actual = FxCtor[Id].errorOf[Unit](expectedError)
+      tools.expectThrowable(actual, expectedError)
+    }
   }
 
 }
