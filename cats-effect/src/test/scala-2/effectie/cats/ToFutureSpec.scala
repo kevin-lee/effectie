@@ -2,14 +2,11 @@ package effectie.cats
 
 import cats._
 import cats.effect._
-
 import effectie.ConcurrentSupport
-
 import hedgehog._
 import hedgehog.runner._
 
 import java.util.concurrent.ExecutorService
-
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
@@ -37,18 +34,20 @@ object ToFutureSpec extends Properties {
     def testUnsafeToFuture: Property = for {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {
-      val fa = IO(a)
+      val expected = a
+      val fa       = IO(expected)
 
       implicit val es: ExecutorService = ConcurrentSupport.newExecutorService()
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
-      implicit val ec                  = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
+      implicit val ec = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
       ConcurrentSupport.runAndShutdown(es, 800.milliseconds) {
         val future   = ToFuture[IO].unsafeToFuture(fa)
-        val expected = a
+        val ioResult = fa.unsafeRunSync() ==== expected
         val actual   = ConcurrentSupport.futureToValueAndTerminate(future, 500.milliseconds)
 
         Result.all(
           List(
+            ioResult,
             Result
               .assert(future.isInstanceOf[Future[Int]])
               .log(s"future is not an instance of Future[Int]. future.getClass: ${future.getClass.toString}"),
@@ -67,7 +66,7 @@ object ToFutureSpec extends Properties {
     } yield {
       implicit val es: ExecutorService = ConcurrentSupport.newExecutorService()
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
-      implicit val ec                  = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
+      implicit val ec = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
       ConcurrentSupport.runAndShutdown(es, 300.milliseconds) {
         val expected = Future(a)
         val fa       = Future(a)
@@ -96,7 +95,7 @@ object ToFutureSpec extends Properties {
     } yield {
       implicit val es: ExecutorService = ConcurrentSupport.newExecutorService()
 
-      val fa          = a
+      val fa = a
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
       implicit val ec = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
       ConcurrentSupport.runAndShutdown(es, 300.milliseconds) {

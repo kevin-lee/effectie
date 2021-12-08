@@ -77,8 +77,9 @@ object EffectfulSpec extends Properties {
   }
 
   object TaskSpec {
-    import monix.execution.Scheduler.Implicits.global
     import effectie.monix.Fx._
+
+    import monix.execution.Scheduler.Implicits.global
 
     @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
     def testAll: Property = for {
@@ -181,8 +182,9 @@ object EffectfulSpec extends Properties {
   }
 
   object IoSpec {
-    import cats.effect.IO
     import effectie.monix.Fx._
+
+    import cats.effect.IO
 
     @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
     def testAll: Property = for {
@@ -396,7 +398,6 @@ object EffectfulSpec extends Properties {
   }
 
   object IdSpec {
-
     import effectie.monix.Fx._
 
     def testAll: Property = for {

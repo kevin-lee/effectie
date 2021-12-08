@@ -19,8 +19,10 @@ import scala.util.control.{ControlThrowable, NonFatal}
 object CanRecoverSpec extends Properties {
   val CanRecover: effectie.CanRecover.type = effectie.CanRecover
 
-  override def tests: List[Test] = List(
-    /* IO */
+  override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
+
+  /* IO */
+  val ioSpecs = List(
     example(
       "test CanRecover[IO].recoverFromNonFatalWith should catch NonFatal",
       IOSpec.testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal
@@ -140,9 +142,11 @@ object CanRecoverSpec extends Properties {
     example(
       "test CanRecover[IO].recoverEitherTFromNonFatal should return the failed result",
       IOSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnFailedResult
-    ),
+    )
+  )
 
-    /* Future */
+  /* Future */
+  val futureSpecs = List(
     example(
       "test CanRecover[Future].recoverFromNonFatalWith should catch NonFatal",
       FutureSpec.testCanRecover_Future_recoverFromNonFatalWithShouldRecoverFromNonFatal
@@ -230,9 +234,11 @@ object CanRecoverSpec extends Properties {
     example(
       "test CanRecover[Future].recoverEitherTFromNonFatal should return the failed result",
       FutureSpec.testCanRecover_Future_recoverEitherTFromNonFatalShouldReturnFailedResult
-    ),
+    )
+  )
 
-    /* Id */
+  /* Id */
+  val idSpecs = List(
     example(
       "test CanRecover[Id].recoverFromNonFatalWith should catch NonFatal",
       IdSpec.testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal
@@ -1122,7 +1128,7 @@ object CanRecoverSpec extends Properties {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = 1
-      val actual            = ConcurrentSupport.futureToValue[Int](
+      val actual            = ConcurrentSupport.futureToValueAndTerminate[Int](
         CanRecover[Future].recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => expected },
         waitFor
       )

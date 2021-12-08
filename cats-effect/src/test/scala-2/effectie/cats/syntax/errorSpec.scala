@@ -3369,7 +3369,7 @@ object CanRecoverSyntaxSpec {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = 1
-      val actual            = ConcurrentSupport.futureToValue[Int](
+      val actual            = ConcurrentSupport.futureToValueAndTerminate[Int](
         fa.recoverFromNonFatal { case NonFatal(`expectedExpcetion`) => expected },
         waitFor
       )

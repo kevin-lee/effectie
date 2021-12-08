@@ -263,105 +263,104 @@ object FxSpec extends Properties {
         "test Fx[Future]catchNonFatalEitherT should return the failed result",
         FutureSpec.CanCatchSpec.testCanCatch_Future_catchNonFatalEitherTShouldReturnFailedResult
       ),
+    ) ++ List(
+      example(
+        "test Fx[Future].handleNonFatalWith should handle NonFatal",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithShouldHandleNonFatalWith
+      ),
+      example(
+        "test Fx[Future].handleNonFatalWith should return the successful result",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Future].handleNonFatalWithEither should handle NonFatal",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldHandleNonFatalWith
+      ),
+      example(
+        "test Fx[Future].handleNonFatalWithEither should return the successful result",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Future].handleNonFatalWithEither should return the failed result",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldReturnFailedResult
+      ),
+      example(
+        "test Fx[Future].handleEitherNonFatalWith should handle NonFatal",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldHandleNonFatalWith
+      ),
+      example(
+        "test Fx[Future].handleEitherNonFatalWith should return the successful result",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Future].handleEitherNonFatalWith should return the failed result",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnFailedResult
+      ),
+      example(
+        "test Fx[Future].handleEitherTNonFatalWith should handle NonFatal",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldHandleNonFatalWith
+      ),
+      example(
+        "test Fx[Future].handleEitherTNonFatalWith should return the successful result",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Future].handleEitherTNonFatalWith should return the failed result",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldReturnFailedResult
+      ),
+      example(
+        "test Fx[Future].handleNonFatal should handle NonFatal",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalShouldHandleNonFatal
+      ),
+      example(
+        "test Fx[Future].handleNonFatal should return the successful result",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Future].handleNonFatalEither should handle NonFatal",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalEitherShouldHandleNonFatal
+      ),
+      example(
+        "test Fx[Future].handleNonFatalEither should return the successful result",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalEitherShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Future].handleNonFatalEither should return the failed result",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalEitherShouldReturnFailedResult
+      ),
+      example(
+        "test Fx[Future].handleEitherNonFatal should handle NonFatal",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalShouldHandleNonFatal
+      ),
+      example(
+        "test Fx[Future].handleEitherNonFatal should return the successful result",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Future].handleEitherNonFatal should return the failed result",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnFailedResult
+      ),
+      example(
+        "test Fx[Future].handleEitherTNonFatal should handle NonFatal",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherTNonFatalShouldHandleNonFatal
+      ),
+      example(
+        "test Fx[Future].handleEitherTNonFatal should return the successful result",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherTNonFatalShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Future].handleEitherTNonFatal should return the failed result",
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherTNonFatalShouldReturnFailedResult
+      ),
     )
 
+  /* Id */
   private val idSpecs = List(
-    example(
-      "test Fx[Future].handleNonFatalWith should handle NonFatal",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithShouldHandleNonFatalWith
-    ),
-    example(
-      "test Fx[Future].handleNonFatalWith should return the successful result",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Future].handleNonFatalWithEither should handle NonFatal",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldHandleNonFatalWith
-    ),
-    example(
-      "test Fx[Future].handleNonFatalWithEither should return the successful result",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Future].handleNonFatalWithEither should return the failed result",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldReturnFailedResult
-    ),
-    example(
-      "test Fx[Future].handleEitherNonFatalWith should handle NonFatal",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldHandleNonFatalWith
-    ),
-    example(
-      "test Fx[Future].handleEitherNonFatalWith should return the successful result",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Future].handleEitherNonFatalWith should return the failed result",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnFailedResult
-    ),
-    example(
-      "test Fx[Future].handleEitherTNonFatalWith should handle NonFatal",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldHandleNonFatalWith
-    ),
-    example(
-      "test Fx[Future].handleEitherTNonFatalWith should return the successful result",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Future].handleEitherTNonFatalWith should return the failed result",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldReturnFailedResult
-    ),
-    example(
-      "test Fx[Future].handleNonFatal should handle NonFatal",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalShouldHandleNonFatal
-    ),
-    example(
-      "test Fx[Future].handleNonFatal should return the successful result",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Future].handleNonFatalEither should handle NonFatal",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalEitherShouldHandleNonFatal
-    ),
-    example(
-      "test Fx[Future].handleNonFatalEither should return the successful result",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalEitherShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Future].handleNonFatalEither should return the failed result",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalEitherShouldReturnFailedResult
-    ),
-    example(
-      "test Fx[Future].handleEitherNonFatal should handle NonFatal",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalShouldHandleNonFatal
-    ),
-    example(
-      "test Fx[Future].handleEitherNonFatal should return the successful result",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Future].handleEitherNonFatal should return the failed result",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnFailedResult
-    ),
-    example(
-      "test Fx[Future].handleEitherTNonFatal should handle NonFatal",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherTNonFatalShouldHandleNonFatal
-    ),
-    example(
-      "test Fx[Future].handleEitherTNonFatal should return the successful result",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherTNonFatalShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Future].handleEitherTNonFatal should return the failed result",
-      FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherTNonFatalShouldReturnFailedResult
-    ),
+    property("test Fx[Id].effectOf", IdSpec.testEffectOf),
+    property("test Fx[Id].pureOf", IdSpec.testPureOf),
+    example("test Fx[Id].unitOf", IdSpec.testUnitOf),
+    example("test Fx[Id].errorOf", IdSpec.testErrorOf),
   ) ++
-    /* Id */
-    List(
-      property("test Fx[Id].effectOf", IdSpec.testEffectOf),
-      property("test Fx[Id].pureOf", IdSpec.testPureOf),
-      example("test Fx[Id].unitOf", IdSpec.testUnitOf),
-      example("test Fx[Id].errorOf", IdSpec.testErrorOf),
-    ) ++
     IdSpec.testMonadLaws ++
     List(
       /* Id */

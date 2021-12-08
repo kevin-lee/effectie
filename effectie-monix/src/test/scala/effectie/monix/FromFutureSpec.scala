@@ -1,12 +1,10 @@
 package effectie.monix
 
 import cats.Id
-
+import cats.effect.{ContextShift, IO}
 import effectie.ConcurrentSupport
-
 import hedgehog._
 import hedgehog.runner._
-
 import monix.eval.Task
 import monix.execution.Scheduler
 
@@ -20,6 +18,7 @@ import scala.concurrent.{ExecutionContext, Future}
 object FromFutureSpec extends Properties {
   override def tests: List[Test] = List(
     property("test FromFuture[Task].toEffect", TaskSpec.testToEffect),
+    property("test FromFuture[IO].toEffect", IoSpec.testToEffect),
     property("test FromFuture[Future].toEffect", FutureSpec.testToEffect),
     property("test FromFuture[Id].toEffect", IdSpec.testToEffect)
   )
@@ -35,6 +34,23 @@ object FromFutureSpec extends Properties {
       ConcurrentSupport.runAndShutdown(es, 300.milliseconds) {
         lazy val fa = Future(a)
         val actual  = FromFuture[Task].toEffect(fa).runSyncUnsafe()
+
+        actual ==== a
+      }
+    }
+  }
+
+  object IoSpec {
+    def testToEffect: Property = for {
+      a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
+    } yield {
+      val es                            = ConcurrentSupport.newExecutorService()
+      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContextWithLogger(es, println(_))
+      implicit val cs: ContextShift[IO] = IO.contextShift(ec)
+
+      ConcurrentSupport.runAndShutdown(es, 300.milliseconds) {
+        lazy val fa = Future(a)
+        val actual  = FromFuture[IO].toEffect(fa).unsafeRunSync()
 
         actual ==== a
       }

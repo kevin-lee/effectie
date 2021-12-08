@@ -1277,12 +1277,12 @@ object FxSpec extends Properties {
     def testMonadLaws: List[Test] = {
       import cats.syntax.eq.*
 
-      implicit val ec: scala.concurrent.ExecutionContext             = scala.concurrent.ExecutionContext.global
+      given ec: scala.concurrent.ExecutionContext             = scala.concurrent.ExecutionContext.global
       implicit def futureEqual[A](implicit EQ: Eq[A]): Eq[Future[A]] = new Eq[Future[A]] {
         override def eqv(x: Future[A], y: Future[A]): Boolean =
           Await.result(x.flatMap(a => y.map(b => EQ.eqv(a, b))), 1.second)
       }
-      implicit val eqFuture: Eq[Future[Int]]                         =
+      given eqFuture: Eq[Future[Int]]                         =
         (x, y) => {
           val future = x.flatMap(xx => y.map(_ === xx))
           Await.result(future, waitFor)

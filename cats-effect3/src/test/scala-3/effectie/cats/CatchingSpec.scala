@@ -4,6 +4,7 @@ import Catching.*
 import cats.*
 import cats.data.EitherT
 import cats.effect.*
+import cats.effect.testkit.TestContext
 import cats.effect.unsafe.IORuntime
 import cats.instances.all.*
 import cats.syntax.all.*
@@ -21,8 +22,10 @@ import scala.util.control.ControlThrowable
   */
 object CatchingSpec extends Properties {
 
-  override def tests: List[Test] = List(
-    /* IO */
+  override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
+
+  /* IO */
+  val ioSpecs = List(
     example(
       "test Catching.catchNonFatal[IO] should catch NonFatal",
       IoSpec.testCatching_IO_catchNonFatalShouldCatchNonFatal
@@ -95,8 +98,10 @@ object CatchingSpec extends Properties {
       "test Catching.catchNonFatalEitherT[IO] should return the failed result",
       IoSpec.testCatching_IO_catchNonFatalEitherTShouldReturnFailedResult
     ),
-    /* Future */
+  )
 
+  /* Future */
+  val futureSpecs = List(
     example(
       "test Catching.catchNonFatal[Future] should catch NonFatal",
       FutureSpec.testCatching_Future_catchNonFatalShouldCatchNonFatal
@@ -149,7 +154,10 @@ object CatchingSpec extends Properties {
       "test Catching.catchNonFatalEitherT[Future] should return the failed result",
       FutureSpec.testCatching_Future_catchNonFatalEitherTShouldReturnFailedResult
     ),
-    /* Id */
+  )
+
+  /* Id */
+  val idSpecs = List(
     example(
       "test Catching.catchNonFatal[Id] should catch NonFatal",
       IdSpec.testCatching_Id_catchNonFatalShouldCatchNonFatal
@@ -235,15 +243,15 @@ object CatchingSpec extends Properties {
 
     def testCatching_IO_catchNonFatalShouldCatchNonFatal: Result = {
 
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual            = catchNonFatal(fa)(SomeError.someThrowable).unsafeRunSync()
+      val actual            = catchNonFatal(fa)(SomeError.someThrowable)
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCatching_IO_catchNonFatalShouldNotCatchFatal: Result = {
@@ -269,26 +277,26 @@ object CatchingSpec extends Properties {
 
     def testCatching_IO_catchNonFatalShouldReturnSuccessfulResult: Result = {
 
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val fa       = run[IO, Int](1)
       val expected = 1.asRight[SomeError]
-      val actual   = catchNonFatal(fa)(SomeError.someThrowable).unsafeRunSync()
+      val actual   = catchNonFatal(fa)(SomeError.someThrowable)
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCatching_IO_catchNonFatalFShouldCatchNonFatal: Result = {
 
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual            = catchNonFatalF[IO](throwThrowable[Int](expectedExpcetion))(SomeError.someThrowable).unsafeRunSync()
+      val actual            = catchNonFatalF[IO](throwThrowable[Int](expectedExpcetion))(SomeError.someThrowable)
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCatching_IO_catchNonFatalFShouldNotCatchFatal: Result = {
@@ -313,26 +321,26 @@ object CatchingSpec extends Properties {
 
     def testCatching_IO_catchNonFatalFShouldReturnSuccessfulResult: Result = {
 
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val expected = 1.asRight[SomeError]
-      val actual   = catchNonFatalF[IO](1)(SomeError.someThrowable).unsafeRunSync()
+      val actual   = catchNonFatalF[IO](1)(SomeError.someThrowable)
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCatching_IO_catchNonFatalEitherShouldCatchNonFatal: Result = {
 
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual            = catchNonFatalEither(fa)(SomeError.someThrowable).unsafeRunSync()
+      val actual            = catchNonFatalEither(fa)(SomeError.someThrowable)
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCatching_IO_catchNonFatalEitherShouldNotCatchFatal: Result = {
@@ -358,41 +366,40 @@ object CatchingSpec extends Properties {
 
     def testCatching_IO_catchNonFatalEitherShouldReturnSuccessfulResult: Result = {
 
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
-      val actual   = catchNonFatalEither(fa)(SomeError.someThrowable).unsafeRunSync()
+      val actual   = catchNonFatalEither(fa)(SomeError.someThrowable)
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCatching_IO_catchNonFatalEitherShouldReturnFailedResult: Result = {
 
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
-      val actual          = catchNonFatalEither(fa)(SomeError.someThrowable).unsafeRunSync()
+      val actual          = catchNonFatalEither(fa)(SomeError.someThrowable)
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCatching_IO_catchNonFatalEitherFShouldCatchNonFatal: Result = {
 
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actual            =
         catchNonFatalEitherF[IO](throwThrowable[Either[SomeError, Int]](expectedExpcetion))(SomeError.someThrowable)
-          .unsafeRunSync()
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCatching_IO_catchNonFatalEitherFShouldNotCatchFatal: Result = {
@@ -419,39 +426,39 @@ object CatchingSpec extends Properties {
 
     def testCatching_IO_catchNonFatalEitherFShouldReturnSuccessfulResult: Result = {
 
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val expected = 1.asRight[SomeError]
-      val actual   = catchNonFatalEitherF[IO](1.asRight[SomeError])(SomeError.someThrowable).unsafeRunSync()
+      val actual   = catchNonFatalEitherF[IO](1.asRight[SomeError])(SomeError.someThrowable)
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCatching_IO_catchNonFatalEitherFShouldReturnFailedResult: Result = {
 
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val expectedFailure = SomeError.message("Failed")
       val expected        = expectedFailure.asLeft[Int]
-      val actual          = catchNonFatalEitherF[IO](expectedFailure.asLeft[Int])(SomeError.someThrowable).unsafeRunSync()
+      val actual          = catchNonFatalEitherF[IO](expectedFailure.asLeft[Int])(SomeError.someThrowable)
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCatching_IO_catchNonFatalEitherTShouldCatchNonFatal: Result = {
 
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
       val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actual            =
-        catchNonFatalEitherT[IO](fa)(SomeError.someThrowable).value.unsafeRunSync()
+        catchNonFatalEitherT[IO](fa)(SomeError.someThrowable).value
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCatching_IO_catchNonFatalEitherTShouldNotCatchFatal: Result = {
@@ -477,28 +484,28 @@ object CatchingSpec extends Properties {
 
     def testCatching_IO_catchNonFatalEitherTShouldReturnSuccessfulResult: Result = {
 
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected          = 1.asRight[SomeError]
-      val actual            = catchNonFatalEitherT[IO](fa)(SomeError.someThrowable).value.unsafeRunSync()
+      val actual            = catchNonFatalEitherT[IO](fa)(SomeError.someThrowable).value
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
 
     def testCatching_IO_catchNonFatalEitherTShouldReturnFailedResult: Result = {
 
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      import effectie.cats.CatsEffectRunner.*
+      given ticket: Ticker = Ticker(TestContext())
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = EitherT(run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
       val expected        = expectedFailure.asLeft[Int]
-      val actual          = catchNonFatalEitherT[IO](fa)(SomeError.someThrowable).value.unsafeRunSync()
+      val actual          = catchNonFatalEitherT[IO](fa)(SomeError.someThrowable).value
 
-      actual ==== expected
+      actual.completeAs(expected)
     }
   }
 

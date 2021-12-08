@@ -1,5 +1,7 @@
 package effectie.testing
 
+import cats.{Eq, Show}
+
 /**
  * @author Kevin Lee
  * @since 2021-10-30
@@ -16,6 +18,9 @@ object types {
 
     def message(message: String): SomeError = Message(message)
 
+    implicit val someErrorEq: Eq[SomeError] = Eq.fromUniversalEquals
+
+    implicit val someErrorShow: Show[SomeError] = _.toString
   }
 
   abstract class SomeThrowableError(val message: String, val cause: Throwable) extends RuntimeException(message, cause)
@@ -25,6 +30,10 @@ object types {
 
     def message(message: String): SomeThrowableError = Message(message)
     def someThrowable(cause: Throwable): SomeThrowableError = SomeThrowable(cause)
+
+    implicit val someThrowableErrorEq: Eq[SomeThrowableError] = Eq.fromUniversalEquals
+
+    implicit val someThrowableErrorShow: Show[SomeThrowableError] = _.toString
   }
 
 }

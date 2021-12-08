@@ -19,8 +19,10 @@ import scala.util.control.ControlThrowable
   */
 object CatchingSpec extends Properties {
 
-  override def tests: List[Test] = List(
-    /* IO */
+  override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
+
+  /* IO */
+  val ioSpecs = List(
     example(
       "test Catching.catchNonFatal[IO] should catch NonFatal",
       IoSpec.testCatching_IO_catchNonFatalShouldCatchNonFatal
@@ -93,8 +95,10 @@ object CatchingSpec extends Properties {
       "test Catching.catchNonFatalEitherT[IO] should return the failed result",
       IoSpec.testCatching_IO_catchNonFatalEitherTShouldReturnFailedResult
     ),
-    /* Future */
+  )
 
+  /* Future */
+  val futureSpecs = List(
     example(
       "test Catching.catchNonFatal[Future] should catch NonFatal",
       FutureSpec.testCatching_Future_catchNonFatalShouldCatchNonFatal
@@ -147,7 +151,10 @@ object CatchingSpec extends Properties {
       "test Catching.catchNonFatalEitherT[Future] should return the failed result",
       FutureSpec.testCatching_Future_catchNonFatalEitherTShouldReturnFailedResult
     ),
-    /* Id */
+  )
+
+  /* Id */
+  val idSpecs = List(
     example(
       "test Catching.catchNonFatal[Id] should catch NonFatal",
       IdSpec.testCatching_Id_catchNonFatalShouldCatchNonFatal
