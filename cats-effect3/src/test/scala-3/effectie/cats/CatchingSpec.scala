@@ -4,7 +4,7 @@ import Catching.*
 import cats.*
 import cats.data.EitherT
 import cats.effect.*
-import cats.effect.testkit.TestContext
+import effectie.cats.CatsEffectRunner.TestContext
 import cats.effect.unsafe.IORuntime
 import cats.instances.all.*
 import cats.syntax.all.*

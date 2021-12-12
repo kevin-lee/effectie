@@ -2,7 +2,6 @@ package effectie.cats
 
 import cats._
 import cats.effect._
-import cats.effect.testkit.TestContext
 import effectie.ConcurrentSupport
 import hedgehog._
 import hedgehog.runner._
