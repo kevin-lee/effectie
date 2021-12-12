@@ -1,3 +1,4 @@
 update: [ 'update/**', 'dependabot/**' ]
 pr: '**'
+v2: '**'
 release: 'prepare-to-release'
