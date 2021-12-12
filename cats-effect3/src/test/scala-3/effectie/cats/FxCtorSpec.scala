@@ -2,7 +2,7 @@ package effectie.cats
 
 import cats.Id
 import cats.effect.*
-import cats.effect.testkit.TestContext
+import effectie.cats.CatsEffectRunner.TestContext
 import cats.effect.unsafe.IORuntime
 import effectie.{ConcurrentSupport, FxCtor}
 import effectie.cats.compat.CatsEffectIoCompatForFuture

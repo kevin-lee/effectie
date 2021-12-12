@@ -2,7 +2,6 @@ package effectie.cats
 
 import cats.data.EitherT
 import cats.effect._
-import cats.effect.testkit.TestContext
 import cats.effect.unsafe.IORuntime
 import cats.syntax.either.catsSyntaxEitherId
 import cats.{Eq, Functor, Id, Monad}

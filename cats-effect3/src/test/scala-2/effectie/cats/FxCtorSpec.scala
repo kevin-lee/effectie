@@ -2,7 +2,6 @@ package effectie.cats
 
 import cats.Id
 import cats.effect._
-import cats.effect.testkit.TestContext
 import effectie.ConcurrentSupport
 import effectie.testing.tools
 import effectie.testing.types.SomeThrowableError

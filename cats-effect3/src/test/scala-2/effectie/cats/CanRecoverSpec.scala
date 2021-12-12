@@ -3,7 +3,6 @@ package effectie.cats
 import cats._
 import cats.data.EitherT
 import cats.effect.IO
-import cats.effect.testkit.TestContext
 import cats.effect.unsafe.IORuntime
 import cats.instances.all._
 import cats.syntax.all._

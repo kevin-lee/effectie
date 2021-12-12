@@ -53,20 +53,20 @@ lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
 
 lazy val testing4Cats = projectCommonSettings("test4cats", ProjectName("test4cats"), file("test4cats"))
   .settings(
-    description               := "Effect's test utils for Cats",
-    libraryDependencies       :=
+    description         := "Effect's test utils for Cats",
+    libraryDependencies :=
       libraryDependencies.value ++ List(
         libs.libCatsCore(props.catsLatestVersion),
       ) ++ libs.hedgehogLibs,
-    libraryDependencies       := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
+    libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie.testing.cats._""",
   )
 
 lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effect"), file("cats-effect"))
   .settings(
-    description               := "Effect Utils - Cats Effect",
-    libraryDependencies       :=
+    description         := "Effect Utils - Cats Effect",
+    libraryDependencies :=
       (SemVer.parseUnsafe(scalaVersion.value) match {
         case SemVer(Major(2), Minor(11), _, _, _) =>
           libraryDependencies.value ++ Seq(libs.libCatsCore_2_0_0, libs.libCatsEffect_2_0_0)
@@ -87,7 +87,7 @@ lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effe
             libs.libCatsEffect(props.catsEffect2LatestVersion)
           )
       }),
-    libraryDependencies       := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
+    libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie.cats._""",
   )
@@ -98,13 +98,13 @@ lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effe
 
 lazy val catsEffect3 = projectCommonSettings("catsEffect3", ProjectName("cats-effect3"), file("cats-effect3"))
   .settings(
-    description               := "Effect Utils - Cats Effect 3",
+    description         := "Effect Utils - Cats Effect 3",
     libraryDependencies ++= List(
       libs.libCatsCore(props.catsLatestVersion),
       libs.libCatsEffect(props.catsEffect3Version),
-      libs.libCatsEffectTestKit % Test
+      libs.libCatsEffectTestKit % Test excludeAll ("org.scalacheck")
     ),
-    libraryDependencies       := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
+    libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie.cats._""",
   )
@@ -115,8 +115,8 @@ lazy val catsEffect3 = projectCommonSettings("catsEffect3", ProjectName("cats-ef
 
 lazy val monix = projectCommonSettings("monix", ProjectName("monix"), file(s"${props.RepoName}-monix"))
   .settings(
-    description               := "Effect Utils - Monix",
-    libraryDependencies       :=
+    description         := "Effect Utils - Monix",
+    libraryDependencies :=
       crossVersionProps(
         List.empty,
         SemVer.parseUnsafe(scalaVersion.value),
@@ -126,7 +126,7 @@ lazy val monix = projectCommonSettings("monix", ProjectName("monix"), file(s"${p
         case x                        =>
           libraryDependencies.value ++ List(libs.libMonix)
       },
-    libraryDependencies       := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
+    libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie.monix._""",
   )
@@ -240,7 +240,7 @@ lazy val libs =
 
     def libCatsEffect(catsEffectVersion: String): ModuleID = "org.typelevel" %% "cats-effect" % catsEffectVersion
 
-    lazy val libCatsEffectTestKit = "org.typelevel" %% "cats-effect-testkit" % props.catsEffect3Version
+    lazy val libCatsEffectTestKit = "org.typelevel" %% "cats-effect-kernel-testkit" % props.catsEffect3Version
 
     lazy val libCatsCore_2_0_0: ModuleID   = "org.typelevel" %% "cats-core"   % props.cats2_0_0Version
     lazy val libCatsEffect_2_0_0: ModuleID = "org.typelevel" %% "cats-effect" % props.catsEffect2_0_0Version

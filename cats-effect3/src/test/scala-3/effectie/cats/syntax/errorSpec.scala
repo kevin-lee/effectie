@@ -4,7 +4,7 @@ import cats.{Functor, Id}
 import cats.data.EitherT
 import cats.syntax.all.*
 import cats.effect.IO
-import cats.effect.testkit.TestContext
+import effectie.cats.CatsEffectRunner.TestContext
 import cats.effect.unsafe.IORuntime
 import effectie.{ConcurrentSupport, Fx, SomeControlThrowable}
 import effectie.cats.{CanCatch, FxCtor, testing}
