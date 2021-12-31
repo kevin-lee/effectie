@@ -1,4 +1,6 @@
 update: [ 'update/**', 'dependabot/**' ]
+documentation: [ 'docs/**' ]
+publish-docs: [ 'docs/**' ]
 pr: '**'
 v2: '**'
 release: 'prepare-to-release'
