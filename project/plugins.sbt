@@ -5,7 +5,7 @@ logLevel := sbt.Level.Warn
 addSbtPlugin("com.geirsson" % "sbt-ci-release" % "1.5.7")
 
 libraryDependencies ++= {
-  if (scalaVersion.value.startsWith("3.0")) {
+  if (scalaVersion.value.startsWith("3.")) {
     List.empty[ModuleID]
   } else {
     val sbtV   = (pluginCrossBuild / sbtBinaryVersion).value
@@ -14,8 +14,8 @@ libraryDependencies ++= {
   }
 }
 
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.0")
-addSbtPlugin("org.scoverage" % "sbt-coveralls" % "1.2.7")
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.9.2")
+addSbtPlugin("org.scoverage" % "sbt-coveralls" % "1.3.1")
 addSbtPlugin("org.scalameta" % "sbt-mdoc"      % "2.2.22")
 addSbtPlugin("io.kevinlee"   % "sbt-docusaur"  % "0.8.0")
 
