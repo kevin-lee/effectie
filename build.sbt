@@ -81,7 +81,7 @@ lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effe
             libs.libCatsCore(props.catsVersion),
             libs.libCatsEffect(props.catsEffect2Version)
           )
-        case x                                    =>
+        case x =>
           libraryDependencies.value ++ Seq(
             libs.libCatsCore(props.catsLatestVersion),
             libs.libCatsEffect(props.catsEffect2LatestVersion)
@@ -123,7 +123,7 @@ lazy val monix = projectCommonSettings("monix", ProjectName("monix"), file(s"${p
       ) {
         case (Major(2), Minor(11), _) =>
           libraryDependencies.value ++ List(libs.libMonix3_3_0)
-        case x                        =>
+        case x =>
           libraryDependencies.value ++ List(libs.libMonix)
       },
     libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
@@ -150,7 +150,7 @@ lazy val docs = (project in file("generated-docs"))
       libraryDependencies.value
     ),
     mdocVariables       := Map(
-      "VERSION"                  -> {
+      "VERSION" -> {
         import sys.process._
         "git fetch --tags".!
         val tag = "git rev-list --tags --max-count=1".!!.trim
@@ -187,8 +187,8 @@ lazy val props =
     final val Scala3Versions = List("3.0.0")
     final val Scala3Version  = Scala3Versions.head
 
-    final val ProjectScalaVersion = Scala2Version
-//    final val ProjectScalaVersion = Scala3Version
+//    final val ProjectScalaVersion = Scala2Version
+    final val ProjectScalaVersion = Scala3Version
 
     lazy val licenses = List("MIT" -> url("http://opensource.org/licenses/MIT"))
 
@@ -269,7 +269,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
     .settings(
       name                                    := prefixedProjectName(projectName.projectName),
       scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
-      libraryDependencies ++= libs.hedgehogLibs.map(_ % Test) ++ List("io.kevinlee" %% "extras-cats" % "0.2.0" % Test),
+      libraryDependencies ++= libs.hedgehogLibs.map(_ % Test) ++ List("io.kevinlee" %% "extras-cats" % "0.4.0" % Test),
       /* WartRemover and scalacOptions { */
 //      Compile / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
 //      Test / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
@@ -343,7 +343,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
       coverageHighlighting                    := (CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, 10)) | Some((2, 11)) =>
           false
-        case _                             =>
+        case _ =>
           true
       })
       /* } Coveralls */

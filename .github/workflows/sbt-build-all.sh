@@ -23,17 +23,18 @@ else
   if [ "$2" == "report" ]
   then
     # For now it does nothing
+    test_task="coverage test coverageReport coverageAggregate"
 #    test_task="coverage test scalafix coverageReport coverageAggregate coveralls"
-    echo "report build but it does nothing for now."
+#    echo "report build but it does nothing for now."
   fi
 
-  echo "sbt -J-Xmx2048m ++${scala_version}! -v clean ${test_task}"
-  sbt \
-    -J-Xmx2048m \
-    ++${scala_version}! \
-    -v \
-    clean \
-    ${test_task}
+#  echo "sbt -J-Xmx2048m ++${scala_version}! -v clean ${test_task}"
+#  sbt \
+#    -J-Xmx2048m \
+#    ++${scala_version}! \
+#    -v \
+#    clean \
+#    ${test_task}
 
   export SOURCE_DATE_EPOCH=$(date +%s)
   echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH"
@@ -45,7 +46,7 @@ else
       ++${scala_version}! \
       -v \
       clean \
-      test \
+      ${test_task} \
       packagedArtifacts
   else
     sbt \
@@ -53,7 +54,7 @@ else
       ++${scala_version}! \
       -v \
       clean \
-      test \
+      ${test_task} \
       package
   fi
 
