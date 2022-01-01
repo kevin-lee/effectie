@@ -29,123 +29,123 @@ object CanRecoverSpec extends Properties {
   val ioSpecs = List(
     example(
       "test CanRecover[IO].recoverFromNonFatalWith should catch NonFatal",
-      IOSpec.testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal
+      IoSpec.testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal
     ),
     example(
       "test CanRecover[IO].recoverFromNonFatalWith should not catch Fatal",
-      IOSpec.testCanRecover_IO_recoverFromNonFatalWithShouldNotCatchFatal
+      IoSpec.testCanRecover_IO_recoverFromNonFatalWithShouldNotCatchFatal
     ),
     example(
       "test CanRecover[IO].recoverFromNonFatalWith should return the successful result",
-      IOSpec.testCanRecover_IO_recoverFromNonFatalWithShouldReturnSuccessfulResult
+      IoSpec.testCanRecover_IO_recoverFromNonFatalWithShouldReturnSuccessfulResult
     ),
     example(
       "test CanRecover[IO].recoverFromNonFatalWithEither should catch NonFatal",
-      IOSpec.testCanRecover_IO_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal
+      IoSpec.testCanRecover_IO_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal
     ),
     example(
       "test CanRecover[IO].recoverFromNonFatalWithEither should not catch Fatal",
-      IOSpec.testCanRecover_IO_recoverFromNonFatalWithEitherShouldNotCatchFatal
+      IoSpec.testCanRecover_IO_recoverFromNonFatalWithEitherShouldNotCatchFatal
     ),
     example(
       "test CanRecover[IO].recoverFromNonFatalWithEither should return the successful result",
-      IOSpec.testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult
+      IoSpec.testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult
     ),
     example(
       "test CanRecover[IO].recoverFromNonFatalWithEither should return the failed result",
-      IOSpec.testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnFailedResult
+      IoSpec.testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnFailedResult
     ),
     example(
       "test CanRecover[IO].recoverEitherFromNonFatalWith should catch NonFatal",
-      IOSpec.testCanRecover_IO_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal
+      IoSpec.testCanRecover_IO_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal
     ),
     example(
       "test CanRecover[IO].recoverEitherFromNonFatalWith should not catch Fatal",
-      IOSpec.testCanRecover_IO_recoverEitherFromNonFatalWithShouldNotCatchFatal
+      IoSpec.testCanRecover_IO_recoverEitherFromNonFatalWithShouldNotCatchFatal
     ),
     example(
       "test CanRecover[IO].recoverEitherFromNonFatalWith should return the successful result",
-      IOSpec.testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult
+      IoSpec.testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult
     ),
     example(
       "test CanRecover[IO].recoverEitherFromNonFatalWith should return the failed result",
-      IOSpec.testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnFailedResult
+      IoSpec.testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnFailedResult
     ),
     example(
       "test CanRecover[IO].recoverEitherTFromNonFatalWith should catch NonFatal",
-      IOSpec.testCanRecover_IO_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal
+      IoSpec.testCanRecover_IO_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal
     ),
     example(
       "test CanRecover[IO].recoverEitherTFromNonFatalWith should not catch Fatal",
-      IOSpec.testCanRecover_IO_recoverEitherTFromNonFatalWithShouldNotCatchFatal
+      IoSpec.testCanRecover_IO_recoverEitherTFromNonFatalWithShouldNotCatchFatal
     ),
     example(
       "test CanRecover[IO].recoverEitherTFromNonFatalWith should return the successful result",
-      IOSpec.testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult
+      IoSpec.testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult
     ),
     example(
       "test CanRecover[IO].recoverEitherTFromNonFatalWith should return the failed result",
-      IOSpec.testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnFailedResult
+      IoSpec.testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnFailedResult
     ),
     example(
       "test CanRecover[IO].recoverFromNonFatal should catch NonFatal",
-      IOSpec.testCanRecover_IO_recoverFromNonFatalShouldRecoverFromNonFatal
+      IoSpec.testCanRecover_IO_recoverFromNonFatalShouldRecoverFromNonFatal
     ),
     example(
       "test CanRecover[IO].recoverFromNonFatal should not catch Fatal",
-      IOSpec.testCanRecover_IO_recoverFromNonFatalShouldNotCatchFatal
+      IoSpec.testCanRecover_IO_recoverFromNonFatalShouldNotCatchFatal
     ),
     example(
       "test CanRecover[IO].recoverFromNonFatal should return the successful result",
-      IOSpec.testCanRecover_IO_recoverFromNonFatalShouldReturnSuccessfulResult
+      IoSpec.testCanRecover_IO_recoverFromNonFatalShouldReturnSuccessfulResult
     ),
     example(
       "test CanRecover[IO].recoverFromNonFatalEither should catch NonFatal",
-      IOSpec.testCanRecover_IO_recoverFromNonFatalEitherShouldRecoverFromNonFatal
+      IoSpec.testCanRecover_IO_recoverFromNonFatalEitherShouldRecoverFromNonFatal
     ),
     example(
       "test CanRecover[IO].recoverFromNonFatalEither should not catch Fatal",
-      IOSpec.testCanRecover_IO_recoverFromNonFatalEitherShouldNotCatchFatal
+      IoSpec.testCanRecover_IO_recoverFromNonFatalEitherShouldNotCatchFatal
     ),
     example(
       "test CanRecover[IO].recoverFromNonFatalEither should return the successful result",
-      IOSpec.testCanRecover_IO_recoverFromNonFatalEitherShouldReturnSuccessfulResult
+      IoSpec.testCanRecover_IO_recoverFromNonFatalEitherShouldReturnSuccessfulResult
     ),
     example(
       "test CanRecover[IO].recoverFromNonFatalEither should return the failed result",
-      IOSpec.testCanRecover_IO_recoverFromNonFatalEitherShouldReturnFailedResult
+      IoSpec.testCanRecover_IO_recoverFromNonFatalEitherShouldReturnFailedResult
     ),
     example(
       "test CanRecover[IO].recoverEitherFromNonFatal should catch NonFatal",
-      IOSpec.testCanRecover_IO_recoverEitherFromNonFatalShouldRecoverFromNonFatal
+      IoSpec.testCanRecover_IO_recoverEitherFromNonFatalShouldRecoverFromNonFatal
     ),
     example(
       "test CanRecover[IO].recoverEitherFromNonFatal should not catch Fatal",
-      IOSpec.testCanRecover_IO_recoverEitherFromNonFatalShouldNotCatchFatal
+      IoSpec.testCanRecover_IO_recoverEitherFromNonFatalShouldNotCatchFatal
     ),
     example(
       "test CanRecover[IO].recoverEitherFromNonFatal should return the successful result",
-      IOSpec.testCanRecover_IO_recoverEitherFromNonFatalShouldReturnSuccessfulResult
+      IoSpec.testCanRecover_IO_recoverEitherFromNonFatalShouldReturnSuccessfulResult
     ),
     example(
       "test CanRecover[IO].recoverEitherFromNonFatal should return the failed result",
-      IOSpec.testCanRecover_IO_recoverEitherFromNonFatalShouldReturnFailedResult
+      IoSpec.testCanRecover_IO_recoverEitherFromNonFatalShouldReturnFailedResult
     ),
     example(
       "test CanRecover[IO].recoverEitherTFromNonFatal should catch NonFatal",
-      IOSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldRecoverFromNonFatal
+      IoSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldRecoverFromNonFatal
     ),
     example(
       "test CanRecover[IO].recoverEitherTFromNonFatal should not catch Fatal",
-      IOSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldNotCatchFatal
+      IoSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldNotCatchFatal
     ),
     example(
       "test CanRecover[IO].recoverEitherTFromNonFatal should return the successful result",
-      IOSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnSuccessfulResult
+      IoSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnSuccessfulResult
     ),
     example(
       "test CanRecover[IO].recoverEitherTFromNonFatal should return the failed result",
-      IOSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnFailedResult
+      IoSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnFailedResult
     ),
   )
 
@@ -371,7 +371,7 @@ object CanRecoverSpec extends Properties {
   def run[F[*]: FxCtor: Functor, A](a: => A): F[A] =
     effectOf[F](a)
 
-  object IOSpec {
+  object IoSpec {
     import effectie.cats.Fx.given
     import effectie.cats.CanRecover.given
 

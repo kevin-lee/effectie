@@ -6,6 +6,8 @@ import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import cats.instances.all._
 import cats.syntax.all._
+import effectie.cats.CanRecover._
+import effectie.cats.FxCtor._
 import effectie.cats.Effectful._
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.testing.types.SomeError
@@ -376,9 +378,6 @@ object CanRecoverSpec extends Properties {
     effectOf[F](a)
 
   object IOSpec {
-
-    import effectie.cats.Fx.IoFx
-    import effectie.cats.CanRecover._
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
@@ -1423,8 +1422,6 @@ object CanRecoverSpec extends Properties {
   }
 
   object IdSpec {
-    import effectie.cats.Fx._
-    import effectie.cats.CanRecover._
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

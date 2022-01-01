@@ -5,8 +5,9 @@ import cats.data.EitherT
 import cats.effect.IO
 import cats.instances.all._
 import cats.syntax.all._
-import effectie.monix.FxCtor._
 import effectie.monix.Effectful._
+import effectie.monix.FxCtor._
+import effectie.monix.CanRecover._
 import effectie.testing.types.SomeError
 import effectie.{ConcurrentSupport, SomeControlThrowable}
 import hedgehog._
@@ -497,7 +498,6 @@ object CanRecoverSpec extends Properties {
 
   object TaskSpec {
     import monix.execution.Scheduler.Implicits.global
-    import effectie.monix.CanRecover._
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
@@ -1993,7 +1993,6 @@ object CanRecoverSpec extends Properties {
   }
 
   object IdSpec {
-    import effectie.monix.CanRecover._
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

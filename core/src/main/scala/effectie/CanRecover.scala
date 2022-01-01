@@ -31,16 +31,17 @@ object CanRecover {
 
   def apply[F[_]: CanRecover]: CanRecover[F] = implicitly[CanRecover[F]]
 
-  implicit def futureCanRecover(implicit ec: ExecutionContext): CanRecover[Future] = new FutureCanRecover(ec)
+  implicit def futureCanRecover(implicit ec: ExecutionContext): CanRecover[Future] = new CanRecoverFuture
 
-  class FutureCanRecover(val ec: ExecutionContext) extends CanRecover[Future] {
+  trait FutureCanRecover extends CanRecover[Future] {
+    implicit def EC0: ExecutionContext
 
     override def recoverFromNonFatalWith[A, AA >: A](
       fa: => Future[A]
     )(
       handleError: PartialFunction[Throwable, Future[AA]]
     ): Future[AA] =
-      fa.recoverWith(handleError)(ec)
+      fa.recoverWith(handleError)
 
     @SuppressWarnings(Array("org.wartremover.warts.Throw"))
     override def recoverFromNonFatal[A, AA >: A](
@@ -49,8 +50,10 @@ object CanRecover {
       handleError: PartialFunction[Throwable, AA]
     ): Future[AA] =
       recoverFromNonFatalWith[A, AA](fa)(
-        handleError.andThen(Future(_)(ec))
+        handleError.andThen(Future(_))
       )
   }
+
+  class CanRecoverFuture(override implicit val EC0: ExecutionContext) extends FutureCanRecover
 
 }
