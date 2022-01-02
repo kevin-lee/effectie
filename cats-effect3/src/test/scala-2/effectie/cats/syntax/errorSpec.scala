@@ -197,8 +197,6 @@ object CanCatchSyntaxSpec {
 
   object IoSpec {
 
-    import effectie.cats.Fx._
-
     def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService()
@@ -580,8 +578,6 @@ object CanCatchSyntaxSpec {
   }
 
   object IdSpec {
-
-    import effectie.cats.Fx._
 
     def testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
@@ -2024,7 +2020,6 @@ object CanHandleErrorSyntaxSpec {
   }
 
   object IdSpec {
-    import effectie.cats.Fx._
 
     def testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
@@ -2769,8 +2764,6 @@ object CanRecoverSyntaxSpec {
     effectOf[F](a)
 
   object IOSpec {
-    import effectie.cats.Fx._
-    import effectie.cats.CanRecover._
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
@@ -3630,22 +3623,25 @@ object CanRecoverSyntaxSpec {
       val expectedExpcetion    = new RuntimeException("Something's wrong")
       val fa                   = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actualFailedResult   =
-        ConcurrentSupport.futureToValue(
-          fa.recoverFromNonFatal {
-            case err => SomeError.someThrowable(err).asLeft[Int]
-          },
+
+      ConcurrentSupport.runAndShutdown(executorService, waitFor) {
+        val actualFailedResult =
+          ConcurrentSupport.futureToValue(
+            fa.recoverFromNonFatal {
+              case err => SomeError.someThrowable(err).asLeft[Int]
+            },
+            waitFor
+          )
+
+        val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        val expected = 1.asRight[SomeError]
+        val actual = ConcurrentSupport.futureToValue(
+          fa2.recoverFromNonFatal { case NonFatal(`expectedExpcetion`) => expected },
           waitFor
         )
 
-      val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-      val expected = 1.asRight[SomeError]
-      val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa2.recoverFromNonFatal { case NonFatal(`expectedExpcetion`) => expected },
-        waitFor
-      )
-
-      expectedFailedResult ==== actualFailedResult and actual ==== expected
+        expectedFailedResult ==== actualFailedResult and actual ==== expected
+      }
     }
 
     def testCanRecover_Future_recoverFromNonFatalEitherShouldReturnSuccessfulResult: Result = {
@@ -3804,9 +3800,6 @@ object CanRecoverSyntaxSpec {
   }
 
   object IdSpec {
-
-    import effectie.cats.Fx._
-    import effectie.cats.CanRecover._
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

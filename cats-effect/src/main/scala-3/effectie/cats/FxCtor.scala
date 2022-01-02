@@ -20,9 +20,6 @@ object FxCtor {
 
   }
 
-  given futureFxCtor(using EC: ExecutionContext): FxCtor[Future] =
-    effectie.Fx.fxFuture
-
   given idFxCtor: FxCtor[Id] with {
 
     inline override final def effectOf[A](a: => A): Id[A] = a

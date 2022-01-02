@@ -29,6 +29,12 @@ object Fx {
     inline override final def handleNonFatal[A, AA >: A](fa: => IO[A])(handleError: Throwable => AA): IO[AA] =
       CanHandleError.ioCanHandleError.handleNonFatal(fa)(handleError)
 
+    inline override final def recoverFromNonFatalWith[A, AA >: A](fa: => IO[A])(handleError: PartialFunction[Throwable, IO[AA]]): IO[AA] =
+      CanRecover.ioCanRecover.recoverFromNonFatalWith(fa)(handleError)
+
+    inline override final def recoverFromNonFatal[A, AA >: A](fa: => IO[A])(handleError: PartialFunction[Throwable, AA]): IO[AA] =
+      CanRecover.ioCanRecover.recoverFromNonFatal(fa)(handleError)
+
   }
 
   given idFx: Fx[Id] with {
@@ -51,6 +57,12 @@ object Fx {
 
     inline override final def handleNonFatal[A, AA >: A](fa: => Id[A])(handleError: Throwable => AA): Id[AA] =
       CanHandleError.idCanHandleError.handleNonFatal(fa)(handleError)
+
+    inline override final def recoverFromNonFatalWith[A, AA >: A](fa: => Id[A])(handleError: PartialFunction[Throwable, Id[AA]]): Id[AA] =
+      CanRecover.idCanRecover.recoverFromNonFatalWith(fa)(handleError)
+
+    inline override final def recoverFromNonFatal[A, AA >: A](fa: => Id[A])(handleError: PartialFunction[Throwable, AA]): Id[AA] =
+      CanRecover.idCanRecover.recoverFromNonFatal(fa)(handleError)
 
   }
 

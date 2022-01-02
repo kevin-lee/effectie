@@ -27,7 +27,7 @@ object CanRecover {
   }
 
   given futureCanRecover(using ec: ExecutionContext): CanRecover[Future] =
-    new effectie.CanRecover.FutureCanRecover(ec) with CanRecover[Future]
+    new effectie.CanRecover.CanRecoverFuture with CanRecover[Future]
 
   given idCanRecover: CanRecover[Id] with {
 

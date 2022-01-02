@@ -14,12 +14,12 @@ object CanRecover {
 
   implicit object IoCanRecover extends CanRecover[IO] {
 
-    override def recoverFromNonFatalWith[A, AA >: A](fa: => IO[A])(
+    @inline override final def recoverFromNonFatalWith[A, AA >: A](fa: => IO[A])(
       handleError: PartialFunction[Throwable, IO[AA]]
     ): IO[AA] =
       fa.handleErrorWith(err => handleError.applyOrElse(err, ApplicativeError[IO, Throwable].raiseError[AA]))
 
-    override def recoverFromNonFatal[A, AA >: A](fa: => IO[A])(handleError: PartialFunction[Throwable, AA]): IO[AA] =
+    @inline override final def recoverFromNonFatal[A, AA >: A](fa: => IO[A])(handleError: PartialFunction[Throwable, AA]): IO[AA] =
       recoverFromNonFatalWith[A, AA](fa)(handleError.andThen(IO.pure(_)))
 
   }
@@ -27,7 +27,7 @@ object CanRecover {
   implicit object IdCanRecover extends CanRecover[Id] {
 
     @SuppressWarnings(Array("org.wartremover.warts.Throw"))
-    override def recoverFromNonFatalWith[A, AA >: A](fa: => Id[A])(
+    @inline override final def recoverFromNonFatalWith[A, AA >: A](fa: => Id[A])(
       handleError: PartialFunction[Throwable, Id[AA]]
     ): Id[AA] =
       try (fa)
@@ -38,7 +38,7 @@ object CanRecover {
           throw ex
       }
 
-    override def recoverFromNonFatal[A, AA >: A](fa: => Id[A])(
+    @inline override final def recoverFromNonFatal[A, AA >: A](fa: => Id[A])(
       handleError: PartialFunction[Throwable, AA]
     ): Id[AA] =
       recoverFromNonFatalWith[A, AA](fa)(handleError)
