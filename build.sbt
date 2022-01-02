@@ -31,6 +31,8 @@ ThisBuild / scmInfo    :=
   )
 ThisBuild / licenses   := props.licenses
 
+ThisBuild / resolvers += "sonatype-snapshots" at s"https://${props.SonatypeCredentialHost}/content/repositories/snapshots"
+
 lazy val effectie = (project in file("."))
   .enablePlugins(DevOopsGitHubReleasePlugin)
   .settings(
@@ -40,6 +42,7 @@ lazy val effectie = (project in file("."))
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
   )
   .settings(noPublish)
+  .settings(mavenCentralPublishSettings)
   .aggregate(core, testing4Cats, catsEffect, catsEffect3, monix)
 
 lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
@@ -192,6 +195,9 @@ lazy val props =
 
     lazy val licenses = List("MIT" -> url("http://opensource.org/licenses/MIT"))
 
+    val SonatypeCredentialHost = "s01.oss.sonatype.org"
+    val SonatypeRepository     = s"https://$SonatypeCredentialHost/service/local"
+
     val removeDottyIncompatible: ModuleID => Boolean =
       m =>
         m.name == "wartremover" ||
@@ -248,6 +254,13 @@ lazy val libs =
     lazy val libMonix3_3_0: ModuleID = "io.monix" %% "monix" % props.monixVersion3_3_0
     lazy val libMonix: ModuleID      = "io.monix" %% "monix" % props.monixVersion
   }
+
+lazy val mavenCentralPublishSettings: SettingsDefinition = List(
+  /* Publish to Maven Central { */
+  sonatypeCredentialHost := props.SonatypeCredentialHost,
+  sonatypeRepository     := props.SonatypeRepository,
+  /* } Publish to Maven Central */
+)
 
 // scalafmt: off
 def prefixedProjectName(name: String) = s"${props.RepoName}${if (name.isEmpty) "" else s"-$name"}"
@@ -348,3 +361,4 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
       })
       /* } Coveralls */
     )
+    .settings(mavenCentralPublishSettings)
