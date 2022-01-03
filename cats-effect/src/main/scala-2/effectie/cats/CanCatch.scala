@@ -4,7 +4,6 @@ import cats.Id
 import cats.effect.IO
 import cats.syntax.all._
 
-
 /** @author Kevin Lee
   * @since 2020-06-07
   */

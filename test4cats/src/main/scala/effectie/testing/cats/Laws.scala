@@ -33,7 +33,7 @@ object Laws {
   }
   object FunctorLaws extends FunctorLaws
 
-  trait ApplicativeLaws  extends FunctorLaws {
+  trait ApplicativeLaws extends FunctorLaws {
     /* Identity
      * pure id <*> v = v
      */
@@ -92,7 +92,7 @@ object Laws {
   }
   object ApplicativeLaws extends ApplicativeLaws
 
-  trait MonadLaws  extends ApplicativeLaws {
+  trait MonadLaws extends ApplicativeLaws {
     /*
      * return a >>= f === f a
      */

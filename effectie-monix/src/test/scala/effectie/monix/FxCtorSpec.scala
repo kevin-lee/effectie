@@ -109,7 +109,7 @@ object FxCtorSpec extends Properties {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual        = before
       val testBefore    = actual ==== before
-      val io          = FxCtor[IO].effectOf({ actual = after; () })
+      val io            = FxCtor[IO].effectOf({ actual = after; () })
       val testBeforeRun = actual ==== before
       io.unsafeRunSync()
       val testAfterRun  = actual ==== after
@@ -129,7 +129,7 @@ object FxCtorSpec extends Properties {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual        = before
       val testBefore    = actual ==== before
-      val io          = FxCtor[IO].pureOf({ actual = after; () })
+      val io            = FxCtor[IO].pureOf({ actual = after; () })
       val testBeforeRun = actual ==== after
       io.unsafeRunSync()
       val testAfterRun  = actual ==== after
@@ -143,7 +143,7 @@ object FxCtorSpec extends Properties {
     }
 
     def testUnitOf: Result = {
-      val io           = FxCtor[IO].unitOf
+      val io             = FxCtor[IO].unitOf
       val expected: Unit = ()
       val actual: Unit   = io.unsafeRunSync()
       actual ==== expected

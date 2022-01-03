@@ -20,9 +20,8 @@ import scala.util.control.ControlThrowable
   * @since 2020-07-31
   */
 object CatchingSpec extends Properties {
-  type Fx[F[_]] = effectie.Fx[F]
+  type Fx[F[_]]     = effectie.Fx[F]
   type FxCtor[F[_]] = effectie.FxCtor[F]
-
 
   override def tests: List[Test] = List(
     /* IO */
@@ -454,9 +453,9 @@ object CatchingSpec extends Properties {
       implicit val ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa                = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-      val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual            =
+      val fa       = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+      val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val actual   =
         catchNonFatalEitherT[IO](fa)(SomeError.someThrowable).value
 
       actual.completeAs(expected)
@@ -469,7 +468,7 @@ object CatchingSpec extends Properties {
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
-      val fa             = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
+      val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
 
       try {
         val actual = catchNonFatalEitherT[IO](fa)(SomeError.someThrowable).value.unsafeRunSync()
@@ -489,9 +488,9 @@ object CatchingSpec extends Properties {
       import CatsEffectRunner._
       implicit val ticket: Ticker = Ticker(TestContext())
 
-      val expected          = 1.asRight[SomeError]
-      val fa                = EitherT(run[IO, Either[SomeError, Int]](expected))
-      val actual            = catchNonFatalEitherT[IO](fa)(SomeError.someThrowable).value
+      val expected = 1.asRight[SomeError]
+      val fa       = EitherT(run[IO, Either[SomeError, Int]](expected))
+      val actual   = catchNonFatalEitherT[IO](fa)(SomeError.someThrowable).value
 
       actual.completeAs(expected)
     }
@@ -510,7 +509,7 @@ object CatchingSpec extends Properties {
     }
   }
 
-  /////////
+  // ///////
 
   object FutureSpec {
     import java.util.concurrent.{ExecutorService, Executors}
@@ -585,9 +584,9 @@ object CatchingSpec extends Properties {
       implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa                = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-      val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual            = ConcurrentSupport.futureToValueAndTerminate(
+      val fa       = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val actual   = ConcurrentSupport.futureToValueAndTerminate(
         catchNonFatalEither(fa)(SomeError.someThrowable),
         waitFor
       )
@@ -680,9 +679,9 @@ object CatchingSpec extends Properties {
       implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa                = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-      val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual            = ConcurrentSupport.futureToValueAndTerminate(
+      val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+      val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val actual   = ConcurrentSupport.futureToValueAndTerminate(
         catchNonFatalEitherT[Future](fa)(SomeError.someThrowable).value,
         waitFor
       )
@@ -896,9 +895,9 @@ object CatchingSpec extends Properties {
     def testCatching_Id_catchNonFatalEitherTShouldCatchNonFatal: Result = {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
-      lazy val fa           = EitherT(run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-      val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual            = catchNonFatalEitherT[Id](fa)(SomeError.someThrowable).value
+      lazy val fa  = EitherT(run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+      val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val actual   = catchNonFatalEitherT[Id](fa)(SomeError.someThrowable).value
 
       actual ==== expected
     }
@@ -907,7 +906,7 @@ object CatchingSpec extends Properties {
     def testCatching_Id_catchNonFatalEitherTShouldNotCatchFatal: Result = {
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
-      lazy val fa        = EitherT(run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
+      lazy val fa = EitherT(run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
 
       try {
         val actual = catchNonFatalEitherT[Id](fa)(SomeError.someThrowable).value

@@ -493,95 +493,95 @@ object FxSpec extends Properties {
         FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherTNonFatalShouldReturnFailedResult
       ),
     ) ++ List(
-    example(
-      "test Fx[Future].recoverFromNonFatalWith should catch NonFatal",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithShouldRecoverFromNonFatal
-    ),
-    example(
-      "test Fx[Future].recoverFromNonFatalWith should return the successful result",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Future].recoverFromNonFatalWithEither should catch NonFatal",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal
-    ),
-    example(
-      "test Fx[Future].recoverFromNonFatalWithEither should return the successful result",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Future].recoverFromNonFatalWithEither should return the failed result",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldReturnFailedResult
-    ),
-    example(
-      "test Fx[Future].recoverEitherFromNonFatalWith should catch NonFatal",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal
-    ),
-    example(
-      "test Fx[Future].recoverEitherFromNonFatalWith should return the successful result",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Future].recoverEitherFromNonFatalWith should return the failed result",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldReturnFailedResult
-    ),
-    example(
-      "test Fx[Future].recoverEitherTFromNonFatalWith should catch NonFatal",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal
-    ),
-    example(
-      "test Fx[Future].recoverEitherTFromNonFatalWith should return the successful result",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Future].recoverEitherTFromNonFatalWith should return the failed result",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherTFromNonFatalWithShouldReturnFailedResult
-    ),
-    example(
-      "test Fx[Future].recoverFromNonFatal should catch NonFatal",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalShouldRecoverFromNonFatal
-    ),
-    example(
-      "test Fx[Future].recoverFromNonFatal should return the successful result",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Future].recoverFromNonFatalEither should catch NonFatal",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldRecoverFromNonFatal
-    ),
-    example(
-      "test Fx[Future].recoverFromNonFatalEither should return the successful result",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Future].recoverFromNonFatalEither should return the failed result",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldReturnFailedResult
-    ),
-    example(
-      "test Fx[Future].recoverEitherFromNonFatal should catch NonFatal",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldRecoverFromNonFatal
-    ),
-    example(
-      "test Fx[Future].recoverEitherFromNonFatal should return the successful result",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Future].recoverEitherFromNonFatal should return the failed result",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldReturnFailedResult
-    ),
-    example(
-      "test Fx[Future].recoverEitherTFromNonFatal should catch NonFatal",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherTFromNonFatalShouldRecoverFromNonFatal
-    ),
-    example(
-      "test Fx[Future].recoverEitherTFromNonFatal should return the successful result",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherTFromNonFatalShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Future].recoverEitherTFromNonFatal should return the failed result",
-      FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherTFromNonFatalShouldReturnFailedResult
-    ),
-  )
+      example(
+        "test Fx[Future].recoverFromNonFatalWith should catch NonFatal",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithShouldRecoverFromNonFatal
+      ),
+      example(
+        "test Fx[Future].recoverFromNonFatalWith should return the successful result",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Future].recoverFromNonFatalWithEither should catch NonFatal",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal
+      ),
+      example(
+        "test Fx[Future].recoverFromNonFatalWithEither should return the successful result",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Future].recoverFromNonFatalWithEither should return the failed result",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldReturnFailedResult
+      ),
+      example(
+        "test Fx[Future].recoverEitherFromNonFatalWith should catch NonFatal",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal
+      ),
+      example(
+        "test Fx[Future].recoverEitherFromNonFatalWith should return the successful result",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Future].recoverEitherFromNonFatalWith should return the failed result",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldReturnFailedResult
+      ),
+      example(
+        "test Fx[Future].recoverEitherTFromNonFatalWith should catch NonFatal",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal
+      ),
+      example(
+        "test Fx[Future].recoverEitherTFromNonFatalWith should return the successful result",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Future].recoverEitherTFromNonFatalWith should return the failed result",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherTFromNonFatalWithShouldReturnFailedResult
+      ),
+      example(
+        "test Fx[Future].recoverFromNonFatal should catch NonFatal",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalShouldRecoverFromNonFatal
+      ),
+      example(
+        "test Fx[Future].recoverFromNonFatal should return the successful result",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Future].recoverFromNonFatalEither should catch NonFatal",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldRecoverFromNonFatal
+      ),
+      example(
+        "test Fx[Future].recoverFromNonFatalEither should return the successful result",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Future].recoverFromNonFatalEither should return the failed result",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldReturnFailedResult
+      ),
+      example(
+        "test Fx[Future].recoverEitherFromNonFatal should catch NonFatal",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldRecoverFromNonFatal
+      ),
+      example(
+        "test Fx[Future].recoverEitherFromNonFatal should return the successful result",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Future].recoverEitherFromNonFatal should return the failed result",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldReturnFailedResult
+      ),
+      example(
+        "test Fx[Future].recoverEitherTFromNonFatal should catch NonFatal",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherTFromNonFatalShouldRecoverFromNonFatal
+      ),
+      example(
+        "test Fx[Future].recoverEitherTFromNonFatal should return the successful result",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherTFromNonFatalShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Future].recoverEitherTFromNonFatal should return the failed result",
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherTFromNonFatalShouldReturnFailedResult
+      ),
+    )
 
   /* Id */
   private val idSpecs = List(
@@ -779,127 +779,127 @@ object FxSpec extends Properties {
         IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherTNonFatalShouldReturnFailedResult
       )
     ) ++ List(
-    example(
-      "test Fx[Id].recoverFromNonFatalWith should catch NonFatal",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal
-    ),
-    example(
-      "test Fx[Id].recoverFromNonFatalWith should not catch Fatal",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithShouldNotCatchFatal
-    ),
-    example(
-      "test Fx[Id].recoverFromNonFatalWith should return the successful result",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Id].recoverFromNonFatalWithEither should catch NonFatal",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal
-    ),
-    example(
-      "test Fx[Id].recoverFromNonFatalWithEither should not catch Fatal",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldNotCatchFatal
-    ),
-    example(
-      "test Fx[Id].recoverFromNonFatalWithEither should return the successful result",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Id].recoverFromNonFatalWithEither should return the failed result",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldReturnFailedResult
-    ),
-    example(
-      "test Fx[Id].recoverEitherFromNonFatalWith should catch NonFatal",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal
-    ),
-    example(
-      "test Fx[Id].recoverEitherFromNonFatalWith should not catch Fatal",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldNotCatchFatal
-    ),
-    example(
-      "test Fx[Id].recoverEitherFromNonFatalWith should return the successful result",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Id].recoverEitherFromNonFatalWith should return the failed result",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldReturnFailedResult
-    ),
-    example(
-      "test Fx[Id].recoverEitherTFromNonFatalWith should catch NonFatal",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal
-    ),
-    example(
-      "test Fx[Id].recoverEitherTFromNonFatalWith should not catch Fatal",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldNotCatchFatal
-    ),
-    example(
-      "test Fx[Id].recoverEitherTFromNonFatalWith should return the successful result",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Id].recoverEitherTFromNonFatalWith should return the failed result",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldReturnFailedResult
-    ),
-    example(
-      "test Fx[Id].recoverFromNonFatal should catch NonFatal",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalShouldRecoverFromNonFatal
-    ),
-    example(
-      "test Fx[Id].recoverFromNonFatal should not catch Fatal",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalShouldNotCatchFatal
-    ),
-    example(
-      "test Fx[Id].recoverFromNonFatal should return the successful result",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Id].recoverFromNonFatalEither should catch NonFatal",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldRecoverFromNonFatal
-    ),
-    example(
-      "test Fx[Id].recoverFromNonFatalEither should not catch Fatal",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldNotCatchFatal
-    ),
-    example(
-      "test Fx[Id].recoverFromNonFatalEither should return the successful result",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Id].recoverFromNonFatalEither should return the failed result",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldReturnFailedResult
-    ),
-    example(
-      "test Fx[Id].recoverEitherFromNonFatal should catch NonFatal",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldRecoverFromNonFatal
-    ),
-    example(
-      "test Fx[Id].recoverEitherFromNonFatal should not catch Fatal",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldNotCatchFatal
-    ),
-    example(
-      "test Fx[Id].recoverEitherFromNonFatal should return the successful result",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Id].recoverEitherFromNonFatal should return the failed result",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldReturnFailedResult
-    ),
-    example(
-      "test Fx[Id].recoverEitherTFromNonFatal should catch NonFatal",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldRecoverFromNonFatal
-    ),
-    example(
-      "test Fx[Id].recoverEitherTFromNonFatal should not catch Fatal",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldNotCatchFatal
-    ),
-    example(
-      "test Fx[Id].recoverEitherTFromNonFatal should return the successful result",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldReturnSuccessfulResult
-    ),
-    example(
-      "test Fx[Id].recoverEitherTFromNonFatal should return the failed result",
-      IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldReturnFailedResult
+      example(
+        "test Fx[Id].recoverFromNonFatalWith should catch NonFatal",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal
+      ),
+      example(
+        "test Fx[Id].recoverFromNonFatalWith should not catch Fatal",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithShouldNotCatchFatal
+      ),
+      example(
+        "test Fx[Id].recoverFromNonFatalWith should return the successful result",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Id].recoverFromNonFatalWithEither should catch NonFatal",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal
+      ),
+      example(
+        "test Fx[Id].recoverFromNonFatalWithEither should not catch Fatal",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldNotCatchFatal
+      ),
+      example(
+        "test Fx[Id].recoverFromNonFatalWithEither should return the successful result",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Id].recoverFromNonFatalWithEither should return the failed result",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldReturnFailedResult
+      ),
+      example(
+        "test Fx[Id].recoverEitherFromNonFatalWith should catch NonFatal",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal
+      ),
+      example(
+        "test Fx[Id].recoverEitherFromNonFatalWith should not catch Fatal",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldNotCatchFatal
+      ),
+      example(
+        "test Fx[Id].recoverEitherFromNonFatalWith should return the successful result",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Id].recoverEitherFromNonFatalWith should return the failed result",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldReturnFailedResult
+      ),
+      example(
+        "test Fx[Id].recoverEitherTFromNonFatalWith should catch NonFatal",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal
+      ),
+      example(
+        "test Fx[Id].recoverEitherTFromNonFatalWith should not catch Fatal",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldNotCatchFatal
+      ),
+      example(
+        "test Fx[Id].recoverEitherTFromNonFatalWith should return the successful result",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Id].recoverEitherTFromNonFatalWith should return the failed result",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldReturnFailedResult
+      ),
+      example(
+        "test Fx[Id].recoverFromNonFatal should catch NonFatal",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalShouldRecoverFromNonFatal
+      ),
+      example(
+        "test Fx[Id].recoverFromNonFatal should not catch Fatal",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalShouldNotCatchFatal
+      ),
+      example(
+        "test Fx[Id].recoverFromNonFatal should return the successful result",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Id].recoverFromNonFatalEither should catch NonFatal",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldRecoverFromNonFatal
+      ),
+      example(
+        "test Fx[Id].recoverFromNonFatalEither should not catch Fatal",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldNotCatchFatal
+      ),
+      example(
+        "test Fx[Id].recoverFromNonFatalEither should return the successful result",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Id].recoverFromNonFatalEither should return the failed result",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldReturnFailedResult
+      ),
+      example(
+        "test Fx[Id].recoverEitherFromNonFatal should catch NonFatal",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldRecoverFromNonFatal
+      ),
+      example(
+        "test Fx[Id].recoverEitherFromNonFatal should not catch Fatal",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldNotCatchFatal
+      ),
+      example(
+        "test Fx[Id].recoverEitherFromNonFatal should return the successful result",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Id].recoverEitherFromNonFatal should return the failed result",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldReturnFailedResult
+      ),
+      example(
+        "test Fx[Id].recoverEitherTFromNonFatal should catch NonFatal",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldRecoverFromNonFatal
+      ),
+      example(
+        "test Fx[Id].recoverEitherTFromNonFatal should not catch Fatal",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldNotCatchFatal
+      ),
+      example(
+        "test Fx[Id].recoverEitherTFromNonFatal should return the successful result",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldReturnSuccessfulResult
+      ),
+      example(
+        "test Fx[Id].recoverEitherTFromNonFatal should return the failed result",
+        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldReturnFailedResult
+      )
     )
-  )
 
   @SuppressWarnings(Array("org.wartremover.warts.Throw"))
   def throwThrowable[A](throwable: => Throwable): A =
@@ -2519,7 +2519,7 @@ object FxSpec extends Properties {
       MonadSpec.test9_Associativity[Future]
     }
 
-    object CanCatchSpec       {
+    object CanCatchSpec {
       import java.util.concurrent.{ExecutorService, Executors}
       import scala.concurrent.duration._
       import scala.concurrent.{ExecutionContext, Future}
@@ -3147,8 +3147,8 @@ object FxSpec extends Properties {
         implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
         implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
 
-        val expectedExpcetion    = new RuntimeException("Something's wrong")
-        val fa                   = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        val expectedExpcetion = new RuntimeException("Something's wrong")
+        val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
         val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
         val actualFailedResult   =
           ConcurrentSupport.futureToValue(
@@ -3213,8 +3213,8 @@ object FxSpec extends Properties {
         implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
         implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
 
-        val expectedExpcetion    = new RuntimeException("Something's wrong")
-        val fa                   = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        val expectedExpcetion = new RuntimeException("Something's wrong")
+        val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
         val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
         val actualFailedResult   = ConcurrentSupport.futureToValue(
           Fx[Future]
@@ -3281,8 +3281,8 @@ object FxSpec extends Properties {
         implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
         implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
 
-        val expectedExpcetion    = new RuntimeException("Something's wrong")
-        val fa                   = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+        val expectedExpcetion = new RuntimeException("Something's wrong")
+        val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
         val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
         val actualFailedResult   = ConcurrentSupport.futureToValue(
           Fx[Future]
@@ -3293,7 +3293,9 @@ object FxSpec extends Properties {
           waitFor
         )
 
-        val fa2      = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+        val fa2      = EitherT(
+          run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        )
         val expected = 1.asRight[SomeError]
         val actual   =
           ConcurrentSupport.futureToValueAndTerminate(
@@ -3348,7 +3350,7 @@ object FxSpec extends Properties {
         actual ==== expected
       }
 
-      ///
+      // /
 
       def testCanRecover_Future_recoverFromNonFatalShouldRecoverFromNonFatal: Result = {
 
@@ -3386,8 +3388,8 @@ object FxSpec extends Properties {
         implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
         implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
 
-        val expectedExpcetion    = new RuntimeException("Something's wrong")
-        val fa                   = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        val expectedExpcetion = new RuntimeException("Something's wrong")
+        val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
         val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
         val actualFailedResult   =
           ConcurrentSupport.futureToValue(
@@ -3446,8 +3448,8 @@ object FxSpec extends Properties {
         implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
         implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
 
-        val expectedExpcetion    = new RuntimeException("Something's wrong")
-        val fa                   = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        val expectedExpcetion = new RuntimeException("Something's wrong")
+        val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
         val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
         val actualFailedResult   = ConcurrentSupport.futureToValue(
           Fx[Future]
@@ -3508,8 +3510,8 @@ object FxSpec extends Properties {
         implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
         implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
 
-        val expectedExpcetion    = new RuntimeException("Something's wrong")
-        val fa                   = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+        val expectedExpcetion = new RuntimeException("Something's wrong")
+        val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
         val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
         val actualFailedResult   = ConcurrentSupport.futureToValue(
           Fx[Future]
@@ -3520,7 +3522,9 @@ object FxSpec extends Properties {
           waitFor
         )
 
-        val fa2      = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+        val fa2      = EitherT(
+          run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        )
         val expected = 1.asRight[SomeError]
         val actual   =
           ConcurrentSupport.futureToValueAndTerminate(
@@ -4273,8 +4277,8 @@ object FxSpec extends Properties {
 
       def testCanRecover_Id_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal: Result = {
 
-        val expectedExpcetion    = new RuntimeException("Something's wrong")
-        lazy val fa              = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        val expectedExpcetion = new RuntimeException("Something's wrong")
+        lazy val fa = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
         val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
         val actualFailedResult   = Fx[Id].recoverFromNonFatalWith(fa) {
           case err => SomeError.someThrowable(err).asLeft[Int]
@@ -4290,7 +4294,7 @@ object FxSpec extends Properties {
       def testCanRecover_Id_recoverFromNonFatalWithEitherShouldNotCatchFatal: Result = {
 
         val expectedExpcetion = SomeControlThrowable("Something's wrong")
-        lazy val fa           = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        lazy val fa = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
 
         try {
           val actual = Fx[Id].recoverFromNonFatalWith(fa) {
@@ -4331,8 +4335,8 @@ object FxSpec extends Properties {
 
       def testCanRecover_Id_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
-        val expectedExpcetion    = new RuntimeException("Something's wrong")
-        lazy val fa              = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        val expectedExpcetion = new RuntimeException("Something's wrong")
+        lazy val fa = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
         val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
         val actualFailedResult   =
           Fx[Id]
@@ -4351,7 +4355,7 @@ object FxSpec extends Properties {
       def testCanRecover_Id_recoverEitherFromNonFatalWithShouldNotCatchFatal: Result = {
 
         val expectedExpcetion = SomeControlThrowable("Something's wrong")
-        lazy val fa           = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        lazy val fa = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
 
         try {
           val actual = Fx[Id]
@@ -4393,7 +4397,9 @@ object FxSpec extends Properties {
       def testCanRecover_Id_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
         val expectedExpcetion    = new RuntimeException("Something's wrong")
-        lazy val fa              = EitherT(run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+        lazy val fa              = EitherT(
+          run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        )
         val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
         val actualFailedResult   =
           Fx[Id]
@@ -4413,7 +4419,9 @@ object FxSpec extends Properties {
       def testCanRecover_Id_recoverEitherTFromNonFatalWithShouldNotCatchFatal: Result = {
 
         val expectedExpcetion = SomeControlThrowable("Something's wrong")
-        lazy val fa           = EitherT(run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+        lazy val fa           = EitherT(
+          run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        )
 
         try {
           val actual = Fx[Id]
@@ -4454,7 +4462,7 @@ object FxSpec extends Properties {
         actual ==== expected
       }
 
-      ///
+      // /
 
       def testCanRecover_Id_recoverFromNonFatalShouldRecoverFromNonFatal: Result = {
 
@@ -4496,8 +4504,8 @@ object FxSpec extends Properties {
 
       def testCanRecover_Id_recoverFromNonFatalEitherShouldRecoverFromNonFatal: Result = {
 
-        val expectedExpcetion    = new RuntimeException("Something's wrong")
-        lazy val fa              = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        val expectedExpcetion = new RuntimeException("Something's wrong")
+        lazy val fa = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
         val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
         val actualFailedResult   =
           Fx[Id].recoverFromNonFatal(fa) {
@@ -4514,7 +4522,7 @@ object FxSpec extends Properties {
       def testCanRecover_Id_recoverFromNonFatalEitherShouldNotCatchFatal: Result = {
 
         val expectedExpcetion = SomeControlThrowable("Something's wrong")
-        lazy val fa           = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        lazy val fa = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
 
         try {
           val actual = Fx[Id].recoverFromNonFatal(fa) {
@@ -4555,8 +4563,8 @@ object FxSpec extends Properties {
 
       def testCanRecover_Id_recoverEitherFromNonFatalShouldRecoverFromNonFatal: Result = {
 
-        val expectedExpcetion    = new RuntimeException("Something's wrong")
-        lazy val fa              = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        val expectedExpcetion = new RuntimeException("Something's wrong")
+        lazy val fa = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
         val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
         val actualFailedResult   =
           Fx[Id]
@@ -4575,7 +4583,7 @@ object FxSpec extends Properties {
       def testCanRecover_Id_recoverEitherFromNonFatalShouldNotCatchFatal: Result = {
 
         val expectedExpcetion = SomeControlThrowable("Something's wrong")
-        lazy val fa           = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        lazy val fa = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
 
         try {
           val actual = Fx[Id]
@@ -4616,7 +4624,9 @@ object FxSpec extends Properties {
       def testCanRecover_Id_recoverEitherTFromNonFatalShouldRecoverFromNonFatal: Result = {
 
         val expectedExpcetion    = new RuntimeException("Something's wrong")
-        lazy val fa              = EitherT(run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+        lazy val fa              = EitherT(
+          run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        )
         val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
         val actualFailedResult   =
           Fx[Id]
@@ -4636,7 +4646,9 @@ object FxSpec extends Properties {
       def testCanRecover_Id_recoverEitherTFromNonFatalShouldNotCatchFatal: Result = {
 
         val expectedExpcetion = SomeControlThrowable("Something's wrong")
-        lazy val fa           = EitherT(run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+        lazy val fa           = EitherT(
+          run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        )
 
         try {
           val actual = Fx[Id]

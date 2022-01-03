@@ -47,7 +47,7 @@ object CanRecover {
     )(handleError: PartialFunction[Throwable, Id[AA]]): Id[AA] =
       try (fa)
       catch {
-        case NonFatal(ex)  =>
+        case NonFatal(ex) =>
           handleError.applyOrElse(ex, (err: Throwable) => throw err)
         case ex: Throwable =>
           throw ex

@@ -13,7 +13,7 @@ import monix.eval.Task
   */
 object EffectfulSpec extends Properties {
 
-  type Fx[F[_]] = effectie.Fx[F]
+  type Fx[F[_]]     = effectie.Fx[F]
   type FxCtor[F[_]] = effectie.FxCtor[F]
 
   override def tests: List[Test] = List(
@@ -47,7 +47,7 @@ object EffectfulSpec extends Properties {
     def unit: F[Unit]
     def errOf[A](throwable: Throwable): F[A]
   }
-  object FxCtorClient      {
+  object FxCtorClient {
     def apply[F[_]: FxCtorClient]: FxCtorClient[F]         = implicitly[FxCtorClient[F]]
     implicit def eftClientF[F[_]: FxCtor]: FxCtorClient[F] = new FxCtorClientF[F]
     final class FxCtorClientF[F[_]: FxCtor] extends FxCtorClient[F] {
@@ -64,7 +64,7 @@ object EffectfulSpec extends Properties {
     def unit: F[Unit]
     def errOf[A](throwable: Throwable): F[A]
   }
-  object FxClient      {
+  object FxClient {
     def apply[F[_]: FxClient]: FxClient[F]         =
       implicitly[FxClient[F]]
     implicit def eftClientF[F[_]: Fx]: FxClient[F] = new FxClientF[F]

@@ -19,7 +19,9 @@ object CanRecover {
     ): IO[AA] =
       fa.handleErrorWith(err => handleError.applyOrElse(err, ApplicativeError[IO, Throwable].raiseError[AA]))
 
-    @inline override final def recoverFromNonFatal[A, AA >: A](fa: => IO[A])(handleError: PartialFunction[Throwable, AA]): IO[AA] =
+    @inline override final def recoverFromNonFatal[A, AA >: A](fa: => IO[A])(
+      handleError: PartialFunction[Throwable, AA]
+    ): IO[AA] =
       recoverFromNonFatalWith[A, AA](fa)(handleError.andThen(IO.pure(_)))
   }
 
@@ -31,7 +33,7 @@ object CanRecover {
     ): Id[AA] =
       try (fa)
       catch {
-        case NonFatal(ex)  =>
+        case NonFatal(ex) =>
           handleError.applyOrElse(ex, (err: Throwable) => throw err)
         case ex: Throwable =>
           throw ex
