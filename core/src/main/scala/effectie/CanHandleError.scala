@@ -34,7 +34,9 @@ object CanHandleError {
   trait FutureCanHandleError extends CanHandleError[Future] {
     implicit def EC0: ExecutionContext
 
-    @inline override def handleNonFatalWith[A, AA >: A](fa: => Future[A])(handleError: Throwable => Future[AA]): Future[AA] =
+    @inline override def handleNonFatalWith[A, AA >: A](
+      fa: => Future[A]
+    )(handleError: Throwable => Future[AA]): Future[AA] =
       fa.recoverWith {
         case throwable: Throwable =>
           handleError(throwable)

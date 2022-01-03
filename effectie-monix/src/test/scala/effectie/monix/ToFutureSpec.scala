@@ -41,7 +41,7 @@ object ToFutureSpec extends Properties {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {
       val expected = a
-      val fa = Task(expected)
+      val fa       = Task(expected)
 
       implicit val es: ExecutorService  = ConcurrentSupport.newExecutorService()
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
@@ -49,9 +49,9 @@ object ToFutureSpec extends Properties {
       implicit val scheduler: Scheduler = Scheduler(ec)
 
       ConcurrentSupport.runAndShutdown(es, 300.milliseconds) {
-        val future   = ToFuture[Task].unsafeToFuture(fa)
+        val future     = ToFuture[Task].unsafeToFuture(fa)
         val taskResult = fa.runSyncUnsafe() ==== expected
-        val actual   = ConcurrentSupport.futureToValueAndTerminate(future, 300.milliseconds)
+        val actual     = ConcurrentSupport.futureToValueAndTerminate(future, 300.milliseconds)
 
         Result.all(
           List(
@@ -73,7 +73,7 @@ object ToFutureSpec extends Properties {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {
       val expected = a
-      val fa = IO(expected)
+      val fa       = IO(expected)
 
       implicit val es: ExecutorService  = ConcurrentSupport.newExecutorService()
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))

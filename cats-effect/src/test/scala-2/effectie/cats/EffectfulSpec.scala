@@ -41,7 +41,7 @@ object EffectfulSpec extends Properties {
     def of[A](a: A): F[A]
     def unit: F[Unit]
   }
-  object FxCtorClient      {
+  object FxCtorClient {
     def apply[F[_]: FxCtorClient]: FxCtorClient[F]         = implicitly[FxCtorClient[F]]
     implicit def eftClientF[F[_]: FxCtor]: FxCtorClient[F] = new FxCtorClientF[F]
     final class FxCtorClientF[F[_]: FxCtor] extends FxCtorClient[F] {
@@ -56,7 +56,7 @@ object EffectfulSpec extends Properties {
     def of[A](a: A): F[A]
     def unit: F[Unit]
   }
-  object FxClient      {
+  object FxClient {
     def apply[F[_]: FxClient]: FxClient[F]         =
       implicitly[FxClient[F]]
     implicit def eftClientF[F[_]: Fx]: FxClient[F] = new FxClientF[F]

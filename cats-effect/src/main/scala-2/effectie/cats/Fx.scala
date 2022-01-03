@@ -27,10 +27,14 @@ object Fx {
     @inline override final def handleNonFatal[A, AA >: A](fa: => IO[A])(handleError: Throwable => AA): IO[AA] =
       CanHandleError.IoCanHandleError.handleNonFatal[A, AA](fa)(handleError)
 
-    @inline override final def recoverFromNonFatalWith[A, AA >: A](fa: => IO[A])(handleError: PartialFunction[Throwable, IO[AA]]): IO[AA] =
+    @inline override final def recoverFromNonFatalWith[A, AA >: A](fa: => IO[A])(
+      handleError: PartialFunction[Throwable, IO[AA]]
+    ): IO[AA] =
       CanRecover.IoCanRecover.recoverFromNonFatalWith[A, AA](fa)(handleError)
 
-    @inline override final def recoverFromNonFatal[A, AA >: A](fa: => IO[A])(handleError: PartialFunction[Throwable, AA]): IO[AA] =
+    @inline override final def recoverFromNonFatal[A, AA >: A](fa: => IO[A])(
+      handleError: PartialFunction[Throwable, AA]
+    ): IO[AA] =
       CanRecover.IoCanRecover.recoverFromNonFatal[A, AA](fa)(handleError)
   }
 
@@ -55,10 +59,14 @@ object Fx {
     @inline override final def handleNonFatal[A, AA >: A](fa: => Id[A])(handleError: Throwable => AA): Id[AA] =
       CanHandleError.IdCanHandleError.handleNonFatal[A, AA](fa)(handleError)
 
-    @inline override final def recoverFromNonFatalWith[A, AA >: A](fa: => Id[A])(handleError: PartialFunction[Throwable, Id[AA]]): Id[AA] =
+    @inline override final def recoverFromNonFatalWith[A, AA >: A](fa: => Id[A])(
+      handleError: PartialFunction[Throwable, Id[AA]]
+    ): Id[AA] =
       CanRecover.IdCanRecover.recoverFromNonFatalWith[A, AA](fa)(handleError)
 
-    @inline override final def recoverFromNonFatal[A, AA >: A](fa: => Id[A])(handleError: PartialFunction[Throwable, AA]): Id[AA] =
+    @inline override final def recoverFromNonFatal[A, AA >: A](fa: => Id[A])(
+      handleError: PartialFunction[Throwable, AA]
+    ): Id[AA] =
       CanRecover.IdCanRecover.recoverFromNonFatal[A, AA](fa)(handleError)
   }
 
