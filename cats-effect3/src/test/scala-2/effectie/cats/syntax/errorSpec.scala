@@ -11,7 +11,9 @@ import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.cats.syntax.error._
 import effectie.cats.testing
 import effectie.testing.types.SomeError
-import effectie.{ConcurrentSupport, Fx, SomeControlThrowable}
+import effectie.{Fx, SomeControlThrowable}
+import extras.concurrent.testing.ConcurrentSupport
+import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._
 import hedgehog.runner._
 
@@ -199,7 +201,7 @@ object CanCatchSyntaxSpec {
 
     def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -213,7 +215,7 @@ object CanCatchSyntaxSpec {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanCatch_IO_catchNonFatalThrowableShouldNotCatchFatal: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
@@ -234,7 +236,7 @@ object CanCatchSyntaxSpec {
 
     def testCanCatch_IO_catchNonFatalThrowableShouldReturnSuccessfulResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fa: IO[Int] = run[IO, Int](1)
@@ -246,7 +248,7 @@ object CanCatchSyntaxSpec {
 
     def testCanCatch_IO_catchNonFatalShouldCatchNonFatal: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -260,7 +262,7 @@ object CanCatchSyntaxSpec {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanCatch_IO_catchNonFatalShouldNotCatchFatal: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
@@ -281,7 +283,7 @@ object CanCatchSyntaxSpec {
 
     def testCanCatch_IO_catchNonFatalShouldReturnSuccessfulResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fa: IO[Int] = run[IO, Int](1)
@@ -293,7 +295,7 @@ object CanCatchSyntaxSpec {
 
     def testCanCatch_IO_catchNonFatalEitherShouldCatchNonFatal: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -307,7 +309,7 @@ object CanCatchSyntaxSpec {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanCatch_IO_catchNonFatalEitherShouldNotCatchFatal: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
@@ -328,7 +330,7 @@ object CanCatchSyntaxSpec {
 
     def testCanCatch_IO_catchNonFatalEitherShouldReturnSuccessfulResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
@@ -340,7 +342,7 @@ object CanCatchSyntaxSpec {
 
     def testCanCatch_IO_catchNonFatalEitherShouldReturnFailedResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedFailure = SomeError.message("Failed")
@@ -353,7 +355,7 @@ object CanCatchSyntaxSpec {
 
     def testCanCatch_IO_catchNonFatalEitherTShouldCatchNonFatal: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -367,7 +369,7 @@ object CanCatchSyntaxSpec {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanCatch_IO_catchNonFatalEitherTShouldNotCatchFatal: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
@@ -388,7 +390,7 @@ object CanCatchSyntaxSpec {
 
     def testCanCatch_IO_catchNonFatalEitherTShouldReturnSuccessfulResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
@@ -400,7 +402,7 @@ object CanCatchSyntaxSpec {
 
     def testCanCatch_IO_catchNonFatalEitherTShouldReturnFailedResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedFailure = SomeError.message("Failed")
@@ -418,20 +420,23 @@ object CanCatchSyntaxSpec {
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
 
-    val waitFor: FiniteDuration = 1.second
+    private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
+
+    private val waitFor = WaitFor(1.second)
 
     def testCanCatch_Future_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = expectedExpcetion.asLeft[Int]
       val actual            = ConcurrentSupport.futureToValueAndTerminate(
-        fa.catchNonFatalThrowable,
+        executorService,
         waitFor
-      )
+      )(fa.catchNonFatalThrowable)
 
       actual ==== expected
     }
@@ -439,14 +444,15 @@ object CanCatchSyntaxSpec {
     def testCanCatch_Future_catchNonFatalThrowableShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Int](1)
       val expected = 1.asRight[Throwable]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa.catchNonFatalThrowable,
+        executorService,
         waitFor
-      )
+      )(fa.catchNonFatalThrowable)
 
       actual ==== expected
     }
@@ -454,15 +460,16 @@ object CanCatchSyntaxSpec {
     def testCanCatch_Future_catchNonFatalShouldCatchNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actual            = ConcurrentSupport.futureToValueAndTerminate(
-        fa.catchNonFatal(SomeError.someThrowable),
+        executorService,
         waitFor
-      )
+      )(fa.catchNonFatal(SomeError.someThrowable))
 
       actual ==== expected
     }
@@ -470,14 +477,15 @@ object CanCatchSyntaxSpec {
     def testCanCatch_Future_catchNonFatalShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Int](1)
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa.catchNonFatal(SomeError.someThrowable),
+        executorService,
         waitFor
-      )
+      )(fa.catchNonFatal(SomeError.someThrowable))
 
       actual ==== expected
     }
@@ -485,15 +493,16 @@ object CanCatchSyntaxSpec {
     def testCanCatch_Future_catchNonFatalEitherShouldCatchNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa       = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa.catchNonFatalEither(SomeError.someThrowable),
+        executorService,
         waitFor
-      )
+      )(fa.catchNonFatalEither(SomeError.someThrowable))
 
       actual ==== expected
     }
@@ -501,14 +510,15 @@ object CanCatchSyntaxSpec {
     def testCanCatch_Future_catchNonFatalEitherShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa.catchNonFatalEither(SomeError.someThrowable),
+        executorService,
         waitFor
-      )
+      )(fa.catchNonFatalEither(SomeError.someThrowable))
 
       actual ==== expected
     }
@@ -516,15 +526,16 @@ object CanCatchSyntaxSpec {
     def testCanCatch_Future_catchNonFatalEitherShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
       val actual          = ConcurrentSupport.futureToValueAndTerminate(
-        fa.catchNonFatalEither(SomeError.someThrowable),
+        executorService,
         waitFor
-      )
+      )(fa.catchNonFatalEither(SomeError.someThrowable))
 
       actual ==== expected
     }
@@ -532,15 +543,16 @@ object CanCatchSyntaxSpec {
     def testCanCatch_Future_catchNonFatalEitherTShouldCatchNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
       val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa.catchNonFatalEitherT(SomeError.someThrowable).value,
+        executorService,
         waitFor
-      )
+      )(fa.catchNonFatalEitherT(SomeError.someThrowable).value)
 
       actual ==== expected
     }
@@ -548,14 +560,15 @@ object CanCatchSyntaxSpec {
     def testCanCatch_Future_catchNonFatalEitherTShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = EitherT(run[Future, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa.catchNonFatalEitherT(SomeError.someThrowable).value,
+        executorService,
         waitFor
-      )
+      )(fa.catchNonFatalEitherT(SomeError.someThrowable).value)
 
       actual ==== expected
     }
@@ -563,15 +576,16 @@ object CanCatchSyntaxSpec {
     def testCanCatch_Future_catchNonFatalEitherTShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = EitherT(run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
       val expected        = expectedFailure.asLeft[Int]
       val actual          = ConcurrentSupport.futureToValueAndTerminate(
-        fa.catchNonFatalEitherT(SomeError.someThrowable).value,
+        executorService,
         waitFor
-      )
+      )(fa.catchNonFatalEitherT(SomeError.someThrowable).value)
 
       actual ==== expected
     }
@@ -1102,7 +1116,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -1121,7 +1135,7 @@ object CanHandleErrorSyntaxSpec {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanHandleError_IO_handleNonFatalWithShouldNotHandleFatalWith: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
@@ -1142,7 +1156,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleNonFatalWithShouldReturnSuccessfulResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fa       = run[IO, Int](1)
@@ -1154,7 +1168,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleNonFatalWithEitherShouldHandleNonFatalWith: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -1173,7 +1187,7 @@ object CanHandleErrorSyntaxSpec {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanHandleError_IO_handleNonFatalWithEitherShouldNotHandleFatalWith: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
@@ -1194,7 +1208,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleNonFatalWithEitherShouldReturnSuccessfulResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
@@ -1206,7 +1220,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleNonFatalWithEitherShouldReturnFailedResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedFailure = SomeError.message("Failed")
@@ -1219,7 +1233,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleEitherNonFatalWithShouldHandleNonFatalWith: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -1238,7 +1252,7 @@ object CanHandleErrorSyntaxSpec {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanHandleError_IO_handleEitherNonFatalWithShouldNotHandleFatalWith: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
@@ -1261,7 +1275,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleEitherNonFatalWithShouldReturnSuccessfulResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
@@ -1274,7 +1288,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleEitherNonFatalWithShouldReturnFailedResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedFailure = SomeError.message("Failed")
@@ -1288,7 +1302,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleEitherTNonFatalWithShouldHandleNonFatalWith: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -1308,7 +1322,7 @@ object CanHandleErrorSyntaxSpec {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanHandleError_IO_handleEitherTNonFatalWithShouldNotHandleFatalWith: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
@@ -1332,7 +1346,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnSuccessfulResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
@@ -1345,7 +1359,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnFailedResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedFailure = SomeError.message("Failed")
@@ -1359,7 +1373,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleNonFatalShouldHandleNonFatal: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -1378,7 +1392,7 @@ object CanHandleErrorSyntaxSpec {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanHandleError_IO_handleNonFatalShouldNotHandleFatal: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
@@ -1399,7 +1413,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleNonFatalShouldReturnSuccessfulResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fa       = run[IO, Int](1)
@@ -1411,7 +1425,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleNonFatalEitherShouldHandleNonFatal: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -1428,7 +1442,7 @@ object CanHandleErrorSyntaxSpec {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanHandleError_IO_handleNonFatalEitherShouldNotHandleFatal: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
@@ -1449,7 +1463,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleNonFatalEitherShouldReturnSuccessfulResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
@@ -1461,7 +1475,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleNonFatalEitherShouldReturnFailedResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedFailure = SomeError.message("Failed")
@@ -1474,7 +1488,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleEitherNonFatalShouldHandleNonFatal: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -1493,7 +1507,7 @@ object CanHandleErrorSyntaxSpec {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanHandleError_IO_handleEitherNonFatalShouldNotHandleFatal: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
@@ -1516,7 +1530,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleEitherNonFatalShouldReturnSuccessfulResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
@@ -1528,7 +1542,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleEitherNonFatalShouldReturnFailedResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedFailure = SomeError.message("Failed")
@@ -1542,7 +1556,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleEitherTNonFatalShouldHandleNonFatal: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -1562,7 +1576,7 @@ object CanHandleErrorSyntaxSpec {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanHandleError_IO_handleEitherTNonFatalShouldNotHandleFatal: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
@@ -1586,7 +1600,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleEitherTNonFatalShouldReturnSuccessfulResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
@@ -1598,7 +1612,7 @@ object CanHandleErrorSyntaxSpec {
 
     def testCanHandleError_IO_handleEitherTNonFatalShouldReturnFailedResult: Result = {
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService()
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
       val expectedFailure = SomeError.message("Failed")
@@ -1617,20 +1631,23 @@ object CanHandleErrorSyntaxSpec {
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
 
-    val waitFor: FiniteDuration = 1.second
+    private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
+
+    private val waitFor = WaitFor(1.second)
 
     def testCanHandleError_Future_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = 1
-      val actual            = ConcurrentSupport.futureToValueAndTerminate[Int](
-        fa.handleNonFatalWith(_ => Future(expected)),
+      val actual            = ConcurrentSupport.futureToValueAndTerminate(
+        executorService,
         waitFor
-      )
+      )(fa.handleNonFatalWith(_ => Future(expected)))
 
       actual ==== expected
     }
@@ -1638,14 +1655,15 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleNonFatalWithShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Int](1)
       val expected = 1
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa.handleNonFatalWith(_ => Future(123)),
+        executorService,
         waitFor
-      )
+      )(fa.handleNonFatalWith(_ => Future(123)))
 
       actual ==== expected
     }
@@ -1653,7 +1671,8 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleNonFatalWithEitherShouldHandleNonFatalWith: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -1667,9 +1686,9 @@ object CanHandleErrorSyntaxSpec {
       val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa2.handleNonFatalWith(_ => Future(expected)),
+        executorService,
         waitFor
-      )
+      )(fa2.handleNonFatalWith(_ => Future(expected)))
 
       expectedFailedResult ==== actualFailedResult and actual ==== expected
     }
@@ -1677,15 +1696,16 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleNonFatalWithEitherShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa.handleNonFatalWith(err => Future(SomeError.someThrowable(err).asLeft[Int])),
+          executorService,
           waitFor
-        )
+        )(fa.handleNonFatalWith(err => Future(SomeError.someThrowable(err).asLeft[Int])))
 
       actual ==== expected
     }
@@ -1693,15 +1713,16 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleNonFatalWithEitherShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
       val actual          = ConcurrentSupport.futureToValueAndTerminate(
-        fa.handleNonFatalWith(_ => Future(1.asRight[SomeError])),
+        executorService,
         waitFor
-      )
+      )(fa.handleNonFatalWith(_ => Future(1.asRight[SomeError])))
 
       actual ==== expected
     }
@@ -1709,7 +1730,8 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleEitherNonFatalWithShouldHandleNonFatalWith: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -1723,9 +1745,9 @@ object CanHandleErrorSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa2.handleEitherNonFatalWith(err => Future(expected)),
+          executorService,
           waitFor
-        )
+        )(fa2.handleEitherNonFatalWith(err => Future(expected)))
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -1733,14 +1755,15 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleEitherNonFatalWithShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa.handleEitherNonFatalWith(err => Future(SomeError.someThrowable(err).asLeft[Int])),
+        executorService,
         waitFor
-      )
+      )(fa.handleEitherNonFatalWith(err => Future(SomeError.someThrowable(err).asLeft[Int])))
 
       actual ==== expected
     }
@@ -1748,16 +1771,17 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleEitherNonFatalWithShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa.handleEitherNonFatalWith(_ => Future(expected)),
+          executorService,
           waitFor
-        )
+        )(fa.handleEitherNonFatalWith(_ => Future(expected)))
 
       actual ==== expected
     }
@@ -1765,7 +1789,8 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleEitherTNonFatalWithShouldHandleNonFatalWith: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
@@ -1779,9 +1804,9 @@ object CanHandleErrorSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa2.handleEitherTNonFatalWith(err => Future(expected)).value,
+          executorService,
           waitFor
-        )
+        )(fa2.handleEitherTNonFatalWith(err => Future(expected)).value)
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -1789,14 +1814,15 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleEitherTNonFatalWithShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = EitherT(run[Future, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa.handleEitherTNonFatalWith(err => Future(SomeError.someThrowable(err).asLeft[Int])).value,
+        executorService,
         waitFor
-      )
+      )(fa.handleEitherTNonFatalWith(err => Future(SomeError.someThrowable(err).asLeft[Int])).value)
 
       actual ==== expected
     }
@@ -1804,16 +1830,17 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleEitherTNonFatalWithShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = EitherT(run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa.handleEitherTNonFatalWith(_ => Future(expected)).value,
+          executorService,
           waitFor
-        )
+        )(fa.handleEitherTNonFatalWith(_ => Future(expected)).value)
 
       actual ==== expected
     }
@@ -1821,15 +1848,16 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleNonFatalShouldHandleNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = 1
-      val actual            = ConcurrentSupport.futureToValueAndTerminate[Int](
-        fa.handleNonFatal(_ => expected),
+      val actual            = ConcurrentSupport.futureToValueAndTerminate(
+        executorService,
         waitFor
-      )
+      )(fa.handleNonFatal(_ => expected))
 
       actual ==== expected
     }
@@ -1837,14 +1865,15 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleNonFatalShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Int](1)
       val expected = 1
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa.handleNonFatal(_ => 123),
+        executorService,
         waitFor
-      )
+      )(fa.handleNonFatal(_ => 123))
 
       actual ==== expected
     }
@@ -1852,7 +1881,8 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleNonFatalEitherShouldHandleNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -1866,9 +1896,9 @@ object CanHandleErrorSyntaxSpec {
       val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa2.handleNonFatal(_ => expected),
+        executorService,
         waitFor
-      )
+      )(fa2.handleNonFatal(_ => expected))
 
       expectedFailedResult ==== actualFailedResult and actual ==== expected
     }
@@ -1876,15 +1906,16 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleNonFatalEitherShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa.handleNonFatal(err => SomeError.someThrowable(err).asLeft[Int]),
+          executorService,
           waitFor
-        )
+        )(fa.handleNonFatal(err => SomeError.someThrowable(err).asLeft[Int]))
 
       actual ==== expected
     }
@@ -1892,15 +1923,16 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleNonFatalEitherShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
       val actual          = ConcurrentSupport.futureToValueAndTerminate(
-        fa.handleNonFatal(_ => 1.asRight[SomeError]),
+        executorService,
         waitFor
-      )
+      )(fa.handleNonFatal(_ => 1.asRight[SomeError]))
 
       actual ==== expected
     }
@@ -1908,7 +1940,8 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleEitherNonFatalShouldHandleNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -1922,9 +1955,9 @@ object CanHandleErrorSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa2.handleEitherNonFatal(err => expected),
+          executorService,
           waitFor
-        )
+        )(fa2.handleEitherNonFatal(err => expected))
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -1932,14 +1965,15 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleEitherNonFatalShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa.handleEitherNonFatal(err => SomeError.someThrowable(err).asLeft[Int]),
+        executorService,
         waitFor
-      )
+      )(fa.handleEitherNonFatal(err => SomeError.someThrowable(err).asLeft[Int]))
 
       actual ==== expected
     }
@@ -1947,16 +1981,17 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleEitherNonFatalShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa.handleEitherNonFatal(_ => expected),
+          executorService,
           waitFor
-        )
+        )(fa.handleEitherNonFatal(_ => expected))
 
       actual ==== expected
     }
@@ -1964,7 +1999,8 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleEitherTNonFatalShouldHandleNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
@@ -1978,9 +2014,9 @@ object CanHandleErrorSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa2.handleEitherTNonFatal(err => expected).value,
+          executorService,
           waitFor
-        )
+        )(fa2.handleEitherTNonFatal(err => expected).value)
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -1988,14 +2024,15 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleEitherTNonFatalShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = EitherT(run[Future, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa.handleEitherTNonFatal(err => SomeError.someThrowable(err).asLeft[Int]).value,
+        executorService,
         waitFor
-      )
+      )(fa.handleEitherTNonFatal(err => SomeError.someThrowable(err).asLeft[Int]).value)
 
       actual ==== expected
     }
@@ -2003,16 +2040,17 @@ object CanHandleErrorSyntaxSpec {
     def testCanHandleError_Future_handleEitherTNonFatalShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = EitherT(run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa.handleEitherTNonFatal(_ => expected).value,
+          executorService,
           waitFor
-        )
+        )(fa.handleEitherTNonFatal(_ => expected).value)
 
       actual ==== expected
     }
@@ -3351,22 +3389,25 @@ object CanRecoverSyntaxSpec {
     import scala.concurrent.{ExecutionContext, Future}
     import scala.util.control.NonFatal
 
-    val waitFor: FiniteDuration = 1.second
+    private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
+
+    private val waitFor = WaitFor(1.second)
 
     def testCanRecover_Future_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = 1
-      val actual            = ConcurrentSupport.futureToValueAndTerminate[Int](
-        fa.recoverFromNonFatalWith {
-          case NonFatal(`expectedExpcetion`) => Future(expected)
-        },
+      val actual            = ConcurrentSupport.futureToValueAndTerminate(
+        executorService,
         waitFor
-      )
+      )(fa.recoverFromNonFatalWith {
+        case NonFatal(`expectedExpcetion`) => Future(expected)
+      })
 
       actual ==== expected
     }
@@ -3374,16 +3415,17 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverFromNonFatalWithShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Int](1)
       val expected = 1
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa.recoverFromNonFatalWith {
-          case NonFatal(_) => Future(123)
-        },
+        executorService,
         waitFor
-      )
+      )(fa.recoverFromNonFatalWith {
+        case NonFatal(_) => Future(123)
+      })
 
       actual ==== expected
     }
@@ -3391,7 +3433,8 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -3408,11 +3451,11 @@ object CanRecoverSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa2.recoverFromNonFatalWith {
-            case NonFatal(`expectedExpcetion`) => Future(expected)
-          },
+          executorService,
           waitFor
-        )
+        )(fa2.recoverFromNonFatalWith {
+          case NonFatal(`expectedExpcetion`) => Future(expected)
+        })
 
       expectedFailedResult ==== actualFailedResult and actual ==== expected
     }
@@ -3420,17 +3463,18 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa.recoverFromNonFatalWith {
-            case err => Future(SomeError.someThrowable(err).asLeft[Int])
-          },
+          executorService,
           waitFor
-        )
+        )(fa.recoverFromNonFatalWith {
+          case err => Future(SomeError.someThrowable(err).asLeft[Int])
+        })
 
       actual ==== expected
     }
@@ -3438,18 +3482,19 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverFromNonFatalWithEitherShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa.recoverFromNonFatalWith {
-            case NonFatal(_) => Future(1.asRight[SomeError])
-          },
+          executorService,
           waitFor
-        )
+        )(fa.recoverFromNonFatalWith {
+          case NonFatal(_) => Future(1.asRight[SomeError])
+        })
 
       actual ==== expected
     }
@@ -3457,7 +3502,8 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -3473,11 +3519,11 @@ object CanRecoverSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa2.recoverEitherFromNonFatalWith {
-            case err => Future(expected)
-          },
+          executorService,
           waitFor
-        )
+        )(fa2.recoverEitherFromNonFatalWith {
+          case err => Future(expected)
+        })
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -3485,16 +3531,17 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa.recoverEitherFromNonFatalWith {
-          case err => Future(SomeError.someThrowable(err).asLeft[Int])
-        },
+        executorService,
         waitFor
-      )
+      )(fa.recoverEitherFromNonFatalWith {
+        case err => Future(SomeError.someThrowable(err).asLeft[Int])
+      })
 
       actual ==== expected
     }
@@ -3502,18 +3549,19 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverEitherFromNonFatalWithShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa.recoverEitherFromNonFatalWith {
-            case NonFatal(_) => Future(expected)
-          },
+          executorService,
           waitFor
-        )
+        )(fa.recoverEitherFromNonFatalWith {
+          case NonFatal(_) => Future(expected)
+        })
 
       actual ==== expected
     }
@@ -3521,7 +3569,8 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
@@ -3537,11 +3586,11 @@ object CanRecoverSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa2.recoverEitherTFromNonFatalWith {
-            case err => Future(expected)
-          }.value,
+          executorService,
           waitFor
-        )
+        )(fa2.recoverEitherTFromNonFatalWith {
+          case err => Future(expected)
+        }.value)
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -3549,16 +3598,17 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = EitherT(run[Future, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa.recoverEitherTFromNonFatalWith {
-          case err => Future(SomeError.someThrowable(err).asLeft[Int])
-        }.value,
+        executorService,
         waitFor
-      )
+      )(fa.recoverEitherTFromNonFatalWith {
+        case err => Future(SomeError.someThrowable(err).asLeft[Int])
+      }.value)
 
       actual ==== expected
     }
@@ -3566,18 +3616,19 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverEitherTFromNonFatalWithShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = EitherT(run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa.recoverEitherTFromNonFatalWith {
-            case NonFatal(_) => Future(expected)
-          }.value,
+          executorService,
           waitFor
-        )
+        )(fa.recoverEitherTFromNonFatalWith {
+          case NonFatal(_) => Future(expected)
+        }.value)
 
       actual ==== expected
     }
@@ -3587,15 +3638,16 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverFromNonFatalShouldRecoverFromNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = 1
-      val actual            = ConcurrentSupport.futureToValueAndTerminate[Int](
-        fa.recoverFromNonFatal { case NonFatal(`expectedExpcetion`) => expected },
+      val actual            = ConcurrentSupport.futureToValueAndTerminate(
+        executorService,
         waitFor
-      )
+      )(fa.recoverFromNonFatal { case NonFatal(`expectedExpcetion`) => expected })
 
       actual ==== expected
     }
@@ -3603,14 +3655,15 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverFromNonFatalShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Int](1)
       val expected = 1
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa.recoverFromNonFatal { case NonFatal(_) => 123 },
+        executorService,
         waitFor
-      )
+      )(fa.recoverFromNonFatal { case NonFatal(_) => 123 })
 
       actual ==== expected
     }
@@ -3618,7 +3671,8 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverFromNonFatalEitherShouldRecoverFromNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -3647,17 +3701,18 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverFromNonFatalEitherShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa.recoverFromNonFatal {
-            case err => SomeError.someThrowable(err).asLeft[Int]
-          },
+          executorService,
           waitFor
-        )
+        )(fa.recoverFromNonFatal {
+          case err => SomeError.someThrowable(err).asLeft[Int]
+        })
 
       actual ==== expected
     }
@@ -3665,15 +3720,16 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverFromNonFatalEitherShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
       val actual          = ConcurrentSupport.futureToValueAndTerminate(
-        fa.recoverFromNonFatal { case NonFatal(_) => 1.asRight[SomeError] },
+        executorService,
         waitFor
-      )
+      )(fa.recoverFromNonFatal { case NonFatal(_) => 1.asRight[SomeError] })
 
       actual ==== expected
     }
@@ -3681,7 +3737,8 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverEitherFromNonFatalShouldRecoverFromNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -3697,9 +3754,9 @@ object CanRecoverSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa2.recoverEitherFromNonFatal { case err => expected },
+          executorService,
           waitFor
-        )
+        )(fa2.recoverEitherFromNonFatal { case err => expected })
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -3707,16 +3764,17 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverEitherFromNonFatalShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa.recoverEitherFromNonFatal {
-          case err => SomeError.someThrowable(err).asLeft[Int]
-        },
+        executorService,
         waitFor
-      )
+      )(fa.recoverEitherFromNonFatal {
+        case err => SomeError.someThrowable(err).asLeft[Int]
+      })
 
       actual ==== expected
     }
@@ -3724,16 +3782,17 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverEitherFromNonFatalShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa.recoverEitherFromNonFatal { case NonFatal(_) => expected },
+          executorService,
           waitFor
-        )
+        )(fa.recoverEitherFromNonFatal { case NonFatal(_) => expected })
 
       actual ==== expected
     }
@@ -3741,7 +3800,8 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverEitherTFromNonFatalShouldRecoverFromNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
@@ -3757,9 +3817,9 @@ object CanRecoverSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa2.recoverEitherTFromNonFatal { case err => expected }.value,
+          executorService,
           waitFor
-        )
+        )(fa2.recoverEitherTFromNonFatal { case err => expected }.value)
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -3767,16 +3827,17 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverEitherTFromNonFatalShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = EitherT(run[Future, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        fa.recoverEitherTFromNonFatal {
-          case err => SomeError.someThrowable(err).asLeft[Int]
-        }.value,
+        executorService,
         waitFor
-      )
+      )(fa.recoverEitherTFromNonFatal {
+        case err => SomeError.someThrowable(err).asLeft[Int]
+      }.value)
 
       actual ==== expected
     }
@@ -3784,16 +3845,17 @@ object CanRecoverSyntaxSpec {
     def testCanRecover_Future_recoverEitherTFromNonFatalShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = EitherT(run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
-          fa.recoverEitherTFromNonFatal { case NonFatal(_) => expected }.value,
+          executorService,
           waitFor
-        )
+        )(fa.recoverEitherTFromNonFatal { case NonFatal(_) => expected }.value)
 
       actual ==== expected
     }

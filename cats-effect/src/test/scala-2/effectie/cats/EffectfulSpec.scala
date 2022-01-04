@@ -2,9 +2,10 @@ package effectie.cats
 
 import cats.Id
 import cats.effect.IO
-import effectie.ConcurrentSupport
 import effectie.testing.tools._
 import effectie.testing.types.SomeThrowableError
+import extras.concurrent.testing.ConcurrentSupport
+import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._
 import hedgehog.runner._
 
@@ -12,6 +13,8 @@ import hedgehog.runner._
   * @since 2021-05-16
   */
 object EffectfulSpec extends Properties {
+  implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
+
   type Fx[F[_]] = effectie.Fx[F]
   val Fx: effectie.Fx.type = effectie.Fx
   type FxCtor[F[_]] = effectie.FxCtor[F]
@@ -175,14 +178,14 @@ object EffectfulSpec extends Properties {
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
 
-    val waitFor: FiniteDuration = 1.second
+    val waitFor = WaitFor(1.second)
 
     def testAll: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual                  = before
@@ -203,7 +206,7 @@ object EffectfulSpec extends Properties {
           _  <- eftClient.unit
           _  <- effectConstructorClient.unit
         } yield ()
-      ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
+      ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
       val testAfterRun            = actual ==== after
       val testAfterRun2           = actual2 ==== after
       Result.all(
@@ -221,13 +224,13 @@ object EffectfulSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual               = before
       val testBefore           = actual ==== before
       val future: Future[Unit] = effectOf[Future]({ actual = after; () })
-      ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
+      ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
       val testAfterRun         = actual ==== after
       Result.all(
         List(
@@ -242,13 +245,13 @@ object EffectfulSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual       = before
       val testBefore   = actual ==== before
       val future       = pureOf[Future]({ actual = after; () })
-      ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
+      ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
       val testAfterRun = actual ==== after
       Result.all(
         List(
@@ -260,10 +263,10 @@ object EffectfulSpec extends Properties {
 
     def testUnitOf: Result = {
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
       val future                                    = unitOf[Future]
       val expected: Unit                            = ()
-      val actual: Unit                              = ConcurrentSupport.futureToValueAndTerminate(future, waitFor)
+      val actual: Unit                              = ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
       actual ==== expected
     }
 
@@ -272,10 +275,10 @@ object EffectfulSpec extends Properties {
       val expectedError   = SomeThrowableError.message(expectedMessage)
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService)
+      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val future = errorOf[Future][Unit](expectedError)
-      expectThrowable(ConcurrentSupport.futureToValueAndTerminate(future, waitFor), expectedError)
+      expectThrowable(ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future), expectedError)
     }
 
   }

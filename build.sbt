@@ -48,6 +48,7 @@ lazy val effectie = (project in file("."))
 lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
   .settings(
     description               := "Effect Utils - Core",
+    libraryDependencies ++= List(libs.extrasConcurrent, libs.extrasConcurrentTesting),
     libraryDependencies       :=
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
@@ -229,6 +230,7 @@ lazy val props =
     final val monixVersion3_3_0 = "3.3.0"
     final val monixVersion      = "3.4.0"
 
+    final val ExtrasVersion = "0.4.0"
   }
 
 lazy val libs =
@@ -253,6 +255,11 @@ lazy val libs =
 
     lazy val libMonix3_3_0: ModuleID = "io.monix" %% "monix" % props.monixVersion3_3_0
     lazy val libMonix: ModuleID      = "io.monix" %% "monix" % props.monixVersion
+
+    lazy val extrasCats = "io.kevinlee" %% "extras-cats" % props.ExtrasVersion
+
+    lazy val extrasConcurrent        = "io.kevinlee" %% "extras-concurrent"         % props.ExtrasVersion % Test
+    lazy val extrasConcurrentTesting = "io.kevinlee" %% "extras-concurrent-testing" % props.ExtrasVersion % Test
   }
 
 lazy val mavenCentralPublishSettings: SettingsDefinition = List(
@@ -282,7 +289,7 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
     .settings(
       name                                    := prefixedProjectName(projectName.projectName),
       scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
-      libraryDependencies ++= libs.hedgehogLibs.map(_ % Test) ++ List("io.kevinlee" %% "extras-cats" % "0.4.0" % Test),
+      libraryDependencies ++= libs.hedgehogLibs.map(_ % Test) ++ List(libs.extrasCats % Test),
       /* WartRemover and scalacOptions { */
 //      Compile / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
 //      Test / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
