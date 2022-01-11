@@ -156,39 +156,7 @@ object CanHandleErrorSpec extends Properties {
   )
 
   /* Future */
-  private val futureSpecs = List(
-    example(
-      "test CanHandleError[Future].handleNonFatalWith should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleNonFatalWithShouldHandleNonFatalWith
-    ),
-    example(
-      "test CanHandleError[Future].handleNonFatalWith should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleNonFatalWithShouldReturnSuccessfulResult
-    ),
-    example(
-      "test CanHandleError[Future].handleNonFatalWithEither should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldHandleNonFatalWith
-    ),
-    example(
-      "test CanHandleError[Future].handleNonFatalWithEither should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldReturnSuccessfulResult
-    ),
-    example(
-      "test CanHandleError[Future].handleNonFatalWithEither should return the failed result",
-      FutureSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldReturnFailedResult
-    ),
-    example(
-      "test CanHandleError[Future].handleEitherNonFatalWith should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldHandleNonFatalWith
-    ),
-    example(
-      "test CanHandleError[Future].handleEitherNonFatalWith should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnSuccessfulResult
-    ),
-    example(
-      "test CanHandleError[Future].handleEitherNonFatalWith should return the failed result",
-      FutureSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnFailedResult
-    ),
+  private val futureSpecs = effectie.CanHandleErrorSpec.futureSpecs ++ List(
     example(
       "test CanHandleError[Future].handleEitherTNonFatalWith should handle NonFatal",
       FutureSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldHandleNonFatalWith
@@ -200,38 +168,6 @@ object CanHandleErrorSpec extends Properties {
     example(
       "test CanHandleError[Future].handleEitherTNonFatalWith should return the failed result",
       FutureSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldReturnFailedResult
-    ),
-    example(
-      "test CanHandleError[Future].handleNonFatal should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleNonFatalShouldHandleNonFatal
-    ),
-    example(
-      "test CanHandleError[Future].handleNonFatal should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleNonFatalShouldReturnSuccessfulResult
-    ),
-    example(
-      "test CanHandleError[Future].handleNonFatalEither should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleNonFatalEitherShouldHandleNonFatal
-    ),
-    example(
-      "test CanHandleError[Future].handleNonFatalEither should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleNonFatalEitherShouldReturnSuccessfulResult
-    ),
-    example(
-      "test CanHandleError[Future].handleNonFatalEither should return the failed result",
-      FutureSpec.testCanHandleError_Future_handleNonFatalEitherShouldReturnFailedResult
-    ),
-    example(
-      "test CanHandleError[Future].handleEitherNonFatal should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleEitherNonFatalShouldHandleNonFatal
-    ),
-    example(
-      "test CanHandleError[Future].handleEitherNonFatal should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnSuccessfulResult
-    ),
-    example(
-      "test CanHandleError[Future].handleEitherNonFatal should return the failed result",
-      FutureSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnFailedResult
     ),
     example(
       "test CanHandleError[Future].handleEitherTNonFatal should handle NonFatal",

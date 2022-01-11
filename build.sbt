@@ -54,6 +54,7 @@ lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
     console / initialCommands :=
       """import effectie._""",
   )
+  .dependsOn(testing4Cats % Test)
 
 lazy val testing4Cats = projectCommonSettings("test4cats", ProjectName("test4cats"), file("test4cats"))
   .settings(
@@ -245,6 +246,7 @@ lazy val libs =
     }
 
     def libCatsCore(catsVersion: String): ModuleID = "org.typelevel" %% "cats-core" % catsVersion
+    def libCatsKernel(catsVersion: String): ModuleID = "org.typelevel" %% "cats-kernel" % catsVersion
 
     def libCatsEffect(catsEffectVersion: String): ModuleID = "org.typelevel" %% "cats-effect" % catsEffectVersion
 
@@ -313,21 +315,21 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
         val sharedSourceDir = baseDirectory.value / "src" / "main"
         if (isScala3(scalaVersion.value))
           Seq(
-            sharedSourceDir / "scala-2.12_3.0",
-            sharedSourceDir / "scala-2.13_3.0",
+            sharedSourceDir / "scala-2.12_3",
+            sharedSourceDir / "scala-2.13_3",
             sharedSourceDir / "scala-3",
           )
         else if (scalaVersion.value.startsWith("2.13"))
           Seq(
             sharedSourceDir / "scala-2.12_2.13",
-            sharedSourceDir / "scala-2.12_3.0",
-            sharedSourceDir / "scala-2.13_3.0",
+            sharedSourceDir / "scala-2.12_3",
+            sharedSourceDir / "scala-2.13_3",
             sharedSourceDir / "scala-2",
           )
         else if (scalaVersion.value.startsWith("2.12"))
           Seq(
             sharedSourceDir / "scala-2.12_2.13",
-            sharedSourceDir / "scala-2.12_3.0",
+            sharedSourceDir / "scala-2.12_3",
             sharedSourceDir / "scala-2.12",
             sharedSourceDir / "scala-2",
           )
@@ -336,22 +338,22 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
       },
       Test / unmanagedSourceDirectories ++= {
         val sharedSourceDir = baseDirectory.value / "src" / "test"
-        if (isScala3(scalaVersion.value) || scalaVersion.value.startsWith("3.0"))
+        if (isScala3(scalaVersion.value) || scalaVersion.value.startsWith("3."))
           Seq(
-            sharedSourceDir / "scala-2.12_3.0",
-            sharedSourceDir / "scala-2.13_3.0",
+            sharedSourceDir / "scala-2.12_3",
+            sharedSourceDir / "scala-2.13_3",
             sharedSourceDir / "scala-3",
           )
         else if (scalaVersion.value.startsWith("2.13"))
           Seq(
             sharedSourceDir / "scala-2.12_2.13",
-            sharedSourceDir / "scala-2.13_3.0",
+            sharedSourceDir / "scala-2.13_3",
             sharedSourceDir / "scala-2",
           )
         else if (scalaVersion.value.startsWith("2.12"))
           Seq(
             sharedSourceDir / "scala-2.12_2.13",
-            sharedSourceDir / "scala-2.12_3.0",
+            sharedSourceDir / "scala-2.12_3",
             sharedSourceDir / "scala-2.12",
             sharedSourceDir / "scala-2",
           )

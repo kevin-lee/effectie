@@ -65,7 +65,7 @@ jobs:
             test
 
 
-  report:
+  test_report:
     runs-on: ubuntu-latest
 
     strategy:
