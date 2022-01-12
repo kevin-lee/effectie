@@ -157,39 +157,7 @@ object CanRecoverSpec extends Properties {
   )
 
   /* Future */
-  val futureSpecs = List(
-    example(
-      "test CanRecover[Future].recoverFromNonFatalWith should catch NonFatal",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalWithShouldRecoverFromNonFatal
-    ),
-    example(
-      "test CanRecover[Future].recoverFromNonFatalWith should return the successful result",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalWithShouldReturnSuccessfulResult
-    ),
-    example(
-      "test CanRecover[Future].recoverFromNonFatalWithEither should catch NonFatal",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal
-    ),
-    example(
-      "test CanRecover[Future].recoverFromNonFatalWithEither should return the successful result",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult
-    ),
-    example(
-      "test CanRecover[Future].recoverFromNonFatalWithEither should return the failed result",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldReturnFailedResult
-    ),
-    example(
-      "test CanRecover[Future].recoverEitherFromNonFatalWith should catch NonFatal",
-      FutureSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal
-    ),
-    example(
-      "test CanRecover[Future].recoverEitherFromNonFatalWith should return the successful result",
-      FutureSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult
-    ),
-    example(
-      "test CanRecover[Future].recoverEitherFromNonFatalWith should return the failed result",
-      FutureSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldReturnFailedResult
-    ),
+  val futureSpecs = effectie.CanRecoverSpec.futureSpecs ++ List(
     example(
       "test CanRecover[Future].recoverEitherTFromNonFatalWith should catch NonFatal",
       FutureSpec.testCanRecover_Future_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal
@@ -201,38 +169,6 @@ object CanRecoverSpec extends Properties {
     example(
       "test CanRecover[Future].recoverEitherTFromNonFatalWith should return the failed result",
       FutureSpec.testCanRecover_Future_recoverEitherTFromNonFatalWithShouldReturnFailedResult
-    ),
-    example(
-      "test CanRecover[Future].recoverFromNonFatal should catch NonFatal",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalShouldRecoverFromNonFatal
-    ),
-    example(
-      "test CanRecover[Future].recoverFromNonFatal should return the successful result",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalShouldReturnSuccessfulResult
-    ),
-    example(
-      "test CanRecover[Future].recoverFromNonFatalEither should catch NonFatal",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldRecoverFromNonFatal
-    ),
-    example(
-      "test CanRecover[Future].recoverFromNonFatalEither should return the successful result",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldReturnSuccessfulResult
-    ),
-    example(
-      "test CanRecover[Future].recoverFromNonFatalEither should return the failed result",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldReturnFailedResult
-    ),
-    example(
-      "test CanRecover[Future].recoverEitherFromNonFatal should catch NonFatal",
-      FutureSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldRecoverFromNonFatal
-    ),
-    example(
-      "test CanRecover[Future].recoverEitherFromNonFatal should return the successful result",
-      FutureSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldReturnSuccessfulResult
-    ),
-    example(
-      "test CanRecover[Future].recoverEitherFromNonFatal should return the failed result",
-      FutureSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldReturnFailedResult
     ),
     example(
       "test CanRecover[Future].recoverEitherTFromNonFatal should catch NonFatal",

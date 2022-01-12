@@ -1,6 +1,6 @@
 package effectie.testing
 
-import cats.{Eq, Show}
+import _root_.cats.{Eq, Show}
 
 /** @author Kevin Lee
   * @since 2021-10-30

@@ -14,15 +14,18 @@ import hedgehog.runner.*
   * @since 2020-12-06
   */
 object FxCtorSpec extends Properties {
-  override def tests: List[Test] = List(
+  override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
+
+  val ioSpecs = List(
     property("test FxCtor[IO].effectOf", IoSpec.testEffectOf),
     property("test FxCtor[IO].pureOf", IoSpec.testPureOf),
     example("test FxCtor[IO].unitOf", IoSpec.testUnitOf),
     example("test FxCtor[IO].errorOf", IoSpec.testErrorOf),
-    property("test FxCtor[Future].effectOf", FutureSpec.testEffectOf),
-    property("test FxCtor[Future].pureOf", FutureSpec.testPureOf),
-    example("test FxCtor[Future].unitOf", FutureSpec.testUnitOf),
-    example("test FxCtor[Future].errorOf", FutureSpec.testErrorOf),
+  )
+
+  val futureSpecs = effectie.FxCtorSpec.futureSpecs
+
+  val idSpecs = List(
     property("test FxCtor[Id].effectOf", IdSpec.testEffectOf),
     property("test FxCtor[Id].pureOf", IdSpec.testPureOf),
     example("test FxCtor[Id].unitOf", IdSpec.testUnitOf),
@@ -83,76 +86,6 @@ object FxCtorSpec extends Properties {
 
       val io = FxCtor[IO].errorOf(expectedError)
       tools.expectThrowable(io.unsafeRunSync(), expectedError)
-    }
-
-  }
-
-  object FutureSpec {
-    import java.util.concurrent.{ExecutorService, Executors}
-    import scala.concurrent.duration.*
-    import scala.concurrent.{ExecutionContext, Future}
-
-    private given errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
-
-    private val waitFor = WaitFor(1.second)
-
-    def testEffectOf: Property = for {
-      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
-    } yield {
-      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      given ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
-      var actual               = before
-      val testBefore           = actual ==== before
-      val future: Future[Unit] = FxCtor[Future].effectOf({ actual = after; () })
-      ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
-      val testAfterRun         = actual ==== after
-      Result.all(
-        List(
-          testBefore.log("testBefore"),
-          testAfterRun.log("testAfterRun")
-        )
-      )
-    }
-
-    def testPureOf: Property = for {
-      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
-    } yield {
-      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      given ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
-      var actual       = before
-      val testBefore   = actual ==== before
-      val future       = FxCtor[Future].pureOf({ actual = after; () })
-      ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
-      val testAfterRun = actual ==== after
-      Result.all(
-        List(
-          testBefore.log("testBefore"),
-          testAfterRun.log("testAfterRun")
-        )
-      )
-    }
-
-    def testUnitOf: Result = {
-      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      given ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-      val future                             = FxCtor[Future].unitOf
-      val expected: Unit                     = ()
-      val actual: Unit                       = ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
-      actual ==== expected
-    }
-
-    def testErrorOf: Result = {
-      val expectedMessage                    = "This is a throwable test error."
-      val expectedError                      = SomeThrowableError.message(expectedMessage)
-      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      given ExecutionContext                 = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
-      val future = FxCtor[Future].errorOf(expectedError)
-      tools.expectThrowable(ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future), expectedError)
     }
 
   }
