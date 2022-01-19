@@ -8,7 +8,7 @@ ThisBuild / scalaVersion       := props.ProjectScalaVersion
 ThisBuild / organization       := "io.kevinlee"
 ThisBuild / organizationName   := "Kevin's Code"
 ThisBuild / crossScalaVersions := props.CrossScalaVersions
-ThisBuild / version := "2.0.0-SNAPSHOT"
+ThisBuild / version            := "2.0.0-SNAPSHOT"
 
 ThisBuild / testFrameworks ~=
   (frameworks => (TestFramework("hedgehog.sbt.Framework") +: frameworks).distinct)
@@ -63,7 +63,7 @@ lazy val testing4Cats = projectCommonSettings("test4cats", ProjectName("test4cat
     libraryDependencies :=
       libraryDependencies.value ++ List(
         libs.libCatsCore(props.catsLatestVersion),
-      ) ++ libs.hedgehogLibs,
+      ) ++ List(libs.hedgehogCore, libs.hedgehogRunner),
     libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie.testing.cats._""",
@@ -217,7 +217,7 @@ lazy val props =
 
     final val IncludeTest = "compile->compile;test->test"
 
-    final val hedgehogLatestVersion = "0.7.0"
+    final val hedgehogLatestVersion = "0.8.0"
 
     final val catsVersion       = "2.5.0"
     final val catsLatestVersion = "2.6.1"
@@ -237,16 +237,19 @@ lazy val props =
 
 lazy val libs =
   new {
-    lazy val hedgehogLibs: List[ModuleID] = {
-      val hedgehogVersion = props.hedgehogLatestVersion
-      List(
-        "qa.hedgehog" %% "hedgehog-core"   % hedgehogVersion,
-        "qa.hedgehog" %% "hedgehog-runner" % hedgehogVersion,
-        "qa.hedgehog" %% "hedgehog-sbt"    % hedgehogVersion,
-      )
-    }
+    val hedgehogVersion     = props.hedgehogLatestVersion
+    lazy val hedgehogCore   = "qa.hedgehog" %% "hedgehog-core"   % hedgehogVersion
+    lazy val hedgehogRunner = "qa.hedgehog" %% "hedgehog-runner" % hedgehogVersion
+    lazy val hedgehogSbt    = "qa.hedgehog" %% "hedgehog-sbt"    % hedgehogVersion
 
-    def libCatsCore(catsVersion: String): ModuleID = "org.typelevel" %% "cats-core" % catsVersion
+    lazy val hedgehogLibs: List[ModuleID] =
+      List(
+        hedgehogCore,
+        hedgehogRunner,
+        hedgehogSbt,
+      )
+
+    def libCatsCore(catsVersion: String): ModuleID   = "org.typelevel" %% "cats-core"   % catsVersion
     def libCatsKernel(catsVersion: String): ModuleID = "org.typelevel" %% "cats-kernel" % catsVersion
 
     def libCatsEffect(catsEffectVersion: String): ModuleID = "org.typelevel" %% "cats-effect" % catsEffectVersion
