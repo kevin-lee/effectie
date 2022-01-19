@@ -903,7 +903,8 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
@@ -912,8 +913,8 @@ object CanRecoverSpec extends Properties {
         executorService,
         waitFor
       )(CanRecover[Future].recoverFromNonFatalWith(fa) {
-          case NonFatal(`expectedExpcetion`) => Future(expected)
-        })
+        case NonFatal(`expectedExpcetion`) => Future(expected)
+      })
 
       actual ==== expected
     }
@@ -921,7 +922,8 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverFromNonFatalWithShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Int](1)
       val expected = 1
@@ -929,8 +931,8 @@ object CanRecoverSpec extends Properties {
         executorService,
         waitFor
       )(CanRecover[Future].recoverFromNonFatalWith(fa) {
-          case NonFatal(_) => Future(123)
-        })
+        case NonFatal(_) => Future(123)
+      })
 
       actual ==== expected
     }
@@ -938,7 +940,8 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -955,11 +958,11 @@ object CanRecoverSpec extends Properties {
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
-        waitFor
-      )(CanRecover[Future].recoverFromNonFatalWith(fa2) {
-            case NonFatal(`expectedExpcetion`) => Future(expected)
-          })
+          executorService,
+          waitFor
+        )(CanRecover[Future].recoverFromNonFatalWith(fa2) {
+          case NonFatal(`expectedExpcetion`) => Future(expected)
+        })
 
       expectedFailedResult ==== actualFailedResult and actual ==== expected
     }
@@ -967,17 +970,18 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
-        waitFor
-      )(CanRecover[Future].recoverFromNonFatalWith(fa) {
-            case err => Future(SomeError.someThrowable(err).asLeft[Int])
-          })
+          executorService,
+          waitFor
+        )(CanRecover[Future].recoverFromNonFatalWith(fa) {
+          case err => Future(SomeError.someThrowable(err).asLeft[Int])
+        })
 
       actual ==== expected
     }
@@ -985,18 +989,19 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverFromNonFatalWithEitherShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
-        waitFor
-      )(CanRecover[Future].recoverFromNonFatalWith(fa) {
-            case NonFatal(_) => Future(1.asRight[SomeError])
-          })
+          executorService,
+          waitFor
+        )(CanRecover[Future].recoverFromNonFatalWith(fa) {
+          case NonFatal(_) => Future(1.asRight[SomeError])
+        })
 
       actual ==== expected
     }
@@ -1004,7 +1009,8 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -1021,12 +1027,14 @@ object CanRecoverSpec extends Properties {
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
-        waitFor
-      )(CanRecover[Future]
+          executorService,
+          waitFor
+        )(
+          CanRecover[Future]
             .recoverEitherFromNonFatalWith(fa2) {
               case err => Future(expected)
-            })
+            }
+        )
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -1034,17 +1042,20 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
         waitFor
-      )(CanRecover[Future]
+      )(
+        CanRecover[Future]
           .recoverEitherFromNonFatalWith(fa) {
             case err => Future(SomeError.someThrowable(err).asLeft[Int])
-          })
+          }
+      )
 
       actual ==== expected
     }
@@ -1052,19 +1063,22 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverEitherFromNonFatalWithShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
-        waitFor
-      )(CanRecover[Future]
+          executorService,
+          waitFor
+        )(
+          CanRecover[Future]
             .recoverEitherFromNonFatalWith(fa) {
               case NonFatal(_) => Future(expected)
-            })
+            }
+        )
 
       actual ==== expected
     }
@@ -1072,7 +1086,8 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
@@ -1090,13 +1105,15 @@ object CanRecoverSpec extends Properties {
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
-        waitFor
-      )(CanRecover[Future]
+          executorService,
+          waitFor
+        )(
+          CanRecover[Future]
             .recoverEitherTFromNonFatalWith(fa2) {
               case err => Future(expected)
             }
-            .value)
+            .value
+        )
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -1104,18 +1121,21 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = EitherT(run[Future, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
         waitFor
-      )(CanRecover[Future]
+      )(
+        CanRecover[Future]
           .recoverEitherTFromNonFatalWith(fa) {
             case err => Future(SomeError.someThrowable(err).asLeft[Int])
           }
-          .value)
+          .value
+      )
 
       actual ==== expected
     }
@@ -1123,20 +1143,23 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverEitherTFromNonFatalWithShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = EitherT(run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
-        waitFor
-      )(CanRecover[Future]
+          executorService,
+          waitFor
+        )(
+          CanRecover[Future]
             .recoverEitherTFromNonFatalWith(fa) {
               case NonFatal(_) => Future(expected)
             }
-            .value)
+            .value
+        )
 
       actual ==== expected
     }
@@ -1146,7 +1169,8 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverFromNonFatalShouldRecoverFromNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
@@ -1162,7 +1186,8 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverFromNonFatalShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Int](1)
       val expected = 1
@@ -1177,7 +1202,8 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverFromNonFatalEitherShouldRecoverFromNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -1203,17 +1229,18 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverFromNonFatalEitherShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
-        waitFor
-      )(CanRecover[Future].recoverFromNonFatal(fa) {
-            case err => SomeError.someThrowable(err).asLeft[Int]
-          })
+          executorService,
+          waitFor
+        )(CanRecover[Future].recoverFromNonFatal(fa) {
+          case err => SomeError.someThrowable(err).asLeft[Int]
+        })
 
       actual ==== expected
     }
@@ -1221,7 +1248,8 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverFromNonFatalEitherShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int])
@@ -1237,7 +1265,8 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverEitherFromNonFatalShouldRecoverFromNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -1254,9 +1283,9 @@ object CanRecoverSpec extends Properties {
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
-        waitFor
-      )(CanRecover[Future].recoverEitherFromNonFatal(fa2) { case err => expected })
+          executorService,
+          waitFor
+        )(CanRecover[Future].recoverEitherFromNonFatal(fa2) { case err => expected })
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -1264,17 +1293,20 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverEitherFromNonFatalShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = run[Future, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
         waitFor
-      )(CanRecover[Future]
+      )(
+        CanRecover[Future]
           .recoverEitherFromNonFatal(fa) {
             case err => SomeError.someThrowable(err).asLeft[Int]
-          })
+          }
+      )
 
       actual ==== expected
     }
@@ -1282,16 +1314,17 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverEitherFromNonFatalShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
-        waitFor
-      )(CanRecover[Future].recoverEitherFromNonFatal(fa) { case NonFatal(_) => expected })
+          executorService,
+          waitFor
+        )(CanRecover[Future].recoverEitherFromNonFatal(fa) { case NonFatal(_) => expected })
 
       actual ==== expected
     }
@@ -1299,7 +1332,8 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverEitherTFromNonFatalShouldRecoverFromNonFatal: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
@@ -1317,9 +1351,9 @@ object CanRecoverSpec extends Properties {
       val expected = 1.asRight[SomeError]
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
-        waitFor
-      )(CanRecover[Future].recoverEitherTFromNonFatal(fa2) { case err => expected }.value)
+          executorService,
+          waitFor
+        )(CanRecover[Future].recoverEitherTFromNonFatal(fa2) { case err => expected }.value)
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -1327,18 +1361,21 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverEitherTFromNonFatalShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val fa       = EitherT(run[Future, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
         waitFor
-      )(CanRecover[Future]
+      )(
+        CanRecover[Future]
           .recoverEitherTFromNonFatal(fa) {
             case err => SomeError.someThrowable(err).asLeft[Int]
           }
-          .value)
+          .value
+      )
 
       actual ==== expected
     }
@@ -1346,16 +1383,17 @@ object CanRecoverSpec extends Properties {
     def testCanRecover_Future_recoverEitherTFromNonFatalShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             = ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeError.message("Failed")
       val fa              = EitherT(run[Future, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
-        waitFor
-      )(CanRecover[Future].recoverEitherTFromNonFatal(fa) { case NonFatal(_) => expected }.value)
+          executorService,
+          waitFor
+        )(CanRecover[Future].recoverEitherTFromNonFatal(fa) { case NonFatal(_) => expected }.value)
 
       actual ==== expected
     }

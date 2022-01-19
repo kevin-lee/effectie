@@ -48,7 +48,8 @@ object ToFutureSpec extends Properties {
 
       implicit val es: ExecutorService  = ConcurrentSupport.newExecutorService(2)
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
-      implicit val ec                   = ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec                   =
+        ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
       implicit val scheduler: Scheduler = Scheduler(ec)
 
       ConcurrentSupport.runAndShutdown(es, WaitFor(300.milliseconds)) {
@@ -80,7 +81,8 @@ object ToFutureSpec extends Properties {
 
       implicit val es: ExecutorService  = ConcurrentSupport.newExecutorService(2)
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
-      implicit val ec                   = ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec                   =
+        ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
       implicit val scheduler: Scheduler = Scheduler(ec)
 
       ConcurrentSupport.runAndShutdown(es, WaitFor(300.milliseconds)) {
@@ -109,7 +111,8 @@ object ToFutureSpec extends Properties {
     } yield {
       implicit val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
-      implicit val ec                  = ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec                  =
+        ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
       ConcurrentSupport.runAndShutdown(es, WaitFor(300.milliseconds)) {
         val expected = Future(a)
         val fa       = Future(a)
@@ -140,7 +143,8 @@ object ToFutureSpec extends Properties {
 
       val fa          = a
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
-      implicit val ec = ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec =
+        ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
       ConcurrentSupport.runAndShutdown(es, WaitFor(300.milliseconds)) {
         val expected = Future(a)
 

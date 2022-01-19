@@ -43,7 +43,8 @@ object ToFutureSpec extends Properties {
 
       implicit val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
-      implicit val ec                  = ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec                  =
+        ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
       ConcurrentSupport.runAndShutdown(es, WaitFor(800.milliseconds)) {
         import CatsEffectRunner._
         implicit val ticket: Ticker = Ticker(TestContext())
@@ -73,7 +74,8 @@ object ToFutureSpec extends Properties {
     } yield {
       implicit val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
-      implicit val ec                  = ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec                  =
+        ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
       ConcurrentSupport.runAndShutdown(es, WaitFor(300.milliseconds)) {
         val expected = Future(a)
         val fa       = Future(a)
@@ -104,7 +106,8 @@ object ToFutureSpec extends Properties {
 
       val fa          = a
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
-      implicit val ec = ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec =
+        ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
       ConcurrentSupport.runAndShutdown(es, WaitFor(300.milliseconds)) {
         val expected = Future(a)
 

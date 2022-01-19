@@ -3,8 +3,8 @@ package effectie.syntax
 import effectie.{CanCatch, CanHandleError, CanRecover}
 
 /** @author Kevin Lee
- * @since 2021-10-16
- */
+  * @since 2021-10-16
+  */
 trait error {
   import effectie.syntax.error.{FAErrorHandlingOps, FEitherABErrorHandlingOps}
 
@@ -94,6 +94,4 @@ object error extends error {
       canRecover.recoverEitherFromNonFatal[A, AA, B, BB](fab)(handleError)
   }
 
-
 }
-

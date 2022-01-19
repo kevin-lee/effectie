@@ -11,6 +11,7 @@ import scala.concurrent.ExecutionContext
   */
 final class CatsEffectIoCompatForFuture {
   val es: ExecutorService           = ConcurrentSupport.newExecutorService(2)
-  implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
+  implicit val ec: ExecutionContext =
+    ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
 
 }
