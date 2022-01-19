@@ -4,7 +4,8 @@ import cats._
 import cats.data.EitherT
 import cats.effect.IO
 import cats.syntax.all._
-import effectie.monix.Effectful._
+import effectie.syntax.fx._
+import effectie.syntax.error._
 import effectie.monix.Fx._
 import effectie.monix.syntax.error._
 import effectie.testing.types._

@@ -6,7 +6,7 @@ import cats.effect.IO
 import cats.instances.all._
 import cats.syntax.all._
 import effectie.SomeControlThrowable
-import effectie.monix.Effectful._
+import effectie.syntax.fx._
 import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}

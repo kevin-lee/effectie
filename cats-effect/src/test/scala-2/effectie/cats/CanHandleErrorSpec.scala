@@ -6,7 +6,7 @@ import cats.effect.IO
 import cats.instances.all._
 import cats.syntax.all._
 import effectie.cats.CanHandleError._
-import effectie.cats.Effectful._
+import effectie.syntax.fx._
 import effectie.cats.FxCtor._
 import effectie.testing.types.SomeError
 import effectie.SomeControlThrowable

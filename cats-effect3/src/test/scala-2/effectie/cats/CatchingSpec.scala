@@ -7,7 +7,7 @@ import cats.effect._
 import cats.effect.unsafe.IORuntime
 import cats.instances.all._
 import cats.syntax.all._
-import effectie.cats.Effectful._
+import effectie.syntax.fx._
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.testing.types.SomeError
 import effectie.SomeControlThrowable

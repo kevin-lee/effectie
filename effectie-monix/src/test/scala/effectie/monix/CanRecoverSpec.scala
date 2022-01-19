@@ -5,7 +5,7 @@ import cats.data.EitherT
 import cats.effect.IO
 import cats.instances.all._
 import cats.syntax.all._
-import effectie.monix.Effectful._
+import effectie.syntax.fx._
 import effectie.monix.FxCtor._
 import effectie.monix.CanRecover._
 import effectie.testing.types.SomeError

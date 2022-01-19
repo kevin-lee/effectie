@@ -5,11 +5,12 @@ import cats.data.EitherT
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import cats.syntax.all._
-import effectie.cats.Effectful._
 import effectie.cats.Fx._
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.cats.syntax.error._
 import effectie.cats.testing
+import effectie.syntax.error._
+import effectie.syntax.fx._
 import effectie.testing.types.SomeError
 import effectie.{Fx, SomeControlThrowable}
 import extras.concurrent.testing.ConcurrentSupport
