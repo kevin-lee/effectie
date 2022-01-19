@@ -50,7 +50,8 @@ object FromFutureSpec extends Properties {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {
       implicit val es: ExecutorService  = ConcurrentSupport.newExecutorService(2)
-      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext =
+        ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
 
       ConcurrentSupport.runAndShutdown(es, waitFor300Millis) {
         lazy val fa = Future(a)
@@ -66,7 +67,8 @@ object FromFutureSpec extends Properties {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {
       val es                            = ConcurrentSupport.newExecutorService(2)
-      implicit val ec: ExecutionContext = ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val ec: ExecutionContext =
+        ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
 
       ConcurrentSupport.runAndShutdown(es, waitFor300Millis) {
         implicit val timeout: FromFuture.FromFutureToIdTimeout =
