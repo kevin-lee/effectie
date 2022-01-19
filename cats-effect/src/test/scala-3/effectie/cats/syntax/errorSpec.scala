@@ -6,7 +6,8 @@ import cats.syntax.all.*
 import cats.effect.*
 import effectie.cats.FxCtor
 import effectie.{Fx, SomeControlThrowable}
-import effectie.cats.Effectful.*
+import effectie.syntax.fx.*
+import effectie.syntax.error.*
 import effectie.cats.syntax.error.*
 import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport

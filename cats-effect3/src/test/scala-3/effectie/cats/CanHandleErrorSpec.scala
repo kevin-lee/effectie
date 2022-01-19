@@ -7,7 +7,7 @@ import effectie.cats.CatsEffectRunner.TestContext
 import cats.effect.unsafe.IORuntime
 import cats.instances.all.*
 import cats.syntax.all.*
-import effectie.cats.Effectful.*
+import effectie.syntax.fx.*
 import effectie.testing.types.SomeError
 import effectie.{CanHandleError, FxCtor, SomeControlThrowable}
 import extras.concurrent.testing.ConcurrentSupport

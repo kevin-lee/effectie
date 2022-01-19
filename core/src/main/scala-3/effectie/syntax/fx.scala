@@ -1,9 +1,13 @@
-package effectie.cats
+package effectie.syntax
 
 import effectie.FxCtor
-import effectie.cats.Effectful.*
 
-trait Effectful {
+/**
+ * @author Kevin Lee
+ * @since 2022-01-17
+ */
+trait fx {
+  import effectie.syntax.fx.*
 
   def effectOf[F[_]]: CurriedEffectOf[F] = new CurriedEffectOf[F]
 
@@ -13,31 +17,25 @@ trait Effectful {
 
   def errorOf[F[_]]: CurriedErrorOf[F] = new CurriedErrorOf[F]
 
-  @deprecated(message = "Use pureOf instead.", since = "1.4.0")
-  inline final def effectOfPure[F[_]]: CurriedEffectOfPure[F] = pureOf[F]
-
-  @deprecated(message = "Use unitOf instead", since = "1.4.0")
-  inline final def effectOfUnit[F[_]: FxCtor]: F[Unit] = unitOf[F]
-
 }
 
-object Effectful extends Effectful {
+object fx extends fx {
 
-  private[Effectful] final class CurriedEffectOf[F[_]](
+  private[fx] final class CurriedEffectOf[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
     def apply[A](a: => A)(using EF: FxCtor[F]): F[A] =
       FxCtor[F].effectOf(a)
   }
 
-  private[Effectful] final class CurriedEffectOfPure[F[_]](
+  private[fx] final class CurriedEffectOfPure[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
     def apply[A](a: A)(using EF: FxCtor[F]): F[A] =
       FxCtor[F].pureOf(a)
   }
 
-  private[Effectful] final class CurriedErrorOf[F[_]](
+  private[fx] final class CurriedErrorOf[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
     def apply[A](throwable: Throwable)(using EF: FxCtor[F]): F[A] =

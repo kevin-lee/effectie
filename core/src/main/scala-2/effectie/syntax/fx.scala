@@ -1,8 +1,8 @@
-package effectie.monix
+package effectie.syntax
 
-import effectie.monix.Effectful._
+trait fx {
 
-trait Effectful {
+  import fx._
 
   def effectOf[F[_]]: CurriedEffectOf[F] = new CurriedEffectOf[F]
 
@@ -15,23 +15,23 @@ trait Effectful {
 }
 
 @SuppressWarnings(Array("org.wartremover.warts.DefaultArguments"))
-object Effectful extends Effectful {
+object fx extends fx {
 
-  private[Effectful] final class CurriedEffectOf[F[_]](
+  private[fx] final class CurriedEffectOf[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
     def apply[A](a: => A)(implicit EF: effectie.FxCtor[F]): F[A] =
       effectie.FxCtor[F].effectOf(a)
   }
 
-  private[Effectful] final class CurriedEffectOfPure[F[_]](
+  private[fx] final class CurriedEffectOfPure[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
     def apply[A](a: A)(implicit EF: effectie.FxCtor[F]): F[A] =
       effectie.FxCtor[F].pureOf(a)
   }
 
-  private[Effectful] final class CurriedErrorOf[F[_]](
+  private[fx] final class CurriedErrorOf[F[_]](
     private val dummy: Boolean = true
   ) extends AnyVal {
     def apply[A](throwable: Throwable)(implicit EF: effectie.FxCtor[F]): F[A] =

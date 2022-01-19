@@ -6,7 +6,8 @@ import cats.effect.*
 import cats.instances.all.*
 import cats.syntax.all.*
 import effectie.cats.CanCatch as *
-import effectie.cats.Effectful.*
+import effectie.cats.Fx.given
+import effectie.syntax.fx.*
 import effectie.testing.types.SomeError
 import effectie.{CanCatch, Fx, SomeControlThrowable}
 import extras.concurrent.testing.ConcurrentSupport
@@ -166,8 +167,6 @@ object CanCatchSpec extends Properties {
     effectOf[F](a)
 
   object IoSpec {
-
-    import effectie.cats.Fx.given
 
     def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
@@ -398,8 +397,6 @@ object CanCatchSpec extends Properties {
   }
 
   object IdSpec {
-
-    import effectie.cats.Fx.given
 
     def testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 

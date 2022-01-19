@@ -6,7 +6,7 @@ import cats.data.EitherT
 import cats.effect._
 import cats.instances.all._
 import cats.syntax.all._
-import effectie.cats.Effectful._
+import effectie.syntax.fx._
 import effectie.testing.types.SomeError
 import effectie.SomeControlThrowable
 import effectie.cats.Fx._
