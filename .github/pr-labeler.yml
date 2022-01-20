@@ -1,4 +1,4 @@
-update: [ 'update/**', 'dependabot/**' ]
+dependencies: [ 'update/**', 'dependabot/**' ]
 documentation: [ 'docs/**' ]
 publish-docs: [ 'docs/**' ]
 pr: '**'
