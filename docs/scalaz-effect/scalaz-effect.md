@@ -5,10 +5,10 @@ title: "For Scalaz Effect"
 
 ## Effectie for Scalaz Effect
 
-* [Fx](fx)
-* [ConsoleEffect](console-effect)
-* [OptionTSupport](optiont-support)
-* [EitherTSupport](eithert-support)
+* [Fx](fx.md)
+* [ConsoleEffect](console-effect.md)
+* [OptionTSupport](optiont-support.md)
+* [EitherTSupport](eithert-support.md)
 
 ## All in One Example
 
