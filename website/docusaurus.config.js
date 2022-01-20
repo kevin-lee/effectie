@@ -64,11 +64,11 @@ const websiteConfig = {
             },
             {
               label: 'For Cats Effect',
-              to: 'docs/cats-effect/cats-effect',
+              to: 'docs/cats-effect',
             },
             {
               label: 'For Scalaz Effect',
-              to: 'docs/scalaz-effect/scalaz-effect',
+              to: 'docs/scalaz-effect',
             },
           ],
         },

@@ -67,7 +67,7 @@ import effectie.cats.OptionTSupport._
 import effectie.cats._
 ```
 
-For more details, check out [Effectie for Cats Effect](cats-effect/cats-effect).
+For more details, check out [Effectie for Cats Effect](cats-effect/cats-effect.md).
 
 
 ### For Monix
@@ -88,7 +88,7 @@ import effectie.monix.OptionTSupport._
 import effectie.monix._
 ```
 
-For more details, check out [Effectie for Monix](monix/monix).
+For more details, check out [Effectie for Monix](monix/monix.md).
 
 
 ### For Scalaz Effect
@@ -109,7 +109,7 @@ import effectie.scalaz.OptionTSupport._
 import effectie.scalaz._
 ```
 
-For more details, check out [Effectie for Scalaz Effect](scalaz-effect/scalaz-effect).
+For more details, check out [Effectie for Scalaz Effect](scalaz-effect/scalaz-effect.md).
 
 
 ## Why?
@@ -241,6 +241,6 @@ iou.unsafeRunSync()
 ```
 
 Check out
-* [Effectie for Cats Effect](cats-effect/cats-effect)
-* [Effectie for Monix](monix/monix)
-* [Effectie for Scalaz (v7.2.x) Effect](scalaz-effect/scalaz-effect)
+* [Effectie for Cats Effect](cats-effect/cats-effect.md)
+* [Effectie for Monix](monix/monix.md)
+* [Effectie for Scalaz (v7.2.x) Effect](scalaz-effect/scalaz-effect.md)

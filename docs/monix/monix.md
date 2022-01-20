@@ -5,13 +5,13 @@ title: "For Monix"
 
 ## Effectie for Monix
 
-* [Fx](fx)
-* [ConsoleEffect](console-effect)
-* [CanCatch](can-catch)
-* [CanHandleError](can-handle-error)
-* [FromFuture](from-future)
-* [OptionTSupport](optiont-support)
-* [EitherTSupport](eithert-support)
+* [Fx](fx.md)
+* [ConsoleEffect](console-effect.md)
+* [CanCatch](can-catch.md)
+* [CanHandleError](can-handle-error.md)
+* [FromFuture](from-future.md)
+* [OptionTSupport](optiont-support.md)
+* [EitherTSupport](eithert-support.md)
 
 ## All in One Example
 
