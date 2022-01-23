@@ -12,7 +12,8 @@ import effectie.cats.{CanCatch, FxCtor, testing}
 import effectie.syntax.error.*
 import effectie.syntax.fx.*
 import effectie.testing.types.*
-import effectie.{Fx, SomeControlThrowable}
+import effectie.core.Fx
+import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog.*

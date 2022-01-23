@@ -1,4 +1,4 @@
-package effectie
+package effectie.core
 
 trait ConsoleEffect[F[_]] {
   def readLn: F[String]

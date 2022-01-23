@@ -6,7 +6,7 @@ import cats.{Applicative, Id, Monad}
 import scala.concurrent.{ExecutionContext, Future}
 
 object Fx {
-  type Fx[F[*]] = effectie.Fx[F]
+  type Fx[F[*]] = effectie.core.Fx[F]
 
   given ioFx: Fx[IO] with {
 

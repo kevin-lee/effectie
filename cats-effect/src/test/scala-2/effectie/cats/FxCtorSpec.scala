@@ -15,8 +15,8 @@ object FxCtorSpec extends Properties {
 
   implicit private val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
-  type FxCtor[F[_]] = effectie.FxCtor[F]
-  val FxCtor: effectie.FxCtor.type = effectie.FxCtor
+  type FxCtor[F[_]] = effectie.core.FxCtor[F]
+  val FxCtor: effectie.core.FxCtor.type = effectie.core.FxCtor
 
   override def tests: List[Test] =
     ioSpecs ++
@@ -30,7 +30,7 @@ object FxCtorSpec extends Properties {
     example("test FxCtor[IO].errorOf", IoSpec.testErrorOf),
   )
 
-  private val futureSpecs = effectie.FxCtorSpec.futureSpecs
+  private val futureSpecs = effectie.core.FxCtorSpec.futureSpecs
 
   private val idSpecs = List(
     property("test FxCtor[Id].effectOf", IdSpec.testEffectOf),

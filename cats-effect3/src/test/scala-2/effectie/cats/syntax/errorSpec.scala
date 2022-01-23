@@ -12,7 +12,8 @@ import effectie.cats.testing
 import effectie.syntax.error._
 import effectie.syntax.fx._
 import effectie.testing.types.SomeError
-import effectie.{Fx, SomeControlThrowable}
+import effectie.core.Fx
+import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._
@@ -31,7 +32,7 @@ object errorSpec extends Properties {
 
 object CanCatchSyntaxSpec {
 
-  val CanHandleError: effectie.CanHandleError.type = effectie.CanHandleError
+  val CanHandleError: effectie.core.CanHandleError.type = effectie.core.CanHandleError
 
   def tests: List[Test] = List(
     /* IO */

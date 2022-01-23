@@ -2,7 +2,7 @@ package effectie.cats
 
 import cats.Id
 import cats.effect.*
-import effectie.FxCtor
+import effectie.core.FxCtor
 import effectie.testing.tools
 import effectie.testing.types.SomeThrowableError
 import extras.concurrent.testing.ConcurrentSupport
@@ -23,7 +23,7 @@ object FxCtorSpec extends Properties {
     example("test FxCtor[IO].errorOf", IoSpec.testErrorOf),
   )
 
-  val futureSpecs = effectie.FxCtorSpec.futureSpecs
+  val futureSpecs = effectie.core.FxCtorSpec.futureSpecs
 
   val idSpecs = List(
     property("test FxCtor[Id].effectOf", IdSpec.testEffectOf),

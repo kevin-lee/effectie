@@ -24,7 +24,7 @@ object FxSpec extends Properties {
 
   private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
-  val Fx: effectie.Fx.type = effectie.Fx
+  val Fx: effectie.core.Fx.type = effectie.core.Fx
 
   override def tests: List[Test] = taskSpecs ++ ioSpecs ++ futureSpecs ++ idSpecs
 
@@ -649,7 +649,7 @@ object FxSpec extends Properties {
     )
 
   /* Future */
-  private val futureSpecs = effectie.FxSpec.futureSpecs ++
+  private val futureSpecs = effectie.core.FxSpec.futureSpecs ++
     List(
       example(
         "test Fx[Future].catchNonFatalEitherT should catch NonFatal",

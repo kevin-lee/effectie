@@ -24,8 +24,8 @@ import scala.util.control.ControlThrowable
 object CatchingSpec extends Properties {
   private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
-  type Fx[F[_]]     = effectie.Fx[F]
-  type FxCtor[F[_]] = effectie.FxCtor[F]
+  type Fx[F[_]]     = effectie.core.Fx[F]
+  type FxCtor[F[_]] = effectie.core.FxCtor[F]
 
   override def tests: List[Test] = List(
     /* IO */

@@ -1,19 +1,19 @@
 package effectie.cats
 
 import _root_.cats.data.EitherT
-import effectie.Fx
+import effectie.core.Fx
 
 /** @author Kevin Lee
   * @since 2021-11-25
   */
-extension [F[*]](canCatch: effectie.CanCatch[F]) {
+extension [F[*]](canCatch: effectie.core.CanCatch[F]) {
 
   def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(f: Throwable => AA): EitherT[F, AA, B] =
     EitherT(canCatch.catchNonFatalEither[A, AA, B](fab.value)(f))
 
 }
 
-extension [F[*]](canHandleError: effectie.CanHandleError[F]) {
+extension [F[*]](canHandleError: effectie.core.CanHandleError[F]) {
 
   def handleEitherTNonFatalWith[A, AA >: A, B, BB >: B](
     efab: => EitherT[F, A, B]
@@ -31,7 +31,7 @@ extension [F[*]](canHandleError: effectie.CanHandleError[F]) {
 
 }
 
-extension [F[_]](canRecover: effectie.CanRecover[F]) {
+extension [F[_]](canRecover: effectie.core.CanRecover[F]) {
 
   final def recoverEitherTFromNonFatalWith[A, AA >: A, B, BB >: B](
     efab: => EitherT[F, A, B]

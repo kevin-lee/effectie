@@ -1,6 +1,6 @@
 package effectie.syntax
 
-import effectie.FxCtor
+import effectie.core.FxCtor
 
 /**
  * @author Kevin Lee

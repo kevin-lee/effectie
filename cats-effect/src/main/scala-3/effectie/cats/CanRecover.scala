@@ -13,7 +13,7 @@ import scala.util.control.NonFatal
   */
 object CanRecover {
 
-  type CanRecover[F[*]] = effectie.CanRecover[F]
+  type CanRecover[F[*]] = effectie.core.CanRecover[F]
 
   given ioCanRecover: CanRecover[IO] with {
     override def recoverFromNonFatalWith[A, AA >: A](fa: => IO[A])(
@@ -27,7 +27,7 @@ object CanRecover {
   }
 
   given futureCanRecover(using ec: ExecutionContext): CanRecover[Future] =
-    new effectie.CanRecover.CanRecoverFuture with CanRecover[Future]
+    new effectie.core.CanRecover.CanRecoverFuture with CanRecover[Future]
 
   given idCanRecover: CanRecover[Id] with {
 

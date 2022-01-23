@@ -4,7 +4,7 @@ import cats.Id
 import cats.effect.IO
 
 object FxCtor {
-  type FxCtor[F[_]] = effectie.FxCtor[F]
+  type FxCtor[F[_]] = effectie.core.FxCtor[F]
 
   implicit object IoFxCtor extends FxCtor[IO] {
 

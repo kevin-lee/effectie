@@ -1,7 +1,7 @@
 package effectie.cats
 
 import cats.data.EitherT
-import effectie.{CanCatch, Fx}
+import effectie.core.{CanCatch, Fx}
 
 /** @author Kevin Lee
   * @since 2020-06-07

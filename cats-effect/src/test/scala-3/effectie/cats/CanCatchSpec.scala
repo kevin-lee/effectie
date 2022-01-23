@@ -9,7 +9,8 @@ import effectie.cats.CanCatch as *
 import effectie.cats.Fx.given
 import effectie.syntax.fx.*
 import effectie.testing.types.SomeError
-import effectie.{CanCatch, Fx, SomeControlThrowable}
+import effectie.core.{CanCatch, Fx}
+import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog.*
@@ -85,7 +86,7 @@ object CanCatchSpec extends Properties {
   )
 
   /* Future */
-  val futureSpecs = effectie.CanCatchSpec.futureSpecs ++ List(
+  val futureSpecs = effectie.core.CanCatchSpec.futureSpecs ++ List(
     example(
       "test CanCatch[Future]catchNonFatalEitherT should catch NonFatal",
       FutureSpec.testCanCatch_Future_catchNonFatalEitherTShouldCatchNonFatal
@@ -173,7 +174,7 @@ object CanCatchSpec extends Properties {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = expectedExpcetion.asLeft[Int]
-      val actual            = effectie.CanCatch[IO].catchNonFatalThrowable(fa).unsafeRunSync()
+      val actual            = effectie.core.CanCatch[IO].catchNonFatalThrowable(fa).unsafeRunSync()
 
       actual ==== expected
     }

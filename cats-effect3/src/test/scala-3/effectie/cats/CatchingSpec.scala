@@ -11,7 +11,8 @@ import cats.syntax.all.*
 import effectie.syntax.fx.*
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.testing.types.SomeError
-import effectie.{FxCtor, SomeControlThrowable}
+import effectie.core.FxCtor
+import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog.*

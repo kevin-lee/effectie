@@ -9,7 +9,8 @@ import effectie.cats.syntax.error._
 import effectie.syntax.error._
 import effectie.syntax.fx._
 import effectie.testing.types._
-import effectie.{FxCtor, SomeControlThrowable}
+import effectie.core.FxCtor
+import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._

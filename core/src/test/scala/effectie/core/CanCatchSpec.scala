@@ -1,4 +1,4 @@
-package effectie
+package effectie.core
 
 import cats.Functor
 import effectie.testing.types.SomeError

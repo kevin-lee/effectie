@@ -11,7 +11,8 @@ import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.cats.Fx.given
 import effectie.testing.tools.*
 import effectie.testing.types.{SomeError, SomeThrowableError}
-import effectie.{Fx, SomeControlThrowable}
+import effectie.core.Fx
+import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog.*
@@ -26,7 +27,7 @@ import scala.util.control.{ControlThrowable, NonFatal}
   */
 object FxSpec extends Properties {
 
-  val Fx: effectie.Fx.type = effectie.Fx
+  val Fx: effectie.core.Fx.type = effectie.core.Fx
 
   given eqSomeError: Eq[SomeError]     = Eq.fromUniversalEquals[SomeError]
   given shosSomeError: Show[SomeError] = Show.fromToString
@@ -353,7 +354,7 @@ object FxSpec extends Properties {
     )
 
   /* Future */
-  private val futureSpecs = effectie.FxSpec.futureSpecs ++
+  private val futureSpecs = effectie.core.FxSpec.futureSpecs ++
     List(
       example(
         "test Fx[Future]catchNonFatalEitherT should catch NonFatal",

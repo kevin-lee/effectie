@@ -7,7 +7,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 object Fx {
 
-  type Fx[F[*]] = effectie.Fx[F]
+  type Fx[F[*]] = effectie.core.Fx[F]
 
   def apply[F[_]: Fx]: Fx[F] = summon[Fx[F]]
 

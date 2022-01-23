@@ -22,10 +22,10 @@ import scala.util.control.{ControlThrowable, NonFatal}
 object CanRecoverSpec extends Properties {
   implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
-  type FxCtor[F[_]] = effectie.FxCtor[F]
-  val FxCtor: effectie.FxCtor.type = effectie.FxCtor
+  type FxCtor[F[_]] = effectie.core.FxCtor[F]
+  val FxCtor: effectie.core.FxCtor.type = effectie.core.FxCtor
 
-  val CanRecover: effectie.CanRecover.type = effectie.CanRecover
+  val CanRecover: effectie.core.CanRecover.type = effectie.core.CanRecover
 
   override def tests: List[Test] =
     ioSpecs ++
@@ -157,7 +157,7 @@ object CanRecoverSpec extends Properties {
   )
 
   /* Future */
-  val futureSpecs = effectie.CanRecoverSpec.futureSpecs ++ List(
+  val futureSpecs = effectie.core.CanRecoverSpec.futureSpecs ++ List(
     example(
       "test CanRecover[Future].recoverEitherTFromNonFatalWith should catch NonFatal",
       FutureSpec.testCanRecover_Future_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal

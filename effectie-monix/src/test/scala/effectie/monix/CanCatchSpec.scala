@@ -23,9 +23,9 @@ object CanCatchSpec extends Properties {
 
   implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
-  type FxCtor[F[_]]   = effectie.FxCtor[F]
-  type CanCatch[F[_]] = effectie.CanCatch[F]
-  val CanCatch: effectie.CanCatch.type = effectie.CanCatch
+  type FxCtor[F[_]]   = effectie.core.FxCtor[F]
+  type CanCatch[F[_]] = effectie.core.CanCatch[F]
+  val CanCatch: effectie.core.CanCatch.type = effectie.core.CanCatch
 
   override def tests: List[Test] =
     taskSpecs ++
@@ -152,7 +152,7 @@ object CanCatchSpec extends Properties {
       IoSpec.testCanCatch_IO_catchNonFatalEitherTShouldReturnFailedResult
     ),
   )
-  val futureSpecs = effectie.CanCatchSpec.futureSpecs ++ List(
+  val futureSpecs = effectie.core.CanCatchSpec.futureSpecs ++ List(
     /* Future */
     example(
       "test CanCatch[Future].catchNonFatalEitherT should catch NonFatal",

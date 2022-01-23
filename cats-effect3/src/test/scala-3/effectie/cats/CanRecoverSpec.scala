@@ -10,7 +10,8 @@ import cats.syntax.all.*
 import effectie.syntax.fx.*
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.testing.types.SomeError
-import effectie.{FxCtor, SomeControlThrowable}
+import effectie.core.FxCtor
+import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog.*
@@ -23,7 +24,7 @@ import scala.util.control.{ControlThrowable, NonFatal}
   */
 object CanRecoverSpec extends Properties {
 
-  val CanRecover: effectie.CanRecover.type = effectie.CanRecover
+  val CanRecover: effectie.core.CanRecover.type = effectie.core.CanRecover
 
   override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
 
@@ -152,7 +153,7 @@ object CanRecoverSpec extends Properties {
   )
 
   /* Future */
-  val futureSpecs = effectie.CanRecoverSpec.futureSpecs ++ List(
+  val futureSpecs = effectie.core.CanRecoverSpec.futureSpecs ++ List(
     example(
       "test CanRecover[Future].recoverEitherTFromNonFatalWith should catch NonFatal",
       FutureSpec.testCanRecover_Future_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal

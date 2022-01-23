@@ -4,7 +4,7 @@ import cats.Id
 import cats.effect.*
 import effectie.cats.CatsEffectRunner.TestContext
 import cats.effect.unsafe.IORuntime
-import effectie.FxCtor
+import effectie.core.FxCtor
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.testing.tools
 import effectie.testing.types.SomeThrowableError
@@ -25,7 +25,7 @@ object FxCtorSpec extends Properties {
     example("test FxCtor[IO].errorOf", IoSpec.testErrorOf),
   )
   
-  val futureSpecs = effectie.FxCtorSpec.futureSpecs
+  val futureSpecs = effectie.core.FxCtorSpec.futureSpecs
 
   val idSpecs = List(
     property("test FxCtor[Id].effectOf", IdSpec.testEffectOf),

@@ -11,7 +11,7 @@ import scala.concurrent.{ExecutionContext, Future}
   * @since 2020-06-07
   */
 object CanCatch {
-  type CanCatch[F[*]] = effectie.CanCatch[F]
+  type CanCatch[F[*]] = effectie.core.CanCatch[F]
 
   given canCatchIo: CanCatch[IO] with {
 
