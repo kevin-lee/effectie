@@ -8,9 +8,10 @@ import cats.effect.unsafe.IORuntime
 import cats.instances.all.*
 import cats.syntax.all.*
 import effectie.syntax.fx.*
-import effectie.CanCatch
+import effectie.core.CanCatch
 import effectie.testing.types.SomeError
-import effectie.{FxCtor, SomeControlThrowable}
+import effectie.core.FxCtor
+import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog.*
@@ -87,7 +88,7 @@ object CanCatchSpec extends Properties {
   )
 
   /* Future */
-  val futureSpecs = effectie.CanCatchSpec.futureSpecs ++ List(
+  val futureSpecs = effectie.core.CanCatchSpec.futureSpecs ++ List(
     example(
       "test CanCatch[Future]catchNonFatalEitherT should catch NonFatal",
       FutureSpec.testCanCatch_Future_catchNonFatalEitherTShouldCatchNonFatal

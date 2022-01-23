@@ -2,10 +2,10 @@ package effectie.cats
 
 import cats.*
 import cats.syntax.all.*
-import effectie.ConsoleEffect.ConsoleEffectWithoutFlatMap
-import effectie.{FxCtor, YesNo}
+import effectie.core.ConsoleEffect.ConsoleEffectWithoutFlatMap
+import effectie.core.{FxCtor, YesNo}
 
-trait ConsoleEffect[F[*]] extends effectie.ConsoleEffect[F]
+trait ConsoleEffect[F[*]] extends effectie.core.ConsoleEffect[F]
 
 object ConsoleEffect {
   def apply[F[*]: ConsoleEffect]: ConsoleEffect[F] =

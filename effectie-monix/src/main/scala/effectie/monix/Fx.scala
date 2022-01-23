@@ -8,7 +8,7 @@ import monix.eval.Task
   * @since 2021-05-16
   */
 object Fx {
-  type Fx[F[_]] = effectie.Fx[F]
+  type Fx[F[_]] = effectie.core.Fx[F]
 
   implicit object TaskFx extends Fx[Task] {
 

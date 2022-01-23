@@ -2,19 +2,19 @@ package effectie.monix
 
 import cats._
 import cats.syntax.all._
-import effectie.ConsoleEffect.ConsoleEffectWithoutFlatMap
-import effectie.YesNo
+import effectie.core.ConsoleEffect.ConsoleEffectWithoutFlatMap
+import effectie.core.YesNo
 
-trait ConsoleEffect[F[_]] extends effectie.ConsoleEffect[F]
+trait ConsoleEffect[F[_]] extends effectie.core.ConsoleEffect[F]
 
 object ConsoleEffect {
   def apply[F[_]: ConsoleEffect]: ConsoleEffect[F] =
     implicitly[ConsoleEffect[F]]
 
-  implicit def consoleEffectF[F[_]: effectie.FxCtor: FlatMap]: ConsoleEffect[F] =
+  implicit def consoleEffectF[F[_]: effectie.core.FxCtor: FlatMap]: ConsoleEffect[F] =
     new ConsoleEffectF[F]
 
-  final class ConsoleEffectF[F[_]: effectie.FxCtor: FlatMap]
+  final class ConsoleEffectF[F[_]: effectie.core.FxCtor: FlatMap]
       extends ConsoleEffectWithoutFlatMap[F]
       with ConsoleEffect[F] {
 
@@ -24,9 +24,9 @@ object ConsoleEffect {
       answer <- readLn
       yesOrN <- answer match {
                   case "y" | "Y" =>
-                    effectie.FxCtor[F].effectOf(YesNo.yes)
+                    effectie.core.FxCtor[F].effectOf(YesNo.yes)
                   case "n" | "N" =>
-                    effectie.FxCtor[F].effectOf(YesNo.no)
+                    effectie.core.FxCtor[F].effectOf(YesNo.no)
                   case _ =>
                     readYesNo(prompt)
                 }

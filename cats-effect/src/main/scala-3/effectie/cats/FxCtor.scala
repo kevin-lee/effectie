@@ -6,7 +6,7 @@ import cats.effect.IO
 import scala.concurrent.{ExecutionContext, Future}
 
 object FxCtor {
-  type FxCtor[F[*]] = effectie.FxCtor[F]
+  type FxCtor[F[*]] = effectie.core.FxCtor[F]
 
   given ioFxCtor: FxCtor[IO] with {
 

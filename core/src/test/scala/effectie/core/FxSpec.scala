@@ -1,4 +1,4 @@
-package effectie
+package effectie.core
 
 import cats.Eq
 import cats.syntax.eq._

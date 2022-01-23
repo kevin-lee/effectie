@@ -1,4 +1,4 @@
-package effectie
+package effectie.core
 
 sealed trait YesNo
 

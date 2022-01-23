@@ -1,6 +1,6 @@
 package effectie.cats
 
-import effectie.YesNo
+import effectie.core.YesNo
 
 trait ConsoleEffectful {
 

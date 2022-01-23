@@ -1,6 +1,6 @@
 package effectie.syntax
 
-import effectie.{CanCatch, CanHandleError, CanRecover}
+import effectie.core.{CanCatch, CanHandleError, CanRecover}
 
 /**
  * @author Kevin Lee

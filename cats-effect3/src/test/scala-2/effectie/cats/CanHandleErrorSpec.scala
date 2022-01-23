@@ -26,9 +26,9 @@ object CanHandleErrorSpec extends Properties {
 
   implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
-  type FxCtor[F[_]] = effectie.FxCtor[F]
+  type FxCtor[F[_]] = effectie.core.FxCtor[F]
 
-  val CanHandleError: effectie.CanHandleError.type = effectie.CanHandleError
+  val CanHandleError: effectie.core.CanHandleError.type = effectie.core.CanHandleError
 
   override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
 
@@ -158,7 +158,7 @@ object CanHandleErrorSpec extends Properties {
     )
 
   /* Future */
-  private val futureSpecs = effectie.CanHandleErrorSpec.futureSpecs ++ List(
+  private val futureSpecs = effectie.core.CanHandleErrorSpec.futureSpecs ++ List(
     example(
       "test CanHandleError[Future].handleEitherTNonFatalWith should handle NonFatal",
       FutureSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldHandleNonFatalWith

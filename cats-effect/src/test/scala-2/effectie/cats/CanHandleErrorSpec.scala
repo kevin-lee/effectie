@@ -23,11 +23,11 @@ import scala.util.control.{ControlThrowable, NonFatal}
 object CanHandleErrorSpec extends Properties {
   implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
-  type FxCtor[F[_]] = effectie.FxCtor[F]
-  val FxCtor: effectie.FxCtor.type = effectie.FxCtor
+  type FxCtor[F[_]] = effectie.core.FxCtor[F]
+  val FxCtor: effectie.core.FxCtor.type = effectie.core.FxCtor
 
-  type CanHandleError[F[_]] = effectie.CanHandleError[F]
-  val CanHandleError: effectie.CanHandleError.type = effectie.CanHandleError
+  type CanHandleError[F[_]] = effectie.core.CanHandleError[F]
+  val CanHandleError: effectie.core.CanHandleError.type = effectie.core.CanHandleError
 
   override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
 
@@ -156,7 +156,7 @@ object CanHandleErrorSpec extends Properties {
   )
 
   /* Future */
-  private val futureSpecs = effectie.CanHandleErrorSpec.futureSpecs ++ List(
+  private val futureSpecs = effectie.core.CanHandleErrorSpec.futureSpecs ++ List(
     example(
       "test CanHandleError[Future].handleEitherTNonFatalWith should handle NonFatal",
       FutureSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldHandleNonFatalWith

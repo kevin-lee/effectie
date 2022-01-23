@@ -6,7 +6,7 @@ import hedgehog.Property
 
 object MonadSpec {
 
-  type Fx[F[_]] = effectie.Fx[F]
+  type Fx[F[_]] = effectie.core.Fx[F]
 
   def test1_Identity[F[_]: Fx: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs

@@ -21,8 +21,8 @@ import scala.util.control.{ControlThrowable, NonFatal}
 object FxSpec extends Properties {
   private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
-  type Fx[F[_]] = effectie.Fx[F]
-  val Fx: effectie.Fx.type = effectie.Fx
+  type Fx[F[_]] = effectie.core.Fx[F]
+  val Fx: effectie.core.Fx.type = effectie.core.Fx
 
   override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
 
@@ -338,7 +338,7 @@ object FxSpec extends Properties {
     )
 
   /* Future */
-  private val futureSpecs = effectie.FxSpec.futureSpecs ++
+  private val futureSpecs = effectie.core.FxSpec.futureSpecs ++
     List(
       example(
         "test Fx[Future]catchNonFatalEitherT should catch NonFatal",

@@ -9,7 +9,8 @@ import effectie.cats.CanHandleError.given
 import effectie.syntax.fx.*
 import effectie.cats.Fx.given
 import effectie.testing.types.SomeError
-import effectie.{CanHandleError, FxCtor, SomeControlThrowable}
+import effectie.core.{CanHandleError, FxCtor}
+import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog.*
@@ -149,7 +150,7 @@ object CanHandleErrorSpec extends Properties {
   )
 
   /* Future */
-  private val futureSpecs = effectie.CanCatchSpec.futureSpecs ++ List(
+  private val futureSpecs = effectie.core.CanCatchSpec.futureSpecs ++ List(
     example(
       "test CanHandleError[Future].handleEitherTNonFatalWith should handle NonFatal",
       FutureSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldHandleNonFatalWith

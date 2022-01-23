@@ -9,7 +9,8 @@ import effectie.syntax.error._
 import effectie.monix.Fx._
 import effectie.monix.syntax.error._
 import effectie.testing.types._
-import effectie.{Fx, SomeControlThrowable}
+import effectie.core.Fx
+import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._
@@ -27,7 +28,7 @@ object errorSpec extends Properties {
 }
 
 object CanCatchSyntaxSpec {
-  val CanRecover: effectie.CanRecover.type = effectie.CanRecover
+  val CanRecover: effectie.core.CanRecover.type = effectie.core.CanRecover
 
   def tests: List[Test] = taskSpecs ++ ioSpecs ++ futureSpecs ++ idSpecs
 

@@ -23,7 +23,7 @@ object FxCtorSpec extends Properties {
     example("test FxCtor[IO].errorOf", IoSpec.testErrorOf),
   )
 
-  private val futureSpecs = effectie.FxCtorSpec.futureSpecs
+  private val futureSpecs = effectie.core.FxCtorSpec.futureSpecs
 
   private val idSpecs = List(
     property("test FxCtor[Id].effectOf", IdSpec.testEffectOf),

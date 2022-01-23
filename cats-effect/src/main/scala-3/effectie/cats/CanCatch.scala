@@ -4,7 +4,6 @@ import cats.Id
 import cats.data.EitherT
 import cats.effect.IO
 import cats.syntax.all.*
-import effectie.CanCatch
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -13,7 +12,7 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 object CanCatch {
 
-  type CanCatch[F[*]] = effectie.CanCatch[F]
+  type CanCatch[F[*]] = effectie.core.CanCatch[F]
 
   given canCatchIo: CanCatch[IO] with {
 

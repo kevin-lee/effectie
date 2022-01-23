@@ -28,7 +28,7 @@ object FxCtorSpec extends Properties {
     example("test FxCtor[IO].errorOf", IoSpec.testErrorOf),
   )
 
-  private val futureSpecs = effectie.FxCtorSpec.futureSpecs
+  private val futureSpecs = effectie.core.FxCtorSpec.futureSpecs
 
   private val idSpecs = List(
     property("test FxCtor[Id].effectOf", IdSpec.testEffectOf),
@@ -38,7 +38,7 @@ object FxCtorSpec extends Properties {
   )
 
   object TaskSpec {
-    import effectie.FxCtor
+    import effectie.core.FxCtor
     import effectie.monix.Fx._
     import monix.execution.Scheduler.Implicits.global
 
@@ -101,7 +101,7 @@ object FxCtorSpec extends Properties {
 
   object IoSpec {
 
-    import effectie.FxCtor
+    import effectie.core.FxCtor
     import effectie.monix.Fx._
 
     def testEffectOf: Property = for {
@@ -164,7 +164,7 @@ object FxCtorSpec extends Properties {
 
   object IdSpec {
 
-    import effectie.FxCtor
+    import effectie.core.FxCtor
     import effectie.monix.Fx._
 
     def testEffectOf: Property = for {

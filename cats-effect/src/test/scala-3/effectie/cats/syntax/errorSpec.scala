@@ -5,7 +5,8 @@ import cats.data.EitherT
 import cats.syntax.all.*
 import cats.effect.*
 import effectie.cats.FxCtor
-import effectie.{Fx, SomeControlThrowable}
+import effectie.core.Fx
+import effectie.SomeControlThrowable
 import effectie.syntax.fx.*
 import effectie.syntax.error.*
 import effectie.cats.syntax.error.*

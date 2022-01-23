@@ -1,4 +1,4 @@
-package effectie
+package effectie.core
 
 import effectie.testing.tools
 import effectie.testing.types.SomeThrowableError

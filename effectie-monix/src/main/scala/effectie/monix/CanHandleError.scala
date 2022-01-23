@@ -11,7 +11,7 @@ import scala.util.control.NonFatal
   */
 object CanHandleError {
 
-  type CanHandleError[F[_]] = effectie.CanHandleError[F]
+  type CanHandleError[F[_]] = effectie.core.CanHandleError[F]
 
   implicit object TaskCanHandleError extends CanHandleError[Task] {
 

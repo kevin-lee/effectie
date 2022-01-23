@@ -1,4 +1,4 @@
-package effectie
+package effectie.core
 
 enum YesNo derives CanEqual {
   case Yes

@@ -2,7 +2,7 @@ package effectie.cats.syntax
 
 import cats.data.EitherT
 import effectie.cats.{CanCatchOps, CanHandleErrorOps, CanRecoverOps}
-import effectie.{CanCatch, CanHandleError, CanRecover}
+import effectie.core.{CanCatch, CanHandleError, CanRecover}
 
 /** @author Kevin Lee
   * @since 2021-10-16

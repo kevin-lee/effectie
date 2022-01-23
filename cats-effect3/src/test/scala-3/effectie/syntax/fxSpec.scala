@@ -10,7 +10,7 @@ import effectie.cats.{CatsEffectRunner, testing}
 import effectie.syntax.fx.*
 import effectie.testing.tools.{dropResult, expectThrowable}
 import effectie.testing.types.SomeThrowableError
-import effectie.{Fx, FxCtor}
+import effectie.core.{Fx, FxCtor}
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog.*
