@@ -10,7 +10,7 @@ import scala.util.control.NonFatal
   */
 object CanHandleError {
 
-  type CanHandleError[F[_]] = effectie.core.CanHandleError[F]
+  private type CanHandleError[F[_]] = effectie.core.CanHandleError[F]
 
   implicit object IoCanHandleError extends CanHandleError[IO] {
 

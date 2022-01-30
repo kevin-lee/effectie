@@ -5,7 +5,8 @@ import cats.effect.IO
 import cats.syntax.all._
 import cats.{Eq, Id, Monad}
 import effectie.monix.CanCatchSpec.{run, throwThrowable}
-import effectie.monix.Fx._
+import effectie.core._
+import effectie.monix.fx._
 import effectie.testing.tools._
 import effectie.testing.types.{SomeError, SomeThrowableError}
 import effectie.SomeControlThrowable
@@ -20,11 +21,9 @@ import scala.util.control.{ControlThrowable, NonFatal}
 /** @author Kevin Lee
   * @since 2020-12-06
   */
-object FxSpec extends Properties {
+object fxSpec extends Properties {
 
   private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
-
-  val Fx: effectie.core.Fx.type = effectie.core.Fx
 
   override def tests: List[Test] = taskSpecs ++ ioSpecs ++ futureSpecs ++ idSpecs
 

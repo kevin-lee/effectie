@@ -2,6 +2,8 @@ package effectie.cats
 
 import cats.Id
 import cats.effect._
+import effectie.core._
+import effectie.cats.fxCtor._
 import effectie.testing.tools
 import effectie.testing.types.SomeThrowableError
 import extras.concurrent.testing.types.ErrorLogger
@@ -11,12 +13,9 @@ import hedgehog.runner._
 /** @author Kevin Lee
   * @since 2020-12-06
   */
-object FxCtorSpec extends Properties {
+object fxCtorSpec extends Properties {
 
   implicit private val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
-
-  type FxCtor[F[_]] = effectie.core.FxCtor[F]
-  val FxCtor: effectie.core.FxCtor.type = effectie.core.FxCtor
 
   override def tests: List[Test] =
     ioSpecs ++
@@ -40,7 +39,6 @@ object FxCtorSpec extends Properties {
   )
 
   object IoSpec {
-    import effectie.cats.Fx._
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
@@ -100,7 +98,6 @@ object FxCtorSpec extends Properties {
   }
 
   object IdSpec {
-    import effectie.cats.Fx._
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

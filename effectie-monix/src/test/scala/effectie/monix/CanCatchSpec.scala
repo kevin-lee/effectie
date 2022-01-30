@@ -6,6 +6,8 @@ import cats.effect.IO
 import cats.instances.all._
 import cats.syntax.all._
 import effectie.SomeControlThrowable
+import effectie.core._
+import effectie.monix.fx._
 import effectie.syntax.fx._
 import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
@@ -23,7 +25,6 @@ object CanCatchSpec extends Properties {
 
   implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
-  type FxCtor[F[_]]   = effectie.core.FxCtor[F]
   type CanCatch[F[_]] = effectie.core.CanCatch[F]
   val CanCatch: effectie.core.CanCatch.type = effectie.core.CanCatch
 
@@ -236,7 +237,6 @@ object CanCatchSpec extends Properties {
     effectOf[F](a)
 
   object TaskSpec {
-    import effectie.monix.Fx.TaskFx
     import monix.execution.Scheduler.Implicits.global
 
     def testCanCatch_Task_catchNonFatalThrowableShouldCatchNonFatal: Result = {
@@ -414,8 +414,6 @@ object CanCatchSpec extends Properties {
   }
 
   object IoSpec {
-
-    import effectie.monix.Fx.IoFx
 
     def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
@@ -760,7 +758,6 @@ object CanCatchSpec extends Properties {
   }
 
   object IdSpec {
-    import effectie.monix.Fx.IdFx
 
     def testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 

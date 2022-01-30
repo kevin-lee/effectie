@@ -1,5 +1,6 @@
 package effectie.cats
 
+import effectie.core._
 import cats.data.EitherT
 
 /** @author Kevin Lee

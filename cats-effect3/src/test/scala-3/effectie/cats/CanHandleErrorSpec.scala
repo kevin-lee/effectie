@@ -309,7 +309,7 @@ object CanHandleErrorSpec extends Properties {
     effectOf[F](a)
 
   object IoSpec {
-    import effectie.cats.Fx.given
+    import effectie.cats.fx.given
     import effectie.cats.CanHandleError.ioCanHandleError
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
@@ -947,7 +947,7 @@ object CanHandleErrorSpec extends Properties {
   }
 
   object IdSpec {
-    import effectie.cats.Fx.given
+    import effectie.cats.fx.given
     import effectie.cats.CanHandleError.idCanHandleError
 
     def testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith: Result = {

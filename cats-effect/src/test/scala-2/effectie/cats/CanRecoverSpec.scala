@@ -5,8 +5,9 @@ import cats.data.EitherT
 import cats.effect.IO
 import cats.instances.all._
 import cats.syntax.all._
+import effectie.core._
 import effectie.syntax.fx._
-import effectie.cats.FxCtor._
+import effectie.cats.fxCtor._
 import effectie.testing.types.SomeError
 import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
@@ -21,9 +22,6 @@ import scala.util.control.{ControlThrowable, NonFatal}
   */
 object CanRecoverSpec extends Properties {
   implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
-
-  type FxCtor[F[_]] = effectie.core.FxCtor[F]
-  val FxCtor: effectie.core.FxCtor.type = effectie.core.FxCtor
 
   val CanRecover: effectie.core.CanRecover.type = effectie.core.CanRecover
 

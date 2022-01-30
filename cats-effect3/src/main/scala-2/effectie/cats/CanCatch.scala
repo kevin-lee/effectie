@@ -8,7 +8,7 @@ import cats.syntax.all._
   * @since 2020-06-07
   */
 object CanCatch {
-  type CanCatch[F[_]] = effectie.core.CanCatch[F]
+  private type CanCatch[F[_]] = effectie.core.CanCatch[F]
 
   implicit object CanCatchIo extends CanCatch[IO] {
 

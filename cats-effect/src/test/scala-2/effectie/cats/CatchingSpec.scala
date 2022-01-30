@@ -6,10 +6,11 @@ import cats.data.EitherT
 import cats.effect._
 import cats.instances.all._
 import cats.syntax.all._
+import effectie.core._
 import effectie.syntax.fx._
+import effectie.cats.fx._
 import effectie.testing.types.SomeError
 import effectie.SomeControlThrowable
-import effectie.cats.Fx._
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._
@@ -22,9 +23,6 @@ import scala.util.control.ControlThrowable
   */
 object CatchingSpec extends Properties {
   implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
-
-  type FxCtor[F[_]] = effectie.core.FxCtor[F]
-  val FxCtor: effectie.core.FxCtor.type = effectie.core.FxCtor
 
   override def tests: List[Test] = List(
     /* IO */

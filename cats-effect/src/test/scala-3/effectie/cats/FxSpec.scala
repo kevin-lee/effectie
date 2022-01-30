@@ -5,7 +5,7 @@ import cats.effect.*
 import cats.syntax.all.*
 import cats.{Eq, Functor, Id, Monad}
 import effectie.testing.tools.*
-import effectie.cats.Fx.given
+import effectie.cats.fx.given
 import effectie.testing.types.{SomeError, SomeThrowableError}
 import effectie.core.Fx
 import effectie.SomeControlThrowable
@@ -778,7 +778,7 @@ object FxSpec extends Properties {
       given eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).unsafeRunSync()
 
-      given ioFx: Fx[IO] = effectie.cats.Fx.ioFx
+      given ioFx: Fx[IO] = effectie.cats.fx.ioFx
 
       MonadSpec.testMonadLaws[IO]("IO")
     }

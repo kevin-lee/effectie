@@ -6,9 +6,10 @@ import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import cats.instances.all._
 import cats.syntax.all._
+import effectie.core._
+import effectie.cats.fxCtor._
 import effectie.cats.CanHandleError._
 import effectie.syntax.fx._
-import effectie.cats.FxCtor._
 import effectie.testing.types.SomeError
 import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
@@ -25,8 +26,6 @@ import scala.util.control.{ControlThrowable, NonFatal}
 object CanHandleErrorSpec extends Properties {
 
   implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
-
-  type FxCtor[F[_]] = effectie.core.FxCtor[F]
 
   val CanHandleError: effectie.core.CanHandleError.type = effectie.core.CanHandleError
 

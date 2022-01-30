@@ -3,7 +3,7 @@ package effectie.syntax
 import cats.Id
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
-import effectie.cats.Fx._
+import effectie.cats.fx._
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.cats.{CatsEffectRunner, testing}
 import effectie.syntax.fx._

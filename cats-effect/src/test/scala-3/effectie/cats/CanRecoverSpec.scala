@@ -5,8 +5,9 @@ import cats.data.EitherT
 import cats.effect.IO
 import cats.instances.all.*
 import cats.syntax.all.*
+import effectie.core.{Fx, CanRecover}
 import effectie.cats.CanRecover.given
-import effectie.cats.Fx.given
+import effectie.cats.fx.given
 import effectie.syntax.fx.*
 import effectie.testing.types.SomeError
 import effectie.core.FxCtor
@@ -22,7 +23,6 @@ import scala.util.control.{ControlThrowable, NonFatal}
   * @since 2020-08-17
   */
 object CanRecoverSpec extends Properties {
-  val CanRecover: effectie.core.CanRecover.type = effectie.core.CanRecover
 
   override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
 
