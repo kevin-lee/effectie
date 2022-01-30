@@ -6,8 +6,8 @@ import cats.effect.IO
 import cats.instances.all._
 import cats.syntax.all._
 import effectie.SomeControlThrowable
-import effectie.monix.CanHandleError._
 import effectie.core._
+import effectie.monix.canHandleError._
 import effectie.monix.fxCtor._
 import effectie.syntax.fx._
 import effectie.testing.types.SomeError
@@ -22,10 +22,8 @@ import scala.util.control.{ControlThrowable, NonFatal}
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-object CanHandleErrorSpec extends Properties {
+object canHandleErrorSpec extends Properties {
   implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
-
-  val CanHandleError: effectie.core.CanHandleError.type = effectie.core.CanHandleError
 
   override def tests: List[Test] = taskSpecs ++ ioSpecs ++ futureSpecs ++ idSpecs
 

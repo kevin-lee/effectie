@@ -2,6 +2,7 @@ package effectie.monix
 
 import cats._
 import cats.effect.IO
+import effectie.core.CanRecover
 import monix.eval.Task
 
 import scala.util.control.NonFatal
@@ -9,9 +10,7 @@ import scala.util.control.NonFatal
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-object CanRecover {
-
-  type CanRecover[F[_]] = effectie.core.CanRecover[F]
+object canRecover {
 
   implicit object TaskCanRecover extends CanRecover[Task] {
     @inline override final def recoverFromNonFatalWith[A, AA >: A](

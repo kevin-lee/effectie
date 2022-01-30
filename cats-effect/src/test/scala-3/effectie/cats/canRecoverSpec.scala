@@ -6,7 +6,7 @@ import cats.effect.IO
 import cats.instances.all.*
 import cats.syntax.all.*
 import effectie.core.{Fx, CanRecover}
-import effectie.cats.CanRecover.given
+import effectie.cats.canRecover.given
 import effectie.cats.fx.given
 import effectie.syntax.fx.*
 import effectie.testing.types.SomeError

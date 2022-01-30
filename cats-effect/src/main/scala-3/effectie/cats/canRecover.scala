@@ -3,25 +3,23 @@ package effectie.cats
 import cats.*
 import cats.data.EitherT
 import cats.effect.*
+import effectie.core.CanRecover
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-object CanRecover {
-
-  type CanRecover[F[*]] = effectie.core.CanRecover[F]
+object canRecover {
 
   given ioCanRecover: CanRecover[IO] with {
-    override def recoverFromNonFatalWith[A, AA >: A](fa: => IO[A])(
+    inline override def recoverFromNonFatalWith[A, AA >: A](fa: => IO[A])(
       handleError: PartialFunction[Throwable, IO[AA]]
     ): IO[AA] =
       fa.handleErrorWith(err => handleError.applyOrElse(err, ApplicativeError[IO, Throwable].raiseError[AA]))
 
-    override def recoverFromNonFatal[A, AA >: A](fa: => IO[A])(handleError: PartialFunction[Throwable, AA]): IO[AA] =
+    inline override def recoverFromNonFatal[A, AA >: A](fa: => IO[A])(handleError: PartialFunction[Throwable, AA]): IO[AA] =
       recoverFromNonFatalWith[A, AA](fa)(handleError.andThen(IO.pure(_)))
 
   }
@@ -31,7 +29,7 @@ object CanRecover {
 
   given idCanRecover: CanRecover[Id] with {
 
-    override def recoverFromNonFatalWith[A, AA >: A](fa: => Id[A])(
+    inline override def recoverFromNonFatalWith[A, AA >: A](fa: => Id[A])(
       handleError: PartialFunction[Throwable, Id[AA]]
     ): Id[AA] =
       try (fa)
@@ -42,7 +40,7 @@ object CanRecover {
           throw ex
       }
 
-    override def recoverFromNonFatal[A, AA >: A](fa: => Id[A])(
+    inline override def recoverFromNonFatal[A, AA >: A](fa: => Id[A])(
       handleError: PartialFunction[Throwable, AA]
     ): Id[AA] =
       recoverFromNonFatalWith[A, AA](fa)(handleError)

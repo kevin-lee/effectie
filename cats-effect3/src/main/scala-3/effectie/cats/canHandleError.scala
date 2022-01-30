@@ -3,6 +3,7 @@ package effectie.cats
 import cats.Id
 import cats.data.EitherT
 import cats.effect.IO
+import effectie.core.CanHandleError
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
@@ -10,9 +11,7 @@ import scala.util.control.NonFatal
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-object CanHandleError {
-
-  type CanHandleError[F[*]] = effectie.core.CanHandleError[F]
+object canHandleError {
 
   given ioCanHandleError: CanHandleError[IO] with {
 

@@ -7,7 +7,8 @@ import cats.instances.all._
 import cats.syntax.all._
 import effectie.SomeControlThrowable
 import effectie.core._
-import effectie.monix.fx._
+import effectie.monix.canCatch._
+import effectie.monix.fxCtor._
 import effectie.syntax.fx._
 import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
@@ -21,12 +22,9 @@ import scala.util.control.ControlThrowable
 /** @author Kevin Lee
   * @since 2020-07-31
   */
-object CanCatchSpec extends Properties {
+object canCatchSpec extends Properties {
 
   implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
-
-  type CanCatch[F[_]] = effectie.core.CanCatch[F]
-  val CanCatch: effectie.core.CanCatch.type = effectie.core.CanCatch
 
   override def tests: List[Test] =
     taskSpecs ++

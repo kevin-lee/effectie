@@ -4,14 +4,14 @@ import cats.Id
 import cats.data.EitherT
 import cats.effect.IO
 import cats.syntax.all.*
+import effectie.core.CanCatch
 
 import scala.concurrent.{ExecutionContext, Future}
 
 /** @author Kevin Lee
   * @since 2020-06-07
   */
-object CanCatch {
-  type CanCatch[F[*]] = effectie.core.CanCatch[F]
+object canCatch {
 
   given canCatchIo: CanCatch[IO] with {
 
@@ -26,7 +26,7 @@ object CanCatch {
 
     inline override final def mapFa[A, B](fa: Id[A])(f: A => B): Id[B] = f(fa)
 
-    override def catchNonFatalThrowable[A](fa: => Id[A]): Id[Either[Throwable, A]] =
+    inline override def catchNonFatalThrowable[A](fa: => Id[A]): Id[Either[Throwable, A]] =
       scala.util.Try(fa) match {
         case scala.util.Success(a) =>
           a.asRight[Throwable]

@@ -6,12 +6,13 @@ import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import cats.instances.all._
 import cats.syntax.all._
-import effectie.cats.CanRecover._
-import effectie.cats.fxCtor._
-import effectie.syntax.fx._
-import effectie.cats.compat.CatsEffectIoCompatForFuture
-import effectie.testing.types.SomeError
 import effectie.SomeControlThrowable
+import effectie.cats.canRecover._
+import effectie.cats.compat.CatsEffectIoCompatForFuture
+import effectie.cats.fxCtor._
+import effectie.core._
+import effectie.syntax.fx._
+import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._
@@ -22,12 +23,9 @@ import scala.util.control.{ControlThrowable, NonFatal}
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-object CanRecoverSpec extends Properties {
+object canRecoverSpec extends Properties {
 
   implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
-
-  type FxCtor[F[_]] = effectie.core.FxCtor[F]
-  val CanRecover: effectie.core.CanRecover.type = effectie.core.CanRecover
 
   override def tests: List[Test] =
     ioSpecs ++

@@ -3,15 +3,16 @@ package effectie.cats
 import cats.*
 import cats.data.EitherT
 import cats.effect.*
-import effectie.cats.CatsEffectRunner.TestContext
 import cats.effect.unsafe.IORuntime
 import cats.instances.all.*
 import cats.syntax.all.*
-import effectie.syntax.fx.*
-import effectie.core.CanCatch
-import effectie.testing.types.SomeError
-import effectie.core.FxCtor
 import effectie.SomeControlThrowable
+import effectie.cats.CatsEffectRunner.TestContext
+import effectie.core.*
+import effectie.syntax.fx.*
+import effectie.cats.fxCtor.*
+import effectie.cats.canCatch.*
+import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog.*
@@ -23,7 +24,7 @@ import scala.util.control.ControlThrowable
 /** @author Kevin Lee
   * @since 2020-07-31
   */
-object CanCatchSpec extends Properties {
+object canCatchSpec extends Properties {
 
   override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
 

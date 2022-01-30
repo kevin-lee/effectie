@@ -8,7 +8,7 @@ import cats.syntax.all._
 import effectie.syntax.fx._
 import effectie.core._
 import effectie.monix.fxCtor._
-import effectie.monix.CanRecover._
+import effectie.monix.canRecover._
 import effectie.testing.types.SomeError
 import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
@@ -22,10 +22,8 @@ import scala.util.control.{ControlThrowable, NonFatal}
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-object CanRecoverSpec extends Properties {
+object canRecoverSpec extends Properties {
   implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
-
-  val CanRecover: effectie.core.CanRecover.type = effectie.core.CanRecover
 
   override def tests: List[Test] = taskSpecs ++ ioSpecs ++ futureSpecs ++ idSpecs
 
@@ -950,7 +948,7 @@ object CanRecoverSpec extends Properties {
   }
 
   object IoSpec {
-    import effectie.monix.CanRecover._
+    import effectie.monix.canRecover._
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

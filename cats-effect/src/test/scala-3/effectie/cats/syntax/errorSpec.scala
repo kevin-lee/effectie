@@ -1060,7 +1060,7 @@ object CanHandleErrorSyntaxSpec {
 
   object IoSpec {
 
-    import effectie.cats.CanHandleError.ioCanHandleError
+    import effectie.cats.canHandleError.ioCanHandleError
     import effectie.cats.fx.given
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
@@ -1910,7 +1910,7 @@ object CanHandleErrorSyntaxSpec {
   }
 
   object IdSpec {
-    import effectie.cats.CanHandleError.idCanHandleError
+    import effectie.cats.canHandleError.idCanHandleError
     import effectie.cats.fx.given
 
     def testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith: Result = {
@@ -2647,7 +2647,7 @@ object CanRecoverSyntaxSpec {
     effectOf[F](a)
 
   object IOSpec {
-    import effectie.cats.CanRecover.given
+    import effectie.cats.canRecover.given
     import effectie.cats.fx.given
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
@@ -3611,7 +3611,7 @@ object CanRecoverSyntaxSpec {
   }
 
   object IdSpec {
-    import effectie.cats.CanRecover.given
+    import effectie.cats.canRecover.given
     import effectie.cats.fx.given
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {

@@ -2,15 +2,14 @@ package effectie.cats
 
 import cats.Id
 import cats.effect.IO
+import effectie.core.CanHandleError
 
 import scala.util.control.NonFatal
 
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-object CanHandleError {
-
-  private type CanHandleError[F[_]] = effectie.core.CanHandleError[F]
+object canHandleError {
 
   implicit object IoCanHandleError extends CanHandleError[IO] {
 

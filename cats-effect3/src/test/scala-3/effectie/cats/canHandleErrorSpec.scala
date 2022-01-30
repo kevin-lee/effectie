@@ -9,7 +9,9 @@ import cats.instances.all.*
 import cats.syntax.all.*
 import effectie.syntax.fx.*
 import effectie.testing.types.SomeError
-import effectie.core.{CanHandleError, FxCtor}
+import effectie.core.*
+import effectie.cats.fxCtor.*
+import effectie.cats.canHandleError.*
 import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
@@ -22,7 +24,7 @@ import scala.util.control.{ControlThrowable, NonFatal}
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-object CanHandleErrorSpec extends Properties {
+object canHandleErrorSpec extends Properties {
 
   override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
 
@@ -310,7 +312,7 @@ object CanHandleErrorSpec extends Properties {
 
   object IoSpec {
     import effectie.cats.fx.given
-    import effectie.cats.CanHandleError.ioCanHandleError
+    import effectie.cats.canHandleError.ioCanHandleError
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
@@ -948,7 +950,7 @@ object CanHandleErrorSpec extends Properties {
 
   object IdSpec {
     import effectie.cats.fx.given
-    import effectie.cats.CanHandleError.idCanHandleError
+    import effectie.cats.canHandleError.idCanHandleError
 
     def testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 

@@ -5,7 +5,7 @@ import cats.data.EitherT
 import cats.effect.*
 import cats.instances.all.*
 import cats.syntax.all.*
-import effectie.cats.CanCatch as *
+import effectie.cats.canCatch as *
 import effectie.cats.fx.given
 import effectie.syntax.fx.*
 import effectie.testing.types.SomeError

@@ -5,11 +5,11 @@ import cats.data.EitherT
 import cats.effect.IO
 import cats.instances.all._
 import cats.syntax.all._
+import effectie.SomeControlThrowable
+import effectie.cats.fxCtor._
 import effectie.core._
 import effectie.syntax.fx._
-import effectie.cats.fxCtor._
 import effectie.testing.types.SomeError
-import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._
@@ -20,10 +20,8 @@ import scala.util.control.{ControlThrowable, NonFatal}
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-object CanRecoverSpec extends Properties {
+object canRecoverSpec extends Properties {
   implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
-
-  val CanRecover: effectie.core.CanRecover.type = effectie.core.CanRecover
 
   override def tests: List[Test] =
     ioSpecs ++
@@ -314,7 +312,7 @@ object CanRecoverSpec extends Properties {
     effectOf[F](a)
 
   object IOSpec {
-    import effectie.cats.CanRecover._
+    import effectie.cats.canRecover._
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
@@ -1330,7 +1328,7 @@ object CanRecoverSpec extends Properties {
   }
 
   object IdSpec {
-    import effectie.cats.CanRecover._
+    import effectie.cats.canRecover._
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

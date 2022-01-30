@@ -7,11 +7,12 @@ import effectie.cats.CatsEffectRunner.TestContext
 import cats.effect.unsafe.IORuntime
 import cats.instances.all.*
 import cats.syntax.all.*
-import effectie.core.CanRecover
+import effectie.core.*
+import effectie.cats.fxCtor.*
+import effectie.cats.canRecover.*
 import effectie.syntax.fx.*
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.testing.types.SomeError
-import effectie.core.FxCtor
 import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
@@ -23,7 +24,7 @@ import scala.util.control.{ControlThrowable, NonFatal}
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-object CanRecoverSpec extends Properties {
+object canRecoverSpec extends Properties {
 
   override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
 
@@ -311,7 +312,7 @@ object CanRecoverSpec extends Properties {
 
   object IoSpec {
     import effectie.cats.fx.given
-    import effectie.cats.CanRecover.given
+    import effectie.cats.canRecover.given
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
@@ -1046,7 +1047,7 @@ object CanRecoverSpec extends Properties {
 
   object IdSpec {
     import effectie.cats.fx.given
-    import effectie.cats.CanRecover.given
+    import effectie.cats.canRecover.given
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
