@@ -2,16 +2,18 @@ package effectie.cats
 
 import cats.*
 import cats.syntax.all.*
+import effectie.cats.console.ConsoleEffectF
 import effectie.core.ConsoleEffect.ConsoleEffectWithoutFlatMap
-import effectie.core.{FxCtor, YesNo}
+import effectie.core.{ConsoleEffect, FxCtor, YesNo}
 
-trait ConsoleEffect[F[*]] extends effectie.core.ConsoleEffect[F]
-
-object ConsoleEffect {
-  def apply[F[*]: ConsoleEffect]: ConsoleEffect[F] = summon[ConsoleEffect[F]]
+trait console {
 
   given consoleEffectF[F[*]: FxCtor: FlatMap]: ConsoleEffect[F] =
     new ConsoleEffectF[F]
+
+}
+
+object console extends console {
 
   final class ConsoleEffectF[F[*]: FxCtor: FlatMap] extends ConsoleEffectWithoutFlatMap[F] with ConsoleEffect[F] {
 
@@ -23,7 +25,7 @@ object ConsoleEffect {
                     FxCtor[F].effectOf(YesNo.yes)
                   case "n" | "N" =>
                     FxCtor[F].effectOf(YesNo.no)
-                  case _         =>
+                  case _ =>
                     readYesNo(prompt)
                 }
     } yield yesOrN

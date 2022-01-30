@@ -193,8 +193,8 @@ lazy val props =
     final val Scala3Versions = List("3.0.0")
     final val Scala3Version  = Scala3Versions.head
 
-//    final val ProjectScalaVersion = Scala2Version
-    final val ProjectScalaVersion = "2.12.13"
+//    final val ProjectScalaVersion = "2.12.13"
+    final val ProjectScalaVersion = Scala2Version
 //    final val ProjectScalaVersion = Scala3Version
 
     lazy val licenses = List("MIT" -> url("http://opensource.org/licenses/MIT"))
