@@ -6,8 +6,9 @@ import cats.effect._
 import cats.instances.all._
 import cats.syntax.all._
 import effectie.SomeControlThrowable
+import effectie.core._
 import effectie.syntax.fx._
-import effectie.cats.Fx._
+import effectie.cats.fx._
 import effectie.testing.types._
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
@@ -23,7 +24,6 @@ object CanCatchSpec extends Properties {
 
   private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
-  type FxCtor[F[_]]   = effectie.core.FxCtor[F]
   type CanCatch[F[_]] = effectie.core.CanCatch[F]
   val CanCatch: effectie.core.CanCatch.type = effectie.core.CanCatch
 

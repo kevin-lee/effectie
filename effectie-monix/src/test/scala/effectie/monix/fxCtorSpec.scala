@@ -2,6 +2,8 @@ package effectie.monix
 
 import cats.Id
 import cats.effect.IO
+import effectie.core._
+import effectie.monix.fxCtor._
 import effectie.testing.tools
 import effectie.testing.types.SomeThrowableError
 import extras.concurrent.testing.types.ErrorLogger
@@ -12,7 +14,7 @@ import monix.eval.Task
 /** @author Kevin Lee
   * @since 2020-12-06
   */
-object FxCtorSpec extends Properties {
+object fxCtorSpec extends Properties {
   private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
   override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
@@ -38,8 +40,6 @@ object FxCtorSpec extends Properties {
   )
 
   object TaskSpec {
-    import effectie.core.FxCtor
-    import effectie.monix.Fx._
     import monix.execution.Scheduler.Implicits.global
 
     def testEffectOf: Property = for {
@@ -101,9 +101,6 @@ object FxCtorSpec extends Properties {
 
   object IoSpec {
 
-    import effectie.core.FxCtor
-    import effectie.monix.Fx._
-
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
@@ -163,9 +160,6 @@ object FxCtorSpec extends Properties {
   }
 
   object IdSpec {
-
-    import effectie.core.FxCtor
-    import effectie.monix.Fx._
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

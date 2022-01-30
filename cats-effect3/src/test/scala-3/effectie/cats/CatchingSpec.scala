@@ -242,7 +242,7 @@ object CatchingSpec extends Properties {
     effectOf[F](a)
 
   object IoSpec {
-    import effectie.cats.Fx.given
+    import effectie.cats.fx.given
 
     def testCatching_IO_catchNonFatalShouldCatchNonFatal: Result = {
 
@@ -727,7 +727,7 @@ object CatchingSpec extends Properties {
   }
 
   object IdSpec {
-    import effectie.cats.Fx.given
+    import effectie.cats.fx.given
 
     def testCatching_Id_catchNonFatalShouldCatchNonFatal: Result = {
 

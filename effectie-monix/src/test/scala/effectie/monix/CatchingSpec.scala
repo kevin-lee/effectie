@@ -6,6 +6,8 @@ import cats.data.EitherT
 import cats.effect.IO
 import cats.instances.all._
 import cats.syntax.all._
+import effectie.core._
+import effectie.monix.fx._
 import effectie.syntax.fx._
 import effectie.testing.types.SomeError
 import effectie.SomeControlThrowable
@@ -22,8 +24,6 @@ import scala.util.control.ControlThrowable
   */
 object CatchingSpec extends Properties {
   private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
-
-  type FxCtor[F[_]] = effectie.core.FxCtor[F]
 
   override def tests: List[Test] = taskSpecs ++ ioSpecs ++ futureSpecs ++ idSpecs
 
@@ -321,8 +321,6 @@ object CatchingSpec extends Properties {
   object TaskSpec {
     import monix.execution.Scheduler.Implicits.global
 
-    import effectie.monix.Fx._
-
     def testCatching_Task_catchNonFatalShouldCatchNonFatal: Result = {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -545,8 +543,6 @@ object CatchingSpec extends Properties {
   }
 
   object IoSpec {
-
-    import effectie.monix.Fx._
 
     def testCatching_IO_catchNonFatalShouldCatchNonFatal: Result = {
 
@@ -999,7 +995,6 @@ object CatchingSpec extends Properties {
   }
 
   object IdSpec {
-    import effectie.monix.Fx._
 
     def testCatching_Id_catchNonFatalShouldCatchNonFatal: Result = {
 

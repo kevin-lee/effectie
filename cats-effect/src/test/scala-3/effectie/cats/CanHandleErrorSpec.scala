@@ -7,7 +7,7 @@ import cats.instances.all.*
 import cats.syntax.all.*
 import effectie.cats.CanHandleError.given
 import effectie.syntax.fx.*
-import effectie.cats.Fx.given
+import effectie.cats.fx.given
 import effectie.testing.types.SomeError
 import effectie.core.{CanHandleError, FxCtor}
 import effectie.SomeControlThrowable

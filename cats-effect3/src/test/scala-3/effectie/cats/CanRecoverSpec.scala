@@ -7,6 +7,7 @@ import effectie.cats.CatsEffectRunner.TestContext
 import cats.effect.unsafe.IORuntime
 import cats.instances.all.*
 import cats.syntax.all.*
+import effectie.core.CanRecover
 import effectie.syntax.fx.*
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.testing.types.SomeError
@@ -23,8 +24,6 @@ import scala.util.control.{ControlThrowable, NonFatal}
   * @since 2020-08-17
   */
 object CanRecoverSpec extends Properties {
-
-  val CanRecover: effectie.core.CanRecover.type = effectie.core.CanRecover
 
   override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
 
@@ -311,7 +310,7 @@ object CanRecoverSpec extends Properties {
     effectOf[F](a)
 
   object IoSpec {
-    import effectie.cats.Fx.given
+    import effectie.cats.fx.given
     import effectie.cats.CanRecover.given
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
@@ -1046,7 +1045,7 @@ object CanRecoverSpec extends Properties {
   }
 
   object IdSpec {
-    import effectie.cats.Fx.given
+    import effectie.cats.fx.given
     import effectie.cats.CanRecover.given
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {

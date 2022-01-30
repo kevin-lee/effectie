@@ -5,7 +5,7 @@ import cats.data.EitherT
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import cats.syntax.all._
-import effectie.cats.Fx._
+import effectie.cats.fx._
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.cats.syntax.error._
 import effectie.cats.testing

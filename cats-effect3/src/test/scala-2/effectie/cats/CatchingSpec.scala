@@ -7,6 +7,8 @@ import cats.effect._
 import cats.effect.unsafe.IORuntime
 import cats.instances.all._
 import cats.syntax.all._
+import effectie.core._
+import effectie.cats.fx._
 import effectie.syntax.fx._
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.testing.types.SomeError
@@ -23,9 +25,6 @@ import scala.util.control.ControlThrowable
   */
 object CatchingSpec extends Properties {
   private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
-
-  type Fx[F[_]]     = effectie.core.Fx[F]
-  type FxCtor[F[_]] = effectie.core.FxCtor[F]
 
   override def tests: List[Test] = List(
     /* IO */
@@ -238,8 +237,6 @@ object CatchingSpec extends Properties {
     effectOf[F](a)
 
   object IoSpec {
-
-    import effectie.cats.Fx._
 
     def testCatching_IO_catchNonFatalShouldCatchNonFatal: Result = {
 
@@ -741,8 +738,6 @@ object CatchingSpec extends Properties {
   }
 
   object IdSpec {
-
-    import effectie.cats.Fx._
 
     def testCatching_Id_catchNonFatalShouldCatchNonFatal: Result = {
 

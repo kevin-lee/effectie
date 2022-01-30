@@ -4,7 +4,7 @@ import cats.*
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import effectie.cats.CatsEffectRunner.{TestContext, Ticker}
-import effectie.cats.Fx.given
+import effectie.cats.fx.given
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.cats.{CatsEffectRunner, testing}
 import effectie.syntax.fx.*

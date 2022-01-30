@@ -3,8 +3,8 @@ package effectie.cats
 import cats.Id
 import cats.effect.IO
 
-object FxCtor {
-  type FxCtor[F[_]] = effectie.core.FxCtor[F]
+object fxCtor {
+  private type FxCtor[F[_]] = effectie.core.FxCtor[F]
 
   implicit object IoFxCtor extends FxCtor[IO] {
 

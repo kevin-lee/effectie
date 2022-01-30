@@ -10,7 +10,7 @@ import scala.util.control.NonFatal
   */
 object CanRecover {
 
-  type CanRecover[F[_]] = effectie.core.CanRecover[F]
+  private type CanRecover[F[_]] = effectie.core.CanRecover[F]
 
   implicit object IoCanRecover extends CanRecover[IO] {
 

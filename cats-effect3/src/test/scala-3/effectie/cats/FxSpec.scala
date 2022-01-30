@@ -8,7 +8,7 @@ import cats.instances.either.*
 import cats.syntax.all.*
 import cats.{Eq, Functor, Id, Monad, Show}
 import effectie.cats.compat.CatsEffectIoCompatForFuture
-import effectie.cats.Fx.given
+import effectie.cats.fx.given
 import effectie.testing.tools.*
 import effectie.testing.types.{SomeError, SomeThrowableError}
 import effectie.core.Fx
@@ -26,8 +26,6 @@ import scala.util.control.{ControlThrowable, NonFatal}
   * @since 2020-12-06
   */
 object FxSpec extends Properties {
-
-  val Fx: effectie.core.Fx.type = effectie.core.Fx
 
   given eqSomeError: Eq[SomeError]     = Eq.fromUniversalEquals[SomeError]
   given shosSomeError: Show[SomeError] = Show.fromToString

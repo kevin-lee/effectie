@@ -35,7 +35,7 @@ object FxCtorSpec extends Properties {
   )
 
   object IoSpec {
-    import effectie.cats.Fx.given
+    import effectie.cats.fx.given
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
@@ -116,7 +116,7 @@ object FxCtorSpec extends Properties {
   }
 
   object IdSpec {
-    import effectie.cats.Fx.given
+    import effectie.cats.fx.given
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

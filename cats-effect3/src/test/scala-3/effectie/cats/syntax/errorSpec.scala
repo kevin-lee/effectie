@@ -8,7 +8,8 @@ import cats.{Functor, Id}
 import effectie.cats.CatsEffectRunner.TestContext
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.cats.syntax.error.*
-import effectie.cats.{CanCatch, FxCtor, testing}
+import effectie.core.FxCtor
+import effectie.cats.{CanCatch, testing}
 import effectie.syntax.error.*
 import effectie.syntax.fx.*
 import effectie.testing.types.*
@@ -205,7 +206,7 @@ object CanCatchSyntaxSpec {
     effectOf[F](a)
 
   object IoSpec {
-    import effectie.cats.Fx.given
+    import effectie.cats.fx.given
 
     def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
@@ -586,7 +587,7 @@ object CanCatchSyntaxSpec {
   }
 
   object IdSpec {
-    import effectie.cats.Fx.given
+    import effectie.cats.fx.given
 
     def testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
@@ -1112,7 +1113,7 @@ object CanHandleErrorSyntaxSpec {
 
   object IoSpec {
     import effectie.cats.CanHandleError.ioCanHandleError
-    import effectie.cats.Fx.given
+    import effectie.cats.fx.given
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
@@ -2027,7 +2028,7 @@ object CanHandleErrorSyntaxSpec {
 
   object IdSpec {
     import effectie.cats.CanHandleError.idCanHandleError
-    import effectie.cats.Fx.given
+    import effectie.cats.fx.given
 
     def testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
@@ -2772,7 +2773,7 @@ object CanRecoverSyntaxSpec {
 
   object IOSpec {
     import effectie.cats.CanRecover.given
-    import effectie.cats.Fx.given
+    import effectie.cats.fx.given
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
@@ -3783,7 +3784,7 @@ object CanRecoverSyntaxSpec {
 
   object IdSpec {
     import effectie.cats.CanRecover.given
-    import effectie.cats.Fx.given
+    import effectie.cats.fx.given
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

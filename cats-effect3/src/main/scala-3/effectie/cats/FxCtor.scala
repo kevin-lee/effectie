@@ -2,11 +2,11 @@ package effectie.cats
 
 import cats.Id
 import cats.effect.IO
+import effectie.core.FxCtor
 
 import scala.concurrent.{ExecutionContext, Future}
 
-object FxCtor {
-  type FxCtor[F[*]] = effectie.core.FxCtor[F]
+object fxCtor {
 
   given ioFxCtor: FxCtor[IO] with {
 

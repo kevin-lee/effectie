@@ -6,7 +6,7 @@ import cats.data.EitherT
 import cats.effect.*
 import cats.instances.all.*
 import cats.syntax.all.*
-import effectie.cats.Fx.given
+import effectie.cats.fx.given
 import effectie.syntax.fx.*
 import effectie.testing.types.SomeError
 import effectie.core.FxCtor
