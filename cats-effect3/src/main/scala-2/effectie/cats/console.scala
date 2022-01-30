@@ -2,17 +2,18 @@ package effectie.cats
 
 import cats._
 import cats.syntax.all._
+import effectie.cats.console.ConsoleEffectF
 import effectie.core.ConsoleEffect.ConsoleEffectWithoutFlatMap
-import effectie.core.YesNo
+import effectie.core.{ConsoleEffect, YesNo}
 
-trait ConsoleEffect[F[_]] extends effectie.core.ConsoleEffect[F]
-
-object ConsoleEffect {
-  def apply[F[_]: ConsoleEffect]: ConsoleEffect[F] =
-    implicitly[ConsoleEffect[F]]
+trait console {
 
   implicit def consoleEffectF[F[_]: effectie.core.FxCtor: FlatMap]: ConsoleEffect[F] =
     new ConsoleEffectF[F]
+
+}
+
+object console extends console {
 
   final class ConsoleEffectF[F[_]: effectie.core.FxCtor: FlatMap]
       extends ConsoleEffectWithoutFlatMap[F]
