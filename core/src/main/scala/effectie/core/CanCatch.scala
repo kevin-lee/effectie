@@ -8,10 +8,10 @@ trait CanCatch[F[_]] {
 
   def catchNonFatalThrowable[A](fa: => F[A]): F[Either[Throwable, A]]
 
-  final def catchNonFatal[A, B](fb: => F[B])(f: Throwable => A): F[Either[A, B]] =
+  @inline final def catchNonFatal[A, B](fb: => F[B])(f: Throwable => A): F[Either[A, B]] =
     mapFa(catchNonFatalThrowable[B](fb))(ab => ab.left.map(f))
 
-  final def catchNonFatalEither[A, AA >: A, B](fab: => F[Either[A, B]])(f: Throwable => AA): F[Either[AA, B]] =
+  @inline final def catchNonFatalEither[A, AA >: A, B](fab: => F[Either[A, B]])(f: Throwable => AA): F[Either[AA, B]] =
     mapFa(catchNonFatal(fab)(f))(_.joinRight)
 
 }

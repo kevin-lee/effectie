@@ -1,10 +1,10 @@
 package effectie.cats
 
-import cats.effect.IO
 import cats.Id
+import cats.effect.IO
+import effectie.core.Fx
 
 object fx {
-  private type Fx[F[_]] = effectie.core.Fx[F]
 
   implicit object IoFx extends Fx[IO] {
 
@@ -19,23 +19,23 @@ object fx {
     @inline override final def mapFa[A, B](fa: IO[A])(f: A => B): IO[B] = fa.map(f)
 
     @inline override final def catchNonFatalThrowable[A](fa: => IO[A]): IO[Either[Throwable, A]] =
-      CanCatch.CanCatchIo.catchNonFatalThrowable(fa)
+      canCatch.CanCatchIo.catchNonFatalThrowable(fa)
 
     @inline override final def handleNonFatalWith[A, AA >: A](fa: => IO[A])(handleError: Throwable => IO[AA]): IO[AA] =
-      CanHandleError.IoCanHandleError.handleNonFatalWith[A, AA](fa)(handleError)
+      canHandleError.IoCanHandleError.handleNonFatalWith[A, AA](fa)(handleError)
 
     @inline override final def handleNonFatal[A, AA >: A](fa: => IO[A])(handleError: Throwable => AA): IO[AA] =
-      CanHandleError.IoCanHandleError.handleNonFatal[A, AA](fa)(handleError)
+      canHandleError.IoCanHandleError.handleNonFatal[A, AA](fa)(handleError)
 
     @inline override final def recoverFromNonFatalWith[A, AA >: A](fa: => IO[A])(
       handleError: PartialFunction[Throwable, IO[AA]]
     ): IO[AA] =
-      CanRecover.IoCanRecover.recoverFromNonFatalWith[A, AA](fa)(handleError)
+      canRecover.IoCanRecover.recoverFromNonFatalWith[A, AA](fa)(handleError)
 
     @inline override final def recoverFromNonFatal[A, AA >: A](fa: => IO[A])(
       handleError: PartialFunction[Throwable, AA]
     ): IO[AA] =
-      CanRecover.IoCanRecover.recoverFromNonFatal[A, AA](fa)(handleError)
+      canRecover.IoCanRecover.recoverFromNonFatal[A, AA](fa)(handleError)
   }
 
   implicit object IdFx extends Fx[Id] {
@@ -51,23 +51,23 @@ object fx {
     @inline override final def mapFa[A, B](fa: Id[A])(f: A => B): Id[B] = f(fa)
 
     @inline override final def catchNonFatalThrowable[A](fa: => Id[A]): Id[Either[Throwable, A]] =
-      CanCatch.CanCatchId.catchNonFatalThrowable(fa)
+      canCatch.CanCatchId.catchNonFatalThrowable(fa)
 
     @inline override final def handleNonFatalWith[A, AA >: A](fa: => Id[A])(handleError: Throwable => Id[AA]): Id[AA] =
-      CanHandleError.IdCanHandleError.handleNonFatalWith[A, AA](fa)(handleError)
+      canHandleError.IdCanHandleError.handleNonFatalWith[A, AA](fa)(handleError)
 
     @inline override final def handleNonFatal[A, AA >: A](fa: => Id[A])(handleError: Throwable => AA): Id[AA] =
-      CanHandleError.IdCanHandleError.handleNonFatal[A, AA](fa)(handleError)
+      canHandleError.IdCanHandleError.handleNonFatal[A, AA](fa)(handleError)
 
     @inline override final def recoverFromNonFatalWith[A, AA >: A](fa: => Id[A])(
       handleError: PartialFunction[Throwable, Id[AA]]
     ): Id[AA] =
-      CanRecover.IdCanRecover.recoverFromNonFatalWith[A, AA](fa)(handleError)
+      canRecover.IdCanRecover.recoverFromNonFatalWith[A, AA](fa)(handleError)
 
     @inline override final def recoverFromNonFatal[A, AA >: A](fa: => Id[A])(
       handleError: PartialFunction[Throwable, AA]
     ): Id[AA] =
-      CanRecover.IdCanRecover.recoverFromNonFatal[A, AA](fa)(handleError)
+      canRecover.IdCanRecover.recoverFromNonFatal[A, AA](fa)(handleError)
   }
 
 }

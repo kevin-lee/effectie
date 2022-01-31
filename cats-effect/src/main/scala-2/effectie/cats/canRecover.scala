@@ -2,15 +2,14 @@ package effectie.cats
 
 import cats._
 import cats.effect._
+import effectie.core.CanRecover
 
 import scala.util.control.NonFatal
 
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-object CanRecover {
-
-  type CanRecover[F[_]] = effectie.core.CanRecover[F]
+object canRecover {
 
   implicit object IoCanRecover extends CanRecover[IO] {
 

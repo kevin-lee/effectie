@@ -4,7 +4,7 @@ import cats.data.EitherT
 import cats.effect.IO
 import cats.syntax.all._
 import cats.{Eq, Id, Monad}
-import effectie.monix.CanCatchSpec.{run, throwThrowable}
+import effectie.monix.canCatchSpec.{run, throwThrowable}
 import effectie.core._
 import effectie.monix.fx._
 import effectie.testing.tools._

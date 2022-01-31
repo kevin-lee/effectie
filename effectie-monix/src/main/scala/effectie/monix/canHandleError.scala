@@ -1,16 +1,28 @@
-package effectie.cats
+package effectie.monix
 
 import cats.Id
 import cats.effect.IO
+import effectie.core.CanHandleError
+import monix.eval.Task
 
 import scala.util.control.NonFatal
 
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-object CanHandleError {
+object canHandleError {
 
-  private type CanHandleError[F[_]] = effectie.core.CanHandleError[F]
+  implicit object TaskCanHandleError extends CanHandleError[Task] {
+
+    @inline override final def handleNonFatalWith[A, AA >: A](fa: => Task[A])(
+      handleError: Throwable => Task[AA]
+    ): Task[AA] =
+      fa.onErrorHandleWith(handleError)
+
+    @inline override final def handleNonFatal[A, AA >: A](fa: => Task[A])(handleError: Throwable => AA): Task[AA] =
+      handleNonFatalWith[A, AA](fa)(err => Task.pure(handleError(err)))
+
+  }
 
   implicit object IoCanHandleError extends CanHandleError[IO] {
 

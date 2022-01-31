@@ -1,34 +1,38 @@
 package effectie.cats
 
-import cats._
-import cats.effect._
+import cats.*
+import cats.data.EitherT
+import cats.effect.*
+import effectie.core.CanRecover
 
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-object CanRecover {
+object canRecover {
 
-  private type CanRecover[F[_]] = effectie.core.CanRecover[F]
+  given ioCanRecover: CanRecover[IO] with {
 
-  implicit object IoCanRecover extends CanRecover[IO] {
-
-    @inline override final def recoverFromNonFatalWith[A, AA >: A](fa: => IO[A])(
+    inline override def recoverFromNonFatalWith[A, AA >: A](fa: => IO[A])(
       handleError: PartialFunction[Throwable, IO[AA]]
     ): IO[AA] =
       fa.handleErrorWith(err => handleError.applyOrElse(err, ApplicativeError[IO, Throwable].raiseError[AA]))
 
-    @inline override final def recoverFromNonFatal[A, AA >: A](fa: => IO[A])(
+    inline override def recoverFromNonFatal[A, AA >: A](fa: => IO[A])(
       handleError: PartialFunction[Throwable, AA]
     ): IO[AA] =
       recoverFromNonFatalWith[A, AA](fa)(handleError.andThen(IO.pure(_)))
+
   }
 
-  implicit object IdCanRecover extends CanRecover[Id] {
+  given futureCanRecover(using ec: ExecutionContext): CanRecover[Future] =
+    new effectie.core.CanRecover.CanRecoverFuture with CanRecover[Future]
 
-    @SuppressWarnings(Array("org.wartremover.warts.Throw"))
-    @inline override final def recoverFromNonFatalWith[A, AA >: A](fa: => Id[A])(
+  given idCanRecover: CanRecover[Id] with {
+
+    inline override def recoverFromNonFatalWith[A, AA >: A](fa: => Id[A])(
       handleError: PartialFunction[Throwable, Id[AA]]
     ): Id[AA] =
       try (fa)
@@ -39,7 +43,7 @@ object CanRecover {
           throw ex
       }
 
-    @inline override final def recoverFromNonFatal[A, AA >: A](fa: => Id[A])(
+    inline override def recoverFromNonFatal[A, AA >: A](fa: => Id[A])(
       handleError: PartialFunction[Throwable, AA]
     ): Id[AA] =
       recoverFromNonFatalWith[A, AA](fa)(handleError)

@@ -9,7 +9,7 @@ trait CanRecover[F[_]] {
 
   def recoverFromNonFatalWith[A, AA >: A](fa: => F[A])(handleError: PartialFunction[Throwable, F[AA]]): F[AA]
 
-  final def recoverEitherFromNonFatalWith[A, AA >: A, B, BB >: B](
+  @inline final def recoverEitherFromNonFatalWith[A, AA >: A, B, BB >: B](
     fab: => F[Either[A, B]]
   )(
     handleError: PartialFunction[Throwable, F[Either[AA, BB]]]
@@ -18,7 +18,7 @@ trait CanRecover[F[_]] {
 
   def recoverFromNonFatal[A, AA >: A](fa: => F[A])(handleError: PartialFunction[Throwable, AA]): F[AA]
 
-  final def recoverEitherFromNonFatal[A, AA >: A, B, BB >: B](
+  @inline final def recoverEitherFromNonFatal[A, AA >: A, B, BB >: B](
     fab: => F[Either[A, B]]
   )(
     handleError: PartialFunction[Throwable, Either[AA, BB]]
@@ -36,7 +36,7 @@ object CanRecover {
   trait FutureCanRecover extends CanRecover[Future] {
     implicit def EC0: ExecutionContext
 
-    override def recoverFromNonFatalWith[A, AA >: A](
+    @inline override def recoverFromNonFatalWith[A, AA >: A](
       fa: => Future[A]
     )(
       handleError: PartialFunction[Throwable, Future[AA]]
@@ -44,7 +44,7 @@ object CanRecover {
       fa.recoverWith(handleError)
 
     @SuppressWarnings(Array("org.wartremover.warts.Throw"))
-    override def recoverFromNonFatal[A, AA >: A](
+    @inline override def recoverFromNonFatal[A, AA >: A](
       fa: => Future[A]
     )(
       handleError: PartialFunction[Throwable, AA]
