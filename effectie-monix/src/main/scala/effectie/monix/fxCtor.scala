@@ -2,13 +2,13 @@ package effectie.monix
 
 import cats.Id
 import cats.effect.IO
+import effectie.core.FxCtor
 import monix.eval.Task
 
 /** @author Kevin Lee
   * @since 2021-05-16
   */
 object fxCtor {
-  private type FxCtor[F[_]] = effectie.core.FxCtor[F]
 
   implicit object TaskFxCtor extends FxCtor[Task] {
 

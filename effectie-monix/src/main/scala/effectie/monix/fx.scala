@@ -1,14 +1,14 @@
 package effectie.monix
 
-import cats.effect.IO
 import cats.Id
+import cats.effect.IO
+import effectie.core.Fx
 import monix.eval.Task
 
 /** @author Kevin Lee
   * @since 2021-05-16
   */
 object fx {
-  private type Fx[F[_]] = effectie.core.Fx[F]
 
   implicit object TaskFx extends Fx[Task] {
 

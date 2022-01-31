@@ -1,10 +1,10 @@
 package effectie.cats
 
-import cats.effect.IO
 import cats.Id
+import cats.effect.IO
+import effectie.core.Fx
 
 object fx {
-  private type Fx[F[_]] = effectie.core.Fx[F]
 
   implicit object IoFx extends Fx[IO] {
 
