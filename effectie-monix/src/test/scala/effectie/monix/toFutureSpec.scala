@@ -1,11 +1,15 @@
-package effectie.cats
+package effectie.monix
 
 import cats._
-import cats.effect._
+import cats.effect.IO
+import effectie.core.ToFuture
+import effectie.monix.toFuture._
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._
 import hedgehog.runner._
+import monix.eval.Task
+import monix.execution.Scheduler
 
 import java.util.concurrent.ExecutorService
 import scala.concurrent.Future
@@ -14,17 +18,17 @@ import scala.concurrent.duration._
 /** @author Kevin Lee
   * @since 2020-09-23
   */
-object ToFutureSpec extends Properties {
+object toFutureSpec extends Properties {
   private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
   override def tests: List[Test] = List(
     property(
-      "test ToFuture[IO].unsafeToFuture",
-      IoSpec.testUnsafeToFuture
+      "test ToFuture[Task].unsafeToFuture",
+      TaskSpec.testUnsafeToFuture
     ),
     property(
-      "test ToFuture[Future].unsafeToFuture",
-      FutureSpec.testUnsafeToFuture
+      "test ToFuture[IO].unsafeToFuture",
+      IoSpec.testUnsafeToFuture
     ),
     property(
       "test ToFuture[Id].unsafeToFuture",
@@ -32,34 +36,32 @@ object ToFutureSpec extends Properties {
     )
   )
 
-  object IoSpec {
-
+  object TaskSpec {
     @SuppressWarnings(Array("org.wartremover.warts.IsInstanceOf"))
     def testUnsafeToFuture: Property = for {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {
       val expected = a
-      val fa       = IO(expected)
+      val fa       = Task(expected)
 
-      implicit val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
+      implicit val es: ExecutorService  = ConcurrentSupport.newExecutorService(2)
       @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
-      implicit val ec                  =
+      implicit val ec                   =
         ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
-      ConcurrentSupport.runAndShutdown(es, WaitFor(800.milliseconds)) {
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      implicit val scheduler: Scheduler = Scheduler(ec)
 
-        val future   = ToFuture[IO].unsafeToFuture(fa)
-        val ioResult = fa.completeAs(expected)
-        val actual   = ConcurrentSupport.futureToValueAndTerminate(es, WaitFor(500.milliseconds))(future)
+      ConcurrentSupport.runAndShutdown(es, WaitFor(300.milliseconds)) {
+        val future     = ToFuture[Task].unsafeToFuture(fa)
+        val taskResult = fa.runSyncUnsafe() ==== expected
+        val actual     = ConcurrentSupport.futureToValueAndTerminate(es, WaitFor(300.milliseconds))(future)
 
         Result.all(
           List(
-            ioResult,
+            taskResult,
             Result
               .assert(future.isInstanceOf[Future[Int]])
               .log(s"future is not an instance of Future[Int]. future.getClass: ${future.getClass.toString}"),
-            actual ==== expected
+            actual ==== expected,
           )
         )
       }
@@ -67,29 +69,32 @@ object ToFutureSpec extends Properties {
 
   }
 
-  object FutureSpec {
+  object IoSpec {
     @SuppressWarnings(Array("org.wartremover.warts.IsInstanceOf"))
     def testUnsafeToFuture: Property = for {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {
-      implicit val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-      @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
-      implicit val ec                  =
-        ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
-      ConcurrentSupport.runAndShutdown(es, WaitFor(300.milliseconds)) {
-        val expected = Future(a)
-        val fa       = Future(a)
+      val expected = a
+      val fa       = IO(expected)
 
-        val future = ToFuture[Future].unsafeToFuture(fa)
-        val actual = ConcurrentSupport.futureToValueAndTerminate(es, WaitFor(300.milliseconds))(future)
+      implicit val es: ExecutorService  = ConcurrentSupport.newExecutorService(2)
+      @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
+      implicit val ec                   =
+        ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
+      implicit val scheduler: Scheduler = Scheduler(ec)
+
+      ConcurrentSupport.runAndShutdown(es, WaitFor(300.milliseconds)) {
+        val future   = ToFuture[IO].unsafeToFuture(fa)
+        val ioResult = fa.unsafeRunSync() ==== expected
+        val actual   = ConcurrentSupport.futureToValueAndTerminate(es, WaitFor(300.milliseconds))(future)
 
         Result.all(
           List(
+            ioResult,
             Result
               .assert(future.isInstanceOf[Future[Int]])
               .log(s"future is not an instance of Future[Int]. future.getClass: ${future.getClass.toString}"),
-            actual ==== ConcurrentSupport.futureToValueAndTerminate(es, WaitFor(300.milliseconds))(expected),
-            actual ==== a
+            actual ==== expected,
           )
         )
       }
