@@ -783,7 +783,7 @@ object fxSpec extends Properties {
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).unsafeRunSync()
 
-      implicit val ioFx: Fx[IO] = effectie.cats.fx.IoFx
+      implicit val ioFx: Fx[IO] = effectie.cats.fx.ioFx
 
       MonadSpec.testMonadLaws[IO]("IO")
     }

@@ -11,7 +11,7 @@ import scala.util.control.NonFatal
   */
 object canRecover {
 
-  implicit object IoCanRecover extends CanRecover[IO] {
+  implicit object ioCanRecover extends CanRecover[IO] {
 
     @inline override final def recoverFromNonFatalWith[A, AA >: A](fa: => IO[A])(
       handleError: PartialFunction[Throwable, IO[AA]]
@@ -24,7 +24,7 @@ object canRecover {
       recoverFromNonFatalWith[A, AA](fa)(handleError.andThen(IO.pure(_)))
   }
 
-  implicit object IdCanRecover extends CanRecover[Id] {
+  implicit object idCanRecover extends CanRecover[Id] {
 
     @SuppressWarnings(Array("org.wartremover.warts.Throw"))
     @inline override final def recoverFromNonFatalWith[A, AA >: A](fa: => Id[A])(
