@@ -11,7 +11,7 @@ import scala.util.control.NonFatal
   */
 object canHandleError {
 
-  implicit object IoCanHandleError extends CanHandleError[IO] {
+  implicit object ioCanHandleError extends CanHandleError[IO] {
 
     @inline override final def handleNonFatalWith[A, AA >: A](fa: => IO[A])(handleError: Throwable => IO[AA]): IO[AA] =
       fa.handleErrorWith(handleError)
@@ -21,7 +21,7 @@ object canHandleError {
 
   }
 
-  implicit object IdCanHandleError extends CanHandleError[Id] {
+  implicit object idCanHandleError extends CanHandleError[Id] {
 
     @inline override final def handleNonFatalWith[A, AA >: A](fa: => Id[A])(handleError: Throwable => Id[AA]): Id[AA] =
       try (fa)

@@ -6,7 +6,7 @@ import effectie.core.FxCtor
 
 object fxCtor {
 
-  implicit object IoFxCtor extends FxCtor[IO] {
+  implicit object ioFxCtor extends FxCtor[IO] {
 
     @inline override final def effectOf[A](a: => A): IO[A] = IO(a)
 
@@ -18,7 +18,7 @@ object fxCtor {
 
   }
 
-  implicit object IdFxCtor extends FxCtor[Id] {
+  implicit object idFxCtor extends FxCtor[Id] {
 
     @inline override final def effectOf[A](a: => A): Id[A] = a
 

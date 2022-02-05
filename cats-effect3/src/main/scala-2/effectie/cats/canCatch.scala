@@ -10,7 +10,7 @@ import effectie.core.CanCatch
   */
 object canCatch {
 
-  implicit object CanCatchIo extends CanCatch[IO] {
+  implicit object canCatchIo extends CanCatch[IO] {
 
     @inline override final def mapFa[A, B](fa: IO[A])(f: A => B): IO[B] = fa.map(f)
 
@@ -19,7 +19,7 @@ object canCatch {
 
   }
 
-  implicit object CanCatchId extends CanCatch[Id] {
+  implicit object canCatchId extends CanCatch[Id] {
 
     @inline override final def mapFa[A, B](fa: Id[A])(f: A => B): Id[B] = f(fa)
 

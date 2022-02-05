@@ -14,7 +14,7 @@ import scala.concurrent.{Await, Future}
 object fromFuture {
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
-  implicit object FromFutureToTask extends FromFuture[Task] {
+  implicit object fromFutureToTask extends FromFuture[Task] {
     override def toEffect[A](future: => Future[A]): Task[A] =
       Task.fromFuture[A](future)
   }
