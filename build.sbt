@@ -46,7 +46,7 @@ lazy val effectie = (project in file("."))
   .settings(mavenCentralPublishSettings)
   .aggregate(core, testing4Cats, catsEffect, catsEffect3, monix)
 
-lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
+lazy val core = projectCommonSettings("core", ProjectName("core"))
   .settings(
     description               := "Effect Utils - Core",
     libraryDependencies ++= List(libs.extrasConcurrent, libs.extrasConcurrentTesting),
@@ -57,7 +57,7 @@ lazy val core = projectCommonSettings("core", ProjectName("core"), file("core"))
   )
   .dependsOn(testing4Cats % Test)
 
-lazy val testing4Cats = projectCommonSettings("test4cats", ProjectName("test4cats"), file("test4cats"))
+lazy val testing4Cats = projectCommonSettings("test4cats", ProjectName("test4cats"))
   .settings(
     description         := "Effect's test utils for Cats",
     libraryDependencies :=
@@ -69,7 +69,7 @@ lazy val testing4Cats = projectCommonSettings("test4cats", ProjectName("test4cat
       """import effectie.testing.cats._""",
   )
 
-lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effect"), file("cats-effect"))
+lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effect"))
   .settings(
     description         := "Effect Utils - Cats Effect",
     libraryDependencies :=
@@ -102,7 +102,7 @@ lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effe
     testing4Cats % Test,
   )
 
-lazy val catsEffect3 = projectCommonSettings("catsEffect3", ProjectName("cats-effect3"), file("cats-effect3"))
+lazy val catsEffect3 = projectCommonSettings("catsEffect3", ProjectName("cats-effect3"))
   .settings(
     description         := "Effect Utils - Cats Effect 3",
     libraryDependencies ++= List(
@@ -119,7 +119,7 @@ lazy val catsEffect3 = projectCommonSettings("catsEffect3", ProjectName("cats-ef
     testing4Cats % Test,
   )
 
-lazy val monix = projectCommonSettings("monix", ProjectName("monix"), file(s"${props.RepoName}-monix"))
+lazy val monix = projectCommonSettings("monix", ProjectName("monix"))
   .settings(
     description         := "Effect Utils - Monix",
     libraryDependencies :=
@@ -291,15 +291,16 @@ def libraryDependenciesPostProcess(
   else
     libraries
 
-def projectCommonSettings(id: String, projectName: ProjectName, file: File): Project =
-  Project(id, file)
+def projectCommonSettings(id: String, projectName: ProjectName): Project = {
+  val prefixedName = prefixedProjectName(projectName.projectName)
+  Project(id, file(s"modules/$prefixedName"))
     .settings(
-      name                                    := prefixedProjectName(projectName.projectName),
+      name                                    := prefixedName,
       scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
       libraryDependencies ++= libs.hedgehogLibs.map(_ % Test) ++ List(libs.extrasCats % Test),
       /* WartRemover and scalacOptions { */
-//      Compile / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
-//      Test / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
+      //      Compile / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
+      //      Test / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
       wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
       //      , wartremoverErrors ++= Warts.all
       Compile / console / wartremoverErrors   := List.empty,
@@ -376,3 +377,4 @@ def projectCommonSettings(id: String, projectName: ProjectName, file: File): Pro
       /* } Coveralls */
     )
     .settings(mavenCentralPublishSettings)
+}
