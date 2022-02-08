@@ -10,15 +10,15 @@ import monix.eval.Task
   */
 object fx {
 
-  implicit object TaskFx extends Fx[Task] {
+  implicit object taskFx extends Fx[Task] {
 
-    @inline override final def effectOf[A](a: => A): Task[A] = fxCtor.TaskFxCtor.effectOf(a)
+    @inline override final def effectOf[A](a: => A): Task[A] = fxCtor.taskFxCtor.effectOf(a)
 
-    @inline override final def pureOf[A](a: A): Task[A] = fxCtor.TaskFxCtor.pureOf(a)
+    @inline override final def pureOf[A](a: A): Task[A] = fxCtor.taskFxCtor.pureOf(a)
 
-    @inline override final val unitOf: Task[Unit] = fxCtor.TaskFxCtor.unitOf
+    @inline override final val unitOf: Task[Unit] = fxCtor.taskFxCtor.unitOf
 
-    @inline override final def errorOf[A](throwable: Throwable): Task[A] = fxCtor.TaskFxCtor.errorOf(throwable)
+    @inline override final def errorOf[A](throwable: Throwable): Task[A] = fxCtor.taskFxCtor.errorOf(throwable)
 
     @inline override final def mapFa[A, B](fa: Task[A])(f: A => B): Task[B] = fa.map(f)
 
@@ -44,15 +44,15 @@ object fx {
       canRecover.taskCanRecover.recoverFromNonFatal[A, AA](fa)(handleError)
   }
 
-  implicit object IoFx extends Fx[IO] {
+  implicit object ioFx extends Fx[IO] {
 
-    @inline override final def effectOf[A](a: => A): IO[A] = fxCtor.IoFxCtor.effectOf(a)
+    @inline override final def effectOf[A](a: => A): IO[A] = fxCtor.ioFxCtor.effectOf(a)
 
-    @inline override final def pureOf[A](a: A): IO[A] = fxCtor.IoFxCtor.pureOf(a)
+    @inline override final def pureOf[A](a: A): IO[A] = fxCtor.ioFxCtor.pureOf(a)
 
-    @inline override final val unitOf: IO[Unit] = fxCtor.IoFxCtor.unitOf
+    @inline override final val unitOf: IO[Unit] = fxCtor.ioFxCtor.unitOf
 
-    @inline override final def errorOf[A](throwable: Throwable): IO[A] = fxCtor.IoFxCtor.errorOf(throwable)
+    @inline override final def errorOf[A](throwable: Throwable): IO[A] = fxCtor.ioFxCtor.errorOf(throwable)
 
     @inline override final def mapFa[A, B](fa: IO[A])(f: A => B): IO[B] = fa.map(f)
 
@@ -76,15 +76,15 @@ object fx {
       canRecover.ioCanRecover.recoverFromNonFatal[A, AA](fa)(handleError)
   }
 
-  implicit object IdFx extends Fx[Id] {
+  implicit object idFx extends Fx[Id] {
 
-    @inline override final def effectOf[A](a: => A): Id[A] = fxCtor.IdFxCtor.effectOf(a)
+    @inline override final def effectOf[A](a: => A): Id[A] = fxCtor.idFxCtor.effectOf(a)
 
-    @inline override final def pureOf[A](a: A): Id[A] = fxCtor.IdFxCtor.pureOf(a)
+    @inline override final def pureOf[A](a: A): Id[A] = fxCtor.idFxCtor.pureOf(a)
 
-    @inline override final val unitOf: Id[Unit] = fxCtor.IdFxCtor.unitOf
+    @inline override final val unitOf: Id[Unit] = fxCtor.idFxCtor.unitOf
 
-    @inline override final def errorOf[A](throwable: Throwable): Id[A] = fxCtor.IdFxCtor.errorOf(throwable)
+    @inline override final def errorOf[A](throwable: Throwable): Id[A] = fxCtor.idFxCtor.errorOf(throwable)
 
     @inline override final def mapFa[A, B](fa: Id[A])(f: A => B): Id[B] = f(fa)
 

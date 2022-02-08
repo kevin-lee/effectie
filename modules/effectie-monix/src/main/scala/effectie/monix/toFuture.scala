@@ -21,7 +21,7 @@ object toFuture {
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
-  implicit object IoToFuture extends ToFuture[IO] {
+  implicit object ioToFuture extends ToFuture[IO] {
 
     override def unsafeToFuture[A](fa: IO[A]): Future[A] =
       fa.unsafeToFuture()
