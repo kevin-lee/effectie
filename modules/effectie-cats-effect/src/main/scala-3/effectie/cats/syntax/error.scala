@@ -9,7 +9,7 @@ import effectie.cats.*
   */
 trait error {
 
-  extension [F[*], A, B](efab: EitherT[F, A, B]) {
+  extension [F[*], A, B](efab: => EitherT[F, A, B]) {
 
     def catchNonFatalEitherT[AA >: A](
       f: Throwable => AA

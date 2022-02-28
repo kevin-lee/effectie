@@ -5,13 +5,14 @@ import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import effectie.cats.fx._
 import effectie.cats.compat.CatsEffectIoCompatForFuture
-import effectie.cats.{CatsEffectRunner, testing}
+import effectie.cats.testing
 import effectie.syntax.fx._
 import effectie.testing.tools.{dropResult, expectThrowable}
 import effectie.testing.types.SomeThrowableError
 import effectie.core.{Fx, FxCtor}
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
+import extras.hedgehog.cats.effect.CatsEffectRunner
 import hedgehog._
 import hedgehog.runner._
 

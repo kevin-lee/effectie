@@ -2,7 +2,6 @@ package effectie.cats
 
 import cats.Id
 import cats.effect.*
-import effectie.cats.CatsEffectRunner.TestContext
 import cats.effect.unsafe.IORuntime
 import effectie.core.FxCtor
 import effectie.cats.compat.CatsEffectIoCompatForFuture
@@ -10,6 +9,7 @@ import effectie.testing.tools
 import effectie.testing.types.SomeThrowableError
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
+import extras.hedgehog.cats.effect.CatsEffectRunner
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -49,7 +49,7 @@ object FxCtorSpec extends Properties {
       })
       val testBeforeRun = actual ==== before
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
       val runResult = io.completeAs(())
 
@@ -74,7 +74,7 @@ object FxCtorSpec extends Properties {
         actual = after; ()
       })
       val testBeforeRun = actual ==== after
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
 
       given ticket: Ticker = Ticker(TestContext())
       val runResult = io.completeAs(())
@@ -94,7 +94,7 @@ object FxCtorSpec extends Properties {
       val actual             = FxCtor[IO].unitOf
       val expected: Unit = ()
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }

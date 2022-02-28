@@ -3,7 +3,6 @@ package effectie.cats
 import cats.*
 import cats.data.EitherT
 import cats.effect.IO
-import effectie.cats.CatsEffectRunner.TestContext
 import cats.effect.unsafe.IORuntime
 import cats.instances.all.*
 import cats.syntax.all.*
@@ -15,6 +14,7 @@ import effectie.cats.canHandleError.*
 import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
+import extras.hedgehog.cats.effect.CatsEffectRunner
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -316,7 +316,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -354,7 +354,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleNonFatalWithShouldReturnSuccessfulResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val fa       = run[IO, Int](1)
@@ -366,7 +366,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleNonFatalWithEitherShouldHandleNonFatalWith: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion    = new RuntimeException("Something's wrong")
@@ -405,7 +405,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleNonFatalWithEitherShouldReturnSuccessfulResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
@@ -417,7 +417,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleNonFatalWithEitherShouldReturnFailedResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedFailure = SomeError.message("Failed")
@@ -430,7 +430,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleEitherNonFatalWithShouldHandleNonFatalWith: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion     = new RuntimeException("Something's wrong")
@@ -472,7 +472,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleEitherNonFatalWithShouldReturnSuccessfulResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
@@ -485,7 +485,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleEitherNonFatalWithShouldReturnFailedResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedFailure = SomeError.message("Failed")
@@ -499,7 +499,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleEitherTNonFatalWithShouldHandleNonFatalWith: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion     = new RuntimeException("Something's wrong")
@@ -543,7 +543,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnSuccessfulResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
@@ -556,7 +556,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnFailedResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedFailure = SomeError.message("Failed")
@@ -570,7 +570,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleNonFatalShouldHandleNonFatal: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -608,7 +608,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleNonFatalShouldReturnSuccessfulResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val fa       = run[IO, Int](1)
@@ -620,7 +620,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleNonFatalEitherShouldHandleNonFatal: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion    = new RuntimeException("Something's wrong")
@@ -657,7 +657,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleNonFatalEitherShouldReturnSuccessfulResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
@@ -669,7 +669,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleNonFatalEitherShouldReturnFailedResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedFailure = SomeError.message("Failed")
@@ -682,7 +682,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleEitherNonFatalShouldHandleNonFatal: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion     = new RuntimeException("Something's wrong")
@@ -724,7 +724,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleEitherNonFatalShouldReturnSuccessfulResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
@@ -736,7 +736,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleEitherNonFatalShouldReturnFailedResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedFailure = SomeError.message("Failed")
@@ -750,7 +750,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleEitherTNonFatalShouldHandleNonFatal: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion     = new RuntimeException("Something's wrong")
@@ -794,7 +794,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleEitherTNonFatalShouldReturnSuccessfulResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
@@ -806,7 +806,7 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_IO_handleEitherTNonFatalShouldReturnFailedResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedFailure = SomeError.message("Failed")
