@@ -15,6 +15,7 @@ import effectie.testing.types.SomeError
 import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
+import extras.hedgehog.cats.effect.CatsEffectRunner
 import hedgehog._
 import hedgehog.runner._
 

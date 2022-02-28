@@ -7,7 +7,6 @@ import cats.effect.unsafe.IORuntime
 import cats.instances.all.*
 import cats.syntax.all.*
 import effectie.SomeControlThrowable
-import effectie.cats.CatsEffectRunner.TestContext
 import effectie.core.*
 import effectie.syntax.fx.*
 import effectie.cats.fxCtor.*
@@ -15,6 +14,7 @@ import effectie.cats.canCatch.*
 import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
+import extras.hedgehog.cats.effect.CatsEffectRunner
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -175,7 +175,7 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -209,7 +209,7 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_IO_catchNonFatalThrowableShouldReturnSuccessfulResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val fa: IO[Int] = run[IO, Int](1)
@@ -221,7 +221,7 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_IO_catchNonFatalShouldCatchNonFatal: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -255,7 +255,7 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_IO_catchNonFatalShouldReturnSuccessfulResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val fa: IO[Int] = run[IO, Int](1)
@@ -267,7 +267,7 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_IO_catchNonFatalEitherShouldCatchNonFatal: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -301,7 +301,7 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_IO_catchNonFatalEitherShouldReturnSuccessfulResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
@@ -313,7 +313,7 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_IO_catchNonFatalEitherShouldReturnFailedResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedFailure = SomeError.message("Failed")
@@ -326,7 +326,7 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_IO_catchNonFatalEitherTShouldCatchNonFatal: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -360,7 +360,7 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_IO_catchNonFatalEitherTShouldReturnSuccessfulResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
@@ -372,7 +372,7 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_IO_catchNonFatalEitherTShouldReturnFailedResult: Result = {
 
-      import effectie.cats.CatsEffectRunner.*
+      import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
 
       val expectedFailure = SomeError.message("Failed")

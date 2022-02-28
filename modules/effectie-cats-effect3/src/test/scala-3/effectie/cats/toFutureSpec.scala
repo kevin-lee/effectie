@@ -3,12 +3,12 @@ package effectie.cats
 import cats.Id
 import cats.effect.*
 import cats.effect.unsafe.IORuntime
-import effectie.cats.CatsEffectRunner.*
 import effectie.cats.compat.CatsEffectIoCompatForFuture
 import effectie.cats.toFuture.given
 import effectie.core.ToFuture
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
+import extras.hedgehog.cats.effect.CatsEffectRunner
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -44,7 +44,7 @@ object toFutureSpec extends Properties {
       given ec: ExecutionContext =
         ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
       ConcurrentSupport.runAndShutdown(es, WaitFor(800.milliseconds)) {
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val future   = ToFuture[IO].unsafeToFuture(fa)

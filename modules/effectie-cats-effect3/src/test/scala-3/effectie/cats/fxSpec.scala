@@ -2,7 +2,6 @@ package effectie.cats
 
 import cats.data.EitherT
 import cats.effect.*
-import effectie.cats.CatsEffectRunner.TestContext
 import cats.effect.unsafe.IORuntime
 import cats.instances.either.*
 import cats.syntax.all.*
@@ -15,6 +14,7 @@ import effectie.core.Fx
 import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
+import extras.hedgehog.cats.effect.CatsEffectRunner
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -1661,7 +1661,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -1700,7 +1700,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverFromNonFatalWithShouldReturnSuccessfulResult: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val fa       = run[IO, Int](1)
@@ -1714,7 +1714,7 @@ object FxSpec extends Properties {
       }
 
       def testCanRecover_IO_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal: Result = {
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -1760,7 +1760,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
@@ -1775,7 +1775,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnFailedResult: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val expectedFailure = SomeError.message("Failed")
@@ -1791,7 +1791,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -1837,7 +1837,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
@@ -1852,7 +1852,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnFailedResult: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val expectedFailure = SomeError.message("Failed")
@@ -1869,7 +1869,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -1918,7 +1918,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
@@ -1934,7 +1934,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnFailedResult: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val expectedFailure = SomeError.message("Failed")
@@ -1954,7 +1954,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverFromNonFatalShouldRecoverFromNonFatal: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -1993,7 +1993,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverFromNonFatalShouldReturnSuccessfulResult: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val fa       = run[IO, Int](1)
@@ -2005,7 +2005,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverFromNonFatalEitherShouldRecoverFromNonFatal: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -2045,7 +2045,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverFromNonFatalEitherShouldReturnSuccessfulResult: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
@@ -2057,7 +2057,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverFromNonFatalEitherShouldReturnFailedResult: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val expectedFailure = SomeError.message("Failed")
@@ -2070,7 +2070,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverEitherFromNonFatalShouldRecoverFromNonFatal: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -2117,7 +2117,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverEitherFromNonFatalShouldReturnSuccessfulResult: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
@@ -2131,7 +2131,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverEitherFromNonFatalShouldReturnFailedResult: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val expectedFailure = SomeError.message("Failed")
@@ -2146,7 +2146,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverEitherTFromNonFatalShouldRecoverFromNonFatal: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -2195,7 +2195,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnSuccessfulResult: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
@@ -2210,7 +2210,7 @@ object FxSpec extends Properties {
 
       def testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnFailedResult: Result = {
 
-        import effectie.cats.CatsEffectRunner.*
+        import CatsEffectRunner.*
         given ticket: Ticker = Ticker(TestContext())
 
         val expectedFailure = SomeError.message("Failed")

@@ -16,6 +16,7 @@ import effectie.core.Fx
 import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
+import extras.hedgehog.cats.effect.CatsEffectRunner
 import hedgehog._
 import hedgehog.runner._
 
@@ -134,10 +135,10 @@ object CanCatchSyntaxSpec {
       FutureSpec.testCanCatch_Future_catchNonFatalEitherTShouldReturnFailedResult
     ),
     /* Id */
-//    example(
-//      "test CanCatch[Id]catchNonFatalThrowable should catch NonFatal",
-//      IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal
-//    ),
+    example(
+      "test CanCatch[Id]catchNonFatalThrowable should catch NonFatal",
+      IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal
+    ),
     example(
       "test CanCatch[Id]catchNonFatalThrowable should not catch Fatal",
       IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldNotCatchFatal
@@ -146,10 +147,10 @@ object CanCatchSyntaxSpec {
       "test CanCatch[Id]catchNonFatalThrowable should return the successful result",
       IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldReturnSuccessfulResult
     ),
-//    example(
-//      "test CanCatch[Id]catchNonFatal should catch NonFatal",
-//      IdSpec.testCanCatch_Id_catchNonFatalShouldCatchNonFatal
-//    ),
+    example(
+      "test CanCatch[Id]catchNonFatal should catch NonFatal",
+      IdSpec.testCanCatch_Id_catchNonFatalShouldCatchNonFatal
+    ),
     example(
       "test CanCatch[Id]catchNonFatal should not catch Fatal",
       IdSpec.testCanCatch_Id_catchNonFatalShouldNotCatchFatal
@@ -158,10 +159,10 @@ object CanCatchSyntaxSpec {
       "test CanCatch[Id]catchNonFatal should return the successful result",
       IdSpec.testCanCatch_Id_catchNonFatalShouldReturnSuccessfulResult
     ),
-//    example(
-//      "test CanCatch[Id]catchNonFatalEither should catch NonFatal",
-//      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldCatchNonFatal
-//    ),
+    example(
+      "test CanCatch[Id]catchNonFatalEither should catch NonFatal",
+      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldCatchNonFatal
+    ),
     example(
       "test CanCatch[Id]catchNonFatalEither should not catch Fatal",
       IdSpec.testCanCatch_Id_catchNonFatalEitherShouldNotCatchFatal
@@ -174,10 +175,10 @@ object CanCatchSyntaxSpec {
       "test CanCatch[Id]catchNonFatalEither should return the failed result",
       IdSpec.testCanCatch_Id_catchNonFatalEitherShouldReturnFailedResult
     ),
-//    example(
-//      "test CanCatch[Id]catchNonFatalEitherT should catch NonFatal",
-//      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldCatchNonFatal
-//    ),
+    example(
+      "test CanCatch[Id]catchNonFatalEitherT should catch NonFatal",
+      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldCatchNonFatal
+    ),
     example(
       "test CanCatch[Id]catchNonFatalEitherT should not catch Fatal",
       IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldNotCatchFatal
@@ -209,9 +210,11 @@ object CanCatchSyntaxSpec {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = expectedExpcetion.asLeft[Int]
-      val actual            = fa.catchNonFatalThrowable.unsafeRunSync()
+      val actual            = fa.catchNonFatalThrowable
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -243,9 +246,11 @@ object CanCatchSyntaxSpec {
 
       val fa: IO[Int] = run[IO, Int](1)
       val expected    = 1.asRight[Throwable]
-      val actual      = fa.catchNonFatalThrowable.unsafeRunSync()
+      val actual      = fa.catchNonFatalThrowable
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanCatch_IO_catchNonFatalShouldCatchNonFatal: Result = {
@@ -256,9 +261,11 @@ object CanCatchSyntaxSpec {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual            = fa.catchNonFatal(SomeError.someThrowable).unsafeRunSync()
+      val actual            = fa.catchNonFatal(SomeError.someThrowable)
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -290,9 +297,11 @@ object CanCatchSyntaxSpec {
 
       val fa: IO[Int] = run[IO, Int](1)
       val expected    = 1.asRight[SomeError]
-      val actual      = fa.catchNonFatal(SomeError.someThrowable).unsafeRunSync()
+      val actual      = fa.catchNonFatal(SomeError.someThrowable)
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanCatch_IO_catchNonFatalEitherShouldCatchNonFatal: Result = {
@@ -303,9 +312,11 @@ object CanCatchSyntaxSpec {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual            = fa.catchNonFatalEither(SomeError.someThrowable).unsafeRunSync()
+      val actual            = fa.catchNonFatalEither(SomeError.someThrowable)
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -337,9 +348,11 @@ object CanCatchSyntaxSpec {
 
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
-      val actual   = fa.catchNonFatalEither(SomeError.someThrowable).unsafeRunSync()
+      val actual   = fa.catchNonFatalEither(SomeError.someThrowable)
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanCatch_IO_catchNonFatalEitherShouldReturnFailedResult: Result = {
@@ -350,9 +363,11 @@ object CanCatchSyntaxSpec {
       val expectedFailure = SomeError.message("Failed")
       val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
-      val actual          = fa.catchNonFatalEither(SomeError.someThrowable).unsafeRunSync()
+      val actual          = fa.catchNonFatalEither(SomeError.someThrowable)
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanCatch_IO_catchNonFatalEitherTShouldCatchNonFatal: Result = {
@@ -363,9 +378,11 @@ object CanCatchSyntaxSpec {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa       = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
       val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actual   = fa.catchNonFatalEitherT(SomeError.someThrowable).value.unsafeRunSync()
+      val actual   = fa.catchNonFatalEitherT(SomeError.someThrowable).value
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -397,9 +414,11 @@ object CanCatchSyntaxSpec {
 
       val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected = 1.asRight[SomeError]
-      val actual   = fa.catchNonFatalEitherT(SomeError.someThrowable).value.unsafeRunSync()
+      val actual   = fa.catchNonFatalEitherT(SomeError.someThrowable).value
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanCatch_IO_catchNonFatalEitherTShouldReturnFailedResult: Result = {
@@ -410,9 +429,11 @@ object CanCatchSyntaxSpec {
       val expectedFailure = SomeError.message("Failed")
       val fa              = EitherT(run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
       val expected        = expectedFailure.asLeft[Int]
-      val actual          = fa.catchNonFatalEitherT(SomeError.someThrowable).value.unsafeRunSync()
+      val actual          = fa.catchNonFatalEitherT(SomeError.someThrowable).value
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
   }
@@ -985,10 +1006,10 @@ object CanHandleErrorSyntaxSpec {
       FutureSpec.testCanHandleError_Future_handleEitherTNonFatalShouldReturnFailedResult
     ),
     /* Id */
-//    example(
-//      "test CanHandleError[Id].handleNonFatalWith should handle NonFatal",
-//      IdSpec.testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith
-//    ),
+    example(
+      "test CanHandleError[Id].handleNonFatalWith should handle NonFatal",
+      IdSpec.testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith
+    ),
     example(
       "test CanHandleError[Id].handleNonFatalWith should not handle Fatal",
       IdSpec.testCanHandleError_Id_handleNonFatalWithShouldNotHandleFatalWith
@@ -997,10 +1018,10 @@ object CanHandleErrorSyntaxSpec {
       "test CanHandleError[Id].handleNonFatalWith should return the successful result",
       IdSpec.testCanHandleError_Id_handleNonFatalWithShouldReturnSuccessfulResult
     ),
-//    example(
-//      "test CanHandleError[Id].handleNonFatalWithEither should handle NonFatal",
-//      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldHandleNonFatalWith
-//    ),
+    example(
+      "test CanHandleError[Id].handleNonFatalWithEither should handle NonFatal",
+      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldHandleNonFatalWith
+    ),
     example(
       "test CanHandleError[Id].handleNonFatalWithEither should not handle Fatal",
       IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldNotHandleFatalWith
@@ -1013,10 +1034,10 @@ object CanHandleErrorSyntaxSpec {
       "test CanHandleError[Id].handleNonFatalWithEither should return the failed result",
       IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldReturnFailedResult
     ),
-//    example(
-//      "test CanHandleError[Id].handleEitherNonFatalWith should handle NonFatal",
-//      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldHandleNonFatalWith
-//    ),
+    example(
+      "test CanHandleError[Id].handleEitherNonFatalWith should handle NonFatal",
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldHandleNonFatalWith
+    ),
     example(
       "test CanHandleError[Id].handleEitherNonFatalWith should not handle Fatal",
       IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldNotHandleFatalWith
@@ -1029,10 +1050,10 @@ object CanHandleErrorSyntaxSpec {
       "test CanHandleError[Id].handleEitherNonFatalWith should return the failed result",
       IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldReturnFailedResult
     ),
-//    example(
-//      "test CanHandleError[Id].handleEitherTNonFatalWith should handle NonFatal",
-//      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldHandleNonFatalWith
-//    ),
+    example(
+      "test CanHandleError[Id].handleEitherTNonFatalWith should handle NonFatal",
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldHandleNonFatalWith
+    ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatalWith should not handle Fatal",
       IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldNotHandleFatalWith
@@ -1045,10 +1066,10 @@ object CanHandleErrorSyntaxSpec {
       "test CanHandleError[Id].handleEitherTNonFatalWith should return the failed result",
       IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldReturnFailedResult
     ),
-//    example(
-//      "test CanHandleError[Id].handleNonFatal should handle NonFatal",
-//      IdSpec.testCanHandleError_Id_handleNonFatalShouldHandleNonFatal
-//    ),
+    example(
+      "test CanHandleError[Id].handleNonFatal should handle NonFatal",
+      IdSpec.testCanHandleError_Id_handleNonFatalShouldHandleNonFatal
+    ),
     example(
       "test CanHandleError[Id].handleNonFatal should not handle Fatal",
       IdSpec.testCanHandleError_Id_handleNonFatalShouldNotHandleFatal
@@ -1057,10 +1078,10 @@ object CanHandleErrorSyntaxSpec {
       "test CanHandleError[Id].handleNonFatal should return the successful result",
       IdSpec.testCanHandleError_Id_handleNonFatalShouldReturnSuccessfulResult
     ),
-//    example(
-//      "test CanHandleError[Id].handleNonFatalEither should handle NonFatal",
-//      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldHandleNonFatal
-//    ),
+    example(
+      "test CanHandleError[Id].handleNonFatalEither should handle NonFatal",
+      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldHandleNonFatal
+    ),
     example(
       "test CanHandleError[Id].handleNonFatalEither should not handle Fatal",
       IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldNotHandleFatal
@@ -1073,10 +1094,10 @@ object CanHandleErrorSyntaxSpec {
       "test CanHandleError[Id].handleNonFatalEither should return the failed result",
       IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldReturnFailedResult
     ),
-//    example(
-//      "test CanHandleError[Id].handleEitherNonFatal should handle NonFatal",
-//      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldHandleNonFatal
-//    ),
+    example(
+      "test CanHandleError[Id].handleEitherNonFatal should handle NonFatal",
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldHandleNonFatal
+    ),
     example(
       "test CanHandleError[Id].handleEitherNonFatal should not handle Fatal",
       IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldNotHandleFatal
@@ -1089,10 +1110,10 @@ object CanHandleErrorSyntaxSpec {
       "test CanHandleError[Id].handleEitherNonFatal should return the failed result",
       IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldReturnFailedResult
     ),
-//    example(
-//      "test CanHandleError[Id].handleEitherTNonFatal should handle NonFatal",
-//      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldHandleNonFatal
-//    ),
+    example(
+      "test CanHandleError[Id].handleEitherTNonFatal should handle NonFatal",
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldHandleNonFatal
+    ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatal should not handle Fatal",
       IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldNotHandleFatal
@@ -1129,9 +1150,10 @@ object CanHandleErrorSyntaxSpec {
           case NonFatal(`expectedExpcetion`) =>
             IO.pure(expected)
         }
-        .unsafeRunSync()
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -1163,9 +1185,11 @@ object CanHandleErrorSyntaxSpec {
 
       val fa       = run[IO, Int](1)
       val expected = 1
-      val actual   = fa.handleNonFatalWith(_ => IO.pure(999)).unsafeRunSync()
+      val actual   = fa.handleNonFatalWith(_ => IO.pure(999))
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanHandleError_IO_handleNonFatalWithEitherShouldHandleNonFatalWith: Result = {
@@ -1177,13 +1201,15 @@ object CanHandleErrorSyntaxSpec {
       val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
       val actualFailedResult   =
-        fa.handleNonFatalWith(_ => IO.pure(expectedFailedResult)).unsafeRunSync()
+        fa.handleNonFatalWith(_ => IO.pure(expectedFailedResult))
 
       val expectedSuccessResult = 1.asRight[SomeError]
       val actualSuccessResult   =
-        fa.handleNonFatalWith(_ => IO.pure(1.asRight[SomeError])).unsafeRunSync()
+        fa.handleNonFatalWith(_ => IO.pure(1.asRight[SomeError]))
 
-      actualFailedResult ==== expectedFailedResult and actualSuccessResult ==== expectedSuccessResult
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -1215,9 +1241,11 @@ object CanHandleErrorSyntaxSpec {
 
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
-      val actual   = fa.handleNonFatalWith(_ => IO(999.asRight[SomeError])).unsafeRunSync()
+      val actual   = fa.handleNonFatalWith(_ => IO(999.asRight[SomeError]))
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanHandleError_IO_handleNonFatalWithEitherShouldReturnFailedResult: Result = {
@@ -1228,9 +1256,11 @@ object CanHandleErrorSyntaxSpec {
       val expectedFailure = SomeError.message("Failed")
       val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
-      val actual          = fa.handleNonFatalWith(_ => IO.pure(123.asRight[SomeError])).unsafeRunSync()
+      val actual          = fa.handleNonFatalWith(_ => IO.pure(123.asRight[SomeError]))
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanHandleError_IO_handleEitherNonFatalWithShouldHandleNonFatalWith: Result = {
@@ -1240,15 +1270,18 @@ object CanHandleErrorSyntaxSpec {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-      val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actualFailedResult    = fa
+      val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val actualFailedResult   = fa
         .handleEitherNonFatalWith(err => IO.pure(SomeError.someThrowable(err).asLeft[Int]))
-        .unsafeRunSync()
+
       val expectedSuccessResult = 123.asRight[SomeError]
       val actualSuccessResult   =
-        fa.handleEitherNonFatalWith(_ => IO.pure(123.asRight[SomeError])).unsafeRunSync()
+        fa.handleEitherNonFatalWith(_ => IO.pure(123.asRight[SomeError]))
 
-      actualFailedResult ==== expectedFailedResult and actualSuccessResult ==== expectedSuccessResult
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+
+      actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -1283,9 +1316,11 @@ object CanHandleErrorSyntaxSpec {
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual   =
-        fa.handleEitherNonFatalWith(_ => IO.pure(123.asRight[SomeError])).unsafeRunSync()
+        fa.handleEitherNonFatalWith(_ => IO.pure(123.asRight[SomeError]))
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanHandleError_IO_handleEitherNonFatalWithShouldReturnFailedResult: Result = {
@@ -1297,9 +1332,11 @@ object CanHandleErrorSyntaxSpec {
       val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
-        fa.handleEitherNonFatalWith(_ => IO.pure(123.asRight[SomeError])).unsafeRunSync()
+        fa.handleEitherNonFatalWith(_ => IO.pure(123.asRight[SomeError]))
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanHandleError_IO_handleEitherTNonFatalWithShouldHandleNonFatalWith: Result = {
@@ -1309,16 +1346,19 @@ object CanHandleErrorSyntaxSpec {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-      val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actualFailedResult    = fa
+      val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val actualFailedResult   = fa
         .handleEitherTNonFatalWith(err => IO.pure(SomeError.someThrowable(err).asLeft[Int]))
         .value
-        .unsafeRunSync()
+
       val expectedSuccessResult = 123.asRight[SomeError]
       val actualSuccessResult   =
-        fa.handleEitherTNonFatalWith(_ => IO.pure(123.asRight[SomeError])).value.unsafeRunSync()
+        fa.handleEitherTNonFatalWith(_ => IO.pure(123.asRight[SomeError])).value
 
-      actualFailedResult ==== expectedFailedResult and actualSuccessResult ==== expectedSuccessResult
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+
+      actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -1354,9 +1394,11 @@ object CanHandleErrorSyntaxSpec {
       val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected = 1.asRight[SomeError]
       val actual   =
-        fa.handleEitherTNonFatalWith(_ => IO.pure(123.asRight[SomeError])).value.unsafeRunSync()
+        fa.handleEitherTNonFatalWith(_ => IO.pure(123.asRight[SomeError])).value
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnFailedResult: Result = {
@@ -1368,9 +1410,11 @@ object CanHandleErrorSyntaxSpec {
       val fa              = EitherT(run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
-        fa.handleEitherTNonFatalWith(_ => IO.pure(123.asRight[SomeError])).value.unsafeRunSync()
+        fa.handleEitherTNonFatalWith(_ => IO.pure(123.asRight[SomeError])).value
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanHandleError_IO_handleNonFatalShouldHandleNonFatal: Result = {
@@ -1386,9 +1430,10 @@ object CanHandleErrorSyntaxSpec {
           case NonFatal(`expectedExpcetion`) =>
             expected
         }
-        .unsafeRunSync()
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -1420,9 +1465,11 @@ object CanHandleErrorSyntaxSpec {
 
       val fa       = run[IO, Int](1)
       val expected = 1
-      val actual   = fa.handleNonFatal(_ => 999).unsafeRunSync()
+      val actual   = fa.handleNonFatal(_ => 999)
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanHandleError_IO_handleNonFatalEitherShouldHandleNonFatal: Result = {
@@ -1433,12 +1480,15 @@ object CanHandleErrorSyntaxSpec {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
-      val actualFailedResult   = fa.handleNonFatal(_ => expectedFailedResult).unsafeRunSync()
+      val actualFailedResult   = fa.handleNonFatal(_ => expectedFailedResult)
 
       val expectedSuccessResult = 1.asRight[SomeError]
-      val actualSuccessResult   = fa.handleNonFatal(_ => 1.asRight[SomeError]).unsafeRunSync()
+      val actualSuccessResult   = fa.handleNonFatal(_ => 1.asRight[SomeError])
 
-      actualFailedResult ==== expectedFailedResult and actualSuccessResult ==== expectedSuccessResult
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+
+      actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -1470,9 +1520,11 @@ object CanHandleErrorSyntaxSpec {
 
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
-      val actual   = fa.handleNonFatal(_ => 999.asRight[SomeError]).unsafeRunSync()
+      val actual   = fa.handleNonFatal(_ => 999.asRight[SomeError])
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanHandleError_IO_handleNonFatalEitherShouldReturnFailedResult: Result = {
@@ -1483,9 +1535,11 @@ object CanHandleErrorSyntaxSpec {
       val expectedFailure = SomeError.message("Failed")
       val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
-      val actual          = fa.handleNonFatal(_ => 123.asRight[SomeError]).unsafeRunSync()
+      val actual          = fa.handleNonFatal(_ => 123.asRight[SomeError])
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanHandleError_IO_handleEitherNonFatalShouldHandleNonFatal: Result = {
@@ -1495,15 +1549,17 @@ object CanHandleErrorSyntaxSpec {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-      val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actualFailedResult    = fa
-        .handleEitherNonFatal(err => SomeError.someThrowable(err).asLeft[Int])
-        .unsafeRunSync()
+      val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val actualFailedResult   = fa.handleEitherNonFatal(err => SomeError.someThrowable(err).asLeft[Int])
+
       val expectedSuccessResult = 123.asRight[SomeError]
       val actualSuccessResult   =
-        fa.handleEitherNonFatal(_ => 123.asRight[SomeError]).unsafeRunSync()
+        fa.handleEitherNonFatal(_ => 123.asRight[SomeError])
 
-      actualFailedResult ==== expectedFailedResult and actualSuccessResult ==== expectedSuccessResult
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+
+      actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -1537,9 +1593,11 @@ object CanHandleErrorSyntaxSpec {
 
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
-      val actual   = fa.handleEitherNonFatal(_ => 123.asRight[SomeError]).unsafeRunSync()
+      val actual   = fa.handleEitherNonFatal(_ => 123.asRight[SomeError])
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanHandleError_IO_handleEitherNonFatalShouldReturnFailedResult: Result = {
@@ -1551,9 +1609,11 @@ object CanHandleErrorSyntaxSpec {
       val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
-        fa.handleEitherNonFatal(_ => 123.asRight[SomeError]).unsafeRunSync()
+        fa.handleEitherNonFatal(_ => 123.asRight[SomeError])
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanHandleError_IO_handleEitherTNonFatalShouldHandleNonFatal: Result = {
@@ -1563,16 +1623,16 @@ object CanHandleErrorSyntaxSpec {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-      val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actualFailedResult    = fa
-        .handleEitherTNonFatal(err => SomeError.someThrowable(err).asLeft[Int])
-        .value
-        .unsafeRunSync()
-      val expectedSuccessResult = 123.asRight[SomeError]
-      val actualSuccessResult   =
-        fa.handleEitherTNonFatal(_ => 123.asRight[SomeError]).value.unsafeRunSync()
+      val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val actualFailedResult   = fa.handleEitherTNonFatal(err => SomeError.someThrowable(err).asLeft[Int]).value
 
-      actualFailedResult ==== expectedFailedResult and actualSuccessResult ==== expectedSuccessResult
+      val expectedSuccessResult = 123.asRight[SomeError]
+      val actualSuccessResult   = fa.handleEitherTNonFatal(_ => 123.asRight[SomeError]).value
+
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+
+      actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -1607,9 +1667,11 @@ object CanHandleErrorSyntaxSpec {
 
       val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected = 1.asRight[SomeError]
-      val actual   = fa.handleEitherTNonFatal(_ => 123.asRight[SomeError]).value.unsafeRunSync()
+      val actual   = fa.handleEitherTNonFatal(_ => 123.asRight[SomeError]).value
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanHandleError_IO_handleEitherTNonFatalShouldReturnFailedResult: Result = {
@@ -1621,9 +1683,11 @@ object CanHandleErrorSyntaxSpec {
       val fa              = EitherT(run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
-        fa.handleEitherTNonFatal(_ => 123.asRight[SomeError]).value.unsafeRunSync()
+        fa.handleEitherTNonFatal(_ => 123.asRight[SomeError]).value
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
   }
@@ -2674,10 +2738,10 @@ object CanRecoverSyntaxSpec {
       FutureSpec.testCanRecover_Future_recoverEitherTFromNonFatalShouldReturnFailedResult
     ),
     /* Id */
-//    example(
-//      "test CanRecover[Id].recoverFromNonFatalWith should catch NonFatal",
-//      IdSpec.testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal
-//    ),
+    example(
+      "test CanRecover[Id].recoverFromNonFatalWith should catch NonFatal",
+      IdSpec.testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal
+    ),
     example(
       "test CanRecover[Id].recoverFromNonFatalWith should not catch Fatal",
       IdSpec.testCanRecover_Id_recoverFromNonFatalWithShouldNotCatchFatal
@@ -2686,10 +2750,10 @@ object CanRecoverSyntaxSpec {
       "test CanRecover[Id].recoverFromNonFatalWith should return the successful result",
       IdSpec.testCanRecover_Id_recoverFromNonFatalWithShouldReturnSuccessfulResult
     ),
-//    example(
-//      "test CanRecover[Id].recoverFromNonFatalWithEither should catch NonFatal",
-//      IdSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal
-//    ),
+    example(
+      "test CanRecover[Id].recoverFromNonFatalWithEither should catch NonFatal",
+      IdSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal
+    ),
     example(
       "test CanRecover[Id].recoverFromNonFatalWithEither should not catch Fatal",
       IdSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldNotCatchFatal
@@ -2702,10 +2766,10 @@ object CanRecoverSyntaxSpec {
       "test CanRecover[Id].recoverFromNonFatalWithEither should return the failed result",
       IdSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldReturnFailedResult
     ),
-//    example(
-//      "test CanRecover[Id].recoverEitherFromNonFatalWith should catch NonFatal",
-//      IdSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal
-//    ),
+    example(
+      "test CanRecover[Id].recoverEitherFromNonFatalWith should catch NonFatal",
+      IdSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal
+    ),
     example(
       "test CanRecover[Id].recoverEitherFromNonFatalWith should not catch Fatal",
       IdSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldNotCatchFatal
@@ -2718,10 +2782,10 @@ object CanRecoverSyntaxSpec {
       "test CanRecover[Id].recoverEitherFromNonFatalWith should return the failed result",
       IdSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldReturnFailedResult
     ),
-//    example(
-//      "test CanRecover[Id].recoverEitherTFromNonFatalWith should catch NonFatal",
-//      IdSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal
-//    ),
+    example(
+      "test CanRecover[Id].recoverEitherTFromNonFatalWith should catch NonFatal",
+      IdSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal
+    ),
     example(
       "test CanRecover[Id].recoverEitherTFromNonFatalWith should not catch Fatal",
       IdSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldNotCatchFatal
@@ -2734,10 +2798,10 @@ object CanRecoverSyntaxSpec {
       "test CanRecover[Id].recoverEitherTFromNonFatalWith should return the failed result",
       IdSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldReturnFailedResult
     ),
-//    example(
-//      "test CanRecover[Id].recoverFromNonFatal should catch NonFatal",
-//      IdSpec.testCanRecover_Id_recoverFromNonFatalShouldRecoverFromNonFatal
-//    ),
+    example(
+      "test CanRecover[Id].recoverFromNonFatal should catch NonFatal",
+      IdSpec.testCanRecover_Id_recoverFromNonFatalShouldRecoverFromNonFatal
+    ),
     example(
       "test CanRecover[Id].recoverFromNonFatal should not catch Fatal",
       IdSpec.testCanRecover_Id_recoverFromNonFatalShouldNotCatchFatal
@@ -2746,10 +2810,10 @@ object CanRecoverSyntaxSpec {
       "test CanRecover[Id].recoverFromNonFatal should return the successful result",
       IdSpec.testCanRecover_Id_recoverFromNonFatalShouldReturnSuccessfulResult
     ),
-//    example(
-//      "test CanRecover[Id].recoverFromNonFatalEither should catch NonFatal",
-//      IdSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldRecoverFromNonFatal
-//    ),
+    example(
+      "test CanRecover[Id].recoverFromNonFatalEither should catch NonFatal",
+      IdSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldRecoverFromNonFatal
+    ),
     example(
       "test CanRecover[Id].recoverFromNonFatalEither should not catch Fatal",
       IdSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldNotCatchFatal
@@ -2762,10 +2826,10 @@ object CanRecoverSyntaxSpec {
       "test CanRecover[Id].recoverFromNonFatalEither should return the failed result",
       IdSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldReturnFailedResult
     ),
-//    example(
-//      "test CanRecover[Id].recoverEitherFromNonFatal should catch NonFatal",
-//      IdSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldRecoverFromNonFatal
-//    ),
+    example(
+      "test CanRecover[Id].recoverEitherFromNonFatal should catch NonFatal",
+      IdSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldRecoverFromNonFatal
+    ),
     example(
       "test CanRecover[Id].recoverEitherFromNonFatal should not catch Fatal",
       IdSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldNotCatchFatal
@@ -2778,10 +2842,10 @@ object CanRecoverSyntaxSpec {
       "test CanRecover[Id].recoverEitherFromNonFatal should return the failed result",
       IdSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldReturnFailedResult
     ),
-//    example(
-//      "test CanRecover[Id].recoverEitherTFromNonFatal should catch NonFatal",
-//      IdSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldRecoverFromNonFatal
-//    ),
+    example(
+      "test CanRecover[Id].recoverEitherTFromNonFatal should catch NonFatal",
+      IdSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldRecoverFromNonFatal
+    ),
     example(
       "test CanRecover[Id].recoverEitherTFromNonFatal should not catch Fatal",
       IdSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldNotCatchFatal
@@ -2813,13 +2877,14 @@ object CanRecoverSyntaxSpec {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = 123
-      val app               = fa.recoverFromNonFatalWith {
+      val actual            = fa.recoverFromNonFatalWith {
         case NonFatal(`expectedExpcetion`) =>
           IO.pure(expected)
       }
-      val actual            = app.unsafeRunSync()
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -2856,9 +2921,10 @@ object CanRecoverSyntaxSpec {
         .recoverFromNonFatalWith {
           case NonFatal(_) => IO.pure(999)
         }
-        .unsafeRunSync()
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanRecover_IO_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal: Result = {
@@ -2868,20 +2934,19 @@ object CanRecoverSyntaxSpec {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
-      val actualFailedResult   = fa
-        .recoverFromNonFatalWith {
-          case NonFatal(`expectedExpcetion`) => IO.pure(expectedFailedResult)
-        }
-        .unsafeRunSync()
+      val actualFailedResult   = fa.recoverFromNonFatalWith {
+        case NonFatal(`expectedExpcetion`) => IO.pure(expectedFailedResult)
+      }
 
       val expectedSuccessResult = 1.asRight[SomeError]
-      val actualSuccessResult   = fa
-        .recoverFromNonFatalWith {
-          case NonFatal(`expectedExpcetion`) => IO.pure(1.asRight[SomeError])
-        }
-        .unsafeRunSync()
+      val actualSuccessResult   = fa.recoverFromNonFatalWith {
+        case NonFatal(`expectedExpcetion`) => IO.pure(1.asRight[SomeError])
+      }
 
-      actualFailedResult ==== expectedFailedResult and actualSuccessResult ==== expectedSuccessResult
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+
+      actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -2920,9 +2985,10 @@ object CanRecoverSyntaxSpec {
         .recoverFromNonFatalWith {
           case NonFatal(_) => IO(999.asRight[SomeError])
         }
-        .unsafeRunSync()
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnFailedResult: Result = {
@@ -2937,9 +3003,10 @@ object CanRecoverSyntaxSpec {
         .recoverFromNonFatalWith {
           case NonFatal(_) => IO.pure(123.asRight[SomeError])
         }
-        .unsafeRunSync()
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanRecover_IO_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal: Result = {
@@ -2949,20 +3016,20 @@ object CanRecoverSyntaxSpec {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-      val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actualFailedResult    = fa
-        .recoverEitherFromNonFatalWith {
-          case err => IO.pure(SomeError.someThrowable(err).asLeft[Int])
-        }
-        .unsafeRunSync()
-      val expectedSuccessResult = 123.asRight[SomeError]
-      val actualSuccessResult   = fa
-        .recoverEitherFromNonFatalWith {
-          case NonFatal(`expectedExpcetion`) => IO.pure(123.asRight[SomeError])
-        }
-        .unsafeRunSync()
+      val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val actualFailedResult   = fa.recoverEitherFromNonFatalWith {
+        case err => IO.pure(SomeError.someThrowable(err).asLeft[Int])
+      }
 
-      actualFailedResult ==== expectedFailedResult and actualSuccessResult ==== expectedSuccessResult
+      val expectedSuccessResult = 123.asRight[SomeError]
+      val actualSuccessResult   = fa.recoverEitherFromNonFatalWith {
+        case NonFatal(`expectedExpcetion`) => IO.pure(123.asRight[SomeError])
+      }
+
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+
+      actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -3001,9 +3068,10 @@ object CanRecoverSyntaxSpec {
         .recoverEitherFromNonFatalWith {
           case NonFatal(_) => IO.pure(123.asRight[SomeError])
         }
-        .unsafeRunSync()
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnFailedResult: Result = {
@@ -3017,9 +3085,11 @@ object CanRecoverSyntaxSpec {
       val actual          =
         fa.recoverEitherFromNonFatalWith {
           case NonFatal(_) => IO.pure(123.asRight[SomeError])
-        }.unsafeRunSync()
+        }
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal: Result = {
@@ -3029,22 +3099,20 @@ object CanRecoverSyntaxSpec {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-      val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actualFailedResult    = fa
-        .recoverEitherTFromNonFatalWith {
-          case err => IO.pure(SomeError.someThrowable(err).asLeft[Int])
-        }
-        .value
-        .unsafeRunSync()
-      val expectedSuccessResult = 123.asRight[SomeError]
-      val actualSuccessResult   = fa
-        .recoverEitherTFromNonFatalWith {
-          case NonFatal(`expectedExpcetion`) => IO.pure(123.asRight[SomeError])
-        }
-        .value
-        .unsafeRunSync()
+      val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val actualFailedResult   = fa.recoverEitherTFromNonFatalWith {
+        case err => IO.pure(SomeError.someThrowable(err).asLeft[Int])
+      }.value
 
-      actualFailedResult ==== expectedFailedResult and actualSuccessResult ==== expectedSuccessResult
+      val expectedSuccessResult = 123.asRight[SomeError]
+      val actualSuccessResult   = fa.recoverEitherTFromNonFatalWith {
+        case NonFatal(`expectedExpcetion`) => IO.pure(123.asRight[SomeError])
+      }.value
+
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+
+      actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -3079,14 +3147,13 @@ object CanRecoverSyntaxSpec {
 
       val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected = 1.asRight[SomeError]
-      val actual   = fa
-        .recoverEitherTFromNonFatalWith {
-          case NonFatal(_) => IO.pure(123.asRight[SomeError])
-        }
-        .value
-        .unsafeRunSync()
+      val actual   = fa.recoverEitherTFromNonFatalWith {
+        case NonFatal(_) => IO.pure(123.asRight[SomeError])
+      }.value
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnFailedResult: Result = {
@@ -3101,9 +3168,10 @@ object CanRecoverSyntaxSpec {
         fa.recoverEitherTFromNonFatalWith {
           case NonFatal(_) => IO.pure(123.asRight[SomeError])
         }.value
-          .unsafeRunSync()
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     // /
@@ -3121,9 +3189,10 @@ object CanRecoverSyntaxSpec {
           case NonFatal(`expectedExpcetion`) =>
             expected
         }
-        .unsafeRunSync()
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -3156,9 +3225,11 @@ object CanRecoverSyntaxSpec {
 
       val fa       = run[IO, Int](1)
       val expected = 1
-      val actual   = fa.recoverFromNonFatal { case NonFatal(_) => 999 }.unsafeRunSync()
+      val actual   = fa.recoverFromNonFatal { case NonFatal(_) => 999 }
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanRecover_IO_recoverFromNonFatalEitherShouldRecoverFromNonFatal: Result = {
@@ -3169,16 +3240,15 @@ object CanRecoverSyntaxSpec {
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
-      val actualFailedResult   = fa
-        .recoverFromNonFatal { case NonFatal(`expectedExpcetion`) => expectedFailedResult }
-        .unsafeRunSync()
+      val actualFailedResult   = fa.recoverFromNonFatal { case NonFatal(`expectedExpcetion`) => expectedFailedResult }
 
       val expectedSuccessResult = 1.asRight[SomeError]
-      val actualSuccessResult   = fa
-        .recoverFromNonFatal { case NonFatal(`expectedExpcetion`) => 1.asRight[SomeError] }
-        .unsafeRunSync()
+      val actualSuccessResult   = fa.recoverFromNonFatal { case NonFatal(`expectedExpcetion`) => 1.asRight[SomeError] }
 
-      actualFailedResult ==== expectedFailedResult and actualSuccessResult ==== expectedSuccessResult
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+
+      actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -3211,9 +3281,11 @@ object CanRecoverSyntaxSpec {
 
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
-      val actual   = fa.recoverFromNonFatal { case NonFatal(_) => 999.asRight[SomeError] }.unsafeRunSync()
+      val actual   = fa.recoverFromNonFatal { case NonFatal(_) => 999.asRight[SomeError] }
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanRecover_IO_recoverFromNonFatalEitherShouldReturnFailedResult: Result = {
@@ -3224,9 +3296,11 @@ object CanRecoverSyntaxSpec {
       val expectedFailure = SomeError.message("Failed")
       val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
-      val actual          = fa.recoverFromNonFatal { case NonFatal(_) => 123.asRight[SomeError] }.unsafeRunSync()
+      val actual          = fa.recoverFromNonFatal { case NonFatal(_) => 123.asRight[SomeError] }
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanRecover_IO_recoverEitherFromNonFatalShouldRecoverFromNonFatal: Result = {
@@ -3236,17 +3310,20 @@ object CanRecoverSyntaxSpec {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-      val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actualFailedResult    =
-        fa.recoverEitherFromNonFatal {
-          case err => SomeError.someThrowable(err).asLeft[Int]
-        }.unsafeRunSync()
-      val expectedSuccessResult = 123.asRight[SomeError]
-      val actualSuccessResult   =
-        fa.recoverEitherFromNonFatal { case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError] }
-          .unsafeRunSync()
+      val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val actualFailedResult   = fa.recoverEitherFromNonFatal {
+        case err => SomeError.someThrowable(err).asLeft[Int]
+      }
 
-      actualFailedResult ==== expectedFailedResult and actualSuccessResult ==== expectedSuccessResult
+      val expectedSuccessResult = 123.asRight[SomeError]
+      val actualSuccessResult   = fa.recoverEitherFromNonFatal {
+        case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError]
+      }
+
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+
+      actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -3284,9 +3361,10 @@ object CanRecoverSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   =
         fa.recoverEitherFromNonFatal { case NonFatal(_) => 123.asRight[SomeError] }
-          .unsafeRunSync()
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanRecover_IO_recoverEitherFromNonFatalShouldReturnFailedResult: Result = {
@@ -3299,9 +3377,10 @@ object CanRecoverSyntaxSpec {
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         fa.recoverEitherFromNonFatal { case NonFatal(_) => 123.asRight[SomeError] }
-          .unsafeRunSync()
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanRecover_IO_recoverEitherTFromNonFatalShouldRecoverFromNonFatal: Result = {
@@ -3311,19 +3390,20 @@ object CanRecoverSyntaxSpec {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-      val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-      val actualFailedResult    =
-        fa.recoverEitherTFromNonFatal {
-          case err => SomeError.someThrowable(err).asLeft[Int]
-        }.value
-          .unsafeRunSync()
-      val expectedSuccessResult = 123.asRight[SomeError]
-      val actualSuccessResult   =
-        fa.recoverEitherTFromNonFatal { case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError] }
-          .value
-          .unsafeRunSync()
+      val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val actualFailedResult   = fa.recoverEitherTFromNonFatal {
+        case err => SomeError.someThrowable(err).asLeft[Int]
+      }.value
 
-      actualFailedResult ==== expectedFailedResult and actualSuccessResult ==== expectedSuccessResult
+      val expectedSuccessResult = 123.asRight[SomeError]
+      val actualSuccessResult   = fa.recoverEitherTFromNonFatal {
+        case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError]
+      }.value
+
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+
+      actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
@@ -3360,11 +3440,11 @@ object CanRecoverSyntaxSpec {
       val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected = 1.asRight[SomeError]
       val actual   =
-        fa.recoverEitherTFromNonFatal { case NonFatal(_) => 123.asRight[SomeError] }
-          .value
-          .unsafeRunSync()
+        fa.recoverEitherTFromNonFatal { case NonFatal(_) => 123.asRight[SomeError] }.value
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
     def testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnFailedResult: Result = {
@@ -3375,12 +3455,11 @@ object CanRecoverSyntaxSpec {
       val expectedFailure = SomeError.message("Failed")
       val fa              = EitherT(run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
       val expected        = expectedFailure.asLeft[Int]
-      val actual          =
-        fa.recoverEitherTFromNonFatal { case NonFatal(_) => 123.asRight[SomeError] }
-          .value
-          .unsafeRunSync()
+      val actual          = fa.recoverEitherTFromNonFatal { case NonFatal(_) => 123.asRight[SomeError] }.value
 
-      actual ==== expected
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      actual.completeAs(expected)
     }
 
   }

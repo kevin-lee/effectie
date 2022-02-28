@@ -108,7 +108,8 @@ lazy val catsEffect3 = projectCommonSettings("catsEffect3", ProjectName("cats-ef
     libraryDependencies ++= List(
       libs.libCatsCore(props.catsLatestVersion),
       libs.libCatsEffect(props.catsEffect3Version),
-      libs.libCatsEffectTestKit % Test excludeAll ("org.scalacheck")
+      libs.libCatsEffectTestKit % Test excludeAll ("org.scalacheck"),
+      libs.extrasHedgehogCatsEffect3,
     ),
     libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
@@ -224,8 +225,8 @@ lazy val props =
     final val catsLatestVersion = "2.7.0"
 
     final val catsEffect2Version       = "2.4.1"
-    final val catsEffect2LatestVersion = "2.5.1"
-    final val catsEffect3Version       = "3.1.1"
+    final val catsEffect2LatestVersion = "2.5.4"
+    final val catsEffect3Version       = "3.3.5"
 
     final val cats2_0_0Version       = "2.0.0"
     final val catsEffect2_0_0Version = "2.0.0"
@@ -267,6 +268,8 @@ lazy val libs =
 
     lazy val extrasConcurrent        = "io.kevinlee" %% "extras-concurrent"         % props.ExtrasVersion % Test
     lazy val extrasConcurrentTesting = "io.kevinlee" %% "extras-concurrent-testing" % props.ExtrasVersion % Test
+
+    lazy val extrasHedgehogCatsEffect3 = "io.kevinlee" %% "extras-hedgehog-cats-effect3" % props.ExtrasVersion % Test
   }
 
 lazy val mavenCentralPublishSettings: SettingsDefinition = List(
@@ -296,6 +299,7 @@ def projectCommonSettings(id: String, projectName: ProjectName): Project = {
   Project(id, file(s"modules/$prefixedName"))
     .settings(
       name                                    := prefixedName,
+      fork := true,
       scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
       libraryDependencies ++= libs.hedgehogLibs.map(_ % Test) ++ List(libs.extrasCats % Test),
       /* WartRemover and scalacOptions { */

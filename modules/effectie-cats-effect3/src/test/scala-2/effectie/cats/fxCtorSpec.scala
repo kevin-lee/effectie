@@ -7,6 +7,7 @@ import effectie.cats.fxCtor._
 import effectie.testing.tools
 import effectie.testing.types.SomeThrowableError
 import extras.concurrent.testing.types.ErrorLogger
+import extras.hedgehog.cats.effect.CatsEffectRunner
 import hedgehog._
 import hedgehog.runner._
 

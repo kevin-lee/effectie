@@ -130,10 +130,10 @@ object CanCatchSyntaxSpec {
       FutureSpec.testCanCatch_Future_catchNonFatalEitherTShouldReturnFailedResult
     ),
     /* Id */
-//    example(
-//      "test CanCatch[Id]catchNonFatalThrowable should catch NonFatal",
-//      IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal
-//    ),
+    example(
+      "test CanCatch[Id]catchNonFatalThrowable should catch NonFatal",
+      IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal
+    ),
     example(
       "test CanCatch[Id]catchNonFatalThrowable should not catch Fatal",
       IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldNotCatchFatal
@@ -142,10 +142,10 @@ object CanCatchSyntaxSpec {
       "test CanCatch[Id]catchNonFatalThrowable should return the successful result",
       IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldReturnSuccessfulResult
     ),
-//    example(
-//      "test CanCatch[Id]catchNonFatal should catch NonFatal",
-//      IdSpec.testCanCatch_Id_catchNonFatalShouldCatchNonFatal
-//    ),
+    example(
+      "test CanCatch[Id]catchNonFatal should catch NonFatal",
+      IdSpec.testCanCatch_Id_catchNonFatalShouldCatchNonFatal
+    ),
     example(
       "test CanCatch[Id]catchNonFatal should not catch Fatal",
       IdSpec.testCanCatch_Id_catchNonFatalShouldNotCatchFatal
@@ -154,10 +154,10 @@ object CanCatchSyntaxSpec {
       "test CanCatch[Id]catchNonFatal should return the successful result",
       IdSpec.testCanCatch_Id_catchNonFatalShouldReturnSuccessfulResult
     ),
-//    example(
-//      "test CanCatch[Id]catchNonFatalEither should catch NonFatal",
-//      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldCatchNonFatal
-//    ),
+    example(
+      "test CanCatch[Id]catchNonFatalEither should catch NonFatal",
+      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldCatchNonFatal
+    ),
     example(
       "test CanCatch[Id]catchNonFatalEither should not catch Fatal",
       IdSpec.testCanCatch_Id_catchNonFatalEitherShouldNotCatchFatal
@@ -170,10 +170,10 @@ object CanCatchSyntaxSpec {
       "test CanCatch[Id]catchNonFatalEither should return the failed result",
       IdSpec.testCanCatch_Id_catchNonFatalEitherShouldReturnFailedResult
     ),
-//    example(
-//      "test CanCatch[Id]catchNonFatalEitherT should catch NonFatal",
-//      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldCatchNonFatal
-//    ),
+    example(
+      "test CanCatch[Id]catchNonFatalEitherT should catch NonFatal",
+      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldCatchNonFatal
+    ),
     example(
       "test CanCatch[Id]catchNonFatalEitherT should not catch Fatal",
       IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldNotCatchFatal
@@ -939,10 +939,10 @@ object CanHandleErrorSyntaxSpec {
       FutureSpec.testCanHandleError_Future_handleEitherTNonFatalShouldReturnFailedResult
     ),
     /* Id */
-//    example(
-//      "test CanHandleError[Id].handleNonFatalWith should handle NonFatal",
-//      IdSpec.testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith
-//    ),
+    example(
+      "test CanHandleError[Id].handleNonFatalWith should handle NonFatal",
+      IdSpec.testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith
+    ),
     example(
       "test CanHandleError[Id].handleNonFatalWith should not handle Fatal",
       IdSpec.testCanHandleError_Id_handleNonFatalWithShouldNotHandleFatalWith
@@ -951,10 +951,10 @@ object CanHandleErrorSyntaxSpec {
       "test CanHandleError[Id].handleNonFatalWith should return the successful result",
       IdSpec.testCanHandleError_Id_handleNonFatalWithShouldReturnSuccessfulResult
     ),
-//    example(
-//      "test CanHandleError[Id].handleNonFatalWithEither should handle NonFatal",
-//      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldHandleNonFatalWith
-//    ),
+    example(
+      "test CanHandleError[Id].handleNonFatalWithEither should handle NonFatal",
+      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldHandleNonFatalWith
+    ),
     example(
       "test CanHandleError[Id].handleNonFatalWithEither should not handle Fatal",
       IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldNotHandleFatalWith
@@ -967,10 +967,10 @@ object CanHandleErrorSyntaxSpec {
       "test CanHandleError[Id].handleNonFatalWithEither should return the failed result",
       IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldReturnFailedResult
     ),
-//    example(
-//      "test CanHandleError[Id].handleEitherNonFatalWith should handle NonFatal",
-//      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldHandleNonFatalWith
-//    ),
+    example(
+      "test CanHandleError[Id].handleEitherNonFatalWith should handle NonFatal",
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldHandleNonFatalWith
+    ),
     example(
       "test CanHandleError[Id].handleEitherNonFatalWith should not handle Fatal",
       IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldNotHandleFatalWith
@@ -983,10 +983,10 @@ object CanHandleErrorSyntaxSpec {
       "test CanHandleError[Id].handleEitherNonFatalWith should return the failed result",
       IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldReturnFailedResult
     ),
-//    example(
-//      "test CanHandleError[Id].handleEitherTNonFatalWith should handle NonFatal",
-//      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldHandleNonFatalWith
-//    ),
+    example(
+      "test CanHandleError[Id].handleEitherTNonFatalWith should handle NonFatal",
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldHandleNonFatalWith
+    ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatalWith should not handle Fatal",
       IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldNotHandleFatalWith
@@ -999,10 +999,10 @@ object CanHandleErrorSyntaxSpec {
       "test CanHandleError[Id].handleEitherTNonFatalWith should return the failed result",
       IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldReturnFailedResult
     ),
-//    example(
-//      "test CanHandleError[Id].handleNonFatal should handle NonFatal",
-//      IdSpec.testCanHandleError_Id_handleNonFatalShouldHandleNonFatal
-//    ),
+    example(
+      "test CanHandleError[Id].handleNonFatal should handle NonFatal",
+      IdSpec.testCanHandleError_Id_handleNonFatalShouldHandleNonFatal
+    ),
     example(
       "test CanHandleError[Id].handleNonFatal should not handle Fatal",
       IdSpec.testCanHandleError_Id_handleNonFatalShouldNotHandleFatal
@@ -1011,10 +1011,10 @@ object CanHandleErrorSyntaxSpec {
       "test CanHandleError[Id].handleNonFatal should return the successful result",
       IdSpec.testCanHandleError_Id_handleNonFatalShouldReturnSuccessfulResult
     ),
-//    example(
-//      "test CanHandleError[Id].handleNonFatalEither should handle NonFatal",
-//      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldHandleNonFatal
-//    ),
+    example(
+      "test CanHandleError[Id].handleNonFatalEither should handle NonFatal",
+      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldHandleNonFatal
+    ),
     example(
       "test CanHandleError[Id].handleNonFatalEither should not handle Fatal",
       IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldNotHandleFatal
@@ -1027,10 +1027,10 @@ object CanHandleErrorSyntaxSpec {
       "test CanHandleError[Id].handleNonFatalEither should return the failed result",
       IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldReturnFailedResult
     ),
-//    example(
-//      "test CanHandleError[Id].handleEitherNonFatal should handle NonFatal",
-//      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldHandleNonFatal
-//    ),
+    example(
+      "test CanHandleError[Id].handleEitherNonFatal should handle NonFatal",
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldHandleNonFatal
+    ),
     example(
       "test CanHandleError[Id].handleEitherNonFatal should not handle Fatal",
       IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldNotHandleFatal
@@ -1043,10 +1043,10 @@ object CanHandleErrorSyntaxSpec {
       "test CanHandleError[Id].handleEitherNonFatal should return the failed result",
       IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldReturnFailedResult
     ),
-//    example(
-//      "test CanHandleError[Id].handleEitherTNonFatal should handle NonFatal",
-//      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldHandleNonFatal
-//    ),
+    example(
+      "test CanHandleError[Id].handleEitherTNonFatal should handle NonFatal",
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldHandleNonFatal
+    ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatal should not handle Fatal",
       IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldNotHandleFatal
@@ -2538,10 +2538,10 @@ object CanRecoverSyntaxSpec {
       FutureSpec.testCanRecover_Future_recoverEitherTFromNonFatalShouldReturnFailedResult
     ),
     /* Id */
-//    example(
-//      "test CanRecover[Id].recoverFromNonFatalWith should catch NonFatal",
-//      IdSpec.testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal
-//    ),
+    example(
+      "test CanRecover[Id].recoverFromNonFatalWith should catch NonFatal",
+      IdSpec.testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal
+    ),
     example(
       "test CanRecover[Id].recoverFromNonFatalWith should not catch Fatal",
       IdSpec.testCanRecover_Id_recoverFromNonFatalWithShouldNotCatchFatal
@@ -2550,10 +2550,10 @@ object CanRecoverSyntaxSpec {
       "test CanRecover[Id].recoverFromNonFatalWith should return the successful result",
       IdSpec.testCanRecover_Id_recoverFromNonFatalWithShouldReturnSuccessfulResult
     ),
-//    example(
-//      "test CanRecover[Id].recoverFromNonFatalWithEither should catch NonFatal",
-//      IdSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal
-//    ),
+    example(
+      "test CanRecover[Id].recoverFromNonFatalWithEither should catch NonFatal",
+      IdSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal
+    ),
     example(
       "test CanRecover[Id].recoverFromNonFatalWithEither should not catch Fatal",
       IdSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldNotCatchFatal
@@ -2566,10 +2566,10 @@ object CanRecoverSyntaxSpec {
       "test CanRecover[Id].recoverFromNonFatalWithEither should return the failed result",
       IdSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldReturnFailedResult
     ),
-//    example(
-//      "test CanRecover[Id].recoverEitherFromNonFatalWith should catch NonFatal",
-//      IdSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal
-//    ),
+    example(
+      "test CanRecover[Id].recoverEitherFromNonFatalWith should catch NonFatal",
+      IdSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal
+    ),
     example(
       "test CanRecover[Id].recoverEitherFromNonFatalWith should not catch Fatal",
       IdSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldNotCatchFatal
@@ -2582,10 +2582,10 @@ object CanRecoverSyntaxSpec {
       "test CanRecover[Id].recoverEitherFromNonFatalWith should return the failed result",
       IdSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldReturnFailedResult
     ),
-//    example(
-//      "test CanRecover[Id].recoverEitherTFromNonFatalWith should catch NonFatal",
-//      IdSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal
-//    ),
+    example(
+      "test CanRecover[Id].recoverEitherTFromNonFatalWith should catch NonFatal",
+      IdSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal
+    ),
     example(
       "test CanRecover[Id].recoverEitherTFromNonFatalWith should not catch Fatal",
       IdSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldNotCatchFatal
@@ -2598,10 +2598,10 @@ object CanRecoverSyntaxSpec {
       "test CanRecover[Id].recoverEitherTFromNonFatalWith should return the failed result",
       IdSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldReturnFailedResult
     ),
-//    example(
-//      "test CanRecover[Id].recoverFromNonFatal should catch NonFatal",
-//      IdSpec.testCanRecover_Id_recoverFromNonFatalShouldRecoverFromNonFatal
-//    ),
+    example(
+      "test CanRecover[Id].recoverFromNonFatal should catch NonFatal",
+      IdSpec.testCanRecover_Id_recoverFromNonFatalShouldRecoverFromNonFatal
+    ),
     example(
       "test CanRecover[Id].recoverFromNonFatal should not catch Fatal",
       IdSpec.testCanRecover_Id_recoverFromNonFatalShouldNotCatchFatal
@@ -2610,10 +2610,10 @@ object CanRecoverSyntaxSpec {
       "test CanRecover[Id].recoverFromNonFatal should return the successful result",
       IdSpec.testCanRecover_Id_recoverFromNonFatalShouldReturnSuccessfulResult
     ),
-//    example(
-//      "test CanRecover[Id].recoverFromNonFatalEither should catch NonFatal",
-//      IdSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldRecoverFromNonFatal
-//    ),
+    example(
+      "test CanRecover[Id].recoverFromNonFatalEither should catch NonFatal",
+      IdSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldRecoverFromNonFatal
+    ),
     example(
       "test CanRecover[Id].recoverFromNonFatalEither should not catch Fatal",
       IdSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldNotCatchFatal
@@ -2626,10 +2626,10 @@ object CanRecoverSyntaxSpec {
       "test CanRecover[Id].recoverFromNonFatalEither should return the failed result",
       IdSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldReturnFailedResult
     ),
-//    example(
-//      "test CanRecover[Id].recoverEitherFromNonFatal should catch NonFatal",
-//      IdSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldRecoverFromNonFatal
-//    ),
+    example(
+      "test CanRecover[Id].recoverEitherFromNonFatal should catch NonFatal",
+      IdSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldRecoverFromNonFatal
+    ),
     example(
       "test CanRecover[Id].recoverEitherFromNonFatal should not catch Fatal",
       IdSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldNotCatchFatal
@@ -2642,10 +2642,10 @@ object CanRecoverSyntaxSpec {
       "test CanRecover[Id].recoverEitherFromNonFatal should return the failed result",
       IdSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldReturnFailedResult
     ),
-//    example(
-//      "test CanRecover[Id].recoverEitherTFromNonFatal should catch NonFatal",
-//      IdSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldRecoverFromNonFatal
-//    ),
+    example(
+      "test CanRecover[Id].recoverEitherTFromNonFatal should catch NonFatal",
+      IdSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldRecoverFromNonFatal
+    ),
     example(
       "test CanRecover[Id].recoverEitherTFromNonFatal should not catch Fatal",
       IdSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldNotCatchFatal

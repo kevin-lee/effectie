@@ -8,9 +8,9 @@ import effectie.core.{CanCatch, CanHandleError, CanRecover}
  */
 trait error {
 
-  extension [F[*], B](fb: F[B]) {
+  extension [F[*], B](fb: => F[B]) {
 
-    def catchNonFatalThrowable[A](
+    def catchNonFatalThrowable(
       using canCatch: CanCatch[F]
     ): F[Either[Throwable, B]] =
       canCatch.catchNonFatalThrowable[B](fb)
@@ -47,7 +47,7 @@ trait error {
       canRecover.recoverFromNonFatal[B, BB](fb)(handleError)
   }
 
-  extension [F[*], A, B](fab: F[Either[A, B]]) {
+  extension [F[*], A, B](fab: => F[Either[A, B]]) {
 
     def catchNonFatalEither[AA >: A](
       f: Throwable => AA

@@ -9,7 +9,7 @@ import effectie.core.{CanCatch, CanHandleError, CanRecover}
  */
 trait error {
 
-  extension [F[*], A, B](efab: EitherT[F, A, B]) {
+  extension [F[*], A, B](efab: => EitherT[F, A, B]) {
 
     def catchNonFatalEitherT[AA >: A](
       f: Throwable => AA
