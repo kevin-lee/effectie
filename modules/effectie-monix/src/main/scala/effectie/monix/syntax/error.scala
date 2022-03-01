@@ -10,14 +10,14 @@ import effectie.core.{CanCatch, CanHandleError, CanRecover}
 trait error {
   import effectie.monix.syntax.error.EitherTFABErrorHandlingOps
 
-  implicit def eitherTFABErrorHandlingOps[F[_], A, B](efab: => EitherT[F, A, B]): EitherTFABErrorHandlingOps[F, A, B] =
+  implicit def eitherTFABErrorHandlingOps[F[*], A, B](efab: => EitherT[F, A, B]): EitherTFABErrorHandlingOps[F, A, B] =
     new EitherTFABErrorHandlingOps(() => efab)
 
 }
 
 object error extends error {
 
-  final class EitherTFABErrorHandlingOps[F[_], A, B](private val efab: () => EitherT[F, A, B]) extends AnyVal {
+  final class EitherTFABErrorHandlingOps[F[*], A, B](private val efab: () => EitherT[F, A, B]) extends AnyVal {
 
     def catchNonFatalEitherT[AA >: A](
       f: Throwable => AA

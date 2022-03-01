@@ -2,7 +2,7 @@ package effectie.core
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait FxCtor[F[_]] {
+trait FxCtor[F[*]] {
   def effectOf[A](a: => A): F[A]
   def pureOf[A](a: A): F[A]
   def unitOf: F[Unit]
@@ -12,7 +12,7 @@ trait FxCtor[F[_]] {
 
 object FxCtor {
 
-  def apply[F[_]: FxCtor]: FxCtor[F] = implicitly[FxCtor[F]]
+  def apply[F[*]: FxCtor]: FxCtor[F] = implicitly[FxCtor[F]]
 
   trait FutureFxCtor extends FxCtor[Future] {
 

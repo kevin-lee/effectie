@@ -7,14 +7,14 @@ import _root_.cats.data.EitherT
   */
 package object cats {
 
-  implicit final class CanCatchOps[F[_]](private val canCatch: effectie.core.CanCatch[F]) extends AnyVal {
+  implicit final class CanCatchOps[F[*]](private val canCatch: effectie.core.CanCatch[F]) extends AnyVal {
 
     def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(f: Throwable => AA): EitherT[F, AA, B] =
       EitherT(canCatch.catchNonFatalEither[A, AA, B](fab.value)(f))
 
   }
 
-  implicit final class CanHandleErrorOps[F[_]](private val canHandleError: effectie.core.CanHandleError[F]) extends AnyVal {
+  implicit final class CanHandleErrorOps[F[*]](private val canHandleError: effectie.core.CanHandleError[F]) extends AnyVal {
 
     def handleEitherTNonFatalWith[A, AA >: A, B, BB >: B](
       efab: => EitherT[F, A, B]
@@ -32,7 +32,7 @@ package object cats {
 
   }
 
-  implicit final class CanRecoverOps[F[_]](private val canRecover: effectie.core.CanRecover[F]) extends AnyVal {
+  implicit final class CanRecoverOps[F[*]](private val canRecover: effectie.core.CanRecover[F]) extends AnyVal {
 
     final def recoverEitherTFromNonFatalWith[A, AA >: A, B, BB >: B](
       efab: => EitherT[F, A, B]
@@ -50,7 +50,7 @@ package object cats {
 
   }
 
-  implicit final class FxhOps[F[_]](private val fx: effectie.core.Fx[F]) extends AnyVal {
+  implicit final class FxhOps[F[*]](private val fx: effectie.core.Fx[F]) extends AnyVal {
 
     def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(f: Throwable => AA): EitherT[F, AA, B] =
       EitherT(fx.catchNonFatalEither[A, AA, B](fab.value)(f))

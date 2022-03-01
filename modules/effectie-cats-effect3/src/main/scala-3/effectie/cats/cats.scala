@@ -6,7 +6,7 @@ import effectie.core.Fx
 /** @author Kevin Lee
   * @since 2021-11-25
   */
-extension [F[_]](canCatch: effectie.core.CanCatch[F]) {
+extension [F[*]](canCatch: effectie.core.CanCatch[F]) {
 
   def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(f: Throwable => AA): EitherT[F, AA, B] =
     EitherT(canCatch.catchNonFatalEither[A, AA, B](fab.value)(f))
@@ -31,7 +31,7 @@ extension [F[*]](canHandleError: effectie.core.CanHandleError[F]) {
 
 }
 
-extension [F[_]](canRecover: effectie.core.CanRecover[F]) {
+extension [F[*]](canRecover: effectie.core.CanRecover[F]) {
 
   final def recoverEitherTFromNonFatalWith[A, AA >: A, B, BB >: B](
     efab: => EitherT[F, A, B]
@@ -49,7 +49,7 @@ extension [F[_]](canRecover: effectie.core.CanRecover[F]) {
 
 }
 
-extension [F[_]](fx: Fx[F]) {
+extension [F[*]](fx: Fx[F]) {
 
   def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(f: Throwable => AA): EitherT[F, AA, B] =
     EitherT(fx.catchNonFatalEither[A, AA, B](fab.value)(f))

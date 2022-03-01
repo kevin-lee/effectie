@@ -197,7 +197,7 @@ object CanCatchSyntaxSpec {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: Fx: Functor, A](a: => A): F[A] =
+  def run[F[*]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object IoSpec {
@@ -1132,7 +1132,7 @@ object CanHandleErrorSyntaxSpec {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: Fx: Functor, A](a: => A): F[A] =
+  def run[F[*]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object IoSpec {
@@ -2864,7 +2864,7 @@ object CanRecoverSyntaxSpec {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: Fx: Functor, A](a: => A): F[A] =
+  def run[F[*]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object IOSpec {

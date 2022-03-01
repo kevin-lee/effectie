@@ -8,7 +8,7 @@ import hedgehog.runner._
   * @since 2021-08-04
   */
 object MonadSpec {
-  def testAllLaws[F[_]: Monad](fName: String)(implicit eqF: Eq[F[Int]]): List[Test] =
+  def testAllLaws[F[*]: Monad](fName: String)(implicit eqF: Eq[F[Int]]): List[Test] =
     List(
       property(s"test Monad laws for $fName - Identity", test1_Identity),
       property(s"test Monad laws for $fName - Composition", test2_Composition),
@@ -21,14 +21,14 @@ object MonadSpec {
       property(s"test Monad laws for $fName - Associativity", test9_Associativity),
     )
 
-  def test1_Identity[F[_]: Monad](implicit eqF: Eq[F[Int]]): Property =
+  def test1_Identity[F[*]: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws
       .identity[F](
         Gens.genFA[F, Int](Gens.genInt(Int.MinValue, Int.MaxValue)),
       )
 
-  def test2_Composition[F[_]: Monad](implicit eqF: Eq[F[Int]]): Property =
+  def test2_Composition[F[*]: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws
       .composition[F](
@@ -36,14 +36,14 @@ object MonadSpec {
         Gens.genIntToInt,
       )
 
-  def test3_IdentityAp[F[_]: Monad](implicit eqF: Eq[F[Int]]): Property =
+  def test3_IdentityAp[F[*]: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws
       .identityAp[F](
         Gens.genFA[F, Int](Gens.genInt(Int.MinValue, Int.MaxValue)),
       )
 
-  def test4_Homomorphism[F[_]: Monad](implicit eqF: Eq[F[Int]]): Property =
+  def test4_Homomorphism[F[*]: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws
       .homomorphism[F](
@@ -51,7 +51,7 @@ object MonadSpec {
         Gens.genIntToInt,
       )
 
-  def test5_Interchange[F[_]: Monad](implicit eqF: Eq[F[Int]]): Property =
+  def test5_Interchange[F[*]: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws
       .interchange[F](
@@ -59,7 +59,7 @@ object MonadSpec {
         Gens.genIntToInt,
       )
 
-  def test6_CompositionAp[F[_]: Monad](implicit eqF: Eq[F[Int]]): Property =
+  def test6_CompositionAp[F[*]: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws
       .compositionAp[F](
@@ -67,7 +67,7 @@ object MonadSpec {
         Gens.genIntToInt,
       )
 
-  def test7_LeftIdentity[F[_]: Monad](implicit eqF: Eq[F[Int]]): Property =
+  def test7_LeftIdentity[F[*]: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws
       .leftIdentity[F](
@@ -75,14 +75,14 @@ object MonadSpec {
         Gens.genAToMonadA(Gens.genIntToInt)
       )
 
-  def test8_RightIdentity[F[_]: Monad](implicit eqF: Eq[F[Int]]): Property =
+  def test8_RightIdentity[F[*]: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws
       .rightIdentity[F](
         Gens.genFA[F, Int](Gens.genInt(Int.MinValue, Int.MaxValue)),
       )
 
-  def test9_Associativity[F[_]: Monad](implicit eqF: Eq[F[Int]]): Property =
+  def test9_Associativity[F[*]: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws
       .associativity[F](

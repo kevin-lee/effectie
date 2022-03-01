@@ -27,10 +27,10 @@ object Gens {
       x => x * 100
     )
 
-  def genAToMonadA[F[_]: Monad, A](genF: Gen[A => A]): Gen[A => F[A]] =
+  def genAToMonadA[F[*]: Monad, A](genF: Gen[A => A]): Gen[A => F[A]] =
     genF.map(f => x => Monad[F].pure(f(x)))
 
-  def genFA[F[_]: Monad, A](genA: Gen[A]): Gen[F[A]] =
+  def genFA[F[*]: Monad, A](genA: Gen[A]): Gen[F[A]] =
     genA.map(a => Monad[F].pure(a))
 
 }

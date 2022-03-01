@@ -8,16 +8,16 @@ import effectie.core.{CanCatch, CanHandleError, CanRecover}
 trait error {
   import effectie.syntax.error.{FAErrorHandlingOps, FEitherABErrorHandlingOps}
 
-  implicit def fAErrorHandlingOps[F[_], B](fb: => F[B]): FAErrorHandlingOps[F, B] = new FAErrorHandlingOps(() => fb)
+  implicit def fAErrorHandlingOps[F[*], B](fb: => F[B]): FAErrorHandlingOps[F, B] = new FAErrorHandlingOps(() => fb)
 
-  implicit def fEitherABErrorHandlingOps[F[_], A, B](fab: => F[Either[A, B]]): FEitherABErrorHandlingOps[F, A, B] =
+  implicit def fEitherABErrorHandlingOps[F[*], A, B](fab: => F[Either[A, B]]): FEitherABErrorHandlingOps[F, A, B] =
     new FEitherABErrorHandlingOps(() => fab)
 
 }
 
 object error extends error {
 
-  final class FAErrorHandlingOps[F[_], B](private val fb: () => F[B]) extends AnyVal {
+  final class FAErrorHandlingOps[F[*], B](private val fb: () => F[B]) extends AnyVal {
 
     def catchNonFatalThrowable(
       implicit canCatch: CanCatch[F]
@@ -56,7 +56,7 @@ object error extends error {
       canRecover.recoverFromNonFatal[B, BB](fb())(handleError)
   }
 
-  final class FEitherABErrorHandlingOps[F[_], A, B](private val fab: () => F[Either[A, B]]) extends AnyVal {
+  final class FEitherABErrorHandlingOps[F[*], A, B](private val fab: () => F[Either[A, B]]) extends AnyVal {
 
     def catchNonFatalEither[AA >: A](
       f: Throwable => AA

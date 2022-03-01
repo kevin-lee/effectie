@@ -2,7 +2,7 @@ package effectie.core
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait CanCatch[F[_]] {
+trait CanCatch[F[*]] {
 
   def mapFa[A, B](fa: F[A])(f: A => B): F[B]
 
@@ -17,7 +17,7 @@ trait CanCatch[F[_]] {
 }
 
 object CanCatch {
-  def apply[F[_]: CanCatch]: CanCatch[F] = implicitly[CanCatch[F]]
+  def apply[F[*]: CanCatch]: CanCatch[F] = implicitly[CanCatch[F]]
 
   trait FutureCanCatch extends CanCatch[Future] {
     implicit def EC0: ExecutionContext

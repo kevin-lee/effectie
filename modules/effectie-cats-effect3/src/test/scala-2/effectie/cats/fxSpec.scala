@@ -738,7 +738,7 @@ object fxSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: Fx: Functor, A](a: => A): F[A] =
+  def run[F[*]: Fx: Functor, A](a: => A): F[A] =
     Fx[F].effectOf(a)
 
   object IoSpec {
