@@ -1,6 +1,6 @@
 package effectie.core
 
-trait ConsoleEffect[F[_]] {
+trait ConsoleEffect[F[*]] {
   def readLn: F[String]
 
   def readPassword: F[Array[Char]]
@@ -17,9 +17,9 @@ trait ConsoleEffect[F[_]] {
 }
 
 object ConsoleEffect {
-  def apply[F[_]: ConsoleEffect]: ConsoleEffect[F] = implicitly[ConsoleEffect[F]]
+  def apply[F[*]: ConsoleEffect]: ConsoleEffect[F] = implicitly[ConsoleEffect[F]]
 
-  abstract class ConsoleEffectWithoutFlatMap[F[_]: FxCtor] extends ConsoleEffect[F] {
+  abstract class ConsoleEffectWithoutFlatMap[F[*]: FxCtor] extends ConsoleEffect[F] {
 
     override def readLn: F[String] =
       implicitly[FxCtor[F]].effectOf(scala.io.StdIn.readLine())

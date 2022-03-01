@@ -8,14 +8,14 @@ import effectie.core.{ConsoleEffect, YesNo}
 
 trait console {
 
-  implicit def consoleEffectF[F[_]: effectie.core.FxCtor: FlatMap]: ConsoleEffect[F] =
+  implicit def consoleEffectF[F[*]: effectie.core.FxCtor: FlatMap]: ConsoleEffect[F] =
     new ConsoleEffectF[F]
 
 }
 
 object console extends console {
 
-  final class ConsoleEffectF[F[_]: effectie.core.FxCtor: FlatMap]
+  final class ConsoleEffectF[F[*]: effectie.core.FxCtor: FlatMap]
       extends ConsoleEffectWithoutFlatMap[F]
       with ConsoleEffect[F] {
 

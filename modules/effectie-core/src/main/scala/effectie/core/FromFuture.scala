@@ -6,13 +6,13 @@ import scala.concurrent.duration.Duration
 /** @author Kevin Lee
   * @since 2020-09-22
   */
-trait FromFuture[F[_]] {
+trait FromFuture[F[*]] {
   def toEffect[A](future: => Future[A]): F[A]
 }
 
 object FromFuture {
 
-  def apply[F[_]: FromFuture]: FromFuture[F] = implicitly[FromFuture[F]]
+  def apply[F[*]: FromFuture]: FromFuture[F] = implicitly[FromFuture[F]]
 
   implicit val fromFutureToFuture: FromFuture[Future] =
     new FromFuture[Future] {

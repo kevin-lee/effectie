@@ -10,7 +10,7 @@ object Laws {
     /* Functors must preserve identity morphisms
      * fmap id = id
      */
-    def identity[F[_], A](fa: F[A])(
+    def identity[F[*], A](fa: F[A])(
       implicit F: Functor[F],
       FA: Eq[F[A]]
     ): Boolean =
@@ -22,7 +22,7 @@ object Laws {
     /* Functors preserve composition of morphisms
      * fmap (f . g)  ==  fmap f . fmap g
      */
-    def composition[F[_]: Functor, A, B, C](fa: F[A], f: B => C, g: A => B)(
+    def composition[F[*]: Functor, A, B, C](fa: F[A], f: B => C, g: A => B)(
       implicit F: Functor[F],
       FC: Eq[F[C]]
     ): Boolean =
@@ -37,7 +37,7 @@ object Laws {
     /* Identity
      * pure id <*> v = v
      */
-    def identityAp[F[_]: Applicative, A](fa: => F[A])(
+    def identityAp[F[*]: Applicative, A](fa: => F[A])(
       implicit F: Functor[F],
       FA: Eq[F[A]]
     ): Boolean =
@@ -49,7 +49,7 @@ object Laws {
     /* Homomorphism
      * pure f <*> pure x = pure (f x)
      */
-    def homomorphism[F[_]: Applicative, A, B](f: A => B, a: => A)(
+    def homomorphism[F[*]: Applicative, A, B](f: A => B, a: => A)(
       implicit F: Functor[F],
       FB: Eq[F[B]]
     ): Boolean =
@@ -61,7 +61,7 @@ object Laws {
     /* Interchange
      * u <*> pure y = pure ($ y) <*> u
      */
-    def interchange[F[_], A, B](a: => A, f: F[A => B])(
+    def interchange[F[*], A, B](a: => A, f: F[A => B])(
       implicit F: Applicative[F],
       FB: Eq[F[B]]
     ): Boolean =
@@ -73,7 +73,7 @@ object Laws {
     /* Composition
      * pure (.) <*> u <*> v <*> w = u <*> (v <*> w)
      */
-    def compositionAp[F[_], A, B, C](fa: F[A], f: F[B => C], g: F[A => B])(
+    def compositionAp[F[*], A, B, C](fa: F[A], f: F[B => C], g: F[A => B])(
       implicit F: Applicative[F],
       FC: Eq[F[C]]
     ): Boolean =
@@ -96,7 +96,7 @@ object Laws {
     /*
      * return a >>= f === f a
      */
-    def leftIdentity[F[_], A, B](a: A, f: A => F[B])(
+    def leftIdentity[F[*], A, B](a: A, f: A => F[B])(
       implicit F: Monad[F],
       FB: Eq[F[B]]
     ): Boolean =
@@ -108,7 +108,7 @@ object Laws {
     /*
      * m >>= return === m
      */
-    def rightIdentity[F[_], A](fa: F[A])(
+    def rightIdentity[F[*], A](fa: F[A])(
       implicit F: Monad[F],
       FA: Eq[F[A]]
     ): Boolean =
@@ -120,7 +120,7 @@ object Laws {
     /*
      * (m >>= f) >>= g === m >>= (\x -> f x >>= g)
      */
-    def associativity[F[_], A, B, C](fa: F[A], f: A => F[B], g: B => F[C])(
+    def associativity[F[*], A, B, C](fa: F[A], f: A => F[B], g: B => F[C])(
       implicit F: Monad[F],
       FC: Eq[F[C]]
     ): Boolean =

@@ -193,7 +193,7 @@ object FxSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: Fx, A](a: => A): F[A] =
+  def run[F[*]: Fx, A](a: => A): F[A] =
     Fx[F].effectOf(a)
 
   object FutureSpec {

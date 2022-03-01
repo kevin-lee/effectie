@@ -5,7 +5,7 @@ import scala.concurrent.{ExecutionContext, Future}
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-trait CanRecover[F[_]] {
+trait CanRecover[F[*]] {
 
   def recoverFromNonFatalWith[A, AA >: A](fa: => F[A])(handleError: PartialFunction[Throwable, F[AA]]): F[AA]
 
@@ -29,7 +29,7 @@ trait CanRecover[F[_]] {
 
 object CanRecover {
 
-  def apply[F[_]: CanRecover]: CanRecover[F] = implicitly[CanRecover[F]]
+  def apply[F[*]: CanRecover]: CanRecover[F] = implicitly[CanRecover[F]]
 
   implicit def futureCanRecover(implicit ec: ExecutionContext): CanRecover[Future] = new CanRecoverFuture
 

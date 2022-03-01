@@ -308,7 +308,7 @@ object canRecoverSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[*]: FxCtor: Functor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object IOSpec {

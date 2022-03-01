@@ -86,7 +86,7 @@ object CanRecoverSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  def run[F[_]: FxCtor, A](a: => A): F[A] =
+  def run[F[*]: FxCtor, A](a: => A): F[A] =
     FxCtor[F].effectOf(a)
 
   object FutureSpec {

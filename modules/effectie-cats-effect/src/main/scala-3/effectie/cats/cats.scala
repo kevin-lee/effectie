@@ -31,7 +31,7 @@ extension [F[*]](canHandleError: effectie.core.CanHandleError[F]) {
 
 }
 
-extension [F[_]](canRecover: effectie.core.CanRecover[F]) {
+extension [F[*]](canRecover: effectie.core.CanRecover[F]) {
 
   final def recoverEitherTFromNonFatalWith[A, AA >: A, B, BB >: B](
     efab: => EitherT[F, A, B]

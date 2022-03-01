@@ -41,16 +41,16 @@ object fxSpec extends Properties {
     example("test fx.errorOf[Id]", IdSpec.testErrorOf)
   )
 
-  trait FxCtorClient[F[_]] {
+  trait FxCtorClient[F[*]] {
     def eftOf[A](a: A): F[A]
     def of[A](a: A): F[A]
     def unit: F[Unit]
     def errOf[A](throwable: Throwable): F[A]
   }
   object FxCtorClient {
-    def apply[F[_]: FxCtorClient]: FxCtorClient[F]         = implicitly[FxCtorClient[F]]
-    implicit def eftClientF[F[_]: FxCtor]: FxCtorClient[F] = new FxCtorClientF[F]
-    final class FxCtorClientF[F[_]: FxCtor] extends FxCtorClient[F] {
+    def apply[F[*]: FxCtorClient]: FxCtorClient[F]         = implicitly[FxCtorClient[F]]
+    implicit def eftClientF[F[*]: FxCtor]: FxCtorClient[F] = new FxCtorClientF[F]
+    final class FxCtorClientF[F[*]: FxCtor] extends FxCtorClient[F] {
       override def eftOf[A](a: A): F[A]                 = effectOf[F](a)
       override def of[A](a: A): F[A]                    = pureOf[F](a)
       override def unit: F[Unit]                        = unitOf[F]
@@ -58,17 +58,17 @@ object fxSpec extends Properties {
     }
   }
 
-  trait FxClient[F[_]] {
+  trait FxClient[F[*]] {
     def eftOf[A](a: A): F[A]
     def of[A](a: A): F[A]
     def unit: F[Unit]
     def errOf[A](throwable: Throwable): F[A]
   }
   object FxClient {
-    def apply[F[_]: FxClient]: FxClient[F]         =
+    def apply[F[*]: FxClient]: FxClient[F]         =
       implicitly[FxClient[F]]
-    implicit def eftClientF[F[_]: Fx]: FxClient[F] = new FxClientF[F]
-    final class FxClientF[F[_]: Fx] extends FxClient[F] {
+    implicit def eftClientF[F[*]: Fx]: FxClient[F] = new FxClientF[F]
+    final class FxClientF[F[*]: Fx] extends FxClient[F] {
       override def eftOf[A](a: A): F[A]                 = effectOf[F](a)
       override def of[A](a: A): F[A]                    = pureOf[F](a)
       override def unit: F[Unit]                        = unitOf[F]

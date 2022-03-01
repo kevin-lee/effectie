@@ -6,7 +6,7 @@ import scala.concurrent.Future
 /** @author Kevin Lee
   * @since 2020-09-23
   */
-trait ToFuture[F[_]] {
+trait ToFuture[F[*]] {
 
   def unsafeToFuture[A](fa: F[A]): Future[A]
 
@@ -14,7 +14,7 @@ trait ToFuture[F[_]] {
 
 object ToFuture {
 
-  def apply[F[_] : ToFuture]: ToFuture[F] = implicitly[ToFuture[F]]
+  def apply[F[*] : ToFuture]: ToFuture[F] = implicitly[ToFuture[F]]
 
   implicit val futureToFuture: ToFuture[Future] = new ToFuture[Future] {
 

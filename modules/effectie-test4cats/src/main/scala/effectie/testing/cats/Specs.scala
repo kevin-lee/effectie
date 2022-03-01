@@ -6,7 +6,7 @@ import hedgehog._
 object Specs {
 
   object FunctorLaws {
-    def identity[F[_]](
+    def identity[F[*]](
       genM: Gen[F[Int]]
     )(implicit functor: Functor[F], eqM: Eq[F[Int]]): Property = for {
       m <- genM.log("m: F[Int]")
@@ -15,7 +15,7 @@ object Specs {
         .log("functorLaw.identity")
     }
 
-    def composition[F[_]](
+    def composition[F[*]](
       genM: Gen[F[Int]],
       genF: Gen[Int => Int]
     )(implicit functor: Functor[F], eqM: Eq[F[Int]]): Property = for {
@@ -29,7 +29,7 @@ object Specs {
   }
 
   object ApplicativeLaws {
-    def identity[F[_]](
+    def identity[F[*]](
       genM: Gen[F[Int]]
     )(implicit applicative: Applicative[F], eqM: Eq[F[Int]]): Property = for {
       m <- genM.log("m: F[Int]")
@@ -37,7 +37,7 @@ object Specs {
       (Laws.ApplicativeLaws.identity[F, Int](m) ==== true)
         .log("functorLaw.identity")
     }
-    def composition[F[_]](
+    def composition[F[*]](
       genM: Gen[F[Int]],
       genF: Gen[Int => Int]
     )(implicit applicative: Applicative[F], eqM: Eq[F[Int]]): Property = for {
@@ -48,7 +48,7 @@ object Specs {
       (Laws.ApplicativeLaws.composition[F, Int, Int, Int](m, f, f2) ==== true)
         .log("functorLaw.composition")
     }
-    def identityAp[F[_]](
+    def identityAp[F[*]](
       genM: Gen[F[Int]]
     )(implicit applicative: Applicative[F], eqM: Eq[F[Int]]): Property = for {
       m <- genM.log("m: F[Int]")
@@ -56,7 +56,7 @@ object Specs {
       (Laws.ApplicativeLaws.identityAp[F, Int](m) ==== true)
         .log("applicativeLaw.identityAp")
     }
-    def homomorphism[F[_]](
+    def homomorphism[F[*]](
       genInt: Gen[Int],
       genF: Gen[Int => Int]
     )(implicit applicative: Applicative[F], eqM: Eq[F[Int]]): Property = for {
@@ -66,7 +66,7 @@ object Specs {
       (Laws.ApplicativeLaws.homomorphism[F, Int, Int](f, x) ==== true)
         .log("applicativeLaw.homomorphism")
     }
-    def interchange[F[_]](
+    def interchange[F[*]](
       genInt: Gen[Int],
       genF: Gen[Int => Int]
     )(implicit applicative: Applicative[F], eqM: Eq[F[Int]]): Property = for {
@@ -76,7 +76,7 @@ object Specs {
       (Laws.ApplicativeLaws.interchange[F, Int, Int](x, applicative.pure(f)) ==== true)
         .log("applicativeLaw.interchange")
     }
-    def compositionAp[F[_]](
+    def compositionAp[F[*]](
       genM: Gen[F[Int]],
       genF: Gen[Int => Int]
     )(implicit applicative: Applicative[F], eqM: Eq[F[Int]]): Property = for {
@@ -90,7 +90,7 @@ object Specs {
   }
 
   object MonadLaws {
-    def identity[F[_]](
+    def identity[F[*]](
       genM: Gen[F[Int]],
     )(implicit monad: Monad[F], eqM: Eq[F[Int]]): Property = for {
       m <- genM.log("m: F[Int]")
@@ -99,7 +99,7 @@ object Specs {
         .log("functorLaw.identity")
     }
 
-    def composition[F[_]](
+    def composition[F[*]](
       genM: Gen[F[Int]],
       genF: Gen[Int => Int],
     )(implicit monad: Monad[F], eqM: Eq[F[Int]]): Property = for {
@@ -111,7 +111,7 @@ object Specs {
         .log("functorLaw.composition")
     }
 
-    def identityAp[F[_]](
+    def identityAp[F[*]](
       genM: Gen[F[Int]],
     )(implicit monad: Monad[F], eqM: Eq[F[Int]]): Property = for {
       m <- genM.log("m: F[Int]")
@@ -120,7 +120,7 @@ object Specs {
         .log("applicativeLaw.identityAp")
     }
 
-    def homomorphism[F[_]](
+    def homomorphism[F[*]](
       genInt: Gen[Int],
       genF: Gen[Int => Int],
     )(implicit monad: Monad[F], eqM: Eq[F[Int]]): Property = for {
@@ -131,7 +131,7 @@ object Specs {
         .log("applicativeLaw.homomorphism")
     }
 
-    def interchange[F[_]](
+    def interchange[F[*]](
       genInt: Gen[Int],
       genF: Gen[Int => Int],
     )(implicit monad: Monad[F], eqM: Eq[F[Int]]): Property = for {
@@ -142,7 +142,7 @@ object Specs {
         .log("applicativeLaw.interchange")
     }
 
-    def compositionAp[F[_]](
+    def compositionAp[F[*]](
       genM: Gen[F[Int]],
       genF: Gen[Int => Int],
     )(implicit monad: Monad[F], eqM: Eq[F[Int]]): Property = for {
@@ -154,7 +154,7 @@ object Specs {
         .log("applicativeLaw.compositionAp")
     }
 
-    def leftIdentity[F[_]](
+    def leftIdentity[F[*]](
       genInt: Gen[Int],
       genFm: Gen[Int => F[Int]]
     )(implicit monad: Monad[F], eqM: Eq[F[Int]]): Property = for {
@@ -165,7 +165,7 @@ object Specs {
         .log("monadLaw.leftIdentity")
     }
 
-    def rightIdentity[F[_]](
+    def rightIdentity[F[*]](
       genM: Gen[F[Int]],
     )(implicit monad: Monad[F], eqM: Eq[F[Int]]): Property = for {
       m <- genM.log("m: F[Int]")
@@ -174,7 +174,7 @@ object Specs {
         .log("monadLaw.rightIdentity")
     }
 
-    def associativity[F[_]](
+    def associativity[F[*]](
       genM: Gen[F[Int]],
       genFm: Gen[Int => F[Int]]
     )(implicit monad: Monad[F], eqM: Eq[F[Int]]): Property = for {

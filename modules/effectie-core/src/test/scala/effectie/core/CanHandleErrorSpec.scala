@@ -87,7 +87,7 @@ object CanHandleErrorSpec extends Properties {
   private def throwThrowable[A](throwable: => Throwable): A =
     throw throwable
 
-  private def run[F[_]: FxCtor, A](a: => A): F[A] =
+  private def run[F[*]: FxCtor, A](a: => A): F[A] =
     FxCtor[F].effectOf(a)
 
   object FutureSpec {

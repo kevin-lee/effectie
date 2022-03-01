@@ -5,7 +5,7 @@ import scala.concurrent.{ExecutionContext, Future}
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-trait CanHandleError[F[_]] {
+trait CanHandleError[F[*]] {
 
   def handleNonFatalWith[A, AA >: A](fa: => F[A])(handleError: Throwable => F[AA]): F[AA]
 
@@ -29,7 +29,7 @@ trait CanHandleError[F[_]] {
 
 object CanHandleError {
 
-  def apply[F[_]: CanHandleError]: CanHandleError[F] = implicitly[CanHandleError[F]]
+  def apply[F[*]: CanHandleError]: CanHandleError[F] = implicitly[CanHandleError[F]]
 
   trait FutureCanHandleError extends CanHandleError[Future] {
     implicit def EC0: ExecutionContext
