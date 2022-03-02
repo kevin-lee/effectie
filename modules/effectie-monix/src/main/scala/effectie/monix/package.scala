@@ -1,6 +1,6 @@
 package effectie
 
-import cats.data.EitherT
+import _root_.cats.data.EitherT
 
 /** @author Kevin Lee
   * @since 2021-11-23

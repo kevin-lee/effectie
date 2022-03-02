@@ -23,9 +23,9 @@ object console extends console {
       answer <- readLn
       yesOrN <- answer match {
                   case "y" | "Y" =>
-                    effectie.core.FxCtor[F].effectOf(YesNo.yes)
+                    FxCtor[F].pureOf(YesNo.yes)
                   case "n" | "N" =>
-                    effectie.core.FxCtor[F].effectOf(YesNo.no)
+                    FxCtor[F].pureOf(YesNo.no)
                   case _ =>
                     readYesNo(prompt)
                 }
