@@ -44,18 +44,29 @@ lazy val effectie = (project in file("."))
   )
   .settings(noPublish)
   .settings(mavenCentralPublishSettings)
-  .aggregate(core, testing4Cats, catsEffect, catsEffect3, monix)
+  .aggregate(testing4Cats, core, cats, catsEffect, catsEffect3, monix)
 
 lazy val core = projectCommonSettings("core", ProjectName("core"))
   .settings(
-    description               := "Effect Utils - Core",
+    description         := "Effect Utils - Core",
     libraryDependencies ++= List(libs.extrasConcurrent, libs.extrasConcurrentTesting),
-    libraryDependencies       :=
+    libraryDependencies :=
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
-    console / initialCommands :=
-      """import effectie._""",
   )
   .dependsOn(testing4Cats % Test)
+
+lazy val cats = projectCommonSettings("cats", ProjectName("cats"))
+  .settings(
+    description         := "Effect Utils - Cats",
+    libraryDependencies ++= List(
+      libs.libCatsCore(props.catsLatestVersion),
+      libs.extrasConcurrent,
+      libs.extrasConcurrentTesting
+    ),
+    libraryDependencies :=
+      libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
+  )
+  .dependsOn(core % props.IncludeTest)
 
 lazy val testing4Cats = projectCommonSettings("test4cats", ProjectName("test4cats"))
   .settings(
@@ -94,11 +105,10 @@ lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effe
           )
       }),
     libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
-    console / initialCommands :=
-      """import effectie.cats._""",
   )
   .dependsOn(
     core         % props.IncludeTest,
+    cats         % props.IncludeTest,
     testing4Cats % Test,
   )
 
@@ -117,6 +127,7 @@ lazy val catsEffect3 = projectCommonSettings("catsEffect3", ProjectName("cats-ef
   )
   .dependsOn(
     core         % props.IncludeTest,
+    cats         % props.IncludeTest,
     testing4Cats % Test,
   )
 
@@ -134,11 +145,10 @@ lazy val monix = projectCommonSettings("monix", ProjectName("monix"))
           libraryDependencies.value ++ List(libs.libMonix)
       },
     libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
-    console / initialCommands :=
-      """import effectie.monix._""",
   )
   .dependsOn(
     core         % props.IncludeTest,
+    cats         % props.IncludeTest,
     testing4Cats % Test,
   )
 
@@ -157,7 +167,7 @@ lazy val docs = (project in file("generated-docs"))
       libraryDependencies.value
     ),
     mdocVariables       := Map(
-      "VERSION" -> {
+      "VERSION"                  -> {
         import sys.process._
         "git fetch --tags".!
         val tag = "git rev-list --tags --max-count=1".!!.trim
@@ -299,7 +309,7 @@ def projectCommonSettings(id: String, projectName: ProjectName): Project = {
   Project(id, file(s"modules/$prefixedName"))
     .settings(
       name                                    := prefixedName,
-      fork := true,
+      fork                                    := true,
       scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
       libraryDependencies ++= libs.hedgehogLibs.map(_ % Test) ++ List(libs.extrasCats % Test),
       /* WartRemover and scalacOptions { */
