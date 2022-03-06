@@ -3,6 +3,7 @@ import kevinlee.sbt.SbtCommon.crossVersionProps
 import just.semver.{Anh, Dsv, SemVer}
 import SemVer.{Major, Minor, Patch}
 import just.semver.AdditionalInfo.PreRelease
+import sbtcrossproject.CrossProject
 
 ThisBuild / scalaVersion       := props.ProjectScalaVersion
 ThisBuild / organization       := "io.kevinlee"
@@ -51,9 +52,22 @@ lazy val effectie = (project in file("."))
   )
   .settings(noPublish)
   .settings(mavenCentralPublishSettings)
-  .aggregate(testing4Cats, core, cats, catsEffect, catsEffect3, monix)
+  .aggregate(
+    testing4CatsJvm,
+    testing4CatsJs,
+    coreJvm,
+    coreJs,
+    catsJvm,
+    catsJs,
+    catsEffectJvm,
+    catsEffectJs,
+    catsEffect3Jvm,
+    catsEffect3Js,
+    monixJvm,
+    monixJs,
+  )
 
-lazy val core = projectCommonSettings("core", ProjectName("core"))
+lazy val core = module(ProjectName("core"), crossProject(JVMPlatform, JSPlatform))
   .settings(
     description         := "Effect Utils - Core",
     libraryDependencies ++= List(libs.extrasConcurrent, libs.extrasConcurrentTesting),
@@ -62,7 +76,16 @@ lazy val core = projectCommonSettings("core", ProjectName("core"))
   )
   .dependsOn(testing4Cats % Test)
 
-lazy val cats = projectCommonSettings("cats", ProjectName("cats"))
+lazy val coreJvm = core.jvm
+lazy val coreJs  = core
+  .js
+  .settings(
+    scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty
+                       else List("-P:scalajs:nowarnGlobalExecutionContext")),
+    Test / fork := false,
+  )
+
+lazy val cats    = module(ProjectName("cats"), crossProject(JVMPlatform, JSPlatform))
   .settings(
     description         := "Effect Utils - Cats",
     libraryDependencies ++= List(
@@ -74,8 +97,14 @@ lazy val cats = projectCommonSettings("cats", ProjectName("cats"))
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
   )
   .dependsOn(core % props.IncludeTest)
+lazy val catsJvm = cats.jvm
+lazy val catsJs  = cats
+  .js
+  .settings(
+    Test / fork := false,
+  )
 
-lazy val testing4Cats = projectCommonSettings("test4cats", ProjectName("test4cats"))
+lazy val testing4Cats    = module(ProjectName("test4cats"), crossProject(JVMPlatform, JSPlatform))
   .settings(
     description         := "Effect's test utils for Cats",
     libraryDependencies :=
@@ -86,8 +115,14 @@ lazy val testing4Cats = projectCommonSettings("test4cats", ProjectName("test4cat
     console / initialCommands :=
       """import effectie.testing.cats._""",
   )
+lazy val testing4CatsJvm = testing4Cats.jvm
+lazy val testing4CatsJs  = testing4Cats
+  .js
+  .settings(
+    Test / fork := false,
+  )
 
-lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effect"))
+lazy val catsEffect    = module(ProjectName("cats-effect"), crossProject(JVMPlatform, JSPlatform))
   .settings(
     description         := "Effect Utils - Cats Effect",
     libraryDependencies :=
@@ -118,8 +153,16 @@ lazy val catsEffect = projectCommonSettings("catsEffect", ProjectName("cats-effe
     cats         % props.IncludeTest,
     testing4Cats % Test,
   )
+lazy val catsEffectJvm = catsEffect.jvm
+lazy val catsEffectJs  = catsEffect
+  .js
+  .settings(
+    scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty
+                       else List("-P:scalajs:nowarnGlobalExecutionContext")),
+    Test / fork := false,
+  )
 
-lazy val catsEffect3 = projectCommonSettings("catsEffect3", ProjectName("cats-effect3"))
+lazy val catsEffect3    = module(ProjectName("cats-effect3"), crossProject(JVMPlatform, JSPlatform))
   .settings(
     description         := "Effect Utils - Cats Effect 3",
     libraryDependencies ++= List(
@@ -137,8 +180,16 @@ lazy val catsEffect3 = projectCommonSettings("catsEffect3", ProjectName("cats-ef
     cats         % props.IncludeTest,
     testing4Cats % Test,
   )
+lazy val catsEffect3Jvm = catsEffect3.jvm
+lazy val catsEffect3Js  = catsEffect3
+  .js
+  .settings(
+    scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty
+                       else List("-P:scalajs:nowarnGlobalExecutionContext")),
+    Test / fork := false,
+  )
 
-lazy val monix = projectCommonSettings("monix", ProjectName("monix"))
+lazy val monix    = module(ProjectName("monix"), crossProject(JVMPlatform, JSPlatform))
   .settings(
     description         := "Effect Utils - Monix",
     libraryDependencies :=
@@ -157,6 +208,14 @@ lazy val monix = projectCommonSettings("monix", ProjectName("monix"))
     core         % props.IncludeTest,
     cats         % props.IncludeTest,
     testing4Cats % Test,
+  )
+lazy val monixJvm = monix.jvm
+lazy val monixJs  = monix
+  .js
+  .settings(
+    scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty
+                       else List("-P:scalajs:nowarnGlobalExecutionContext")),
+    Test / fork := false,
   )
 
 lazy val docs = (project in file("generated-docs"))
@@ -311,9 +370,10 @@ def libraryDependenciesPostProcess(
   else
     libraries
 
-def projectCommonSettings(id: String, projectName: ProjectName): Project = {
+def module(projectName: ProjectName, crossProject: CrossProject.Builder): CrossProject = {
   val prefixedName = prefixedProjectName(projectName.projectName)
-  Project(id, file(s"modules/$prefixedName"))
+  crossProject
+    .in(file(s"modules/$prefixedName"))
     .settings(
       name                                    := prefixedName,
       fork                                    := true,
@@ -345,7 +405,7 @@ def projectCommonSettings(id: String, projectName: ProjectName): Project = {
       /* } WartRemover and scalacOptions */
       testFrameworks ++= (testFrameworks.value ++ Seq(TestFramework("hedgehog.sbt.Framework"))).distinct,
       Compile / unmanagedSourceDirectories ++= {
-        val sharedSourceDir = baseDirectory.value / "src" / "main"
+        val sharedSourceDir = (baseDirectory.value / ".." / "shared").getCanonicalFile / "src" / "main"
         if (isScala3(scalaVersion.value))
           Seq(
             sharedSourceDir / "scala-2.12_3",
@@ -370,7 +430,7 @@ def projectCommonSettings(id: String, projectName: ProjectName): Project = {
           Seq.empty
       },
       Test / unmanagedSourceDirectories ++= {
-        val sharedSourceDir = baseDirectory.value / "src" / "test"
+        val sharedSourceDir = (baseDirectory.value / ".." / "shared").getCanonicalFile / "src" / "test"
         if (isScala3(scalaVersion.value) || scalaVersion.value.startsWith("3."))
           Seq(
             sharedSourceDir / "scala-2.12_3",
