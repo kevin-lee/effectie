@@ -75,9 +75,9 @@ object fxSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual                  = before
+      var actual                  = before // scalafix:ok DisableSyntax.var
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual2                 = before
+      var actual2                 = before // scalafix:ok DisableSyntax.var
       val testBefore              = actual ==== before
       val testBefore2             = actual2 ==== before
       val eftClient               = FxCtorClient[IO]
@@ -116,7 +116,7 @@ object fxSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual        = before
+      var actual        = before // scalafix:ok DisableSyntax.var
       val testBefore    = actual ==== before
       val io            = effectOf[IO]({ actual = after; () })
       val testBeforeRun = actual ==== before
@@ -136,7 +136,7 @@ object fxSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual        = before
+      var actual        = before // scalafix:ok DisableSyntax.var
       val testBefore    = actual ==== before
       val io            = pureOf[IO]({ actual = after; () })
       val testBeforeRun = actual ==== after
@@ -185,9 +185,9 @@ object fxSpec extends Properties {
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual                  = before
+      var actual                  = before // scalafix:ok DisableSyntax.var
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual2                 = before
+      var actual2                 = before // scalafix:ok DisableSyntax.var
       val testBefore              = actual ==== before
       val testBefore2             = actual2 ==== before
       val eftClient               = FxCtorClient[Future]
@@ -225,7 +225,7 @@ object fxSpec extends Properties {
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual               = before
+      var actual               = before // scalafix:ok DisableSyntax.var
       val testBefore           = actual ==== before
       val future: Future[Unit] = effectOf[Future]({ actual = after; () })
       ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
@@ -247,7 +247,7 @@ object fxSpec extends Properties {
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual       = before
+      var actual       = before // scalafix:ok DisableSyntax.var
       val testBefore   = actual ==== before
       val future       = pureOf[Future]({ actual = after; () })
       ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
@@ -291,9 +291,9 @@ object fxSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual                  = before
+      var actual                  = before // scalafix:ok DisableSyntax.var
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual2                 = before
+      var actual2                 = before // scalafix:ok DisableSyntax.var
       val testBefore              = actual ==== before
       val testBefore2             = actual2 ==== before
       val eftClient               = FxCtorClient[Id]
@@ -324,7 +324,7 @@ object fxSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual     = before
+      var actual     = before // scalafix:ok DisableSyntax.var
       val testBefore = actual ==== before
       effectOf[Id]({ actual = after; () })
       val testAfter  = actual ==== after
@@ -336,7 +336,7 @@ object fxSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual     = before
+      var actual     = before // scalafix:ok DisableSyntax.var
       val testBefore = actual ==== before
       pureOf[Id]({ actual = after; () })
       val testAfter  = actual ==== after

@@ -47,9 +47,9 @@ object canRecover {
       try (fa)
       catch {
         case NonFatal(ex) =>
-          handleError.applyOrElse(ex, (err: Throwable) => throw err)
+          handleError.applyOrElse(ex, (err: Throwable) => throw err) // scalafix:ok DisableSyntax.throw
         case ex: Throwable =>
-          throw ex
+          throw ex // scalafix:ok DisableSyntax.throw
       }
 
     @inline override final def recoverFromNonFatal[A, AA >: A](

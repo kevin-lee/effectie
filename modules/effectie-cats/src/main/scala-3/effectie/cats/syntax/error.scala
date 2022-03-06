@@ -18,7 +18,6 @@ trait error {
     ): EitherT[F, AA, B] =
       effectie.cats.catchNonFatalEitherT(canCatch)[A, AA, B](efab)(f)
 
-
     def handleEitherTNonFatalWith[AA >: A, BB >: B](
       handleError: Throwable => F[Either[AA, BB]]
     )(

@@ -43,7 +43,7 @@ object ToFutureSpec extends Properties {
         Result.all(
           List(
             Result
-              .assert(future.isInstanceOf[Future[Int]])
+              .assert(future.isInstanceOf[Future[Int]]) // scalafix:ok DisableSyntax.isInstanceOf
               .log(s"future is not an instance of Future[Int]. future.getClass: ${future.getClass.toString}"),
             actual ==== ConcurrentSupport.futureToValueAndTerminate(es, waitFor300Millis)(expected),
             actual ==== a

@@ -40,7 +40,7 @@ object FxCtorSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      var actual        = before
+      var actual        = before // scalafix:ok DisableSyntax.var
       val testBefore    = actual ==== before
       val io            = FxCtor[IO].effectOf({ actual = after; () })
       val testBeforeRun = actual ==== before
@@ -59,7 +59,7 @@ object FxCtorSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      var actual        = before
+      var actual        = before // scalafix:ok DisableSyntax.var
       val testBefore    = actual ==== before
       val io            = FxCtor[IO].pureOf({ actual = after; () })
       val testBeforeRun = actual ==== after
@@ -74,7 +74,7 @@ object FxCtorSpec extends Properties {
       )
     }
 
-    def testUnitOf: Result = {
+    def testUnitOf: Result  = {
       val io             = FxCtor[IO].unitOf
       val expected: Unit = ()
       val actual: Unit   = io.unsafeRunSync()
@@ -98,7 +98,7 @@ object FxCtorSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      var actual     = before
+      var actual     = before // scalafix:ok DisableSyntax.var
       val testBefore = actual ==== before
       FxCtor[Id].effectOf({ actual = after; () })
       val testAfter  = actual ==== after
@@ -109,7 +109,7 @@ object FxCtorSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      var actual     = before
+      var actual     = before // scalafix:ok DisableSyntax.var
       val testBefore = actual ==== before
       FxCtor[Id].pureOf({ actual = after; () })
       val testAfter  = actual ==== after

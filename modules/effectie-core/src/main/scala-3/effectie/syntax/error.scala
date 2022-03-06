@@ -2,10 +2,9 @@ package effectie.syntax
 
 import effectie.core.{CanCatch, CanHandleError, CanRecover}
 
-/**
- * @author Kevin Lee
- * @since 2022-01-17
- */
+/** @author Kevin Lee
+  * @since 2022-01-17
+  */
 trait error {
 
   extension [F[*], B](fb: => F[B]) {

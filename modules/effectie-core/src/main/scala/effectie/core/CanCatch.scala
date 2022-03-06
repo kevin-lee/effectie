@@ -33,7 +33,7 @@ object CanCatch {
           scala.util.Try[Either[Throwable, A]](Left(ex))
 
         case scala.util.Failure(ex) =>
-          throw ex
+          throw ex // scalafix:ok DisableSyntax.throw
       }
 
   }

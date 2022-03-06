@@ -69,8 +69,8 @@ object fxSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      var actual                  = before
-      var actual2                 = before
+      var actual                  = before // scalafix:ok DisableSyntax.var
+      var actual2                 = before // scalafix:ok DisableSyntax.var
       val testBefore              = actual ==== before
       val testBefore2             = actual2 ==== before
       val eftClient               = FxCtorClient[IO]
@@ -107,7 +107,7 @@ object fxSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      var actual        = before
+      var actual        = before // scalafix:ok DisableSyntax.var
       val testBefore    = actual ==== before
       val io            = effectOf[IO]({ actual = after; () })
       val testBeforeRun = actual ==== before
@@ -126,7 +126,7 @@ object fxSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      var actual        = before
+      var actual        = before // scalafix:ok DisableSyntax.var
       val testBefore    = actual ==== before
       val io            = pureOf[IO]({ actual = after; () })
       val testBeforeRun = actual ==== after
@@ -180,8 +180,8 @@ object fxSpec extends Properties {
       given ec: ExecutionContext             =
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
-      var actual                  = before
-      var actual2                 = before
+      var actual                  = before // scalafix:ok DisableSyntax.var
+      var actual2                 = before // scalafix:ok DisableSyntax.var
       val testBefore              = actual ==== before
       val testBefore2             = actual2 ==== before
       val eftClient               = FxCtorClient[Future]
@@ -218,7 +218,7 @@ object fxSpec extends Properties {
       given ec: ExecutionContext             =
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
-      var actual               = before
+      var actual               = before // scalafix:ok DisableSyntax.var
       val testBefore           = actual ==== before
       val future: Future[Unit] = effectOf[Future]({ actual = after; () })
       ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
@@ -239,7 +239,7 @@ object fxSpec extends Properties {
       given ec: ExecutionContext             =
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
-      var actual       = before
+      var actual       = before // scalafix:ok DisableSyntax.var
       val testBefore   = actual ==== before
       val future       = pureOf[Future]({ actual = after; () })
       ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
@@ -285,8 +285,8 @@ object fxSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      var actual                  = before
-      var actual2                 = before
+      var actual                  = before // scalafix:ok DisableSyntax.var
+      var actual2                 = before // scalafix:ok DisableSyntax.var
       val testBefore              = actual ==== before
       val testBefore2             = actual2 ==== before
       val eftClient               = FxCtorClient[Id]
@@ -316,7 +316,7 @@ object fxSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      var actual     = before
+      var actual     = before // scalafix:ok DisableSyntax.var
       val testBefore = actual ==== before
       effectOf[Id]({ actual = after; () })
       val testAfter  = actual ==== after
@@ -327,7 +327,7 @@ object fxSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      var actual     = before
+      var actual     = before // scalafix:ok DisableSyntax.var
       val testBefore = actual ==== before
       pureOf[Id]({ actual = after; () })
       val testAfter  = actual ==== after

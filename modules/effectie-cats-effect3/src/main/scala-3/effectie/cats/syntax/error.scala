@@ -5,8 +5,8 @@ import effectie.cats.*
 import effectie.core.{CanCatch, CanHandleError, CanRecover}
 
 /** @author Kevin Lee
- * @since 2021-10-16
- */
+  * @since 2021-10-16
+  */
 trait error {
 
   extension [F[*], A, B](efab: => EitherT[F, A, B]) {

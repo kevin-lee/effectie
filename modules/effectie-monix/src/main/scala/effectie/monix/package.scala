@@ -13,7 +13,8 @@ package object monix {
 
   }
 
-  implicit final class CanHandleErrorOps[F[*]](private val canHandleError: effectie.core.CanHandleError[F]) extends AnyVal {
+  implicit final class CanHandleErrorOps[F[*]](private val canHandleError: effectie.core.CanHandleError[F])
+      extends AnyVal {
 
     def handleEitherTNonFatalWith[A, AA >: A, B, BB >: B](
       efab: => EitherT[F, A, B]

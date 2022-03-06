@@ -13,7 +13,6 @@ import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog.*
 import hedgehog.runner.*
 
-
 /** @author Kevin Lee
   * @since 2022-02-13
   */
@@ -57,7 +56,7 @@ object CanCatchSyntaxSpec {
   )
 
   def throwThrowable[A](throwable: => Throwable): A =
-    throw throwable
+    throw throwable // scalafix:ok DisableSyntax.throw
 
   def run[F[*]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
@@ -215,7 +214,6 @@ object CanCatchSyntaxSpec {
       actual ==== expected and actual2 ==== expected
     }
 
-
   }
 
 }
@@ -287,7 +285,7 @@ object CanHandleErrorSyntaxSpec {
   )
 
   def throwThrowable[A](throwable: => Throwable): A =
-    throw throwable
+    throw throwable // scalafix:ok DisableSyntax.throw
 
   def run[F[*]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
@@ -477,7 +475,6 @@ object CanHandleErrorSyntaxSpec {
 
       actual ==== expected and actual2 ==== expected
     }
-
 
     def testCanHandleError_Future_handleNonFatalShouldHandleNonFatal: Result = {
 
@@ -708,7 +705,7 @@ object CanRecoverSyntaxSpec {
   )
 
   def throwThrowable[A](throwable: => Throwable): A =
-    throw throwable
+    throw throwable // scalafix:ok DisableSyntax.throw
 
   def run[F[*]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)

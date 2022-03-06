@@ -18,13 +18,13 @@ import hedgehog.runner.*
   */
 object FxCtorSpec extends Properties {
   override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
-  val ioSpecs = List(
+  val ioSpecs                    = List(
     property("test FxCtor[IO].effectOf", IoSpec.testEffectOf),
     property("test FxCtor[IO].pureOf", IoSpec.testPureOf),
     example("test FxCtor[IO].unitOf", IoSpec.testUnitOf),
     example("test FxCtor[IO].errorOf", IoSpec.testErrorOf),
   )
-  
+
   val futureSpecs = effectie.core.FxCtorSpec.futureSpecs
 
   val idSpecs = List(
@@ -42,7 +42,7 @@ object FxCtorSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
 
-      var actual        = before
+      var actual        = before // scalafix:ok DisableSyntax.var
       val testBefore    = actual ==== before
       val io            = FxCtor[IO].effectOf({
         actual = after; ()
@@ -51,9 +51,9 @@ object FxCtorSpec extends Properties {
 
       import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
-      val runResult = io.completeAs(())
+      val runResult        = io.completeAs(())
 
-      val testAfterRun  = actual ==== after
+      val testAfterRun = actual ==== after
       Result.all(
         List(
           testBefore.log("testBefore"),
@@ -68,7 +68,7 @@ object FxCtorSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      var actual        = before
+      var actual        = before // scalafix:ok DisableSyntax.var
       val testBefore    = actual ==== before
       val io            = FxCtor[IO].pureOf({
         actual = after; ()
@@ -77,9 +77,9 @@ object FxCtorSpec extends Properties {
       import CatsEffectRunner.*
 
       given ticket: Ticker = Ticker(TestContext())
-      val runResult = io.completeAs(())
+      val runResult        = io.completeAs(())
 
-      val testAfterRun  = actual ==== after
+      val testAfterRun = actual ==== after
       Result.all(
         List(
           testBefore.log("testBefore"),
@@ -91,14 +91,13 @@ object FxCtorSpec extends Properties {
     }
 
     def testUnitOf: Result = {
-      val actual             = FxCtor[IO].unitOf
+      val actual         = FxCtor[IO].unitOf
       val expected: Unit = ()
 
       import CatsEffectRunner.*
       given ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
-
 
     def testErrorOf: Result = {
       import CatsEffectRunner.*
@@ -122,7 +121,7 @@ object FxCtorSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      var actual     = before
+      var actual     = before // scalafix:ok DisableSyntax.var
       val testBefore = actual ==== before
       FxCtor[Id].effectOf({
         actual = after; ()
@@ -135,7 +134,7 @@ object FxCtorSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      var actual     = before
+      var actual     = before // scalafix:ok DisableSyntax.var
       val testBefore = actual ==== before
       FxCtor[Id].pureOf({
         actual = after; ()

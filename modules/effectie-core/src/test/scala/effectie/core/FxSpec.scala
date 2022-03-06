@@ -191,7 +191,7 @@ object FxSpec extends Properties {
     )
 
   def throwThrowable[A](throwable: => Throwable): A =
-    throw throwable
+    throw throwable // scalafix:ok DisableSyntax.throw
 
   def run[F[*]: Fx, A](a: => A): F[A] =
     Fx[F].effectOf(a)
@@ -212,7 +212,7 @@ object FxSpec extends Properties {
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual               = before
+      var actual               = before // scalafix:ok DisableSyntax.var
       val testBefore           = actual ==== before
       val future: Future[Unit] = Fx[Future].effectOf({ actual = after; () })
       ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
@@ -234,7 +234,7 @@ object FxSpec extends Properties {
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual       = before
+      var actual       = before // scalafix:ok DisableSyntax.var
       val testBefore   = actual ==== before
       val future       = Fx[Future].pureOf({ actual = after; () })
       ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)

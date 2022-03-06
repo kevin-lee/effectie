@@ -59,7 +59,7 @@ object toFutureSpec extends Properties {
           List(
             taskResult,
             Result
-              .assert(future.isInstanceOf[Future[Int]])
+              .assert(future.isInstanceOf[Future[Int]]) // scalafix:ok DisableSyntax.isInstanceOf
               .log(s"future is not an instance of Future[Int]. future.getClass: ${future.getClass.toString}"),
             actual ==== expected,
           )
@@ -92,7 +92,7 @@ object toFutureSpec extends Properties {
           List(
             ioResult,
             Result
-              .assert(future.isInstanceOf[Future[Int]])
+              .assert(future.isInstanceOf[Future[Int]]) // scalafix:ok DisableSyntax.isInstanceOf
               .log(s"future is not an instance of Future[Int]. future.getClass: ${future.getClass.toString}"),
             actual ==== expected,
           )
@@ -122,7 +122,7 @@ object toFutureSpec extends Properties {
         Result.all(
           List(
             Result
-              .assert(future.isInstanceOf[Future[Int]])
+              .assert(future.isInstanceOf[Future[Int]]) // scalafix:ok DisableSyntax.isInstanceOf
               .log(s"future is not an instance of Future[Int]. future.getClass: ${future.getClass.toString}"),
             actual ==== ConcurrentSupport.futureToValueAndTerminate(es, WaitFor(300.milliseconds))(expected),
             actual ==== a
