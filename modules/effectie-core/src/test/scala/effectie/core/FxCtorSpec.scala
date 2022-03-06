@@ -39,7 +39,7 @@ object FxCtorSpec extends Properties {
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual               = before
+      var actual               = before // scalafix:ok DisableSyntax.var
       val testBefore           = actual ==== before
       val future: Future[Unit] = FxCtor[Future].effectOf({ actual = after; () })
       ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
@@ -61,7 +61,7 @@ object FxCtorSpec extends Properties {
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual       = before
+      var actual       = before // scalafix:ok DisableSyntax.var
       val testBefore   = actual ==== before
       val future       = FxCtor[Future].pureOf({ actual = after; () })
       ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)

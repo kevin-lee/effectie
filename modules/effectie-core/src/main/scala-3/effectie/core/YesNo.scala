@@ -6,5 +6,5 @@ enum YesNo derives CanEqual {
 }
 object YesNo {
   def yes: YesNo = Yes
-  def no: YesNo = No
+  def no: YesNo  = No
 }

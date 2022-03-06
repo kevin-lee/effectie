@@ -200,7 +200,7 @@ object CanCatchSyntaxSpec {
   )
 
   def throwThrowable[A](throwable: => Throwable): A =
-    throw throwable
+    throw throwable // scalafix:ok DisableSyntax.throw
 
   def run[F[*]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
@@ -1176,7 +1176,7 @@ object CanHandleErrorSyntaxSpec {
   )
 
   def throwThrowable[A](throwable: => Throwable): A =
-    throw throwable
+    throw throwable // scalafix:ok DisableSyntax.throw
 
   def run[F[*]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
@@ -2972,7 +2972,7 @@ object CanRecoverSyntaxSpec {
   )
 
   def throwThrowable[A](throwable: => Throwable): A =
-    throw throwable
+    throw throwable // scalafix:ok DisableSyntax.throw
 
   def run[F[*]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)

@@ -85,7 +85,7 @@ object CanHandleErrorSpec extends Properties {
 
   @SuppressWarnings(Array("org.wartremover.warts.Throw"))
   private def throwThrowable[A](throwable: => Throwable): A =
-    throw throwable
+    throw throwable // scalafix:ok DisableSyntax.throw
 
   private def run[F[*]: FxCtor, A](a: => A): F[A] =
     FxCtor[F].effectOf(a)

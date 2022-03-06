@@ -1032,7 +1032,7 @@ object fxSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual        = before
+      var actual        = before // scalafix:ok DisableSyntax.var
       val testBefore    = actual ==== before
       val task          = Fx[Task].effectOf({ actual = after; () })
       val testBeforeRun = actual ==== before
@@ -1052,7 +1052,7 @@ object fxSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual        = before
+      var actual        = before // scalafix:ok DisableSyntax.var
       val testBefore    = actual ==== before
       val task          = Fx[Task].pureOf({ actual = after; () })
       val testBeforeRun = actual ==== after
@@ -2221,7 +2221,7 @@ object fxSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual        = before
+      var actual        = before // scalafix:ok DisableSyntax.var
       val testBefore    = actual ==== before
       val io            = Fx[IO].effectOf({ actual = after; () })
       val testBeforeRun = actual ==== before
@@ -2241,7 +2241,7 @@ object fxSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual        = before
+      var actual        = before // scalafix:ok DisableSyntax.var
       val testBefore    = actual ==== before
       val io            = Fx[IO].pureOf({ actual = after; () })
       val testBeforeRun = actual ==== after
@@ -3764,7 +3764,7 @@ object fxSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual     = before
+      var actual     = before // scalafix:ok DisableSyntax.var
       val testBefore = actual ==== before
       Fx[Id].effectOf({ actual = after; () })
       val testAfter  = actual ==== after
@@ -3776,7 +3776,7 @@ object fxSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual     = before
+      var actual     = before // scalafix:ok DisableSyntax.var
       val testBefore = actual ==== before
       Fx[Id].pureOf({ actual = after; () })
       val testAfter  = actual ==== after

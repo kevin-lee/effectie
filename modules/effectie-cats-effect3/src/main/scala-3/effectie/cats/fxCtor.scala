@@ -28,7 +28,8 @@ object fxCtor {
 
     inline override final def unitOf: Id[Unit] = ()
 
-    inline override final def errorOf[A](throwable: Throwable): Id[A] = throw throwable
+    inline override final def errorOf[A](throwable: Throwable): Id[A] =
+      throw throwable // scalafix:ok DisableSyntax.throw
 
   }
 

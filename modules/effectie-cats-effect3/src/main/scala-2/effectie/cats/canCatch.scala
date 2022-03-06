@@ -32,7 +32,7 @@ object canCatch {
           ex.asLeft[A]
 
         case scala.util.Failure(ex) =>
-          throw ex
+          throw ex // scalafix:ok DisableSyntax.throw
       }
 
   }

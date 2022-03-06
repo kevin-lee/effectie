@@ -12,7 +12,7 @@ object fx {
 
     @inline override final def pureOf[A](a: A): IO[A] = fxCtor.ioFxCtor.pureOf(a)
 
-    @inline override final val unitOf: IO[Unit] = fxCtor.ioFxCtor.unitOf
+    @inline override val unitOf: IO[Unit] = fxCtor.ioFxCtor.unitOf
 
     @inline override final def errorOf[A](throwable: Throwable): IO[A] = fxCtor.ioFxCtor.errorOf(throwable)
 
@@ -44,7 +44,7 @@ object fx {
 
     @inline override final def pureOf[A](a: A): Id[A] = fxCtor.idFxCtor.pureOf(a)
 
-    @inline override final val unitOf: Id[Unit] = fxCtor.idFxCtor.unitOf
+    @inline override val unitOf: Id[Unit] = fxCtor.idFxCtor.unitOf
 
     @inline override final def errorOf[A](throwable: Throwable): Id[A] = fxCtor.idFxCtor.errorOf(throwable)
 

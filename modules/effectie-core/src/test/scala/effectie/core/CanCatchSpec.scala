@@ -48,7 +48,7 @@ object CanCatchSpec extends Properties {
 
   @SuppressWarnings(Array("org.wartremover.warts.Throw"))
   def throwThrowable[A](throwable: => Throwable): A =
-    throw throwable
+    throw throwable // scalafix:ok DisableSyntax.throw
 
   def run[F[*]: FxCtor: Functor, A](a: => A): F[A] =
     FxCtor[F].effectOf(a)

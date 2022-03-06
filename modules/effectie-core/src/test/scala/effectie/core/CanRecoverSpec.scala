@@ -84,7 +84,7 @@ object CanRecoverSpec extends Properties {
 
   @SuppressWarnings(Array("org.wartremover.warts.Throw"))
   def throwThrowable[A](throwable: => Throwable): A =
-    throw throwable
+    throw throwable // scalafix:ok DisableSyntax.throw
 
   def run[F[*]: FxCtor, A](a: => A): F[A] =
     FxCtor[F].effectOf(a)

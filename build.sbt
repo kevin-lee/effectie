@@ -34,6 +34,13 @@ ThisBuild / licenses   := props.licenses
 
 ThisBuild / resolvers += "sonatype-snapshots" at s"https://${props.SonatypeCredentialHost}/content/repositories/snapshots"
 
+ThisBuild / scalafixConfig := (
+  if (scalaVersion.value.startsWith("3"))
+    ((ThisBuild / baseDirectory).value / ".scalafix-scala3.conf").some
+  else
+    ((ThisBuild / baseDirectory).value / ".scalafix-scala2.conf").some
+)
+
 lazy val effectie = (project in file("."))
   .enablePlugins(DevOopsGitHubReleasePlugin)
   .settings(
@@ -311,6 +318,12 @@ def projectCommonSettings(id: String, projectName: ProjectName): Project = {
       name                                    := prefixedName,
       fork                                    := true,
       scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
+      scalafixConfig                          := (
+        if (scalaVersion.value.startsWith("3"))
+          ((ThisBuild / baseDirectory).value / ".scalafix-scala3.conf").some
+        else
+          ((ThisBuild / baseDirectory).value / ".scalafix-scala2.conf").some
+      ),
       libraryDependencies ++= libs.hedgehogLibs.map(_ % Test) ++ List(libs.extrasCats % Test),
       /* WartRemover and scalacOptions { */
       //      Compile / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),

@@ -11,10 +11,9 @@ import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._
 import hedgehog.runner._
 
-/**
- * @author Kevin Lee
- * @since 2022-02-26
- */
+/** @author Kevin Lee
+  * @since 2022-02-26
+  */
 object errorSpec extends Properties {
   override def tests: List[Test] =
     CanCatchSyntaxSpec.tests ++ CanHandleErrorSyntaxSpec.tests ++ CanRecoverSyntaxSpec.tests
@@ -58,7 +57,7 @@ object CanCatchSyntaxSpec {
 
   @SuppressWarnings(Array("org.wartremover.warts.Throw"))
   def throwThrowable[A](throwable: => Throwable): A =
-    throw throwable
+    throw throwable // scalafix:ok DisableSyntax.throw
 
   def run[F[*]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
@@ -265,7 +264,7 @@ object CanHandleErrorSyntaxSpec {
 
   @SuppressWarnings(Array("org.wartremover.warts.Throw"))
   def throwThrowable[A](throwable: => Throwable): A =
-    throw throwable
+    throw throwable // scalafix:ok DisableSyntax.throw
 
   def run[F[*]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
@@ -657,7 +656,7 @@ object CanRecoverSyntaxSpec {
 
   @SuppressWarnings(Array("org.wartremover.warts.Throw"))
   def throwThrowable[A](throwable: => Throwable): A =
-    throw throwable
+    throw throwable // scalafix:ok DisableSyntax.throw
 
   def run[F[*]: Fx: Functor, A](a: => A): F[A] =
     effectOf[F](a)
@@ -1010,6 +1009,5 @@ object CanRecoverSyntaxSpec {
     }
 
   }
-
 
 }
