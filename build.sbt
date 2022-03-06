@@ -79,11 +79,8 @@ lazy val core = module(ProjectName("core"), crossProject(JVMPlatform, JSPlatform
 lazy val coreJvm = core.jvm
 lazy val coreJs  = core
   .js
-  .settings(
-    scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty
-                       else List("-P:scalajs:nowarnGlobalExecutionContext")),
-    Test / fork := false,
-  )
+  .settings(jsSettingsForFuture)
+  .settings(jsSettings)
 
 lazy val cats    = module(ProjectName("cats"), crossProject(JVMPlatform, JSPlatform))
   .settings(
@@ -100,9 +97,7 @@ lazy val cats    = module(ProjectName("cats"), crossProject(JVMPlatform, JSPlatf
 lazy val catsJvm = cats.jvm
 lazy val catsJs  = cats
   .js
-  .settings(
-    Test / fork := false,
-  )
+  .settings(jsSettings)
 
 lazy val testing4Cats    = module(ProjectName("test4cats"), crossProject(JVMPlatform, JSPlatform))
   .settings(
@@ -118,9 +113,7 @@ lazy val testing4Cats    = module(ProjectName("test4cats"), crossProject(JVMPlat
 lazy val testing4CatsJvm = testing4Cats.jvm
 lazy val testing4CatsJs  = testing4Cats
   .js
-  .settings(
-    Test / fork := false,
-  )
+  .settings(jsSettings)
 
 lazy val catsEffect    = module(ProjectName("cats-effect"), crossProject(JVMPlatform, JSPlatform))
   .settings(
@@ -156,11 +149,8 @@ lazy val catsEffect    = module(ProjectName("cats-effect"), crossProject(JVMPlat
 lazy val catsEffectJvm = catsEffect.jvm
 lazy val catsEffectJs  = catsEffect
   .js
-  .settings(
-    scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty
-                       else List("-P:scalajs:nowarnGlobalExecutionContext")),
-    Test / fork := false,
-  )
+  .settings(jsSettingsForFuture)
+  .settings(jsSettings)
 
 lazy val catsEffect3    = module(ProjectName("cats-effect3"), crossProject(JVMPlatform, JSPlatform))
   .settings(
@@ -183,11 +173,8 @@ lazy val catsEffect3    = module(ProjectName("cats-effect3"), crossProject(JVMPl
 lazy val catsEffect3Jvm = catsEffect3.jvm
 lazy val catsEffect3Js  = catsEffect3
   .js
-  .settings(
-    scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty
-                       else List("-P:scalajs:nowarnGlobalExecutionContext")),
-    Test / fork := false,
-  )
+  .settings(jsSettingsForFuture)
+  .settings(jsSettings)
 
 lazy val monix    = module(ProjectName("monix"), crossProject(JVMPlatform, JSPlatform))
   .settings(
@@ -212,11 +199,8 @@ lazy val monix    = module(ProjectName("monix"), crossProject(JVMPlatform, JSPla
 lazy val monixJvm = monix.jvm
 lazy val monixJs  = monix
   .js
-  .settings(
-    scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty
-                       else List("-P:scalajs:nowarnGlobalExecutionContext")),
-    Test / fork := false,
-  )
+  .settings(jsSettingsForFuture)
+  .settings(jsSettings)
 
 lazy val docs = (project in file("generated-docs"))
   .enablePlugins(MdocPlugin, DocusaurPlugin)
@@ -465,3 +449,12 @@ def module(projectName: ProjectName, crossProject: CrossProject.Builder): CrossP
     )
     .settings(mavenCentralPublishSettings)
 }
+
+lazy val jsSettingsForFuture: SettingsDefinition = List(
+  Test / scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty
+  else List("-P:scalajs:nowarnGlobalExecutionContext")),
+)
+
+lazy val jsSettings: SettingsDefinition = List(
+  Test / fork := false,
+)
