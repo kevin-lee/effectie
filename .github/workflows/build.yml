@@ -70,4 +70,4 @@ jobs:
           .github/workflows/sbt-build-all.sh ${{ matrix.scala.version }} ${{ matrix.scala.report }}
 
       - if: ${{ github.event_name == 'pull_request' && matrix.scala.report == 'report' }}
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3

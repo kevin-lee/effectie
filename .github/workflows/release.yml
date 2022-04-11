@@ -105,7 +105,7 @@ jobs:
           .github/workflows/sbt-build-all.sh ${{ matrix.scala.version }} ${{ matrix.scala.report }}
 
       - if: ${{ matrix.scala.report == 'report' }}
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
 
 
   gh-release:
