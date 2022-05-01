@@ -4,12 +4,13 @@ import cats.data.EitherT
 import cats.effect.IO
 import cats.syntax.all._
 import cats.{Eq, Id, Monad}
-import effectie.monix.canCatchSpec.{run, throwThrowable}
-import effectie.core._
-import effectie.monix.fx._
-import effectie.testing.tools._
-import effectie.testing.types.{SomeError, SomeThrowableError}
 import effectie.SomeControlThrowable
+import effectie.core._
+import effectie.monix.canCatchSpec.{run, throwThrowable}
+import effectie.monix.fx._
+import effectie.specs.fxSpec.{FxSpecs, IdSpecs}
+import effectie.testing.tools
+import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._
@@ -25,15 +26,56 @@ object fxSpec extends Properties {
 
   private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
+  def assertWithAttempt[F[*]: Fx](
+    run: F[Int] => Either[Throwable, Int]
+  ): (F[Int], Either[Throwable, Int]) => Result = { (io, expected) =>
+    val actual = run(io)
+    (actual ==== expected).log(s"$actual does not equal to $expected")
+  }
+
   override def tests: List[Test] = taskSpecs ++ ioSpecs ++ futureSpecs ++ idSpecs
 
+  private val unit = ()
+
   /* Task */
-  private val taskSpecs = List(
-    property("test Fx[Task].effectOf", TaskSpec.testEffectOf),
-    property("test Fx[Task].pureOf", TaskSpec.testPureOf),
-    example("test Fx[Task].unitOf", TaskSpec.testUnitOf),
-    example("test Fx[Task].errorOf", TaskSpec.testErrorOf),
-  ) ++
+  private val taskSpecs = {
+    import monix.execution.Scheduler.Implicits.global
+    List(
+      property("test Fx[Task].effectOf", FxSpecs.testEffectOf[Task](_.runSyncUnsafe() ==== unit)),
+      property("test Fx[Task].pureOf", FxSpecs.testPureOf[Task](_.runSyncUnsafe() ==== unit)),
+      example("test Fx[Task].unitOf", FxSpecs.testUnitOf[Task](_.runSyncUnsafe() ==== unit)),
+      example(
+        "test Fx[Task].errorOf",
+        FxSpecs.testErrorOf[Task] { (io, expectedError) =>
+          tools.expectThrowable(io.runSyncUnsafe(), expectedError)
+        }
+      ),
+      property(
+        "test Fx[Task].fromEither(Right)",
+        FxSpecs.testFromEitherRightCase[Task](assertWithAttempt[Task](_.attempt.runSyncUnsafe()))
+      ),
+      property(
+        "test Fx[Task].fromEither(Left)",
+        FxSpecs.testFromEitherLeftCase[Task](assertWithAttempt[Task](_.attempt.runSyncUnsafe()))
+      ),
+      property(
+        "test Fx[Task].fromOption(Some)",
+        FxSpecs.testFromOptionSomeCase[Task](assertWithAttempt[Task](_.attempt.runSyncUnsafe()))
+      ),
+      property(
+        "test Fx[Task].fromOption(None)",
+        FxSpecs.testFromOptionNoneCase[Task](assertWithAttempt[Task](_.attempt.runSyncUnsafe()))
+      ),
+      property(
+        "test Fx[Task].fromTry(Success)",
+        FxSpecs.testFromTrySuccessCase[Task](assertWithAttempt[Task](_.attempt.runSyncUnsafe()))
+      ),
+      property(
+        "test Fx[Task].fromTry(Failure)",
+        FxSpecs.testFromTryFailureCase[Task](assertWithAttempt[Task](_.attempt.runSyncUnsafe()))
+      ),
+    )
+  } ++
     TaskSpec.testMonadLaws ++
     List(
       example(
@@ -339,10 +381,39 @@ object fxSpec extends Properties {
 
   /* IO */
   private val ioSpecs = List(
-    property("test Fx[IO].effectOf", IoSpec.testEffectOf),
-    property("test Fx[IO].pureOf", IoSpec.testPureOf),
-    example("test Fx[IO].unitOf", IoSpec.testUnitOf),
-    example("test Fx[IO].errorOf", IoSpec.testErrorOf),
+    property("test Fx[IO].effectOf", FxSpecs.testEffectOf[IO](_.unsafeRunSync() ==== unit)),
+    property("test Fx[IO].pureOf", FxSpecs.testPureOf[IO](_.unsafeRunSync() ==== unit)),
+    example("test Fx[IO].unitOf", FxSpecs.testUnitOf[IO](_.unsafeRunSync() ==== unit)),
+    example(
+      "test Fx[IO].errorOf",
+      FxSpecs.testErrorOf[IO] { (io, expectedError) =>
+        tools.expectThrowable(io.unsafeRunSync(), expectedError)
+      },
+    ),
+    property(
+      "test Fx[IO].fromEither(Right)",
+      FxSpecs.testFromEitherRightCase[IO](assertWithAttempt[IO](_.attempt.unsafeRunSync()))
+    ),
+    property(
+      "test Fx[IO].fromEither(Left)",
+      FxSpecs.testFromEitherLeftCase[IO](assertWithAttempt[IO](_.attempt.unsafeRunSync()))
+    ),
+    property(
+      "test Fx[IO].fromOption(Some)",
+      FxSpecs.testFromOptionSomeCase[IO](assertWithAttempt[IO](_.attempt.unsafeRunSync()))
+    ),
+    property(
+      "test Fx[IO].fromOption(None)",
+      FxSpecs.testFromOptionNoneCase[IO](assertWithAttempt[IO](_.attempt.unsafeRunSync()))
+    ),
+    property(
+      "test Fx[IO].fromTry(Success)",
+      FxSpecs.testFromTrySuccessCase[IO](assertWithAttempt[IO](_.attempt.unsafeRunSync()))
+    ),
+    property(
+      "test Fx[IO].fromTry(Failure)",
+      FxSpecs.testFromTryFailureCase[IO](assertWithAttempt[IO](_.attempt.unsafeRunSync()))
+    )
   ) ++
     IoSpec.testMonadLaws ++
     List(
@@ -717,10 +788,16 @@ object fxSpec extends Properties {
 
   /* Id */
   private val idSpecs = List(
-    property("test Fx[Id].effectOf", IdSpec.testEffectOf),
-    property("test Fx[Id].pureOf", IdSpec.testPureOf),
-    example("test Fx[Id].unitOf", IdSpec.testUnitOf),
-    example("test Fx[Id].errorOf", IdSpec.testErrorOf),
+    property("test Fx[Id].effectOf", IdSpecs.testEffectOf),
+    property("test Fx[Id].pureOf", IdSpecs.testPureOf),
+    example("test Fx[Id].unitOf", IdSpecs.testUnitOf),
+    example("test Fx[Id].errorOf", IdSpecs.testErrorOf),
+    property("test Fx[Id].fromEither(Right)", IdSpecs.testFromEitherRightCase),
+    property("test Fx[Id].fromEither(Left)", IdSpecs.testFromEitherLeftCase),
+    property("test Fx[Id].fromOption(Some)", IdSpecs.testFromOptionSomeCase),
+    property("test Fx[Id].fromOption(None)", IdSpecs.testFromOptionNoneCase),
+    property("test Fx[Id].fromTry(Success)", IdSpecs.testFromTrySuccessCase),
+    property("test Fx[Id].fromTry(Failure)", IdSpecs.testFromTryFailureCase),
   ) ++
     IdSpec.testMonadLaws ++
     List(
@@ -1026,61 +1103,6 @@ object fxSpec extends Properties {
 
   object TaskSpec {
     import monix.execution.Scheduler.Implicits.global
-
-    def testEffectOf: Property = for {
-      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
-    } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual        = before // scalafix:ok DisableSyntax.var
-      val testBefore    = actual ==== before
-      val task          = Fx[Task].effectOf({ actual = after; () })
-      val testBeforeRun = actual ==== before
-      task.runSyncUnsafe()
-      val testAfterRun  = actual ==== after
-      Result.all(
-        List(
-          testBefore.log("testBefore"),
-          testBeforeRun.log("testBeforeRun"),
-          testAfterRun.log("testAfterRun")
-        )
-      )
-    }
-
-    def testPureOf: Property = for {
-      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
-    } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual        = before // scalafix:ok DisableSyntax.var
-      val testBefore    = actual ==== before
-      val task          = Fx[Task].pureOf({ actual = after; () })
-      val testBeforeRun = actual ==== after
-      task.runSyncUnsafe()
-      val testAfterRun  = actual ==== after
-      Result.all(
-        List(
-          testBefore.log("testBefore"),
-          testBeforeRun.log("testBeforeRun"),
-          testAfterRun.log("testAfterRun")
-        )
-      )
-    }
-
-    def testUnitOf: Result = {
-      val task           = Fx[Task].unitOf
-      val expected: Unit = ()
-      val actual: Unit   = task.runSyncUnsafe()
-      actual ==== expected
-    }
-
-    def testErrorOf: Result = {
-      val expectedMessage = "This is a throwable test error."
-      val expectedError   = SomeThrowableError.message(expectedMessage)
-
-      val task = Fx[Task].errorOf[Unit](expectedError)
-      expectThrowable(task.runSyncUnsafe(), expectedError)
-    }
 
     def testMonadLaws: List[Test] = {
       import cats.syntax.eq._
@@ -2215,62 +2237,6 @@ object fxSpec extends Properties {
   }
 
   object IoSpec {
-
-    def testEffectOf: Property = for {
-      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
-    } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual        = before // scalafix:ok DisableSyntax.var
-      val testBefore    = actual ==== before
-      val io            = Fx[IO].effectOf({ actual = after; () })
-      val testBeforeRun = actual ==== before
-      io.unsafeRunSync()
-      val testAfterRun  = actual ==== after
-      Result.all(
-        List(
-          testBefore.log("testBefore"),
-          testBeforeRun.log("testBeforeRun"),
-          testAfterRun.log("testAfterRun")
-        )
-      )
-    }
-
-    def testPureOf: Property = for {
-      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
-    } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual        = before // scalafix:ok DisableSyntax.var
-      val testBefore    = actual ==== before
-      val io            = Fx[IO].pureOf({ actual = after; () })
-      val testBeforeRun = actual ==== after
-      io.unsafeRunSync()
-      val testAfterRun  = actual ==== after
-      Result.all(
-        List(
-          testBefore.log("testBefore"),
-          testBeforeRun.log("testBeforeRun"),
-          testAfterRun.log("testAfterRun")
-        )
-      )
-    }
-
-    def testUnitOf: Result = {
-      val io             = Fx[IO].unitOf
-      val expected: Unit = ()
-      val actual: Unit   = io.unsafeRunSync()
-      actual ==== expected
-    }
-
-    def testErrorOf: Result = {
-      val expectedMessage = "This is a throwable test error."
-      val expectedError   = SomeThrowableError.message(expectedMessage)
-
-      val io = Fx[IO].errorOf[Unit](expectedError)
-
-      expectThrowable(io.unsafeRunSync(), expectedError)
-    }
 
     def testMonadLaws: List[Test] = {
       import cats.syntax.eq._
@@ -3758,49 +3724,6 @@ object fxSpec extends Properties {
   }
 
   object IdSpec {
-
-    def testEffectOf: Property = for {
-      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
-    } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual     = before // scalafix:ok DisableSyntax.var
-      val testBefore = actual ==== before
-      Fx[Id].effectOf({ actual = after; () })
-      val testAfter  = actual ==== after
-      testBefore.log("testBefore") ==== testAfter.log("testAfter")
-    }
-
-    def testPureOf: Property = for {
-      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
-    } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual     = before // scalafix:ok DisableSyntax.var
-      val testBefore = actual ==== before
-      Fx[Id].pureOf({ actual = after; () })
-      val testAfter  = actual ==== after
-      Result.all(
-        List(
-          testBefore.log("testBefore"),
-          testAfter.log("testAfter")
-        )
-      )
-    }
-
-    def testUnitOf: Result = {
-      val expected: Unit = ()
-      val actual         = Fx[Id].unitOf
-      actual ==== expected
-    }
-
-    def testErrorOf: Result = {
-      val expectedMessage = "This is a throwable test error."
-      val expectedError   = SomeThrowableError.message(expectedMessage)
-
-      lazy val actual = Fx[Id].errorOf[Unit](expectedError)
-      expectThrowable(actual, expectedError)
-    }
 
     def testMonadLaws: List[Test] = {
       implicit val idInstance: Monad[Id] = cats.catsInstancesForId
