@@ -5,6 +5,7 @@ import cats.{Applicative, Id, Monad}
 import effectie.core.Fx
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 object fx {
 
@@ -17,6 +18,13 @@ object fx {
     inline override final def unitOf: IO[Unit] = fxCtor.ioFxCtor.unitOf
 
     inline override final def errorOf[A](throwable: Throwable): IO[A] = fxCtor.ioFxCtor.errorOf(throwable)
+
+    inline override final def fromEither[A](either: Either[Throwable, A]): IO[A] = fxCtor.ioFxCtor.fromEither(either)
+
+    inline override final def fromOption[A](option: Option[A])(orElse: => Throwable): IO[A] =
+      fxCtor.ioFxCtor.fromOption(option)(orElse)
+
+    inline override final def fromTry[A](tryA: Try[A]): IO[A] = fxCtor.ioFxCtor.fromTry(tryA)
 
     inline override final def mapFa[A, B](fa: IO[A])(f: A => B): IO[B] = fa.map(f)
 
@@ -50,6 +58,13 @@ object fx {
     inline override final def unitOf: Id[Unit] = fxCtor.idFxCtor.unitOf
 
     inline override final def errorOf[A](throwable: Throwable): Id[A] = fxCtor.idFxCtor.errorOf(throwable)
+
+    inline override final def fromEither[A](either: Either[Throwable, A]): Id[A] = fxCtor.idFxCtor.fromEither(either)
+
+    inline override final def fromOption[A](option: Option[A])(orElse: => Throwable): Id[A] =
+      fxCtor.idFxCtor.fromOption(option)(orElse)
+
+    inline override final def fromTry[A](tryA: Try[A]): Id[A] = fxCtor.idFxCtor.fromTry(tryA)
 
     inline override final def mapFa[A, B](fa: Id[A])(f: A => B): Id[B] = f(fa)
 

@@ -1,8 +1,8 @@
 import ProjectInfo._
-import kevinlee.sbt.SbtCommon.crossVersionProps
 import just.semver.{Anh, Dsv, SemVer}
 import SemVer.{Major, Minor, Patch}
 import just.semver.AdditionalInfo.PreRelease
+import kevinlee.sbt.SbtCommon.crossVersionProps
 import sbtcrossproject.CrossProject
 
 ThisBuild / scalaVersion       := props.ProjectScalaVersion
@@ -246,13 +246,12 @@ lazy val props =
     final val RepoName       = "effectie"
 
     final val Scala2Versions = List(
-      "2.13.5",
+      "2.13.6",
       "2.12.13",
     )
     final val Scala2Version  = Scala2Versions.head
 
-    final val Scala3Versions = List("3.0.0")
-    final val Scala3Version  = Scala3Versions.head
+    final val Scala3Version  = "3.0.2"
 
 //    final val ProjectScalaVersion = "2.12.13"
     final val ProjectScalaVersion = Scala2Version
@@ -275,7 +274,7 @@ lazy val props =
       _.startsWith("-P:wartremover")
 
     final val CrossScalaVersions =
-      (Scala3Versions ++ Scala2Versions).distinct
+      (Scala3Version :: Scala2Versions).distinct
 
     final val IncludeTest = "compile->compile;test->test"
 
@@ -394,21 +393,21 @@ def module(projectName: ProjectName, crossProject: CrossProject.Builder): CrossP
           Seq(
             sharedSourceDir / "scala-2.12_3",
             sharedSourceDir / "scala-2.13_3",
-            sharedSourceDir / "scala-3",
+//            sharedSourceDir / "scala-3",
           )
         else if (scalaVersion.value.startsWith("2.13"))
           Seq(
             sharedSourceDir / "scala-2.12_2.13",
             sharedSourceDir / "scala-2.12_3",
             sharedSourceDir / "scala-2.13_3",
-            sharedSourceDir / "scala-2",
+//            sharedSourceDir / "scala-2",
           )
         else if (scalaVersion.value.startsWith("2.12"))
           Seq(
             sharedSourceDir / "scala-2.12_2.13",
             sharedSourceDir / "scala-2.12_3",
             sharedSourceDir / "scala-2.12",
-            sharedSourceDir / "scala-2",
+//            sharedSourceDir / "scala-2",
           )
         else
           Seq.empty
@@ -419,20 +418,20 @@ def module(projectName: ProjectName, crossProject: CrossProject.Builder): CrossP
           Seq(
             sharedSourceDir / "scala-2.12_3",
             sharedSourceDir / "scala-2.13_3",
-            sharedSourceDir / "scala-3",
+//            sharedSourceDir / "scala-3",
           )
         else if (scalaVersion.value.startsWith("2.13"))
           Seq(
             sharedSourceDir / "scala-2.12_2.13",
             sharedSourceDir / "scala-2.13_3",
-            sharedSourceDir / "scala-2",
+//            sharedSourceDir / "scala-2",
           )
         else if (scalaVersion.value.startsWith("2.12"))
           Seq(
             sharedSourceDir / "scala-2.12_2.13",
             sharedSourceDir / "scala-2.12_3",
             sharedSourceDir / "scala-2.12",
-            sharedSourceDir / "scala-2",
+//            sharedSourceDir / "scala-2",
           )
         else
           Seq.empty
@@ -452,7 +451,9 @@ def module(projectName: ProjectName, crossProject: CrossProject.Builder): CrossP
 
 lazy val jsSettingsForFuture: SettingsDefinition = List(
   Test / scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty
-  else List("-P:scalajs:nowarnGlobalExecutionContext")),
+                            else List("-P:scalajs:nowarnGlobalExecutionContext")),
+  Test / compile / scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty
+                                      else List("-P:scalajs:nowarnGlobalExecutionContext")),
 )
 
 lazy val jsSettings: SettingsDefinition = List(

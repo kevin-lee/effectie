@@ -5,6 +5,7 @@ import cats.effect.IO
 import effectie.core.FxCtor
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 object fxCtor {
 
@@ -18,6 +19,13 @@ object fxCtor {
 
     inline override final def errorOf[A](throwable: Throwable): IO[A] = IO.raiseError(throwable)
 
+    inline override final def fromEither[A](either: Either[Throwable, A]): IO[A] = IO.fromEither(either)
+
+    inline override final def fromOption[A](option: Option[A])(orElse: => Throwable): IO[A] =
+      IO.fromOption(option)(orElse)
+
+    inline override final def fromTry[A](tryA: Try[A]): IO[A] = IO.fromTry(tryA)
+
   }
 
   given idFxCtor: FxCtor[Id] with {
@@ -30,6 +38,13 @@ object fxCtor {
 
     inline override final def errorOf[A](throwable: Throwable): Id[A] =
       throw throwable // scalafix:ok DisableSyntax.throw
+
+    inline override final def fromEither[A](either: Either[Throwable, A]): Id[A] = either.fold(errorOf(_), pureOf(_))
+
+    inline override final def fromOption[A](option: Option[A])(orElse: => Throwable): Id[A] =
+      option.fold(errorOf(orElse))(pureOf(_))
+
+    inline override final def fromTry[A](tryA: Try[A]): Id[A] = tryA.fold(errorOf(_), pureOf(_))
 
   }
 
