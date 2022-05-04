@@ -48,6 +48,7 @@ lazy val effectie = (project in file("."))
     description         := "Effect Utils",
     libraryDependencies :=
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
+    devOopsPackagedArtifacts += s"*/*/*/target/scala-*/${devOopsArtifactNamePrefix.value}*.jar",
   )
   .settings(noPublish)
   .settings(mavenCentralPublishSettings)
