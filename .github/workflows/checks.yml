@@ -20,7 +20,9 @@ jobs:
     strategy:
       matrix:
         scala:
-          - { name: "Scala", java-version: "adopt@1.11", report: "" }
+          - { name: "Scala 2", version: "2.12.13", binary-version: "2.12", java-version: "adopt@1.11", report: "" }
+          - { name: "Scala 2", version: "2.13.6",  binary-version: "2.13", java-version: "adopt@1.11", report: "" }
+#          - { name: "Scala 3", version: "3.0.2",   binary-version: "3",    java-version: "adopt@1.11", report: "" }
 
     steps:
       - uses: actions/checkout@v3.0.2
@@ -39,7 +41,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-sbt
 
-      - name: "[Push] Build All for ${{ matrix.scala.name }} - ${{ github.run_number }}"
+      - name: "[Push] Build All for ${{ matrix.scala.name }} v${{ matrix.scala.version }} - ${{ github.run_number }}"
         if: github.event_name == 'push'
         env:
           CURRENT_BRANCH_NAME: ${{ github.ref }}
@@ -57,10 +59,11 @@ jobs:
           echo "JVM_OPTS=${JVM_OPTS}"
           echo "SBT_OPTS=${SBT_OPTS}"
           sbt \
-            "+scalafixAll --check" \
-            +scalafmtCheckAll
+            ++${{ matrix.scala.version }}! \
+            "scalafixAll --check" \
+            scalafmtCheckAll
 
-      - name: "[PR] Build All for ${{ matrix.scala.name }} - PR-#${{ github.event.pull_request.number }} - ${{ github.run_number }}"
+      - name: "[PR] Build All for ${{ matrix.scala.name }} v${{ matrix.scala.version }} - PR-#${{ github.event.pull_request.number }} - ${{ github.run_number }}"
         if: github.event_name == 'pull_request'
         env:
           CURRENT_BRANCH_NAME: ${{ github.base_ref }}
@@ -77,5 +80,6 @@ jobs:
           echo "JVM_OPTS=${JVM_OPTS}"
           echo "SBT_OPTS=${SBT_OPTS}"
           sbt \
-            "+scalafixAll --check" \
-            +scalafmtCheckAll
+            ++${{ matrix.scala.version }}! \
+            "scalafixAll --check" \
+            scalafmtCheckAll
