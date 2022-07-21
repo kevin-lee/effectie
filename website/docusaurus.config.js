@@ -11,6 +11,7 @@ const isEmptyObject = obj => {
 
 const isSearchable = !isEmptyObject(algoliaConfig);
 const hasGoogleAnalytics = !isEmptyObject(googleAnalyticsConfig);
+const gtag = hasGoogleAnalytics ? { 'gtag': googleAnalyticsConfig } : null;
 
 const websiteConfig = {
   title: 'Effectie',
@@ -104,6 +105,7 @@ const websiteConfig = {
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
+        ...gtag,
       },
     ],
   ],
@@ -114,9 +116,6 @@ const websiteConfig = {
 
 if (isSearchable) {
   websiteConfig['themeConfig']['algolia'] = algoliaConfig;
-}
-if (hasGoogleAnalytics) {
-  websiteConfig['themeConfig']['googleAnalytics'] = googleAnalyticsConfig;
 }
 
 module.exports = websiteConfig;
