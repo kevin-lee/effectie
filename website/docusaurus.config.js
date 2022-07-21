@@ -18,7 +18,7 @@ const websiteConfig = {
   url: 'https://effectie.kevinly.dev',
   baseUrl: '/',
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'error',
+  onBrokenMarkdownLinks: 'throw',
   favicon: 'img/favicon.png',
   organizationName: 'Kevin-Lee', // Usually your GitHub org/user name.
   projectName: 'effectie', // Usually your repo name.
