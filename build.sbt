@@ -217,12 +217,13 @@ lazy val docs = (project in file("generated-docs"))
       libraryDependencies.value
     ),
     mdocVariables       := Map(
-      "VERSION"                  -> {
-        import sys.process._
-        "git fetch --tags".!
-        val tag = "git rev-list --tags --max-count=1".!!.trim
-        s"git describe --tags $tag".!!.trim.stripPrefix("v")
-      },
+//      "VERSION"                  -> {
+//        import sys.process._
+//        "git fetch --tags".!
+//        val tag = "git rev-list --tags --max-count=1".!!.trim
+//        s"git describe --tags $tag".!!.trim.stripPrefix("v")
+//      },
+      "VERSION"                  -> "1.16.0",
       "SUPPORTED_SCALA_VERSIONS" -> {
         val versions = props
           .CrossScalaVersions
@@ -251,7 +252,7 @@ lazy val props =
     )
     final val Scala2Version  = Scala2Versions.head
 
-    final val Scala3Version  = "3.0.2"
+    final val Scala3Version = "3.0.2"
 
 //    final val ProjectScalaVersion = "2.12.13"
     final val ProjectScalaVersion = Scala2Version
