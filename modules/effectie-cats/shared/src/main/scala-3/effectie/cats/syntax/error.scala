@@ -7,7 +7,7 @@ import effectie.cats.*
 /** @author Kevin Lee
   * @since 2021-10-16
   */
-trait error {
+trait error extends effectie.syntax.error {
 
   extension [F[*], A, B](efab: => EitherT[F, A, B]) {
 

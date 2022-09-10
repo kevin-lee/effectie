@@ -5,10 +5,9 @@ import cats.data.EitherT
 import cats.effect.*
 import cats.syntax.all.*
 import effectie.SomeControlThrowable
+import effectie.cats.syntax.fx.*
 import effectie.cats.syntax.error.*
 import effectie.core.{Fx, FxCtor}
-import effectie.syntax.error.*
-import effectie.syntax.fx.*
 import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}

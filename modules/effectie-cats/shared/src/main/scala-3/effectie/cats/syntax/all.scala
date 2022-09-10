@@ -3,4 +3,5 @@ package effectie.cats.syntax
 /** @author Kevin Lee
   * @since 2021-10-23
   */
-object all extends error
+trait all extends fx with error with console
+object all extends all
