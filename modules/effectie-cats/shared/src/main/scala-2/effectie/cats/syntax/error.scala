@@ -7,7 +7,7 @@ import effectie.core.{CanCatch, CanHandleError, CanRecover}
 /** @author Kevin Lee
   * @since 2021-10-16
   */
-trait error {
+trait error extends effectie.syntax.error {
   import effectie.cats.syntax.error.EitherTFABErrorHandlingOps
 
   implicit def eitherTFABErrorHandlingOps[F[*], A, B](efab: => EitherT[F, A, B]): EitherTFABErrorHandlingOps[F, A, B] =

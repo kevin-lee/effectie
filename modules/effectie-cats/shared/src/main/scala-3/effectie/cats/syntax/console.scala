@@ -1,14 +1,15 @@
-package effectie.cats
+package effectie.cats.syntax
 
 import cats.*
 import cats.syntax.all.*
-import effectie.cats.console.ConsoleEffectF
+import effectie.cats.syntax.console.ConsoleEffectF
 import effectie.core.ConsoleEffect.ConsoleEffectWithoutFlatMap
 import effectie.core.{ConsoleEffect, FxCtor, YesNo}
 
-trait console {
+trait console extends effectie.syntax.console {
 
-  given consoleEffectF[F[*]: FxCtor: FlatMap]: ConsoleEffect[F] = new ConsoleEffectF[F]
+  given consoleEffectF[F[*]: FxCtor: FlatMap]: ConsoleEffect[F] =
+    new ConsoleEffectF[F]
 
 }
 
@@ -21,9 +22,9 @@ object console extends console {
       answer <- readLn
       yesOrN <- answer match {
                   case "y" | "Y" =>
-                    FxCtor[F].effectOf(YesNo.yes)
+                    FxCtor[F].pureOf(YesNo.yes)
                   case "n" | "N" =>
-                    FxCtor[F].effectOf(YesNo.no)
+                    FxCtor[F].pureOf(YesNo.no)
                   case _ =>
                     readYesNo(prompt)
                 }
