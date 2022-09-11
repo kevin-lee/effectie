@@ -866,6 +866,7 @@ object canHandleErrorSpec extends Properties {
   }
 
   object IoSpec {
+    import effectie.cats.fxCtor.ioFxCtor
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
@@ -1735,6 +1736,7 @@ object canHandleErrorSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.cats.fxCtor.idFxCtor
 
     def testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 

@@ -25,7 +25,7 @@ object fxCtorSpec extends Properties {
     (actual ==== expected).log(s"$actual does not equal to $expected")
   }
 
-  private val unit = ()
+  private val unit: Unit = ()
 
   private val taskSpecs = {
     import monix.execution.Scheduler.Implicits.global
@@ -75,6 +75,8 @@ object fxCtorSpec extends Properties {
     )
   }
 
+  import effectie.cats.fxCtor.ioFxCtor
+
   private val ioSpecs = List(
     property(
       "test FxCtor[IO].effectOf",
@@ -121,6 +123,8 @@ object fxCtorSpec extends Properties {
   )
 
   private val futureSpecs = effectie.core.FxCtorSpec.futureSpecs
+
+  import effectie.cats.fxCtor.idFxCtor
 
   private val idSpecs = List(
     property("test FxCtor[Id].effectOf", IdSpecs.testEffectOf),
