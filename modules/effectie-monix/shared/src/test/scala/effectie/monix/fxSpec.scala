@@ -35,7 +35,7 @@ object fxSpec extends Properties {
 
   override def tests: List[Test] = taskSpecs ++ ioSpecs ++ futureSpecs ++ idSpecs
 
-  private val unit = ()
+  private val unit: Unit = ()
 
   /* Task */
   private val taskSpecs = {
@@ -378,6 +378,8 @@ object fxSpec extends Properties {
         TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnFailedResult
       ),
     )
+
+  import effectie.cats.fx.ioFx
 
   /* IO */
   private val ioSpecs = List(
@@ -785,6 +787,8 @@ object fxSpec extends Properties {
         FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherTFromNonFatalShouldReturnFailedResult
       ),
     )
+
+  import effectie.cats.fx.idFx
 
   /* Id */
   private val idSpecs = List(

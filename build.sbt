@@ -194,6 +194,7 @@ lazy val monix    = module(ProjectName("monix"), crossProject(JVMPlatform, JSPla
   .dependsOn(
     core         % props.IncludeTest,
     cats         % props.IncludeTest,
+    catsEffect   % props.IncludeTest,
     testing4Cats % Test,
   )
 lazy val monixJvm = monix.jvm

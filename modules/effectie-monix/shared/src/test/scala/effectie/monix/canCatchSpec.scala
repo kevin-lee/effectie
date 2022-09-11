@@ -413,6 +413,8 @@ object canCatchSpec extends Properties {
 
   object IoSpec {
 
+    import effectie.cats.fxCtor.ioFxCtor
+
     def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
       val expectedExpcetion = new RuntimeException("Something's wrong")
@@ -756,6 +758,7 @@ object canCatchSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.cats.fxCtor.idFxCtor
 
     def testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
