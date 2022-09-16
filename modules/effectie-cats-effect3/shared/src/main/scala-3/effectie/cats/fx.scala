@@ -1,7 +1,7 @@
 package effectie.cats
 
 import cats.effect.{IO, Sync}
-import cats.{Applicative, Id, Monad}
+import cats.{Applicative, Id, Monad, MonadThrow}
 import effectie.core.Fx
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -14,6 +14,8 @@ object fx {
     inline override final def effectOf[A](a: => A): IO[A] = fxCtor.ioFxCtor.effectOf(a)
 
     inline override final def pureOf[A](a: A): IO[A] = fxCtor.ioFxCtor.pureOf(a)
+
+    inline override final def pureOrError[A](a: => A): IO[A] = fxCtor.ioFxCtor.pureOrError(a)
 
     inline override final def unitOf: IO[Unit] = fxCtor.ioFxCtor.unitOf
 
@@ -54,6 +56,8 @@ object fx {
     inline override final def effectOf[A](a: => A): Id[A] = fxCtor.idFxCtor.effectOf(a)
 
     inline override final def pureOf[A](a: A): Id[A] = fxCtor.idFxCtor.pureOf(a)
+
+    inline override final def pureOrError[A](a: => A): Id[A] = fxCtor.idFxCtor.pureOrError(a)
 
     inline override final def unitOf: Id[Unit] = fxCtor.idFxCtor.unitOf
 

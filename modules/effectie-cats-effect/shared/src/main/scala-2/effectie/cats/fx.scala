@@ -16,6 +16,8 @@ object fx {
 
     @inline override val unitOf: IO[Unit] = fxCtor.ioFxCtor.unitOf
 
+    @inline override final def pureOrError[A](a: => A): IO[A] = fxCtor.ioFxCtor.pureOrError(a)
+
     @inline override final def errorOf[A](throwable: Throwable): IO[A] = fxCtor.ioFxCtor.errorOf(throwable)
 
     @inline override final def fromEither[A](either: Either[Throwable, A]): IO[A] = fxCtor.ioFxCtor.fromEither(either)
@@ -52,6 +54,8 @@ object fx {
     @inline override final def effectOf[A](a: => A): Id[A] = fxCtor.idFxCtor.effectOf(a)
 
     @inline override final def pureOf[A](a: A): Id[A] = fxCtor.idFxCtor.pureOf(a)
+
+    @inline override final def pureOrError[A](a: => A): Id[A] = fxCtor.idFxCtor.pureOrError(a)
 
     @inline override val unitOf: Id[Unit] = fxCtor.idFxCtor.unitOf
 

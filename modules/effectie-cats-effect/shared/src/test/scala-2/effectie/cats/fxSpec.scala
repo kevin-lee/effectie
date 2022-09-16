@@ -31,12 +31,22 @@ object fxSpec extends Properties {
     (actual ==== expected).log(s"$actual does not equal to $expected")
   }
 
-  private val unit = ()
+  private val unit: Unit = ()
 
   /* IO */
   private val ioSpecs = List(
     property("test Fx[IO].effectOf", FxSpecs.testEffectOf[IO](_.unsafeRunSync() ==== unit)),
     property("test Fx[IO].pureOf", FxSpecs.testPureOf[IO](_.unsafeRunSync() ==== unit)),
+    property(
+      "test Fx[IO].pureOrError(success case)",
+      FxSpecs.testPureOrErrorSuccessCase[IO](_.unsafeRunSync() ==== unit)
+    ),
+    example(
+      "test Fx[IO].pureOrError(error case)",
+      FxSpecs.testPureOrErrorErrorCase[IO] { (io, expected) =>
+        tools.expectThrowable(io.unsafeRunSync(), expected)
+      }
+    ),
     example("test Fx[IO].unitOf", FxSpecs.testUnitOf[IO](_.unsafeRunSync() ==== unit)),
     example(
       "test Fx[IO].errorOf",
@@ -426,6 +436,8 @@ object fxSpec extends Properties {
   private val idSpecs = List(
     property("test Fx[Id].effectOf", IdSpecs.testEffectOf),
     property("test Fx[Id].pureOf", IdSpecs.testPureOf),
+    property("test Fx[Id].pureOrError(success case)", IdSpecs.testPureOrErrorSuccessCase),
+    example("test Fx[Id].pureOrError(error case)", IdSpecs.testPureOrErrorErrorCase),
     example("test Fx[Id].unitOf", IdSpecs.testUnitOf),
     example("test Fx[Id].errorOf", IdSpecs.testErrorOf),
     property("test Fx[Id].fromEither(Right)", IdSpecs.testFromEitherRightCase),

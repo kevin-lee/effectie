@@ -12,6 +12,8 @@ trait fx {
 
   def pureOf[F[*]]: CurriedEffectOfPure[F] = new CurriedEffectOfPure[F]
 
+  def pureOrError[F[*]]: CurriedEffectOfPureOrError[F] = new CurriedEffectOfPureOrError[F]
+
   inline final def unitOf[F[*]: FxCtor]: F[Unit] = FxCtor[F].unitOf
 
   def errorOf[F[*]]: CurriedErrorOf[F] = new CurriedErrorOf[F]
@@ -32,6 +34,13 @@ object fx extends fx {
   ) extends AnyVal {
     def apply[A](a: A)(using EF: FxCtor[F]): F[A] =
       FxCtor[F].pureOf(a)
+  }
+
+  private[fx] final class CurriedEffectOfPureOrError[F[*]](
+    private val dummy: Boolean = true
+  ) extends AnyVal {
+    def apply[A](a: => A)(using EF: FxCtor[F]): F[A] =
+      FxCtor[F].pureOrError(a)
   }
 
   private[fx] final class CurriedErrorOf[F[*]](

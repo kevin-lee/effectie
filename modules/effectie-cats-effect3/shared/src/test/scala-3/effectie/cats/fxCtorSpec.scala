@@ -48,6 +48,23 @@ object FxCtorSpec extends Properties {
         io.completeAs(())
       }
     ),
+    property(
+      "test FxCtor[IO].pureOrError(success case)",
+      FxCtorSpecs.testPureOrErrorSuccessCase[IO] { io =>
+        import CatsEffectRunner.*
+        given ticket: Ticker = Ticker(TestContext())
+        io.completeAs(())
+      }
+    ),
+    example(
+      "test FxCtor[IO].pureOrError(error case)",
+      FxCtorSpecs.testPureOrErrorErrorCase[IO] { (io, expectedError) =>
+        import CatsEffectRunner.*
+        given ticket: Ticker = Ticker(TestContext())
+
+        io.expectError(expectedError)
+      }
+    ),
     example(
       "test FxCtor[IO].unitOf",
       FxCtorSpecs.testUnitOf[IO] { io =>
@@ -95,6 +112,8 @@ object FxCtorSpec extends Properties {
   private val idSpecs = List(
     property("test FxCtor[Id].effectOf", IdSpecs.testEffectOf),
     property("test FxCtor[Id].pureOf", IdSpecs.testPureOf),
+    property("test FxCtor[Id].pureOrError(success case)", IdSpecs.testPureOrErrorSuccessCase),
+    example("test FxCtor[Id].pureOrError(error case)", IdSpecs.testPureOrErrorErrorCase),
     example("test FxCtor[Id].unitOf", IdSpecs.testUnitOf),
     example("test FxCtor[Id].testErrorOf", IdSpecs.testErrorOf),
     property("test FxCtor[Id].fromEither(Right)", IdSpecs.testFromEitherRightCase),

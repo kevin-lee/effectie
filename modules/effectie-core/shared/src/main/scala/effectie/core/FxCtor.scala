@@ -6,6 +6,8 @@ import scala.util.Try
 trait FxCtor[F[*]] {
   def effectOf[A](a: => A): F[A]
   def pureOf[A](a: A): F[A]
+  def pureOrError[A](a: => A): F[A]
+
   def unitOf: F[Unit]
 
   def errorOf[A](throwable: Throwable): F[A]
@@ -26,6 +28,8 @@ object FxCtor {
     @inline override final def effectOf[A](a: => A): Future[A] = Future(a)
 
     @inline override final def pureOf[A](a: A): Future[A] = Future.successful(a)
+
+    @inline override def pureOrError[A](a: => A): Future[A] = Future.fromTry(Try(a))
 
     @inline override final def unitOf: Future[Unit] = pureOf(())
 

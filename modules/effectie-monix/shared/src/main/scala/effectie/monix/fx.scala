@@ -16,6 +16,8 @@ object fx {
 
     @inline override final def pureOf[A](a: A): Task[A] = fxCtor.taskFxCtor.pureOf(a)
 
+    @inline override final def pureOrError[A](a: => A): Task[A] = fxCtor.taskFxCtor.pureOrError(a)
+
     @inline override val unitOf: Task[Unit] = fxCtor.taskFxCtor.unitOf
 
     @inline override final def errorOf[A](throwable: Throwable): Task[A] = fxCtor.taskFxCtor.errorOf(throwable)
