@@ -1,10 +1,11 @@
 package effectie.cats
 
-import cats.Id
+import cats.{Id, MonadThrow}
 import cats.effect.IO
 import effectie.core.FxCtor
 
 import scala.util.Try
+import scala.util.control.NonFatal
 
 object fxCtor {
 
@@ -13,6 +14,8 @@ object fxCtor {
     inline override final def effectOf[A](a: => A): IO[A] = IO(a)
 
     inline override final def pureOf[A](a: A): IO[A] = IO.pure(a)
+
+    inline override final def pureOrError[A](a: => A): IO[A] = MonadThrow[IO].catchNonFatal(a)
 
     inline override final def unitOf: IO[Unit] = IO.unit
 
@@ -32,6 +35,12 @@ object fxCtor {
     inline override final def effectOf[A](a: => A): Id[A] = a
 
     inline override final def pureOf[A](a: A): Id[A] = a
+
+    inline override final def pureOrError[A](a: => A): Id[A] =
+      try pureOf(a)
+      catch {
+        case NonFatal(ex) => throw ex
+      }
 
     inline override final def unitOf: Id[Unit] = ()
 

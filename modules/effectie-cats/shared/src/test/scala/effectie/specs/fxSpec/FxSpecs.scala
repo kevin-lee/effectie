@@ -54,6 +54,35 @@ object FxSpecs {
     )
   }
 
+  def testPureOrErrorSuccessCase[F[*]: Fx](run: F[Unit] => Result): Property = for {
+    before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+    after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+  } yield {
+    @SuppressWarnings(Array("org.wartremover.warts.Var"))
+    var actual        = before // scalafix:ok DisableSyntax.var
+    val testBefore    = actual ==== before
+    val io            = Fx[F].pureOrError({ actual = after; () })
+    val testBeforeRun = actual ==== after
+    val runResult     = run(io)
+    val testAfterRun  = actual ==== after
+    Result.all(
+      List(
+        testBefore.log("testBefore"),
+        testBeforeRun.log("testBeforeRun"),
+        runResult.log("runResult"),
+        testAfterRun.log("testAfterRun")
+      )
+    )
+  }
+
+  def testPureOrErrorErrorCase[F[*]: Fx](run: (F[Unit], Throwable) => Result): Result = {
+    val expectedMessage = "This is a throwable test error."
+    val expectedError   = SomeThrowableError.message(expectedMessage)
+
+    val io = Fx[F].pureOrError[Unit](throw expectedError) // scalafix:ok DisableSyntax.throw
+    run(io, expectedError)
+  }
+
   def testUnitOf[F[*]: Fx](run: F[Unit] => Result): Result = {
     val io        = Fx[F].unitOf
     val runResult = run(io)

@@ -27,16 +27,22 @@ object fxSpec extends Properties {
     property("test fx.{effectOf, pureOf, unitOf} for IO", IoSpec.testAll),
     property("test fx.effectOf[IO]", IoSpec.testEffectOf),
     property("test fx.pureOf[IO]", IoSpec.testPureOf),
+    property("test fx.pureOrError[IO](success case)", IoSpec.testPureOrErrorSuccessCase),
+    example("test fx.pureOrError[IO](error case)", IoSpec.testPureOrErrorErrorCase),
     example("test fx.unitOf[IO]", IoSpec.testUnitOf),
     example("test fx.errorOf[IO]", IoSpec.testErrorOf),
     property("test fx.{effectOf, pureOf, unitOf} for Future", FutureSpec.testAll),
     property("test fx.effectOf[Future]", FutureSpec.testEffectOf),
     property("test fx.pureOf[Future]", FutureSpec.testPureOf),
+    property("test fx.pureOrError[Future](success case)", FutureSpec.testPureOrErrorSuccessCase),
+    example("test fx.pureOrError[Future](error case)", FutureSpec.testPureOrErrorErrorCase),
     example("test fx.unitOf[Future]", FutureSpec.testUnitOf),
     example("test fx.errorOf[Future]", FutureSpec.testErrorOf),
     property("test fx.{effectOf, pureOf, unitOf} for Id", IdSpec.testAll),
     property("test fx.effectOf[Id]", IdSpec.testEffectOf),
     property("test fx.pureOf[Id]", IdSpec.testPureOf),
+    property("test fx.pureOrError[Id](success case)", IdSpec.testPureOrErrorSuccessCase),
+    example("test fx.pureOrError[Id](error case)", IdSpec.testPureOrErrorErrorCase),
     example("test fx.unitOf[Id]", IdSpec.testUnitOf),
     example("test fx.errorOf[Id]", IdSpec.testErrorOf)
   )
@@ -176,6 +182,44 @@ object fxSpec extends Properties {
       )
     }
 
+    def testPureOrErrorSuccessCase: Property = for {
+      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+    } yield {
+      @SuppressWarnings(Array("org.wartremover.warts.Var"))
+      var actual        = before // scalafix:ok DisableSyntax.var
+      val testBefore    = actual ==== before
+      val io            = pureOrError[IO]({ actual = after; () })
+      val testBeforeRun = actual ==== after
+
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+      val runResult               = io.completeAs(())
+
+      val testAfterRun = actual ==== after
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testBeforeRun.log("testBeforeRun"),
+          runResult,
+          testAfterRun.log("testAfterRun")
+        )
+      )
+    }
+
+    @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
+    def testPureOrErrorErrorCase: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      val io = pureOrError[IO][Unit](throw expectedError) // scalafix:ok DisableSyntax.throw
+
+      import CatsEffectRunner._
+      implicit val ticket: Ticker = Ticker(TestContext())
+
+      io.expectError(expectedError)
+    }
+
     def testUnitOf: Result = {
       val io             = unitOf[IO]
       val expected: Unit = ()
@@ -293,6 +337,40 @@ object fxSpec extends Properties {
       )
     }
 
+    def testPureOrErrorSuccessCase: Property = for {
+      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+    } yield {
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      @SuppressWarnings(Array("org.wartremover.warts.Var"))
+      var actual       = before // scalafix:ok DisableSyntax.var
+      val testBefore   = actual ==== before
+      val future       = pureOrError[Future]({ actual = after; () })
+      ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
+      val testAfterRun = actual ==== after
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testAfterRun.log("testAfterRun")
+        )
+      )
+    }
+
+    def testPureOrErrorErrorCase: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      val future = pureOrError[Future][Unit](throw expectedError) // scalafix:ok DisableSyntax.throw
+      expectThrowable(ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future), expectedError)
+    }
+
     def testUnitOf: Result = {
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
       implicit val ec: ExecutionContext             =
@@ -379,6 +457,31 @@ object fxSpec extends Properties {
           testAfter.log("testAfter")
         )
       )
+    }
+
+    def testPureOrErrorSuccessCase: Property = for {
+      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+    } yield {
+      @SuppressWarnings(Array("org.wartremover.warts.Var"))
+      var actual     = before // scalafix:ok DisableSyntax.var
+      val testBefore = actual ==== before
+      pureOrError[Id]({ actual = after; () })
+      val testAfter  = actual ==== after
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testAfter.log("testAfter")
+        )
+      )
+    }
+
+    def testPureOrErrorErrorCase: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      lazy val actual = pureOrError[Id][Unit](throw expectedError) // scalafix:ok DisableSyntax.throw
+      expectThrowable(actual, expectedError)
     }
 
     def testUnitOf: Result = {

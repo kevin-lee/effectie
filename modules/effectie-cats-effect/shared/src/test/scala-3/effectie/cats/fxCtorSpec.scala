@@ -28,6 +28,16 @@ object FxCtorSpec extends Properties {
   val ioSpecs = List(
     property("test FxCtor[IO].effectOf", FxCtorSpecs.testEffectOf[IO](_.unsafeRunSync() ==== ())),
     property("test FxCtor[IO].pureOf", FxCtorSpecs.testPureOf[IO](_.unsafeRunSync() ==== ())),
+    property(
+      "test FxCtor[IO].pureOrError(success case)",
+      FxCtorSpecs.testPureOrErrorSuccessCase[IO](_.unsafeRunSync() ==== ())
+    ),
+    example(
+      "test FxCtor[IO].pureOrError(error case)",
+      FxCtorSpecs.testPureOrErrorErrorCase[IO] { (io, expected) =>
+        tools.expectThrowable(io.unsafeRunSync(), expected)
+      }
+    ),
     example("test FxCtor[IO].unitOf", FxCtorSpecs.testUnitOf[IO](_.unsafeRunSync() ==== ())),
     example(
       "test FxCtor[IO].errorOf",
@@ -66,6 +76,8 @@ object FxCtorSpec extends Properties {
   private val idSpecs = List(
     property("test FxCtor[Id].effectOf", IdSpecs.testEffectOf),
     property("test FxCtor[Id].pureOf", IdSpecs.testPureOf),
+    property("test FxCtor[Id].pureOrError(success case)", IdSpecs.testPureOrErrorSuccessCase),
+    example("test FxCtor[Id].pureOrError(error case)", IdSpecs.testPureOrErrorErrorCase),
     example("test FxCtor[Id].unitOf", IdSpecs.testUnitOf),
     example("test FxCtor[Id].errorOf", IdSpecs.testErrorOf),
     property("test FxCtor[Id].fromEither(Right)", IdSpecs.testFromEitherRightCase),

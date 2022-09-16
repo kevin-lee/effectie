@@ -4,6 +4,7 @@ import effectie.core.FxCtor
 import monix.eval.Task
 
 import scala.util.Try
+import scala.util.control.NonFatal
 
 /** @author Kevin Lee
   * @since 2021-05-16
@@ -15,6 +16,23 @@ object fxCtor {
     @inline override final def effectOf[A](a: => A): Task[A] = Task(a)
 
     @inline override final def pureOf[A](a: A): Task[A] = Task.now(a)
+
+    /** It cannot be done by
+      * {{{
+      * MonadThrow[Task].catchNonFatal(1)
+      * }}}
+      * as it returns Eval(thunk) which is the same as Task.delay whereas
+      * {{{
+      * MonadThrow[IO].catchNonFatal(1)
+      * }}}
+      * returns Pure(1)
+      * So the implementation of fxCtor.pureOrError for Task doesn't use MonadThrow.
+      */
+    @inline override final def pureOrError[A](a: => A): Task[A] =
+      try pureOf(a)
+      catch {
+        case NonFatal(e) => errorOf(e)
+      }
 
     @inline override val unitOf: Task[Unit] = Task.unit
 

@@ -1,9 +1,8 @@
 package effectie.monix
 
-import cats.effect.IO
 import effectie.core._
 import effectie.monix.fxCtor._
-import effectie.specs.fxCtorSpec.{FxCtorSpecs, IdSpecs}
+import effectie.specs.fxCtorSpec.FxCtorSpecs
 import effectie.testing.tools
 import extras.concurrent.testing.types.ErrorLogger
 import hedgehog._
@@ -16,7 +15,7 @@ import monix.eval.Task
 object fxCtorSpec extends Properties {
   private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
-  override def tests: List[Test] = taskSpecs ++ ioSpecs ++ futureSpecs ++ idSpecs
+  override def tests: List[Test] = taskSpecs
 
   def assertWithAttempt[F[*]: FxCtor](
     run: F[Int] => Either[Throwable, Int]
@@ -37,6 +36,16 @@ object fxCtorSpec extends Properties {
       property(
         "test FxCtor[Task].pureOf",
         effectie.specs.fxCtorSpec.FxCtorSpecs.testPureOf[Task](_.runSyncUnsafe() ==== unit)
+      ),
+      property(
+        "test FxCtor[Task].pureOrError(success case)",
+        effectie.specs.fxCtorSpec.FxCtorSpecs.testPureOrErrorSuccessCase[Task](_.runSyncUnsafe() ==== unit)
+      ),
+      example(
+        "test FxCtor[Task].pureOrError(error case)",
+        effectie.specs.fxCtorSpec.FxCtorSpecs.testPureOrErrorErrorCase[Task] { (io, expectedError) =>
+          tools.expectThrowable(io.runSyncUnsafe(), expectedError)
+        }
       ),
       example(
         "test FxCtor[Task].unitOf",
@@ -74,69 +83,5 @@ object fxCtorSpec extends Properties {
       ),
     )
   }
-
-  import effectie.cats.fxCtor.ioFxCtor
-
-  private val ioSpecs = List(
-    property(
-      "test FxCtor[IO].effectOf",
-      effectie.specs.fxCtorSpec.FxCtorSpecs.testEffectOf[IO](_.unsafeRunSync() ==== unit)
-    ),
-    property(
-      "test FxCtor[IO].pureOf",
-      effectie.specs.fxCtorSpec.FxCtorSpecs.testPureOf[IO](_.unsafeRunSync() ==== unit)
-    ),
-    example(
-      "test FxCtor[IO].unitOf",
-      effectie.specs.fxCtorSpec.FxCtorSpecs.testUnitOf[IO](_.unsafeRunSync() ==== unit)
-    ),
-    example(
-      "test FxCtor[IO].errorOf",
-      effectie.specs.fxCtorSpec.FxCtorSpecs.testErrorOf[IO] { (io, expectedError) =>
-        tools.expectThrowable(io.unsafeRunSync(), expectedError)
-      },
-    ),
-    property(
-      "test FxCtor[IO].fromEither(Right)",
-      FxCtorSpecs.testFromEitherRightCase[IO](assertWithAttempt[IO](_.attempt.unsafeRunSync()))
-    ),
-    property(
-      "test FxCtor[IO].fromEither(Left)",
-      FxCtorSpecs.testFromEitherLeftCase[IO](assertWithAttempt[IO](_.attempt.unsafeRunSync()))
-    ),
-    property(
-      "test FxCtor[IO].fromOption(Some)",
-      FxCtorSpecs.testFromOptionSomeCase[IO](assertWithAttempt[IO](_.attempt.unsafeRunSync()))
-    ),
-    property(
-      "test FxCtor[IO].fromOption(None)",
-      FxCtorSpecs.testFromOptionNoneCase[IO](assertWithAttempt[IO](_.attempt.unsafeRunSync()))
-    ),
-    property(
-      "test FxCtor[IO].fromTry(Success)",
-      FxCtorSpecs.testFromTrySuccessCase[IO](assertWithAttempt[IO](_.attempt.unsafeRunSync()))
-    ),
-    property(
-      "test FxCtor[IO].fromTry(Failure)",
-      FxCtorSpecs.testFromTryFailureCase[IO](assertWithAttempt[IO](_.attempt.unsafeRunSync()))
-    )
-  )
-
-  private val futureSpecs = effectie.core.FxCtorSpec.futureSpecs
-
-  import effectie.cats.fxCtor.idFxCtor
-
-  private val idSpecs = List(
-    property("test FxCtor[Id].effectOf", IdSpecs.testEffectOf),
-    property("test FxCtor[Id].pureOf", IdSpecs.testPureOf),
-    example("test FxCtor[Id].unitOf", IdSpecs.testUnitOf),
-    example("test FxCtor[Id].errorOf", IdSpecs.testErrorOf),
-    property("test FxCtor[Id].fromEither(Right)", IdSpecs.testFromEitherRightCase),
-    property("test FxCtor[Id].fromEither(Left)", IdSpecs.testFromEitherLeftCase),
-    property("test FxCtor[Id].fromOption(Some)", IdSpecs.testFromOptionSomeCase),
-    property("test FxCtor[Id].fromOption(None)", IdSpecs.testFromOptionNoneCase),
-    property("test FxCtor[Id].fromTry(Success)", IdSpecs.testFromTrySuccessCase),
-    property("test FxCtor[Id].fromTry(Failure)", IdSpecs.testFromTryFailureCase),
-  )
 
 }

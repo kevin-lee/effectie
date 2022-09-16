@@ -18,11 +18,11 @@ object FxCtorSpecs {
   } yield {
     @SuppressWarnings(Array("org.wartremover.warts.Var"))
     var actual        = before // scalafix:ok DisableSyntax.var
-    val testBefore    = actual ==== before
+    val testBefore    = (actual ==== before).log("before pureOrError")
     val io            = FxCtor[F].effectOf({ actual = after; () })
-    val testBeforeRun = actual ==== before
+    val testBeforeRun = (actual ==== before).log("after pureOrError but before run")
     val runResult     = run(io)
-    val testAfterRun  = actual ==== after
+    val testAfterRun  = (actual ==== after).log("after pureOrError and run")
     Result.all(
       List(
         testBefore.log("testBefore"),
@@ -39,7 +39,7 @@ object FxCtorSpecs {
   } yield {
     @SuppressWarnings(Array("org.wartremover.warts.Var"))
     var actual        = before // scalafix:ok DisableSyntax.var
-    val testBefore    = actual ==== before
+    val testBefore    = (actual ==== before).log("before pureOrError")
     val io            = FxCtor[F].pureOf({ actual = after; () })
     val testBeforeRun = actual ==== after
     val runResult     = run(io)
@@ -52,6 +52,35 @@ object FxCtorSpecs {
         testAfterRun.log("testAfterRun")
       )
     )
+  }
+
+  def testPureOrErrorSuccessCase[F[*]: FxCtor](run: F[Unit] => Result): Property = for {
+    before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+    after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+  } yield {
+    @SuppressWarnings(Array("org.wartremover.warts.Var"))
+    var actual        = before // scalafix:ok DisableSyntax.var
+    val testBefore    = (actual ==== before).log("before pureOrError")
+    val io            = FxCtor[F].pureOrError({ actual = after; () })
+    val testBeforeRun = (actual ==== after).log("after pureOrError but before run")
+    val runResult     = run(io)
+    val testAfterRun  = (actual ==== after).log("after pureOrError and run")
+    Result.all(
+      List(
+        testBefore.log("testBefore"),
+        testBeforeRun.log("testBeforeRun"),
+        runResult.log("runResult"),
+        testAfterRun.log("testAfterRun")
+      )
+    )
+  }
+
+  def testPureOrErrorErrorCase[F[*]: FxCtor](run: (F[Unit], Throwable) => Result): Result = {
+    val expectedMessage = "This is a throwable test error."
+    val expectedError   = SomeThrowableError.message(expectedMessage)
+
+    val io = FxCtor[F].pureOrError((throw expectedError): Unit) // scalafix:ok DisableSyntax.throw
+    run(io, expectedError)
   }
 
   def testUnitOf[F[*]: FxCtor](run: F[Unit] => Result): Result = {

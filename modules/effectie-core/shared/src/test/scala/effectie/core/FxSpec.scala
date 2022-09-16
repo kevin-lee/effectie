@@ -25,6 +25,8 @@ object FxSpec extends Properties {
   val futureSpecs = List(
     property("test Fx[Future].effectOf", FutureSpec.testEffectOf),
     property("test Fx[Future].pureOf", FutureSpec.testPureOf),
+    property("test Fx[Future].pureOrError(success case)", FutureSpec.testPureOrErrorSuccessCase),
+    example("test Fx[Future].pureOrError(error case)", FutureSpec.testPureOrErrorErrorCase),
     example("test Fx[Future].unitOf", FutureSpec.testUnitOf),
     example("test Fx[Future].errorOf", FutureSpec.testErrorOf),
     property("test Fx[Future].fromEither(Right)", FutureSpec.testFromEitherRightCase),
@@ -252,6 +254,40 @@ object FxSpec extends Properties {
           testAfterRun.log("testAfterRun")
         )
       )
+    }
+
+    def testPureOrErrorSuccessCase: Property = for {
+      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+    } yield {
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      @SuppressWarnings(Array("org.wartremover.warts.Var"))
+      var actual       = before // scalafix:ok DisableSyntax.var
+      val testBefore   = actual ==== before
+      val future       = Fx[Future].pureOrError({ actual = after; () })
+      ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
+      val testAfterRun = actual ==== after
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testAfterRun.log("testAfterRun")
+        )
+      )
+    }
+
+    def testPureOrErrorErrorCase: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      val future = Fx[Future].pureOrError[Unit](throw expectedError) // scalafix:ok DisableSyntax.throw
+      expectThrowable(ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future), expectedError)
     }
 
     def testUnitOf: Result = {

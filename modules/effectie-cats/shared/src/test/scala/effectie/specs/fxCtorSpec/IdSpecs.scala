@@ -43,6 +43,31 @@ object IdSpecs {
     )
   }
 
+  def testPureOrErrorSuccessCase(implicit idFxCtor: FxCtor[Id]): Property = for {
+    before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+    after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+  } yield {
+    @SuppressWarnings(Array("org.wartremover.warts.Var"))
+    var actual     = before // scalafix:ok DisableSyntax.var
+    val testBefore = actual ==== before
+    idFxCtor.pureOrError({ actual = after; () })
+    val testAfter  = actual ==== after
+    Result.all(
+      List(
+        testBefore.log("testBefore"),
+        testAfter.log("testAfter")
+      )
+    )
+  }
+
+  def testPureOrErrorErrorCase(implicit idFxCtor: FxCtor[Id]): Result = {
+    val expectedMessage = "This is a throwable test error."
+    val expectedError   = SomeThrowableError.message(expectedMessage)
+
+    lazy val actual = idFxCtor.pureOrError[Unit](throw expectedError) // scalafix:ok DisableSyntax.throw
+    tools.expectThrowable(actual, expectedError)
+  }
+
   def testUnitOf(implicit idFxCtor: FxCtor[Id]): Result = {
     val expected: Unit = ()
     val actual         = idFxCtor.unitOf
