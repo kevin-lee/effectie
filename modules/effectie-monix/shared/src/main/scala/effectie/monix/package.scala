@@ -50,7 +50,7 @@ package object monix {
 
   }
 
-  implicit final class FxhOps[F[*]](private val fx: effectie.core.Fx[F]) extends AnyVal {
+  implicit final class FxOps[F[*]](private val fx: effectie.core.Fx[F]) extends AnyVal {
 
     def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(f: Throwable => AA): EitherT[F, AA, B] =
       EitherT(fx.catchNonFatalEither[A, AA, B](fab.value)(f))
