@@ -1,12 +1,26 @@
-package effectie.cats.syntax
+package effectie.syntax
 
 import cats.*
 import cats.syntax.all.*
-import effectie.cats.syntax.console.ConsoleEffectF
+import effectie.syntax.console.ConsoleEffectF
 import effectie.core.ConsoleEffect.ConsoleEffectWithoutFlatMap
 import effectie.core.{ConsoleEffect, FxCtor, YesNo}
 
-trait console extends effectie.syntax.console {
+trait console {
+
+  inline def readLn[F[*]: ConsoleEffect]: F[String] = ConsoleEffect[F].readLn
+
+  inline def readPassword[F[*]: ConsoleEffect]: F[Array[Char]] = ConsoleEffect[F].readPassword
+
+  inline def putStr[F[*]: ConsoleEffect](value: String): F[Unit] = ConsoleEffect[F].putStr(value)
+
+  inline def putStrLn[F[*]: ConsoleEffect](value: String): F[Unit] = ConsoleEffect[F].putStrLn(value)
+
+  inline def putErrStr[F[*]: ConsoleEffect](value: String): F[Unit] = ConsoleEffect[F].putErrStr(value)
+
+  inline def putErrStrLn[F[*]: ConsoleEffect](value: String): F[Unit] = ConsoleEffect[F].putErrStrLn(value)
+
+  inline def readYesNo[F[*]: ConsoleEffect](prompt: String): F[YesNo] = ConsoleEffect[F].readYesNo(prompt)
 
   given consoleEffectF[F[*]: FxCtor: FlatMap]: ConsoleEffect[F] =
     new ConsoleEffectF[F]

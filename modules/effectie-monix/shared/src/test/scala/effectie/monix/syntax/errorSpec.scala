@@ -5,8 +5,8 @@ import cats.data.EitherT
 import cats.effect.IO
 import cats.syntax.all._
 import effectie.monix.fx._
-import effectie.cats.syntax.fx._
-import effectie.cats.syntax.error._
+import effectie.syntax.fx._
+import effectie.syntax.error._
 import effectie.testing.types._
 import effectie.core.Fx
 import effectie.SomeControlThrowable

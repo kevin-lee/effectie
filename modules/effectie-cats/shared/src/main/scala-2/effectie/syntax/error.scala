@@ -1,17 +1,23 @@
 package effectie.syntax
 
+import effectie.cats._
+
+import _root_.cats.data.EitherT
 import effectie.core.{CanCatch, CanHandleError, CanRecover}
 
 /** @author Kevin Lee
   * @since 2021-10-16
   */
 trait error {
-  import effectie.syntax.error.{FAErrorHandlingOps, FEitherABErrorHandlingOps}
+  import effectie.syntax.error._
 
   implicit def fAErrorHandlingOps[F[*], B](fb: => F[B]): FAErrorHandlingOps[F, B] = new FAErrorHandlingOps(() => fb)
 
   implicit def fEitherABErrorHandlingOps[F[*], A, B](fab: => F[Either[A, B]]): FEitherABErrorHandlingOps[F, A, B] =
     new FEitherABErrorHandlingOps(() => fab)
+
+  implicit def eitherTFABErrorHandlingOps[F[*], A, B](efab: => EitherT[F, A, B]): EitherTFABErrorHandlingOps[F, A, B] =
+    new EitherTFABErrorHandlingOps(() => efab)
 
 }
 
@@ -92,6 +98,44 @@ object error extends error {
       implicit canRecover: CanRecover[F]
     ): F[Either[AA, BB]] =
       canRecover.recoverEitherFromNonFatal[A, AA, B, BB](fab())(handleError)
+  }
+
+  final class EitherTFABErrorHandlingOps[F[*], A, B](private val efab: () => EitherT[F, A, B]) extends AnyVal {
+
+    def catchNonFatalEitherT[AA >: A](
+      f: Throwable => AA
+    )(
+      implicit canCatch: CanCatch[F]
+    ): EitherT[F, AA, B] =
+      canCatch.catchNonFatalEitherT[A, AA, B](efab())(f)
+
+    def handleEitherTNonFatalWith[AA >: A, BB >: B](
+      handleError: Throwable => F[Either[AA, BB]]
+    )(
+      implicit canHandleError: CanHandleError[F]
+    ): EitherT[F, AA, BB] =
+      canHandleError.handleEitherTNonFatalWith[A, AA, B, BB](efab())(handleError)
+
+    def handleEitherTNonFatal[AA >: A, BB >: B](
+      handleError: Throwable => Either[AA, BB]
+    )(
+      implicit canHandleError: CanHandleError[F]
+    ): EitherT[F, AA, BB] =
+      canHandleError.handleEitherTNonFatal[A, AA, B, BB](efab())(handleError)
+
+    def recoverEitherTFromNonFatalWith[AA >: A, BB >: B](
+      handleError: PartialFunction[Throwable, F[Either[AA, BB]]]
+    )(
+      implicit canRecover: CanRecover[F]
+    ): EitherT[F, AA, BB] =
+      canRecover.recoverEitherTFromNonFatalWith[A, AA, B, BB](efab())(handleError)
+
+    def recoverEitherTFromNonFatal[AA >: A, BB >: B](
+      handleError: PartialFunction[Throwable, Either[AA, BB]]
+    )(
+      implicit canRecover: CanRecover[F]
+    ): EitherT[F, AA, BB] =
+      canRecover.recoverEitherTFromNonFatal[A, AA, B, BB](efab())(handleError)
   }
 
 }
