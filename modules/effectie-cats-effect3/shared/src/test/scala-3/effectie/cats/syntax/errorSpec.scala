@@ -1,4 +1,4 @@
-package effectie.cats.syntax
+package effectie.syntax
 
 import cats.data.EitherT
 import cats.effect.IO
@@ -6,8 +6,8 @@ import cats.effect.unsafe.IORuntime
 import cats.syntax.all.*
 import cats.{Functor, Id}
 import effectie.cats.compat.CatsEffectIoCompatForFuture
-import effectie.cats.syntax.fx.*
-import effectie.cats.syntax.error.*
+import effectie.syntax.fx.*
+import effectie.syntax.error.*
 import effectie.core.FxCtor
 import effectie.cats.{canCatch, testing}
 import effectie.testing.types.*

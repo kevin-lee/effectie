@@ -1,11 +1,11 @@
-package effectie.cats.syntax
+package effectie.syntax
 
 import cats._
 import cats.data.EitherT
 import cats.effect._
 import cats.syntax.all._
 import effectie.cats.fx._
-import effectie.cats.syntax.error._
+import effectie.syntax.error._
 import effectie.syntax.fx._
 import effectie.testing.types._
 import effectie.core.FxCtor
