@@ -57,14 +57,14 @@ lazy val effectie = (project in file("."))
     testing4CatsJs,
     coreJvm,
     coreJs,
-    catsJvm,
-    catsJs,
-    catsEffectJvm,
-    catsEffectJs,
+    syntaxJvm,
+    syntaxJs,
+    catsEffect2Jvm,
+    catsEffect2Js,
     catsEffect3Jvm,
     catsEffect3Js,
-    monixJvm,
-    monixJs,
+    monix3Jvm,
+    monix3Js,
   )
 
 lazy val core = module(ProjectName("core"), crossProject(JVMPlatform, JSPlatform))
@@ -82,9 +82,9 @@ lazy val coreJs  = core
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
 
-lazy val cats    = module(ProjectName("cats"), crossProject(JVMPlatform, JSPlatform))
+lazy val syntax    = module(ProjectName("syntax"), crossProject(JVMPlatform, JSPlatform))
   .settings(
-    description         := "Effect Utils - Cats",
+    description         := "Effect Utils - Syntax",
     libraryDependencies ++= List(
       libs.libCatsCore(props.catsLatestVersion),
       libs.extrasConcurrent,
@@ -94,8 +94,8 @@ lazy val cats    = module(ProjectName("cats"), crossProject(JVMPlatform, JSPlatf
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
   )
   .dependsOn(core % props.IncludeTest)
-lazy val catsJvm = cats.jvm
-lazy val catsJs  = cats
+lazy val syntaxJvm = syntax.jvm
+lazy val syntaxJs  = syntax
   .js
   .settings(jsSettings)
 
@@ -115,9 +115,9 @@ lazy val testing4CatsJs  = testing4Cats
   .js
   .settings(jsSettings)
 
-lazy val catsEffect    = module(ProjectName("cats-effect"), crossProject(JVMPlatform, JSPlatform))
+lazy val catsEffect2    = module(ProjectName("cats-effect2"), crossProject(JVMPlatform, JSPlatform))
   .settings(
-    description         := "Effect Utils - Cats Effect",
+    description         := "Effect Utils - Cats Effect 2",
     libraryDependencies :=
       (SemVer.parseUnsafe(scalaVersion.value) match {
         case SemVer(Major(2), Minor(11), _, _, _) =>
@@ -143,11 +143,11 @@ lazy val catsEffect    = module(ProjectName("cats-effect"), crossProject(JVMPlat
   )
   .dependsOn(
     core         % props.IncludeTest,
-    cats         % props.IncludeTest,
+    syntax       % props.IncludeTest,
     testing4Cats % Test,
   )
-lazy val catsEffectJvm = catsEffect.jvm
-lazy val catsEffectJs  = catsEffect
+lazy val catsEffect2Jvm = catsEffect2.jvm
+lazy val catsEffect2Js  = catsEffect2
   .js
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
@@ -167,7 +167,7 @@ lazy val catsEffect3    = module(ProjectName("cats-effect3"), crossProject(JVMPl
   )
   .dependsOn(
     core         % props.IncludeTest,
-    cats         % props.IncludeTest,
+    syntax       % props.IncludeTest,
     testing4Cats % Test,
   )
 lazy val catsEffect3Jvm = catsEffect3.jvm
@@ -176,9 +176,9 @@ lazy val catsEffect3Js  = catsEffect3
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
 
-lazy val monix    = module(ProjectName("monix"), crossProject(JVMPlatform, JSPlatform))
+lazy val monix3    = module(ProjectName("monix3"), crossProject(JVMPlatform, JSPlatform))
   .settings(
-    description         := "Effect Utils - Monix",
+    description         := "Effect Utils - Monix 3",
     libraryDependencies :=
       crossVersionProps(
         List.empty,
@@ -193,12 +193,12 @@ lazy val monix    = module(ProjectName("monix"), crossProject(JVMPlatform, JSPla
   )
   .dependsOn(
     core         % props.IncludeTest,
-    cats         % props.IncludeTest,
-    catsEffect   % props.IncludeTest,
+    syntax       % props.IncludeTest,
+    catsEffect2  % props.IncludeTest,
     testing4Cats % Test,
   )
-lazy val monixJvm = monix.jvm
-lazy val monixJs  = monix
+lazy val monix3Jvm = monix3.jvm
+lazy val monix3Js  = monix3
   .js
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
