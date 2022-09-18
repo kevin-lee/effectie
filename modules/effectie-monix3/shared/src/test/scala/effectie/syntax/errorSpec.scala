@@ -1,15 +1,15 @@
-package effectie.monix.syntax
+package effectie.syntax
 
 import cats._
 import cats.data.EitherT
 import cats.effect.IO
 import cats.syntax.all._
-import effectie.monix.fx._
-import effectie.syntax.fx._
-import effectie.syntax.error._
-import effectie.testing.types._
-import effectie.core.Fx
 import effectie.SomeControlThrowable
+import effectie.core.Fx
+import effectie.monix3.fx._
+import effectie.syntax.error._
+import effectie.syntax.fx._
+import effectie.testing.types._
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._

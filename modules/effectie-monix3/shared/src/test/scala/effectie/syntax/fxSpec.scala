@@ -1,11 +1,11 @@
 package effectie.syntax
 
 import cats._
-import effectie.monix.fx._
+import effectie.core.{Fx, FxCtor}
+import effectie.monix3.fx._
 import effectie.syntax.fx._
 import effectie.testing.tools.{dropResult, expectThrowable}
 import effectie.testing.types.SomeThrowableError
-import effectie.core.{Fx, FxCtor}
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._

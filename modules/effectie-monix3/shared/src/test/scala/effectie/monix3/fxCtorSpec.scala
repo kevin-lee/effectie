@@ -1,7 +1,7 @@
-package effectie.monix
+package effectie.monix3
 
 import effectie.core._
-import effectie.monix.fxCtor._
+import effectie.monix3.fxCtor._
 import effectie.specs.fxCtorSpec.FxCtorSpecs
 import effectie.testing.tools
 import extras.concurrent.testing.types.ErrorLogger

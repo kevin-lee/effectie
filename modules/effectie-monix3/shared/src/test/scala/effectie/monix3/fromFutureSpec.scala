@@ -1,9 +1,9 @@
-package effectie.monix
+package effectie.monix3
 
 import cats.Id
 import cats.effect.{ContextShift, IO}
 import effectie.core.FromFuture
-import effectie.monix.fromFuture._
+import effectie.monix3.fromFuture._
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._

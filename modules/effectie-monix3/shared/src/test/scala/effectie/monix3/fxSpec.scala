@@ -1,13 +1,14 @@
-package effectie.monix
+package effectie.monix3
 
 import cats.Eq
 import cats.data.EitherT
 import cats.syntax.all._
 import effectie.SomeControlThrowable
 import effectie.core._
-import effectie.monix.canCatchSpec.{run, throwThrowable}
-import effectie.monix.fx._
+import effectie.monix3.canCatchSpec.{run, throwThrowable}
+import effectie.monix3.fx._
 import effectie.specs.fxSpec.FxSpecs
+import effectie.syntax.error._
 import effectie.testing.tools
 import effectie.testing.types.SomeError
 import extras.concurrent.testing.types.ErrorLogger

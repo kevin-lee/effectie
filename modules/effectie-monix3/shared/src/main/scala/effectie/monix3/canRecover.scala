@@ -1,4 +1,4 @@
-package effectie.monix
+package effectie.monix3
 
 import cats._
 import cats.effect.IO

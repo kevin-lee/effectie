@@ -1,18 +1,19 @@
-package effectie.monix
+package effectie.monix3
 
+import canRecover._
 import cats._
 import cats.data.EitherT
 import cats.effect.IO
 import cats.instances.all._
 import cats.syntax.all._
-import effectie.syntax.fx._
-import effectie.core._
-import effectie.monix.fxCtor._
-import effectie.monix.canRecover._
-import effectie.testing.types.SomeError
 import effectie.SomeControlThrowable
+import effectie.core._
+import effectie.syntax.error._
+import effectie.syntax.fx._
+import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
+import fxCtor._
 import hedgehog._
 import hedgehog.runner._
 import monix.eval.Task
@@ -949,7 +950,6 @@ object canRecoverSpec extends Properties {
 
   object IoSpec {
     import effectie.ce2.fxCtor.ioFxCtor
-    import effectie.monix.canRecover._
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

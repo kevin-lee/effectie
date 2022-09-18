@@ -1,4 +1,4 @@
-package effectie.monix
+package effectie.monix3
 
 import effectie.core.FxCtor
 import monix.eval.Task
