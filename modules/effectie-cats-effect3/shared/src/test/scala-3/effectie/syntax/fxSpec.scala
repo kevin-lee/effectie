@@ -3,9 +3,9 @@ package effectie.syntax
 import cats.*
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
-import effectie.cats.fx.given
-import effectie.cats.compat.CatsEffectIoCompatForFuture
-import effectie.cats.testing
+import effectie.ce3.fx.given
+import effectie.ce3.compat.CatsEffectIoCompatForFuture
+import effectie.ce3.testing
 import effectie.syntax.fx.*
 import effectie.testing.tools.{dropResult, expectThrowable}
 import effectie.testing.types.SomeThrowableError
