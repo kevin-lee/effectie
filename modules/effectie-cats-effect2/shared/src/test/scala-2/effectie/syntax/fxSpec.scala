@@ -2,11 +2,11 @@ package effectie.syntax
 
 import cats.Id
 import cats.effect.IO
-import effectie.cats.fx._
+import effectie.ce2.fx._
+import effectie.core.{Fx, FxCtor}
 import effectie.syntax.fx._
 import effectie.testing.tools.{dropResult, expectThrowable}
 import effectie.testing.types.SomeThrowableError
-import effectie.core.{Fx, FxCtor}
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._

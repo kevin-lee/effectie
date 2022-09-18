@@ -948,7 +948,7 @@ object canRecoverSpec extends Properties {
   }
 
   object IoSpec {
-    import effectie.cats.fxCtor.ioFxCtor
+    import effectie.ce2.fxCtor.ioFxCtor
     import effectie.monix.canRecover._
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
@@ -1970,7 +1970,7 @@ object canRecoverSpec extends Properties {
   }
 
   object IdSpec {
-    import effectie.cats.fxCtor.idFxCtor
+    import effectie.ce2.fxCtor.idFxCtor
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

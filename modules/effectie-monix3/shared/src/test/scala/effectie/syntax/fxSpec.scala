@@ -181,7 +181,7 @@ object fxSpec extends Properties {
 
   object IoSpec {
     import cats.effect.IO
-    import effectie.cats.fx.ioFx
+    import effectie.ce2.fx.ioFx
 
     @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
     def testAll: Property = for {
@@ -400,7 +400,7 @@ object fxSpec extends Properties {
   }
 
   object IdSpec {
-    import effectie.cats.fx.idFx
+    import effectie.ce2.fx.idFx
 
     def testAll: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

@@ -1,7 +1,5 @@
 package effectie.syntax
 
-import effectie.cats._
-
 import _root_.cats.data.EitherT
 import effectie.core.{CanCatch, CanHandleError, CanRecover}
 
@@ -18,6 +16,16 @@ trait error {
 
   implicit def eitherTFABErrorHandlingOps[F[*], A, B](efab: => EitherT[F, A, B]): EitherTFABErrorHandlingOps[F, A, B] =
     new EitherTFABErrorHandlingOps(() => efab)
+
+  implicit def canCatchOps[F[*]](canCatch: effectie.core.CanCatch[F]): CanCatchOps[F[*]] = new CanCatchOps(canCatch)
+
+  implicit def canHandleErrorOps[F[*]](canHandleError: effectie.core.CanHandleError[F]): CanHandleErrorOps[F[*]] =
+    new CanHandleErrorOps(canHandleError)
+
+  implicit def CanRecoverOps[F[*]](canRecover: effectie.core.CanRecover[F]): CanRecoverOps[F[*]] =
+    new CanRecoverOps(canRecover)
+
+  implicit def FxOps[F[*]](fx: effectie.core.Fx[F]): FxOps[F[*]] = new FxOps(fx)
 
 }
 
@@ -136,6 +144,56 @@ object error extends error {
       implicit canRecover: CanRecover[F]
     ): EitherT[F, AA, BB] =
       canRecover.recoverEitherTFromNonFatal[A, AA, B, BB](efab())(handleError)
+  }
+
+  final class CanCatchOps[F[*]](private val canCatch: effectie.core.CanCatch[F]) extends AnyVal {
+
+    def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(f: Throwable => AA): EitherT[F, AA, B] =
+      EitherT(canCatch.catchNonFatalEither[A, AA, B](fab.value)(f))
+
+  }
+
+  final class CanHandleErrorOps[F[*]](private val canHandleError: effectie.core.CanHandleError[F]) extends AnyVal {
+
+    def handleEitherTNonFatalWith[A, AA >: A, B, BB >: B](
+      efab: => EitherT[F, A, B]
+    )(
+      handleError: Throwable => F[Either[AA, BB]]
+    ): EitherT[F, AA, BB] =
+      EitherT(canHandleError.handleNonFatalWith[Either[A, B], Either[AA, BB]](efab.value)(handleError))
+
+    def handleEitherTNonFatal[A, AA >: A, B, BB >: B](
+      efab: => EitherT[F, A, B]
+    )(
+      handleError: Throwable => Either[AA, BB]
+    ): EitherT[F, AA, BB] =
+      EitherT(canHandleError.handleNonFatal[Either[A, B], Either[AA, BB]](efab.value)(handleError))
+
+  }
+
+  final class CanRecoverOps[F[*]](private val canRecover: effectie.core.CanRecover[F]) extends AnyVal {
+
+    final def recoverEitherTFromNonFatalWith[A, AA >: A, B, BB >: B](
+      efab: => EitherT[F, A, B]
+    )(
+      handleError: PartialFunction[Throwable, F[Either[AA, BB]]]
+    ): EitherT[F, AA, BB] =
+      EitherT(canRecover.recoverFromNonFatalWith[Either[A, B], Either[AA, BB]](efab.value)(handleError))
+
+    final def recoverEitherTFromNonFatal[A, AA >: A, B, BB >: B](
+      efab: => EitherT[F, A, B]
+    )(
+      handleError: PartialFunction[Throwable, Either[AA, BB]]
+    ): EitherT[F, AA, BB] =
+      EitherT(canRecover.recoverFromNonFatal[Either[A, B], Either[AA, BB]](efab.value)(handleError))
+
+  }
+
+  final class FxOps[F[*]](private val fx: effectie.core.Fx[F]) extends AnyVal {
+
+    def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(f: Throwable => AA): EitherT[F, AA, B] =
+      EitherT(fx.catchNonFatalEither[A, AA, B](fab.value)(f))
+
   }
 
 }
