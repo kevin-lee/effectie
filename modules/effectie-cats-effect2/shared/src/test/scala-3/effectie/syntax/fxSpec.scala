@@ -1,18 +1,14 @@
 package effectie.syntax
 
-import cats.*
+import cats.Id
 import cats.effect.IO
-import cats.effect.unsafe.IORuntime
-import effectie.ce3.fx.given
-import effectie.ce3.compat.CatsEffectIoCompatForFuture
-import effectie.ce3.testing
+import effectie.ce2.fx.given
 import effectie.syntax.fx.*
-import effectie.testing.tools.{dropResult, expectThrowable}
+import effectie.testing.tools.*
 import effectie.testing.types.SomeThrowableError
 import effectie.core.{Fx, FxCtor}
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
-import extras.hedgehog.cats.effect.CatsEffectRunner
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -24,16 +20,22 @@ object fxSpec extends Properties {
     property("test fx.{effectOf, pureOf, unitOf} for IO", IoSpec.testAll),
     property("test fx.effectOf[IO]", IoSpec.testEffectOf),
     property("test fx.pureOf[IO]", IoSpec.testPureOf),
+    property("test fx.pureOrError(success case)[IO]", IoSpec.testPureOrErrorSuccessCase),
+    example("test fx.pureOrError(error case)[IO]", IoSpec.testPureOrErrorErrorCase),
     example("test fx.unitOf[IO]", IoSpec.testUnitOf),
     example("test fx.errorOf[IO]", IoSpec.testErrorOf),
     property("test fx.{effectOf, pureOf, unitOf} for Future", FutureSpec.testAll),
     property("test fx.effectOf[Future]", FutureSpec.testEffectOf),
     property("test fx.pureOf[Future]", FutureSpec.testPureOf),
+    property("test fx.pureOrError[Future](success case)", FutureSpec.testPureOrErrorSuccessCase),
+    example("test fx.pureOrError[Future](error case)", FutureSpec.testPureOrErrorErrorCase),
     example("test fx.unitOf[Future]", FutureSpec.testUnitOf),
     example("test fx.errorOf[Future]", FutureSpec.testErrorOf),
     property("test fx.{effectOf, pureOf, unitOf} for Id", IdSpec.testAll),
     property("test fx.effectOf[Id]", IdSpec.testEffectOf),
     property("test fx.pureOf[Id]", IdSpec.testPureOf),
+    property("test fx.pureOrError(success case)[Id]", IdSpec.testPureOrErrorSuccessCase),
+    example("test fx.pureOrError(error case)[Id]", IdSpec.testPureOrErrorErrorCase),
     example("test fx.unitOf[Id]", IdSpec.testUnitOf),
     example("test fx.errorOf[Id]", IdSpec.testErrorOf)
   )
@@ -44,9 +46,8 @@ object fxSpec extends Properties {
     def unit: F[Unit]
   }
   object FxCtorClient {
-    def apply[F[*]: FxCtorClient]: FxCtorClient[F]         = implicitly[FxCtorClient[F]]
-    implicit def eftClientF[F[*]: FxCtor]: FxCtorClient[F] = new FxCtorClientF[F]
-    final class FxCtorClientF[F[*]: FxCtor] extends FxCtorClient[F] {
+    def apply[F[*]: FxCtorClient]: FxCtorClient[F] = summon[FxCtorClient[F]]
+    given eftClientF[F[*]: FxCtor]: FxCtorClient[F] with {
       override def eftOf[A](a: A): F[A] = effectOf(a)
       override def of[A](a: A): F[A]    = pureOf(a)
       override def unit: F[Unit]        = unitOf
@@ -59,10 +60,9 @@ object fxSpec extends Properties {
     def unit: F[Unit]
   }
   object FxClient {
-    def apply[F[*]: FxClient]: FxClient[F]         =
-      implicitly[FxClient[F]]
-    implicit def eftClientF[F[*]: Fx]: FxClient[F] = new FxClientF[F]
-    final class FxClientF[F[*]: Fx] extends FxClient[F] {
+    def apply[F[*]: FxClient]: FxClient[F] =
+      summon[FxClient[F]]
+    given eftClientF[F[*]: Fx]: FxClient[F] with {
       override def eftOf[A](a: A): F[A] = effectOf(a)
       override def of[A](a: A): F[A]    = pureOf(a)
       override def unit: F[Unit]        = unitOf
@@ -71,17 +71,14 @@ object fxSpec extends Properties {
 
   object IoSpec {
 
-    val compat          = new CatsEffectIoCompatForFuture
-    given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
-
     def testAll: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       var actual                  = before // scalafix:ok DisableSyntax.var
       var actual2                 = before // scalafix:ok DisableSyntax.var
-      val testBefore              = (actual ==== before).log(s"actual testBefore should be $before but was $actual")
-      val testBefore2             = (actual2 ==== before).log(s"actual2 testBefore2 should be $before but was $actual2")
+      val testBefore              = actual ==== before
+      val testBefore2             = actual2 ==== before
       val eftClient               = FxCtorClient[IO]
       val effectConstructorClient = FxClient[IO]
       val io                      =
@@ -95,23 +92,18 @@ object fxSpec extends Properties {
           _  <- eftClient.unit
           _  <- effectConstructorClient.unit
         } yield ()
-      val testBeforeRun           = (actual ==== before).log(s"actual testBeforeRun should be $before but was $actual")
-      val testBeforeRun2 = (actual2 ==== before).log(s"actual2 testBeforeRun2 should be $before but was $actual2")
-
-      import CatsEffectRunner.*
-      given ticket: Ticker = Ticker(TestContext())
-
-      val runResult     = io.completeAs(())
-      val testAfterRun  = (actual ==== after).log(s"actual testAfterRun should be $after but was $actual")
-      val testAfterRun2 = (actual2 ==== after).log(s"actual2 testAfterRun2 should be $after but was $actual2")
+      val testBeforeRun           = actual ==== before
+      val testBeforeRun2          = actual2 ==== before
+      io.unsafeRunSync()
+      val testAfterRun            = actual ==== after
+      val testAfterRun2           = actual2 ==== after
       Result.all(
         List(
           testBefore.log("testBefore"),
-          testBefore2.log("testBefore2"),
           testBeforeRun.log("testBeforeRun"),
-          testBeforeRun2.log("testBeforeRun2"),
-          runResult,
           testAfterRun.log("testAfterRun"),
+          testBefore2.log("testBefore2"),
+          testBeforeRun2.log("testBeforeRun2"),
           testAfterRun2.log("testAfterRun2")
         )
       )
@@ -122,20 +114,15 @@ object fxSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       var actual        = before // scalafix:ok DisableSyntax.var
-      val testBefore    = (actual ==== before).log(s"actual before should be $before but was $actual")
+      val testBefore    = actual ==== before
       val io            = effectOf[IO]({ actual = after; () })
-      val testBeforeRun = (actual ==== before).log(s"actual beforeRun should be $before but was $actual")
-
-      import CatsEffectRunner.*
-      given ticket: Ticker = Ticker(TestContext())
-
-      val runResult    = io.completeAs(())
-      val testAfterRun = (actual ==== after).log(s"actual afterRun should be $after but was $actual")
+      val testBeforeRun = actual ==== before
+      io.unsafeRunSync()
+      val testAfterRun  = actual ==== after
       Result.all(
         List(
           testBefore.log("testBefore"),
           testBeforeRun.log("testBeforeRun"),
-          runResult,
           testAfterRun.log("testAfterRun")
         )
       )
@@ -145,45 +132,69 @@ object fxSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      import CatsEffectRunner.*
-      given ticket: Ticker = Ticker(TestContext())
-
       var actual        = before // scalafix:ok DisableSyntax.var
-      val testBefore    = (actual ==== before).log(s"actual before should be $before but was $actual")
+      val testBefore    = actual ==== before
       val io            = pureOf[IO]({ actual = after; () })
-      val testBeforeRun = (actual ==== after).log(s"actual beforeRun should be $after but was $actual")
-
-      val runResult = io.completeAs(())
-
-      val testAfterRun = (actual ==== after).log(s"actual afterRun should be $after but was $actual")
+      val testBeforeRun = actual ==== after
+      io.unsafeRunSync()
+      val testAfterRun  = actual ==== after
       Result.all(
         List(
           testBefore.log("testBefore"),
           testBeforeRun.log("testBeforeRun"),
-          runResult,
           testAfterRun.log("testAfterRun")
         )
       )
     }
 
-    def testUnitOf: Result = {
-      import CatsEffectRunner.*
-      given ticket: Ticker = Ticker(TestContext())
+    def testPureOrErrorSuccessCase: Property = for {
+      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+    } yield {
+      var actual        = before // scalafix:ok DisableSyntax.var
+      val testBefore    = actual ==== before
+      val io            = pureOrError[IO]({ actual = after; () })
+      val testBeforeRun = actual ==== after
+      io.unsafeRunSync()
+      val testAfterRun  = actual ==== after
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testBeforeRun.log("testBeforeRun"),
+          testAfterRun.log("testAfterRun")
+        )
+      )
+    }
 
+    def testPureOrErrorErrorCase: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      val io = pureOrError[IO][Unit](throw expectedError)
+
+      expectThrowable(
+        io.unsafeRunSync(),
+        expectedError
+      )
+    }
+
+    def testUnitOf: Result = {
       val io             = unitOf[IO]
       val expected: Unit = ()
-      io.completeAs(expected)
+      val actual: Unit   = io.unsafeRunSync()
+      actual ==== expected
     }
 
     def testErrorOf: Result = {
       val expectedMessage = "This is a throwable test error."
       val expectedError   = SomeThrowableError.message(expectedMessage)
 
-      import CatsEffectRunner.*
-      given ticket: Ticker = Ticker(TestContext())
-
       val io = errorOf[IO][Unit](expectedError)
-      io.expectError(expectedError)
+
+      expectThrowable(
+        io.unsafeRunSync(),
+        expectedError
+      )
     }
 
   }
@@ -194,7 +205,7 @@ object fxSpec extends Properties {
     import scala.concurrent.duration.*
     import scala.concurrent.{ExecutionContext, Future}
 
-    private given errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
+    private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
     private val waitFor = WaitFor(1.second)
 
@@ -203,7 +214,7 @@ object fxSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       given executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      given ExecutionContext                 =
+      given ec: ExecutionContext             =
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       var actual                  = before // scalafix:ok DisableSyntax.var
@@ -241,7 +252,7 @@ object fxSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       given executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      given ExecutionContext                 =
+      given ec: ExecutionContext             =
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       var actual               = before // scalafix:ok DisableSyntax.var
@@ -262,7 +273,7 @@ object fxSpec extends Properties {
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
       given executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      given ExecutionContext                 =
+      given ec: ExecutionContext             =
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       var actual       = before // scalafix:ok DisableSyntax.var
@@ -278,9 +289,47 @@ object fxSpec extends Properties {
       )
     }
 
+    def testPureOrErrorSuccessCase: Property = for {
+      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+    } yield {
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      given ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      var actual       = before // scalafix:ok DisableSyntax.var
+      val testBefore   = actual ==== before
+      val future       = pureOrError[Future]({ actual = after; () })
+      ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
+      val testAfterRun = actual ==== after
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testAfterRun.log("testAfterRun")
+        )
+      )
+    }
+
+    def testPureOrErrorErrorCase: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+
+      given ec: ExecutionContext =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      val future = pureOrError[Future][Unit](throw expectedError)
+
+      expectThrowable(
+        ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future),
+        expectedError
+      )
+    }
+
     def testUnitOf: Result = {
       given executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      given ExecutionContext                 =
+      given ec: ExecutionContext             =
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
       val future                             = unitOf[Future]
       val expected: Unit                     = ()
@@ -293,11 +342,14 @@ object fxSpec extends Properties {
       val expectedError   = SomeThrowableError.message(expectedMessage)
 
       given executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      given ExecutionContext                 =
+      given ec: ExecutionContext             =
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+      val future                             = errorOf[Future][Unit](expectedError)
 
-      val future = errorOf[Future][Unit](expectedError)
-      expectThrowable(ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future), expectedError)
+      expectThrowable(
+        ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future),
+        expectedError
+      )
     }
 
   }
@@ -360,6 +412,31 @@ object fxSpec extends Properties {
           testAfter.log("testAfter")
         )
       )
+    }
+
+    def testPureOrErrorSuccessCase: Property = for {
+      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+    } yield {
+      var actual     = before // scalafix:ok DisableSyntax.var
+      val testBefore = actual ==== before
+      pureOrError[Id]({ actual = after; () })
+      val testAfter  = actual ==== after
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testAfter.log("testAfter")
+        )
+      )
+    }
+
+    def testPureOrErrorErrorCase: Result = {
+      val expectedMessage = "This is a throwable test error."
+      val expectedError   = SomeThrowableError.message(expectedMessage)
+
+      lazy val actual = pureOrError[Id][Unit](throw expectedError)
+
+      expectThrowable(actual, expectedError)
     }
 
     def testUnitOf: Result = {
