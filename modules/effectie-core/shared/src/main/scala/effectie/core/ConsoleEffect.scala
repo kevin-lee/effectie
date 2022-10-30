@@ -1,5 +1,16 @@
 package effectie.core
 
+import scala.annotation.implicitNotFound
+
+@implicitNotFound(
+  """
+  Could not find an implicit ConsoleEffect[${F}]. You can probably find it from the effectie.instance package.
+  ---
+  You can simply,
+    import effectie.instances.console._
+  ---
+  """
+)
 trait ConsoleEffect[F[*]] {
   def readLn: F[String]
 

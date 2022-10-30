@@ -1462,6 +1462,9 @@ object canRecoverSpec extends Properties {
   }
 
   object FutureSpec {
+    import effectie.instances.future.canRecover._
+    import effectie.instances.future.fxCtor._
+
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}

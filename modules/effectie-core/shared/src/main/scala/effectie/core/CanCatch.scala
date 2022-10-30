@@ -1,7 +1,28 @@
 package effectie.core
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.annotation.implicitNotFound
 
+@implicitNotFound(
+  """
+  Could not find an implicit CanCatch[${F}]. You can probably find it from the effectie.instance package.
+  ---
+  If you want to use IO from cats-effect 2, try effectie-cats-effect2.
+    import effectie.instances.ce2.canCatch._
+
+  For cats-effect 3, try effectie-cats-effect3.
+    import effectie.instances.ce3.canCatch._
+
+  If you want to use Task from Monix 3, try effectie-monix3.
+    import effectie.instances.monix3.canCatch._
+
+  For Scala's Future, It is just
+    import effectie.instances.future.canCatch._
+
+  If you don't want to use any effect but the raw data, you can use the instance for cats.Id
+    import effectie.instances.id.canCatch._
+  ---
+  """
+)
 trait CanCatch[F[*]] {
 
   def mapFa[A, B](fa: F[A])(f: A => B): F[B]
@@ -18,28 +39,5 @@ trait CanCatch[F[*]] {
 
 object CanCatch {
   def apply[F[*]: CanCatch]: CanCatch[F] = implicitly[CanCatch[F]]
-
-  trait FutureCanCatch extends CanCatch[Future] {
-    implicit def EC0: ExecutionContext
-    @inline override final def mapFa[A, B](fa: Future[A])(f: A => B): Future[B] =
-      fa.map(f)(EC0)
-
-    @inline override final def catchNonFatalThrowable[A](fa: => Future[A]): Future[Either[Throwable, A]] =
-      fa.transform {
-        case scala.util.Success(a) =>
-          scala.util.Try[Either[Throwable, A]](Right(a))
-
-        case scala.util.Failure(scala.util.control.NonFatal(ex)) =>
-          scala.util.Try[Either[Throwable, A]](Left(ex))
-
-        case scala.util.Failure(ex) =>
-          throw ex // scalafix:ok DisableSyntax.throw
-      }
-
-  }
-
-  final class CanCatchFuture(override implicit val EC0: ExecutionContext) extends FutureCanCatch
-
-  implicit def canCatchFuture(implicit EC: ExecutionContext): CanCatch[Future] = new CanCatchFuture
 
 }

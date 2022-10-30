@@ -1,24 +1,35 @@
 package effectie.core
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.annotation.implicitNotFound
 
 /** @author Kevin Lee
   * @since 2021-11-03
   */
+@implicitNotFound(
+  """
+  Could not find an implicit Fx[${F}]. You can probably find it from the effectie.instance package.
+  ---
+  If you want to use IO from cats-effect 2, try effectie-cats-effect2.
+    import effectie.instances.ce2.fx._
+
+  For cats-effect 3, try effectie-cats-effect3.
+    import effectie.instances.ce3.fx._
+
+  If you want to use Task from Monix 3, try effectie-monix3.
+    import effectie.instances.monix3.fx._
+
+  For Scala's Future, It is just
+    import effectie.instances.future.fx._
+
+  If you don't want to use any effect but the raw data, you can use the instance for cats.Id
+    import effectie.instances.id.fx._
+  ---
+  """
+)
 trait Fx[F[*]] extends FxCtor[F] with CanCatch[F] with CanHandleError[F] with CanRecover[F]
 
 object Fx {
 
   def apply[F[*]: Fx]: Fx[F] = implicitly[Fx[F]]
 
-  trait FxOfFuture
-      extends Fx[Future]
-      with FxCtor.FutureFxCtor
-      with CanCatch.FutureCanCatch
-      with CanHandleError.FutureCanHandleError
-      with CanRecover.FutureCanRecover
-
-  final class FutureFx(implicit override val EC0: ExecutionContext) extends FxOfFuture
-
-  implicit def futureFx(implicit EC: ExecutionContext): Fx[Future] = new FutureFx
 }

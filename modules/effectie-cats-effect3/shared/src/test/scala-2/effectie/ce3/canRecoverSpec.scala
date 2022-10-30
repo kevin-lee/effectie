@@ -1,5 +1,6 @@
 package effectie.ce3
 
+import canRecover._
 import cats._
 import cats.data.EitherT
 import cats.effect.IO
@@ -7,8 +8,6 @@ import cats.effect.unsafe.IORuntime
 import cats.instances.all._
 import cats.syntax.all._
 import effectie.SomeControlThrowable
-import canRecover._
-import fxCtor._
 import effectie.ce3.compat.CatsEffectIoCompatForFuture
 import effectie.core._
 import effectie.syntax.error._
@@ -17,6 +16,7 @@ import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import extras.hedgehog.cats.effect.CatsEffectRunner
+import fxCtor._
 import hedgehog._
 import hedgehog.runner._
 
@@ -893,6 +893,9 @@ object canRecoverSpec extends Properties {
   }
 
   object FutureSpec {
+    import effectie.instances.future.canRecover._
+    import effectie.instances.future.fxCtor._
+
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}

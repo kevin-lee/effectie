@@ -4,12 +4,12 @@ import cats._
 import cats.data.EitherT
 import cats.effect._
 import cats.syntax.all._
+import effectie.SomeControlThrowable
 import effectie.ce2.fx._
+import effectie.core.FxCtor
 import effectie.syntax.error._
 import effectie.syntax.fx._
 import effectie.testing.types._
-import effectie.core.FxCtor
-import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._
@@ -371,6 +371,9 @@ object CanCatchSyntaxSpec {
   }
 
   object FutureSpec {
+    import effectie.instances.future.canCatch._
+    import effectie.instances.future.fxCtor._
+
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
@@ -1492,6 +1495,9 @@ object CanHandleErrorSyntaxSpec {
   }
 
   object FutureSpec {
+    import effectie.instances.future.canHandleError._
+    import effectie.instances.future.fxCtor._
+
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
@@ -3161,6 +3167,9 @@ object CanRecoverSyntaxSpec {
   }
 
   object FutureSpec {
+    import effectie.instances.future.canRecover._
+    import effectie.instances.future.fxCtor._
+
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}

@@ -3,7 +3,7 @@ package effectie.monix3
 import cats.Id
 import cats.effect.{ContextShift, IO}
 import effectie.core.FromFuture
-import effectie.core.FromFuture.FromFutureToIdTimeout
+import effectie.instances.future.fromFuture.FromFutureToIdTimeout
 import monix.eval.Task
 
 import scala.concurrent.{Await, Future}

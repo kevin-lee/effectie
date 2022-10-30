@@ -1876,6 +1876,7 @@ object FxSpec extends Properties {
       import java.util.concurrent.{ExecutorService, Executors}
       import scala.concurrent.duration.*
       import scala.concurrent.{ExecutionContext, Future}
+      import effectie.instances.future.fx._
 
       val waitFor = WaitFor(1.second)
 
@@ -1934,6 +1935,7 @@ object FxSpec extends Properties {
       import java.util.concurrent.{ExecutorService, Executors}
       import scala.concurrent.duration.*
       import scala.concurrent.{ExecutionContext, Future}
+      import effectie.instances.future.fx._
 
       val waitFor = WaitFor(1.second)
 
@@ -2072,6 +2074,7 @@ object FxSpec extends Properties {
       import scala.concurrent.duration.*
       import scala.concurrent.{ExecutionContext, Future}
       import scala.util.control.NonFatal
+      import effectie.instances.future.fx._
 
       val waitFor = WaitFor(1.second)
 

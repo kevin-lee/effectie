@@ -887,6 +887,8 @@ object canRecoverSpec extends Properties {
     import scala.concurrent.duration.*
     import scala.concurrent.{ExecutionContext, Future}
     import scala.util.control.NonFatal
+    import effectie.instances.future.fxCtor.*
+    import effectie.instances.future.canRecover._
 
     private given errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 

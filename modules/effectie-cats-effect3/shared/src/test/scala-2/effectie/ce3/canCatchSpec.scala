@@ -1,5 +1,6 @@
 package effectie.ce3
 
+import canCatch._
 import cats._
 import cats.data.EitherT
 import cats.effect._
@@ -8,14 +9,13 @@ import cats.instances.all._
 import cats.syntax.all._
 import effectie.SomeControlThrowable
 import effectie.core._
-import fxCtor._
-import canCatch._
 import effectie.syntax.error._
 import effectie.syntax.fx._
 import effectie.testing.types._
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import extras.hedgehog.cats.effect.CatsEffectRunner
+import fxCtor._
 import hedgehog._
 import hedgehog.runner._
 
@@ -393,6 +393,9 @@ object canCatchSpec extends Properties {
   }
 
   object FutureSpec {
+
+    import effectie.instances.future.canCatch._
+    import effectie.instances.future.fxCtor._
 
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._

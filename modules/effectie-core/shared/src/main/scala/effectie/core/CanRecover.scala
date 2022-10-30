@@ -1,10 +1,31 @@
 package effectie.core
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.annotation.implicitNotFound
 
 /** @author Kevin Lee
   * @since 2020-08-17
   */
+@implicitNotFound(
+  """
+  Could not find an implicit CanRecover[${F}]. You can probably find it from the effectie.instance package.
+  ---
+  If you want to use IO from cats-effect 2, try effectie-cats-effect2.
+    import effectie.instances.ce2.canRecover._
+
+  For cats-effect 3, try effectie-cats-effect3.
+    import effectie.instances.ce3.canRecover._
+
+  If you want to use Task from Monix 3, try effectie-monix3.
+    import effectie.instances.monix3.canRecover._
+
+  For Scala's Future, It is just
+    import effectie.instances.future.canRecover._
+
+  If you don't want to use any effect but the raw data, you can use the instance for cats.Id
+    import effectie.instances.id.canRecover._
+  ---
+  """
+)
 trait CanRecover[F[*]] {
 
   def recoverFromNonFatalWith[A, AA >: A](fa: => F[A])(handleError: PartialFunction[Throwable, F[AA]]): F[AA]
@@ -30,30 +51,5 @@ trait CanRecover[F[*]] {
 object CanRecover {
 
   def apply[F[*]: CanRecover]: CanRecover[F] = implicitly[CanRecover[F]]
-
-  implicit def futureCanRecover(implicit ec: ExecutionContext): CanRecover[Future] = new CanRecoverFuture
-
-  trait FutureCanRecover extends CanRecover[Future] {
-    implicit def EC0: ExecutionContext
-
-    @inline override def recoverFromNonFatalWith[A, AA >: A](
-      fa: => Future[A]
-    )(
-      handleError: PartialFunction[Throwable, Future[AA]]
-    ): Future[AA] =
-      fa.recoverWith(handleError)
-
-    @SuppressWarnings(Array("org.wartremover.warts.Throw"))
-    @inline override def recoverFromNonFatal[A, AA >: A](
-      fa: => Future[A]
-    )(
-      handleError: PartialFunction[Throwable, AA]
-    ): Future[AA] =
-      recoverFromNonFatalWith[A, AA](fa)(
-        handleError.andThen(Future(_))
-      )
-  }
-
-  class CanRecoverFuture(override implicit val EC0: ExecutionContext) extends FutureCanRecover
 
 }

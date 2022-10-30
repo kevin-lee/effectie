@@ -826,6 +826,8 @@ object canHandleErrorSpec extends Properties {
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration.*
     import scala.concurrent.{ExecutionContext, Future}
+    import effectie.instances.future.fxCtor.*
+    import effectie.instances.future.canHandleError.*
 
     private given errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 

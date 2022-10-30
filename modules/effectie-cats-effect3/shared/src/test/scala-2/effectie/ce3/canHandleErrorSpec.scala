@@ -1,5 +1,6 @@
 package effectie.ce3
 
+import canHandleError._
 import cats._
 import cats.data.EitherT
 import cats.effect.IO
@@ -7,8 +8,6 @@ import cats.effect.unsafe.IORuntime
 import cats.instances.all._
 import cats.syntax.all._
 import effectie.SomeControlThrowable
-import canHandleError._
-import fxCtor._
 import effectie.core._
 import effectie.syntax.error._
 import effectie.syntax.fx._
@@ -16,6 +15,7 @@ import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import extras.hedgehog.cats.effect.CatsEffectRunner
+import fxCtor._
 import hedgehog._
 import hedgehog.runner._
 
@@ -832,6 +832,9 @@ object canHandleErrorSpec extends Properties {
   }
 
   object FutureSpec {
+    import effectie.instances.future.canHandleError._
+    import effectie.instances.future.fxCtor._
+
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}

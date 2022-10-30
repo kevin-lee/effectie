@@ -3,6 +3,7 @@ package effectie.monix3
 import cats.Id
 import cats.effect.{ContextShift, IO}
 import effectie.core.FromFuture
+import effectie.instances.future.fromFuture
 import effectie.monix3.fromFuture._
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
@@ -73,10 +74,11 @@ object fromFutureSpec extends Properties {
         ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
 
       ConcurrentSupport.runAndShutdown(es, waitFor300Millis) {
-        implicit val timeout: FromFuture.FromFutureToIdTimeout =
-          FromFuture.FromFutureToIdTimeout(waitFor300Millis.waitFor)
-        lazy val fa                                            = Future(a)
-        val actual                                             = FromFuture[Id].toEffect(fa)
+        implicit val timeout: fromFuture.FromFutureToIdTimeout =
+          fromFuture.FromFutureToIdTimeout(waitFor300Millis.waitFor)
+
+        lazy val fa = Future(a)
+        val actual  = FromFuture[Id].toEffect(fa)
 
         actual ==== a
       }

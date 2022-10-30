@@ -442,6 +442,7 @@ object CanCatchSyntaxSpec {
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
+    import effectie.instances.future.fx._
 
     private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
@@ -1696,6 +1697,7 @@ object CanHandleErrorSyntaxSpec {
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
+    import effectie.instances.future.fx._
 
     private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
@@ -3469,6 +3471,7 @@ object CanRecoverSyntaxSpec {
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
     import scala.util.control.NonFatal
+    import effectie.instances.future.fx._
 
     private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 

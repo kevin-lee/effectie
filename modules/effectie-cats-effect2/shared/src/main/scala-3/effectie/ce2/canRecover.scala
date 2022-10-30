@@ -26,9 +26,6 @@ object canRecover {
 
   }
 
-  given futureCanRecover(using ec: ExecutionContext): CanRecover[Future] =
-    new effectie.core.CanRecover.CanRecoverFuture with CanRecover[Future]
-
   given idCanRecover: CanRecover[Id] with {
 
     inline override def recoverFromNonFatalWith[A, AA >: A](fa: => Id[A])(
