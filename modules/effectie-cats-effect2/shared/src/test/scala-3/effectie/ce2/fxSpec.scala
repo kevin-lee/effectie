@@ -15,6 +15,7 @@ import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog.*
 import hedgehog.runner.*
 import effectie.specs.fxSpec.{FxSpecs, IdSpecs}
+import effectie.specs.MonadSpec
 
 import scala.concurrent.Await
 import scala.util.control.{ControlThrowable, NonFatal}

@@ -1740,7 +1740,7 @@ object canHandleErrorSpec extends Properties {
   }
 
   object IdSpec {
-    import effectie.ce2.fxCtor.idFxCtor
+    import effectie.instances.id.fxCtor._
 
     def testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 

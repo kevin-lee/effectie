@@ -793,7 +793,7 @@ object CanCatchSyntaxSpec {
   }
 
   object IdSpec {
-    import effectie.ce2.fx.idFx
+    import effectie.instances.id.fx._
 
     def testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
@@ -2175,7 +2175,7 @@ object CanHandleErrorSyntaxSpec {
   }
 
   object IdSpec {
-    import effectie.ce2.fx.idFx
+    import effectie.instances.id.fx._
 
     def testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
@@ -3897,7 +3897,7 @@ object CanRecoverSyntaxSpec {
   }
 
   object IdSpec {
-    import effectie.ce2.fx.idFx
+    import effectie.instances.id.fx._
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

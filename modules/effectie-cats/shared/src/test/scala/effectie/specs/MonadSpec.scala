@@ -1,4 +1,4 @@
-package effectie.ce2
+package effectie.specs
 
 import cats.{Eq, Monad}
 import hedgehog.runner.Test
