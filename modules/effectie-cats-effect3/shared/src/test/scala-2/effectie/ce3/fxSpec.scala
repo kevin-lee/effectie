@@ -6,15 +6,15 @@ import cats.effect.unsafe.IORuntime
 import cats.syntax.either.catsSyntaxEitherId
 import cats.{Eq, Functor, Id, Monad}
 import effectie.SomeControlThrowable
-import fx._
 import effectie.ce3.compat.CatsEffectIoCompatForFuture
 import effectie.core._
-import effectie.syntax.error._
 import effectie.specs.fxSpec.{FxSpecs, IdSpecs}
+import effectie.syntax.error._
 import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import extras.hedgehog.cats.effect.CatsEffectRunner
+import fx._
 import hedgehog._
 import hedgehog.runner._
 
@@ -477,29 +477,32 @@ object fxSpec extends Properties {
     )
 
   /* Id */
-  private val idSpecs = List(
-    property("test Fx[Id].effectOf", IdSpecs.testEffectOf),
-    property("test Fx[Id].pureOf", IdSpecs.testPureOf),
-    property("test Fx[Id].pureOrError(success case)", IdSpecs.testPureOrErrorSuccessCase),
-    example("test Fx[Id].pureOrError(error case)", IdSpecs.testPureOrErrorErrorCase),
-    example("test Fx[Id].unitOf", IdSpecs.testUnitOf),
-    example("test Fx[Id].errorOf", IdSpecs.testErrorOf),
-    property("test Fx[Id].fromEither(Right)", IdSpecs.testFromEitherRightCase),
-    property("test Fx[Id].fromEither(Left)", IdSpecs.testFromEitherLeftCase),
-    property("test Fx[Id].fromOption(Some)", IdSpecs.testFromOptionSomeCase),
-    property("test Fx[Id].fromOption(None)", IdSpecs.testFromOptionNoneCase),
-    property("test Fx[Id].fromTry(Success)", IdSpecs.testFromTrySuccessCase),
-    property("test Fx[Id].fromTry(Failure)", IdSpecs.testFromTryFailureCase),
-    property("test Fx[Id] Monad laws - Identity", IdSpec.testMonadLaws1_Identity),
-    property("test Fx[Id] Monad laws - Composition", IdSpec.testMonadLaws2_Composition),
-    property("test Fx[Id] Monad laws - IdentityAp", IdSpec.testMonadLaws3_IdentityAp),
-    property("test Fx[Id] Monad laws - Homomorphism", IdSpec.testMonadLaws4_Homomorphism),
-    property("test Fx[Id] Monad laws - Interchange", IdSpec.testMonadLaws5_Interchange),
-    property("test Fx[Id] Monad laws - CompositionAp", IdSpec.testMonadLaws6_CompositionAp),
-    property("test Fx[Id] Monad laws - LeftIdentity", IdSpec.testMonadLaws7_LeftIdentity),
-    property("test Fx[Id] Monad laws - RightIdentity", IdSpec.testMonadLaws8_RightIdentity),
-    property("test Fx[Id] Monad laws - Associativity", IdSpec.testMonadLaws9_Associativity),
-  ) ++
+  private val idSpecs = {
+    import effectie.instances.id.fx._
+    List(
+      property("test Fx[Id].effectOf", IdSpecs.testEffectOf),
+      property("test Fx[Id].pureOf", IdSpecs.testPureOf),
+      property("test Fx[Id].pureOrError(success case)", IdSpecs.testPureOrErrorSuccessCase),
+      example("test Fx[Id].pureOrError(error case)", IdSpecs.testPureOrErrorErrorCase),
+      example("test Fx[Id].unitOf", IdSpecs.testUnitOf),
+      example("test Fx[Id].errorOf", IdSpecs.testErrorOf),
+      property("test Fx[Id].fromEither(Right)", IdSpecs.testFromEitherRightCase),
+      property("test Fx[Id].fromEither(Left)", IdSpecs.testFromEitherLeftCase),
+      property("test Fx[Id].fromOption(Some)", IdSpecs.testFromOptionSomeCase),
+      property("test Fx[Id].fromOption(None)", IdSpecs.testFromOptionNoneCase),
+      property("test Fx[Id].fromTry(Success)", IdSpecs.testFromTrySuccessCase),
+      property("test Fx[Id].fromTry(Failure)", IdSpecs.testFromTryFailureCase),
+      property("test Fx[Id] Monad laws - Identity", IdSpec.testMonadLaws1_Identity),
+      property("test Fx[Id] Monad laws - Composition", IdSpec.testMonadLaws2_Composition),
+      property("test Fx[Id] Monad laws - IdentityAp", IdSpec.testMonadLaws3_IdentityAp),
+      property("test Fx[Id] Monad laws - Homomorphism", IdSpec.testMonadLaws4_Homomorphism),
+      property("test Fx[Id] Monad laws - Interchange", IdSpec.testMonadLaws5_Interchange),
+      property("test Fx[Id] Monad laws - CompositionAp", IdSpec.testMonadLaws6_CompositionAp),
+      property("test Fx[Id] Monad laws - LeftIdentity", IdSpec.testMonadLaws7_LeftIdentity),
+      property("test Fx[Id] Monad laws - RightIdentity", IdSpec.testMonadLaws8_RightIdentity),
+      property("test Fx[Id] Monad laws - Associativity", IdSpec.testMonadLaws9_Associativity),
+    )
+  } ++
     List(
       example(
         "test Fx[Id]catchNonFatalThrowable should catch NonFatal",
@@ -2223,10 +2226,11 @@ object fxSpec extends Properties {
   }
 
   object FutureSpec {
+    import effectie.instances.future.fx._
+
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
-    import effectie.instances.future.fx._
 
     val waitFor = WaitFor(1.second)
 
@@ -2586,6 +2590,7 @@ object fxSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.instances.id.fx._
 
     implicit val idInstance: Monad[Id] = cats.catsInstancesForId
 

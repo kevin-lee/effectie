@@ -1403,6 +1403,8 @@ object canRecoverSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.instances.id.fxCtor._
+    import effectie.instances.id.canRecover._
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

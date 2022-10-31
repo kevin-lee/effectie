@@ -11,19 +11,29 @@ import scala.concurrent.Future
   Could not find an implicit ToFuture[${F}]. You can probably find it from the effectie.instance package.
   ---
   If you want to use IO from cats-effect 2, try effectie-cats-effect2.
-    import effectie.instances.ce2._
+    import effectie.instances.ce2.toFuture._
+    // for Scala 3
+    import effectie.instances.ce2.toFuture.*
 
   For cats-effect 3, try effectie-cats-effect3.
-    import effectie.instances.ce3._
+    import effectie.instances.ce3.toFuture._
+    // for Scala 3
+    import effectie.instances.ce3.toFuture.*
 
   If you want to use Task from Monix 3, try effectie-monix3.
-    import effectie.instances.monix3._
+    import effectie.instances.monix3.toFuture._
+    // for Scala 3
+    import effectie.instances.monix3.toFuture.*
 
   For Scala's Future, It is just
     import effectie.instances.future.toFuture._
+    // for Scala 3
+    import effectie.instances.future.toFuture.*
 
   If you don't want to use any effect but the raw data, you can use the instance for cats.Id
     import effectie.instances.id.toFuture._
+    // for Scala 3
+    import effectie.instances.id.toFuture.*
   ---
   """
 )

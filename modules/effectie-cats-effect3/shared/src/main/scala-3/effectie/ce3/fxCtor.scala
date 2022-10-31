@@ -1,7 +1,7 @@
 package effectie.ce3
 
 import cats.effect.IO
-import cats.{Id, MonadThrow}
+import cats.MonadThrow
 import effectie.core.FxCtor
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -28,32 +28,6 @@ object fxCtor {
       IO.fromOption(option)(orElse)
 
     inline override final def fromTry[A](tryA: Try[A]): IO[A] = IO.fromTry(tryA)
-
-  }
-
-  given idFxCtor: FxCtor[Id] with {
-
-    inline override final def effectOf[A](a: => A): Id[A] = a
-
-    inline override final def pureOf[A](a: A): Id[A] = a
-
-    inline override final def pureOrError[A](a: => A): Id[A] =
-      try a
-      catch {
-        case NonFatal(ex) => throw ex
-      }
-
-    inline override final def unitOf: Id[Unit] = ()
-
-    inline override final def errorOf[A](throwable: Throwable): Id[A] =
-      throw throwable // scalafix:ok DisableSyntax.throw
-
-    inline override final def fromEither[A](either: Either[Throwable, A]): Id[A] = either.fold(errorOf(_), pureOf(_))
-
-    inline override final def fromOption[A](option: Option[A])(orElse: => Throwable): Id[A] =
-      option.fold(errorOf(orElse))(pureOf(_))
-
-    inline override final def fromTry[A](tryA: Try[A]): Id[A] = tryA.fold(errorOf(_), pureOf(_))
 
   }
 

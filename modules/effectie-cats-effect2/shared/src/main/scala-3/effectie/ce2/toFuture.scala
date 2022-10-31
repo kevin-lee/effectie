@@ -17,9 +17,4 @@ object toFuture {
       fa.unsafeToFuture()
   }
 
-  given idToFuture(using executionContext: ExecutionContext): ToFuture[Id] with {
-    override def unsafeToFuture[A](fa: Id[A]): Future[A] =
-      Future(fa)
-  }
-
 }

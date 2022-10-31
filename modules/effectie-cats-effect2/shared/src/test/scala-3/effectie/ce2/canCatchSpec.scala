@@ -5,7 +5,7 @@ import cats.data.EitherT
 import cats.effect.*
 import cats.instances.all.*
 import cats.syntax.all.*
-import effectie.ce2.canCatch as *
+import effectie.ce2.canCatch
 import effectie.ce2.fx.given
 import effectie.syntax.error.*
 import effectie.syntax.fx.*
@@ -403,6 +403,7 @@ object CanCatchSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.instances.id.fx.*
 
     def testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 

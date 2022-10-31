@@ -8,6 +8,8 @@ import scala.annotation.implicitNotFound
   ---
   You can simply,
     import effectie.instances.console._
+    // for Scala 3
+    import effectie.instances.console.*
   ---
   """
 )

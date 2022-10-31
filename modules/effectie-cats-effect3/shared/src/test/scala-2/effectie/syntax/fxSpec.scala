@@ -397,6 +397,7 @@ object fxSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.instances.id.fx._
 
     def testAll: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

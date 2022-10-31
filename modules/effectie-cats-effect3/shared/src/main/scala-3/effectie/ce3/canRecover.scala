@@ -27,24 +27,4 @@ object canRecover {
 
   }
 
-  given idCanRecover: CanRecover[Id] with {
-
-    inline override def recoverFromNonFatalWith[A, AA >: A](fa: => Id[A])(
-      handleError: PartialFunction[Throwable, Id[AA]]
-    ): Id[AA] =
-      try (fa)
-      catch {
-        case NonFatal(ex) =>
-          handleError.applyOrElse(ex, (err: Throwable) => throw err) // scalafix:ok DisableSyntax.throw
-        case ex: Throwable =>
-          throw ex // scalafix:ok DisableSyntax.throw
-      }
-
-    inline override def recoverFromNonFatal[A, AA >: A](fa: => Id[A])(
-      handleError: PartialFunction[Throwable, AA]
-    ): Id[AA] =
-      recoverFromNonFatalWith[A, AA](fa)(handleError)
-
-  }
-
 }

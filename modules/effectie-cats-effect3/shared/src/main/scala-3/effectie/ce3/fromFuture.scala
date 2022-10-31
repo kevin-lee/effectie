@@ -1,6 +1,5 @@
 package effectie.ce3
 
-import cats.Id
 import cats.effect.IO
 import effectie.core.FromFuture
 import effectie.instances.future.fromFuture.FromFutureToIdTimeout
@@ -15,11 +14,6 @@ object fromFuture {
 
   given fromFutureToIo: FromFuture[IO] with {
     override def toEffect[A](future: => Future[A]): IO[A] = IO.fromFuture[A](IO(future))
-  }
-
-  given fromFutureToId(using timeout: FromFutureToIdTimeout): FromFuture[Id] with {
-    override def toEffect[A](future: => Future[A]): Id[A] =
-      Await.result[A](future, timeout.fromFutureToIdTimeout)
   }
 
 }

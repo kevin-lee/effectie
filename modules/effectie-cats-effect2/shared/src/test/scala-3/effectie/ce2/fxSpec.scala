@@ -433,20 +433,23 @@ object FxSpec extends Properties {
     )
 
   /* Id */
-  private val idSpecs = List(
-    property(" test Fx[Id].effectOf", IdSpecs.testEffectOf),
-    property("test Fx[Id].pureOf", IdSpecs.testPureOf),
-    property("test Fx[Id].pureOrError(success case)", IdSpecs.testPureOrErrorSuccessCase),
-    example("test Fx[Id].pureOrError(error case)", IdSpecs.testPureOrErrorErrorCase),
-    example("test Fx[Id].unitOf", IdSpecs.testUnitOf),
-    example("test Fx[Id].errorOf", IdSpecs.testErrorOf),
-    property("test Fx[Id].fromEither(Right)", IdSpecs.testFromEitherRightCase),
-    property("test Fx[Id].fromEither(Left)", IdSpecs.testFromEitherLeftCase),
-    property("test Fx[Id].fromOption(Some)", IdSpecs.testFromOptionSomeCase),
-    property("test Fx[Id].fromOption(None)", IdSpecs.testFromOptionNoneCase),
-    property("test Fx[Id].fromTry(Success)", IdSpecs.testFromTrySuccessCase),
-    property("test Fx[Id].fromTry(Failure)", IdSpecs.testFromTryFailureCase),
-  ) ++
+  private val idSpecs = {
+    import effectie.instances.id.fx.*
+    List(
+      property(" test Fx[Id].effectOf", IdSpecs.testEffectOf),
+      property("test Fx[Id].pureOf", IdSpecs.testPureOf),
+      property("test Fx[Id].pureOrError(success case)", IdSpecs.testPureOrErrorSuccessCase),
+      example("test Fx[Id].pureOrError(error case)", IdSpecs.testPureOrErrorErrorCase),
+      example("test Fx[Id].unitOf", IdSpecs.testUnitOf),
+      example("test Fx[Id].errorOf", IdSpecs.testErrorOf),
+      property("test Fx[Id].fromEither(Right)", IdSpecs.testFromEitherRightCase),
+      property("test Fx[Id].fromEither(Left)", IdSpecs.testFromEitherLeftCase),
+      property("test Fx[Id].fromOption(Some)", IdSpecs.testFromOptionSomeCase),
+      property("test Fx[Id].fromOption(None)", IdSpecs.testFromOptionNoneCase),
+      property("test Fx[Id].fromTry(Success)", IdSpecs.testFromTrySuccessCase),
+      property("test Fx[Id].fromTry(Failure)", IdSpecs.testFromTryFailureCase),
+    )
+  } ++
     IdSpec.testMonadLaws ++
     List(
       example(
@@ -2238,6 +2241,7 @@ object FxSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.instances.id.fx.*
 
     def testMonadLaws: List[Test] = {
       given idMonad: Monad[Id] = cats.catsInstancesForId

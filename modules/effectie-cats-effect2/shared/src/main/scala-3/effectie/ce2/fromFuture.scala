@@ -18,9 +18,4 @@ object fromFuture {
       IO.fromFuture[A](IO(future))
   }
 
-  given fromFutureToId(using timeout: FromFutureToIdTimeout): FromFuture[Id] with {
-    override def toEffect[A](future: => Future[A]): Id[A] =
-      Await.result[A](future, timeout.fromFutureToIdTimeout)
-  }
-
 }

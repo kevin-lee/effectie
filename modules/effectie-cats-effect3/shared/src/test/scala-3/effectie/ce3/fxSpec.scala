@@ -483,29 +483,32 @@ object FxSpec extends Properties {
     )
 
   /* Id */
-  private val idSpecs = List(
-    property("test Fx[Id].effectOf", IdSpecs.testEffectOf),
-    property("test Fx[Id].pureOf", IdSpecs.testPureOf),
-    property("test Fx[Id].pureOrError(success case)", IdSpecs.testPureOrErrorSuccessCase),
-    example("test Fx[Id].pureOrError(error case)", IdSpecs.testPureOrErrorErrorCase),
-    example("test Fx[Id].unitOf", IdSpecs.testUnitOf),
-    example("test Fx[Id].errorOf", IdSpecs.testErrorOf),
-    property("test Fx[Id].fromEither(Right)", IdSpecs.testFromEitherRightCase),
-    property("test Fx[Id].fromEither(Left)", IdSpecs.testFromEitherLeftCase),
-    property("test Fx[Id].fromOption(Some)", IdSpecs.testFromOptionSomeCase),
-    property("test Fx[Id].fromOption(None)", IdSpecs.testFromOptionNoneCase),
-    property("test Fx[Id].fromTry(Success)", IdSpecs.testFromTrySuccessCase),
-    property("test Fx[Id].fromTry(Failure)", IdSpecs.testFromTryFailureCase),
-    property("test Fx[Id] Monad laws - Identity", IdSpec.testMonadLaws1_Identity),
-    property("test Fx[Id] Monad laws - Composition", IdSpec.testMonadLaws2_Composition),
-    property("test Fx[Id] Monad laws - IdentityAp", IdSpec.testMonadLaws3_IdentityAp),
-    property("test Fx[Id] Monad laws - Homomorphism", IdSpec.testMonadLaws4_Homomorphism),
-    property("test Fx[Id] Monad laws - Interchange", IdSpec.testMonadLaws5_Interchange),
-    property("test Fx[Id] Monad laws - CompositionAp", IdSpec.testMonadLaws6_CompositionAp),
-    property("test Fx[Id] Monad laws - LeftIdentity", IdSpec.testMonadLaws7_LeftIdentity),
-    property("test Fx[Id] Monad laws - RightIdentity", IdSpec.testMonadLaws8_RightIdentity),
-    property("test Fx[Id] Monad laws - Associativity", IdSpec.testMonadLaws9_Associativity),
-  ) ++
+  private val idSpecs = {
+    import effectie.instances.id.fx.*
+    List(
+      property("test Fx[Id].effectOf", IdSpecs.testEffectOf),
+      property("test Fx[Id].pureOf", IdSpecs.testPureOf),
+      property("test Fx[Id].pureOrError(success case)", IdSpecs.testPureOrErrorSuccessCase),
+      example("test Fx[Id].pureOrError(error case)", IdSpecs.testPureOrErrorErrorCase),
+      example("test Fx[Id].unitOf", IdSpecs.testUnitOf),
+      example("test Fx[Id].errorOf", IdSpecs.testErrorOf),
+      property("test Fx[Id].fromEither(Right)", IdSpecs.testFromEitherRightCase),
+      property("test Fx[Id].fromEither(Left)", IdSpecs.testFromEitherLeftCase),
+      property("test Fx[Id].fromOption(Some)", IdSpecs.testFromOptionSomeCase),
+      property("test Fx[Id].fromOption(None)", IdSpecs.testFromOptionNoneCase),
+      property("test Fx[Id].fromTry(Success)", IdSpecs.testFromTrySuccessCase),
+      property("test Fx[Id].fromTry(Failure)", IdSpecs.testFromTryFailureCase),
+      property("test Fx[Id] Monad laws - Identity", IdSpec.testMonadLaws1_Identity),
+      property("test Fx[Id] Monad laws - Composition", IdSpec.testMonadLaws2_Composition),
+      property("test Fx[Id] Monad laws - IdentityAp", IdSpec.testMonadLaws3_IdentityAp),
+      property("test Fx[Id] Monad laws - Homomorphism", IdSpec.testMonadLaws4_Homomorphism),
+      property("test Fx[Id] Monad laws - Interchange", IdSpec.testMonadLaws5_Interchange),
+      property("test Fx[Id] Monad laws - CompositionAp", IdSpec.testMonadLaws6_CompositionAp),
+      property("test Fx[Id] Monad laws - LeftIdentity", IdSpec.testMonadLaws7_LeftIdentity),
+      property("test Fx[Id] Monad laws - RightIdentity", IdSpec.testMonadLaws8_RightIdentity),
+      property("test Fx[Id] Monad laws - Associativity", IdSpec.testMonadLaws9_Associativity),
+    )
+  } ++
     List(
       example(
         "test Fx[Id]catchNonFatalThrowable should catch NonFatal",
@@ -2731,6 +2734,7 @@ object FxSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.instances.id.fx.*
 
     def testEffectOf: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

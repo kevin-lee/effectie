@@ -449,7 +449,8 @@ object canCatchSpec extends Properties {
   }
 
   object IdSpec {
-    import effectie.ce3.fx.given
+    import effectie.instances.id.fxCtor.*
+    import effectie.instances.id.canCatch.*
 
     def testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 

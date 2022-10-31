@@ -22,22 +22,4 @@ object canCatch {
 
   }
 
-  given canCatchId: CanCatch[Id] with {
-
-    inline override final def mapFa[A, B](fa: Id[A])(f: A => B): Id[B] = f(fa)
-
-    inline override def catchNonFatalThrowable[A](fa: => Id[A]): Id[Either[Throwable, A]] =
-      scala.util.Try(fa) match {
-        case scala.util.Success(a) =>
-          a.asRight[Throwable]
-
-        case scala.util.Failure(scala.util.control.NonFatal(ex)) =>
-          ex.asLeft[A]
-
-        case scala.util.Failure(ex) =>
-          throw ex // scalafix:ok DisableSyntax.throw
-      }
-
-  }
-
 }

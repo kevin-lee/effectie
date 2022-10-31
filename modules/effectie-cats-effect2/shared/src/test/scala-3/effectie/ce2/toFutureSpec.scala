@@ -58,6 +58,8 @@ object toFutureSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.instances.id.toFuture.*
+
     def testUnsafeToFuture: Property = for {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {
