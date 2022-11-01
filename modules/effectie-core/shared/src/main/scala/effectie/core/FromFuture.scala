@@ -2,6 +2,7 @@ package effectie.core
 
 import scala.annotation.implicitNotFound
 import scala.concurrent.Future
+import scala.concurrent.duration.Duration
 
 /** @author Kevin Lee
   * @since 2020-09-22
@@ -45,4 +46,5 @@ object FromFuture {
 
   def apply[F[*]: FromFuture]: FromFuture[F] = implicitly[FromFuture[F]]
 
+  final case class FromFutureToIdTimeout(fromFutureToIdTimeout: Duration)
 }

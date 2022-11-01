@@ -2,8 +2,6 @@ package effectie.syntax
 
 import cats.*
 import cats.syntax.all.*
-import effectie.syntax.console.ConsoleEffectF
-import effectie.core.ConsoleEffect.ConsoleEffectWithoutFlatMap
 import effectie.core.{ConsoleEffect, FxCtor, YesNo}
 
 trait console {
@@ -22,27 +20,6 @@ trait console {
 
   inline def readYesNo[F[*]: ConsoleEffect](prompt: String): F[YesNo] = ConsoleEffect[F].readYesNo(prompt)
 
-  given consoleEffectF[F[*]: FxCtor: FlatMap]: ConsoleEffect[F] =
-    new ConsoleEffectF[F]
-
 }
 
-object console extends console {
-
-  final class ConsoleEffectF[F[*]: FxCtor: FlatMap] extends ConsoleEffectWithoutFlatMap[F] with ConsoleEffect[F] {
-
-    override def readYesNo(prompt: String): F[YesNo] = for {
-      _      <- putStrLn(prompt)
-      answer <- readLn
-      yesOrN <- answer match {
-                  case "y" | "Y" =>
-                    FxCtor[F].pureOf(YesNo.yes)
-                  case "n" | "N" =>
-                    FxCtor[F].pureOf(YesNo.no)
-                  case _ =>
-                    readYesNo(prompt)
-                }
-    } yield yesOrN
-
-  }
-}
+object console extends console

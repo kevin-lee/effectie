@@ -5,10 +5,10 @@ import cats.effect._
 import cats.effect.unsafe.IORuntime
 import effectie.ce3.compat.CatsEffectIoCompatForFuture
 import effectie.core.FromFuture
+import effectie.core.FromFuture.FromFutureToIdTimeout
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import fromFuture._
-import effectie.instances.future.fromFuture
 import hedgehog._
 import hedgehog.runner._
 
@@ -57,8 +57,8 @@ object FromFutureSpec extends Properties {
         ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
 
       ConcurrentSupport.runAndShutdown(es, waitFor300Millis) {
-        implicit val timeout: fromFuture.FromFutureToIdTimeout =
-          fromFuture.FromFutureToIdTimeout(waitFor300Millis.waitFor)
+        implicit val timeout: FromFutureToIdTimeout =
+          FromFutureToIdTimeout(waitFor300Millis.waitFor)
 
         lazy val fa = Future(a)
         val actual  = FromFuture[Id].toEffect(fa)

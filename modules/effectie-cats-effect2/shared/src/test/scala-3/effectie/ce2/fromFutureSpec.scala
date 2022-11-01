@@ -3,6 +3,7 @@ package effectie.ce2
 import cats.Id
 import cats.effect.*
 import effectie.core.FromFuture
+import effectie.core.FromFuture.FromFutureToIdTimeout
 import effectie.ce2.compat.CatsEffectIoCompatForFuture
 import effectie.ce2.fromFuture.given
 import effectie.instances.future.fromFuture
@@ -56,8 +57,8 @@ object fromFutureSpec extends Properties {
         ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
 
       ConcurrentSupport.runAndShutdown(es, WaitFor(300.milliseconds)) {
-        given timeout: fromFuture.FromFutureToIdTimeout =
-          fromFuture.FromFutureToIdTimeout(300.milliseconds)
+        given timeout: FromFutureToIdTimeout =
+          FromFutureToIdTimeout(300.milliseconds)
 
         lazy val fa = Future(a)
         val actual  = FromFuture[Id].toEffect(fa)

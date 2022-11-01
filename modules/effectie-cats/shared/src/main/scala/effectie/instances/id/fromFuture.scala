@@ -2,7 +2,7 @@ package effectie.instances.id
 
 import cats.Id
 import effectie.core.FromFuture
-import effectie.instances.future.fromFuture.FromFutureToIdTimeout
+import effectie.core.FromFuture.FromFutureToIdTimeout
 
 import scala.concurrent.{Await, Future}
 

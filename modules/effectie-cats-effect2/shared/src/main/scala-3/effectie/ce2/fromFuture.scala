@@ -3,7 +3,7 @@ package effectie.ce2
 import cats.Id
 import cats.effect.{ContextShift, IO}
 import effectie.core.FromFuture
-import effectie.instances.future.fromFuture.FromFutureToIdTimeout
+import effectie.core.FromFuture.FromFutureToIdTimeout
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
