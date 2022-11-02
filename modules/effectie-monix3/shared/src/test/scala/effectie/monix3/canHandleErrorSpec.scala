@@ -868,6 +868,7 @@ object canHandleErrorSpec extends Properties {
 
   object IoSpec {
     import effectie.ce2.fxCtor.ioFxCtor
+    import effectie.ce2.canHandleError.ioCanHandleError
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 

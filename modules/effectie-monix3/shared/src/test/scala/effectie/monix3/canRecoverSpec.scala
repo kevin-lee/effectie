@@ -950,6 +950,7 @@ object canRecoverSpec extends Properties {
 
   object IoSpec {
     import effectie.ce2.fxCtor.ioFxCtor
+    import effectie.ce2.canRecover.ioCanRecover
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

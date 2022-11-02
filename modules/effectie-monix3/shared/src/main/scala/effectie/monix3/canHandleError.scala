@@ -1,6 +1,5 @@
 package effectie.monix3
 
-import cats.effect.IO
 import effectie.core.CanHandleError
 import monix.eval.Task
 
@@ -18,16 +17,6 @@ object canHandleError {
 
     @inline override final def handleNonFatal[A, AA >: A](fa: => Task[A])(handleError: Throwable => AA): Task[AA] =
       handleNonFatalWith[A, AA](fa)(err => Task.pure(handleError(err)))
-
-  }
-
-  implicit object ioCanHandleError extends CanHandleError[IO] {
-
-    @inline override final def handleNonFatalWith[A, AA >: A](fa: => IO[A])(handleError: Throwable => IO[AA]): IO[AA] =
-      fa.handleErrorWith(handleError)
-
-    @inline override final def handleNonFatal[A, AA >: A](fa: => IO[A])(handleError: Throwable => AA): IO[AA] =
-      handleNonFatalWith[A, AA](fa)(err => IO.pure(handleError(err)))
 
   }
 

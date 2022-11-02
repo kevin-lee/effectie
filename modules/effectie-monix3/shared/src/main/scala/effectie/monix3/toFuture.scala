@@ -1,6 +1,5 @@
 package effectie.monix3
 
-import cats.effect.IO
 import effectie.core.ToFuture
 import monix.eval.Task
 import monix.execution.Scheduler
@@ -17,13 +16,6 @@ object toFuture {
 
     override def unsafeToFuture[A](fa: Task[A]): Future[A] =
       fa.runToFuture
-  }
-
-  @SuppressWarnings(Array("org.wartremover.warts.ImplicitParameter"))
-  implicit object ioToFuture extends ToFuture[IO] {
-
-    override def unsafeToFuture[A](fa: IO[A]): Future[A] =
-      fa.unsafeToFuture()
   }
 
 }

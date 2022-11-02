@@ -48,6 +48,8 @@ object fromFutureSpec extends Properties {
   }
 
   object IoSpec {
+    import effectie.ce2.fromFuture.fromFutureToIo
+
     def testToEffect: Property = for {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {

@@ -415,6 +415,7 @@ object canCatchSpec extends Properties {
   object IoSpec {
 
     import effectie.ce2.fxCtor.ioFxCtor
+    import effectie.ce2.canCatch.canCatchIo
 
     def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 

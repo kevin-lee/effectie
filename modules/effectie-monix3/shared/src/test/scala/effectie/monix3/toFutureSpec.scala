@@ -70,6 +70,8 @@ object toFutureSpec extends Properties {
   }
 
   object IoSpec {
+    import effectie.ce2.toFuture.ioToFuture
+
     @SuppressWarnings(Array("org.wartremover.warts.IsInstanceOf"))
     def testUnsafeToFuture: Property = for {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
