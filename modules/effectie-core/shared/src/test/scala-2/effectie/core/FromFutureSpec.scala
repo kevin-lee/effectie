@@ -22,6 +22,8 @@ object FromFutureSpec extends Properties {
   )
 
   object FutureSpec {
+    import effectie.instances.future.fromFuture._
+
     def testToEffect: Property = for {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
     } yield {

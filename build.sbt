@@ -59,6 +59,8 @@ lazy val effectie = (project in file("."))
     coreJs,
     syntaxJvm,
     syntaxJs,
+    catsJvm,
+    catsJs,
     catsEffect2Jvm,
     catsEffect2Js,
     catsEffect3Jvm,
@@ -86,7 +88,7 @@ lazy val syntax    = module(ProjectName("syntax"), crossProject(JVMPlatform, JSP
   .settings(
     description         := "Effect Utils - Syntax",
     libraryDependencies ++= List(
-      libs.libCatsCore(props.catsLatestVersion),
+      libs.libCatsCore(props.catsVersion),
       libs.extrasConcurrent,
       libs.extrasConcurrentTesting
     ),
@@ -99,12 +101,35 @@ lazy val syntaxJs  = syntax
   .js
   .settings(jsSettings)
 
+lazy val cats = module(ProjectName("cats"), crossProject(JVMPlatform, JSPlatform))
+  .settings(
+    description         := "Effect Utils - Cats",
+    libraryDependencies ++= List(
+      libs.libCatsCore(props.catsVersion),
+      libs.extrasConcurrent,
+      libs.extrasConcurrentTesting
+    ),
+    libraryDependencies :=
+      libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
+  )
+  .dependsOn(
+    core         % props.IncludeTest,
+    syntax,
+    testing4Cats % Test
+  )
+
+lazy val catsJvm = cats.jvm
+lazy val catsJs  = cats
+  .js
+  .settings(jsSettingsForFuture)
+  .settings(jsSettings)
+
 lazy val testing4Cats    = module(ProjectName("test4cats"), crossProject(JVMPlatform, JSPlatform))
   .settings(
     description         := "Effect's test utils for Cats",
     libraryDependencies :=
       libraryDependencies.value ++ List(
-        libs.libCatsCore(props.catsLatestVersion),
+        libs.libCatsCore(props.catsVersion),
       ) ++ List(libs.hedgehogCore, libs.hedgehogRunner),
     libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
@@ -135,7 +160,7 @@ lazy val catsEffect2    = module(ProjectName("cats-effect2"), crossProject(JVMPl
           )
         case x =>
           libraryDependencies.value ++ Seq(
-            libs.libCatsCore(props.catsLatestVersion),
+            libs.libCatsCore(props.catsVersion),
             libs.libCatsEffect(props.catsEffect2LatestVersion)
           )
       }),
@@ -144,6 +169,7 @@ lazy val catsEffect2    = module(ProjectName("cats-effect2"), crossProject(JVMPl
   .dependsOn(
     core         % props.IncludeTest,
     syntax       % props.IncludeTest,
+    cats         % props.IncludeTest,
     testing4Cats % Test,
   )
 lazy val catsEffect2Jvm = catsEffect2.jvm
@@ -156,7 +182,7 @@ lazy val catsEffect3    = module(ProjectName("cats-effect3"), crossProject(JVMPl
   .settings(
     description         := "Effect Utils - Cats Effect 3",
     libraryDependencies ++= List(
-      libs.libCatsCore(props.catsLatestVersion),
+      libs.libCatsCore(props.catsVersion),
       libs.libCatsEffect(props.catsEffect3Version),
       libs.libCatsEffectTestKit % Test excludeAll ("org.scalacheck"),
       libs.extrasHedgehogCatsEffect3,
@@ -168,6 +194,7 @@ lazy val catsEffect3    = module(ProjectName("cats-effect3"), crossProject(JVMPl
   .dependsOn(
     core         % props.IncludeTest,
     syntax       % props.IncludeTest,
+    cats         % props.IncludeTest,
     testing4Cats % Test,
   )
 lazy val catsEffect3Jvm = catsEffect3.jvm
@@ -194,6 +221,7 @@ lazy val monix3    = module(ProjectName("monix3"), crossProject(JVMPlatform, JSP
   .dependsOn(
     core         % props.IncludeTest,
     syntax       % props.IncludeTest,
+    cats         % props.IncludeTest,
     catsEffect2  % props.IncludeTest,
     testing4Cats % Test,
   )
@@ -282,8 +310,7 @@ lazy val props =
 
     final val hedgehogLatestVersion = "0.8.0"
 
-    final val catsVersion       = "2.5.0"
-    final val catsLatestVersion = "2.7.0"
+    final val catsVersion = "2.7.0"
 
     final val catsEffect2Version       = "2.4.1"
     final val catsEffect2LatestVersion = "2.5.4"

@@ -3,13 +3,13 @@ package effectie.syntax
 import cats.Id
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
-import effectie.ce3.fx._
-import effectie.ce3.compat.CatsEffectIoCompatForFuture
-import effectie.ce3.testing.IoAppUtils
+import effectie.instances.ce3.fx._
 import effectie.syntax.fx._
 import effectie.testing.tools.{dropResult, expectThrowable}
 import effectie.testing.types.SomeThrowableError
 import effectie.core.{Fx, FxCtor}
+import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
+import effectie.instances.ce3.testing.IoAppUtils
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import extras.hedgehog.cats.effect.CatsEffectRunner
@@ -250,6 +250,7 @@ object fxSpec extends Properties {
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
+    import effectie.instances.future.fx._
 
     val waitFor = WaitFor(1.second)
 
@@ -396,6 +397,7 @@ object fxSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.instances.id.fx._
 
     def testAll: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

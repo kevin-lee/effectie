@@ -1,8 +1,38 @@
 package effectie.core
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
+import scala.annotation.implicitNotFound
 
+@implicitNotFound(
+  """
+  Could not find an implicit FxCtor[${F}]. You can probably find it from the effectie.instance package.
+  ---
+  If you want to use IO from cats-effect 2, try effectie-cats-effect2.
+    import effectie.instances.ce2.fxCtor._
+    // for Scala 3
+    import effectie.instances.ce2.fxCtor.*
+
+  For cats-effect 3, try effectie-cats-effect3.
+    import effectie.instances.ce3.fxCtor._
+    // for Scala 3
+    import effectie.instances.ce3.fxCtor.*
+
+  If you want to use Task from Monix 3, try effectie-monix3.
+    import effectie.instances.monix3.fxCtor._
+    // for Scala 3
+    import effectie.instances.monix3.fxCtor.*
+
+  For Scala's Future, It is just
+    import effectie.instances.future.fxCtor._
+    // for Scala 3
+    import effectie.instances.future.fxCtor.*
+
+  If you don't want to use any effect but the raw data, you can use the instance for cats.Id
+    import effectie.instances.id.fxCtor._
+    // for Scala 3
+    import effectie.instances.id.fxCtor.*
+  ---
+  """
+)
 trait FxCtor[F[*]] {
   def effectOf[A](a: => A): F[A]
   def pureOf[A](a: A): F[A]
@@ -20,31 +50,5 @@ trait FxCtor[F[*]] {
 object FxCtor {
 
   def apply[F[*]: FxCtor]: FxCtor[F] = implicitly[FxCtor[F]]
-
-  trait FutureFxCtor extends FxCtor[Future] {
-
-    implicit def EC0: ExecutionContext
-
-    @inline override final def effectOf[A](a: => A): Future[A] = Future(a)
-
-    @inline override final def pureOf[A](a: A): Future[A] = Future.successful(a)
-
-    @inline override def pureOrError[A](a: => A): Future[A] = Future.fromTry(Try(a))
-
-    @inline override final def unitOf: Future[Unit] = pureOf(())
-
-    @inline override final def errorOf[A](throwable: Throwable): Future[A] = Future.failed[A](throwable)
-
-    @inline override def fromEither[A](either: Either[Throwable, A]): Future[A] = either.fold(errorOf, pureOf)
-
-    @inline override def fromOption[A](option: Option[A])(orElse: => Throwable): Future[A] =
-      option.fold(errorOf[A](orElse))(pureOf)
-
-    @inline override def fromTry[A](tryA: Try[A]): Future[A] = Future.fromTry(tryA)
-  }
-
-  final class FxCtorFuture(override implicit val EC0: ExecutionContext) extends FutureFxCtor
-
-  implicit def fxCtorFuture(implicit EC: ExecutionContext): FxCtor[Future] = new FxCtorFuture
 
 }

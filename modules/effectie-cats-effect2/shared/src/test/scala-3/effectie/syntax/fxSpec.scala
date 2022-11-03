@@ -2,7 +2,7 @@ package effectie.syntax
 
 import cats.Id
 import cats.effect.IO
-import effectie.ce2.fx.given
+import effectie.instances.ce2.fx.given
 import effectie.syntax.fx.*
 import effectie.testing.tools.*
 import effectie.testing.types.SomeThrowableError
@@ -204,6 +204,7 @@ object fxSpec extends Properties {
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration.*
     import scala.concurrent.{ExecutionContext, Future}
+    import effectie.instances.future.fx.*
 
     private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
@@ -355,6 +356,7 @@ object fxSpec extends Properties {
   }
 
   object IdSpec {
+    import effectie.instances.id.fx.*
 
     def testAll: Property = for {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

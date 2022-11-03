@@ -25,6 +25,8 @@ object ToFutureSpec extends Properties {
   private val waitFor300Millis = WaitFor(300.milliseconds)
 
   object FutureSpec {
+    import effectie.instances.future.toFuture._
+
     @SuppressWarnings(Array("org.wartremover.warts.IsInstanceOf"))
     def testUnsafeToFuture: Property = for {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
