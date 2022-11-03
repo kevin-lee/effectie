@@ -6,7 +6,7 @@ import cats.effect.IO
 import cats.syntax.all._
 import effectie.SomeControlThrowable
 import effectie.core.Fx
-import effectie.monix3.fx._
+import effectie.instances.monix3.fx._
 import effectie.syntax.error._
 import effectie.syntax.fx._
 import effectie.testing.types._
@@ -439,7 +439,7 @@ object CanCatchSyntaxSpec {
   }
 
   object IoSpec {
-    import effectie.ce2.fx.ioFx
+    import effectie.instances.ce2.fx.ioFx
 
     def testCanCatch_Task_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 

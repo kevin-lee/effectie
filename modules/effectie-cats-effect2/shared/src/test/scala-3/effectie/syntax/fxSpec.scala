@@ -2,7 +2,7 @@ package effectie.syntax
 
 import cats.Id
 import cats.effect.IO
-import effectie.ce2.fx.given
+import effectie.instances.ce2.fx.given
 import effectie.syntax.fx.*
 import effectie.testing.tools.*
 import effectie.testing.types.SomeThrowableError

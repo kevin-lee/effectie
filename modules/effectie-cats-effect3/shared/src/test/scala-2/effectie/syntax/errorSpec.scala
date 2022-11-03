@@ -6,11 +6,11 @@ import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import cats.syntax.all._
 import effectie.SomeControlThrowable
-import effectie.ce3.compat.CatsEffectIoCompatForFuture
-import effectie.ce3.fx._
-import effectie.ce3.testing
-import effectie.ce3.testing.IoAppUtils
 import effectie.core.Fx
+import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
+import effectie.instances.ce3.fx._
+import effectie.instances.ce3.testing
+import effectie.instances.ce3.testing.IoAppUtils
 import effectie.syntax.error._
 import effectie.syntax.fx._
 import effectie.testing.types.SomeError
@@ -439,10 +439,11 @@ object CanCatchSyntaxSpec {
   }
 
   object FutureSpec {
+    import effectie.instances.future.fx._
+
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
-    import effectie.instances.future.fx._
 
     private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
@@ -1695,10 +1696,11 @@ object CanHandleErrorSyntaxSpec {
   }
 
   object FutureSpec {
+    import effectie.instances.future.fx._
+
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
-    import effectie.instances.future.fx._
 
     private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
@@ -3469,11 +3471,12 @@ object CanRecoverSyntaxSpec {
   }
 
   object FutureSpec {
+    import effectie.instances.future.fx._
+
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
     import scala.util.control.NonFatal
-    import effectie.instances.future.fx._
 
     private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 

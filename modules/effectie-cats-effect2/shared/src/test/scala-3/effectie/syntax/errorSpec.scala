@@ -191,7 +191,7 @@ object CanCatchSyntaxSpec {
     effectOf[F](a)
 
   object IoSpec {
-    import effectie.ce2.fx.given
+    import effectie.instances.ce2.fx.given
 
     def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
@@ -1116,8 +1116,8 @@ object CanHandleErrorSyntaxSpec {
 
   object IoSpec {
 
-    import effectie.ce2.canHandleError.ioCanHandleError
-    import effectie.ce2.fx.given
+    import effectie.instances.ce2.canHandleError.ioCanHandleError
+    import effectie.instances.ce2.fx.given
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
@@ -2800,8 +2800,8 @@ object CanRecoverSyntaxSpec {
     effectOf[F](a)
 
   object IOSpec {
-    import effectie.ce2.canRecover.given
-    import effectie.ce2.fx.given
+    import effectie.instances.ce2.canRecover.given
+    import effectie.instances.ce2.fx.given
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
@@ -3912,7 +3912,7 @@ object CanRecoverSyntaxSpec {
   }
 
   object IdSpec {
-    import effectie.ce2.canRecover.given
+    import effectie.instances.ce2.canRecover.given
     import effectie.instances.id.fx.*
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {

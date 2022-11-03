@@ -2,7 +2,7 @@ package effectie.syntax
 
 import cats._
 import effectie.core.{Fx, FxCtor}
-import effectie.monix3.fx._
+import effectie.instances.monix3.fx._
 import effectie.syntax.fx._
 import effectie.testing.tools.{dropResult, expectThrowable}
 import effectie.testing.types.SomeThrowableError
@@ -181,7 +181,7 @@ object fxSpec extends Properties {
 
   object IoSpec {
     import cats.effect.IO
-    import effectie.ce2.fx.ioFx
+    import effectie.instances.ce2.fx.ioFx
 
     @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
     def testAll: Property = for {

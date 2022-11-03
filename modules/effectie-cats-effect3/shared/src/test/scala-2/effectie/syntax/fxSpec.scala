@@ -3,13 +3,13 @@ package effectie.syntax
 import cats.Id
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
-import effectie.ce3.fx._
-import effectie.ce3.compat.CatsEffectIoCompatForFuture
-import effectie.ce3.testing.IoAppUtils
+import effectie.instances.ce3.fx._
 import effectie.syntax.fx._
 import effectie.testing.tools.{dropResult, expectThrowable}
 import effectie.testing.types.SomeThrowableError
 import effectie.core.{Fx, FxCtor}
+import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
+import effectie.instances.ce3.testing.IoAppUtils
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import extras.hedgehog.cats.effect.CatsEffectRunner
