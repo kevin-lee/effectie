@@ -29,27 +29,27 @@ object canHandleErrorSpec extends Properties {
   private val futureSpecs = effectie.core.CanHandleErrorSpec.futureSpecs ++ List(
     example(
       "test CanHandleError[Future].handleEitherTNonFatalWith should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldHandleNonFatalWith
+      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[Future].handleEitherTNonFatalWith should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldReturnSuccessfulResult
+      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Future].handleEitherTNonFatalWith should return the failed result",
-      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldReturnFailedResult
+      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[Future].handleEitherTNonFatal should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalShouldHandleNonFatal
+      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[Future].handleEitherTNonFatal should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalShouldReturnSuccessfulResult
+      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Future].handleEitherTNonFatal should return the failed result",
-      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalShouldReturnFailedResult
+      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalShouldReturnFailedResult,
     ),
   )
 
@@ -57,124 +57,124 @@ object canHandleErrorSpec extends Properties {
   private val idSpecs = List(
     example(
       "test CanHandleError[Id].handleNonFatalWith should handle NonFatal",
-      IdSpec.testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith
+      IdSpec.testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalWith should not handle Fatal",
-      IdSpec.testCanHandleError_Id_handleNonFatalWithShouldNotHandleFatalWith
+      IdSpec.testCanHandleError_Id_handleNonFatalWithShouldNotHandleFatalWith,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalWith should return the successful result",
-      IdSpec.testCanHandleError_Id_handleNonFatalWithShouldReturnSuccessfulResult
+      IdSpec.testCanHandleError_Id_handleNonFatalWithShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalWithEither should handle NonFatal",
-      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldHandleNonFatalWith
+      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalWithEither should not handle Fatal",
-      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldNotHandleFatalWith
+      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldNotHandleFatalWith,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalWithEither should return the successful result",
-      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldReturnSuccessfulResult
+      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalWithEither should return the failed result",
-      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldReturnFailedResult
+      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[Id].handleEitherNonFatalWith should handle NonFatal",
-      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldHandleNonFatalWith
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[Id].handleEitherNonFatalWith should not handle Fatal",
-      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldNotHandleFatalWith
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldNotHandleFatalWith,
     ),
     example(
       "test CanHandleError[Id].handleEitherNonFatalWith should return the successful result",
-      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldReturnSuccessfulResult
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Id].handleEitherNonFatalWith should return the failed result",
-      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldReturnFailedResult
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatalWith should handle NonFatal",
-      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldHandleNonFatalWith
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatalWith should not handle Fatal",
-      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldNotHandleFatalWith
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldNotHandleFatalWith,
     ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatalWith should return the successful result",
-      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldReturnSuccessfulResult
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatalWith should return the failed result",
-      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldReturnFailedResult
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[Id].handleNonFatal should handle NonFatal",
-      IdSpec.testCanHandleError_Id_handleNonFatalShouldHandleNonFatal
+      IdSpec.testCanHandleError_Id_handleNonFatalShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[Id].handleNonFatal should not handle Fatal",
-      IdSpec.testCanHandleError_Id_handleNonFatalShouldNotHandleFatal
+      IdSpec.testCanHandleError_Id_handleNonFatalShouldNotHandleFatal,
     ),
     example(
       "test CanHandleError[Id].handleNonFatal should return the successful result",
-      IdSpec.testCanHandleError_Id_handleNonFatalShouldReturnSuccessfulResult
+      IdSpec.testCanHandleError_Id_handleNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalEither should handle NonFatal",
-      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldHandleNonFatal
+      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalEither should not handle Fatal",
-      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldNotHandleFatal
+      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldNotHandleFatal,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalEither should return the successful result",
-      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldReturnSuccessfulResult
+      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalEither should return the failed result",
-      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldReturnFailedResult
+      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[Id].handleEitherNonFatal should handle NonFatal",
-      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldHandleNonFatal
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[Id].handleEitherNonFatal should not handle Fatal",
-      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldNotHandleFatal
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldNotHandleFatal,
     ),
     example(
       "test CanHandleError[Id].handleEitherNonFatal should return the successful result",
-      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldReturnSuccessfulResult
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Id].handleEitherNonFatal should return the failed result",
-      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldReturnFailedResult
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatal should handle NonFatal",
-      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldHandleNonFatal
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatal should not handle Fatal",
-      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldNotHandleFatal
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldNotHandleFatal,
     ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatal should return the successful result",
-      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldReturnSuccessfulResult
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatal should return the failed result",
-      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldReturnFailedResult
-    )
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldReturnFailedResult,
+    ),
   )
 
   @SuppressWarnings(Array("org.wartremover.warts.Throw"))
@@ -205,7 +205,7 @@ object canHandleErrorSpec extends Properties {
       val expected          = 1
       val actual            = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleNonFatalWith(fa)(_ => Future(expected)))
 
       actual ==== expected
@@ -221,7 +221,7 @@ object canHandleErrorSpec extends Properties {
       val expected = 1
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleNonFatalWith(fa)(_ => Future(123)))
 
       actual ==== expected
@@ -239,14 +239,14 @@ object canHandleErrorSpec extends Properties {
       val actualFailedResult   =
         ConcurrentSupport.futureToValue(
           CanHandleError[Future].handleNonFatalWith(fa)(err => Future(SomeError.someThrowable(err).asLeft[Int])),
-          waitFor
+          waitFor,
         )
 
       val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleNonFatalWith(fa2)(_ => Future(expected)))
 
       expectedFailedResult ==== actualFailedResult and actual ==== expected
@@ -263,7 +263,7 @@ object canHandleErrorSpec extends Properties {
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleNonFatalWith(fa)(err => Future(SomeError.someThrowable(err).asLeft[Int])))
 
       actual ==== expected
@@ -280,7 +280,7 @@ object canHandleErrorSpec extends Properties {
       val expected        = expectedFailure.asLeft[Int]
       val actual          = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleNonFatalWith(fa)(_ => Future(1.asRight[SomeError])))
 
       actual ==== expected
@@ -298,7 +298,7 @@ object canHandleErrorSpec extends Properties {
       val actualFailedResult   = ConcurrentSupport.futureToValue(
         CanHandleError[Future]
           .handleEitherNonFatalWith(fa)(err => Future(SomeError.someThrowable(err).asLeft[Int])),
-        waitFor
+        waitFor,
       )
 
       val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -306,7 +306,7 @@ object canHandleErrorSpec extends Properties {
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleEitherNonFatalWith(fa2)(err => Future(expected)))
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
@@ -322,7 +322,7 @@ object canHandleErrorSpec extends Properties {
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(
         CanHandleError[Future]
           .handleEitherNonFatalWith(fa)(err => Future(SomeError.someThrowable(err).asLeft[Int]))
@@ -343,7 +343,7 @@ object canHandleErrorSpec extends Properties {
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleEitherNonFatalWith(fa)(_ => Future(expected)))
 
       actual ==== expected
@@ -362,7 +362,7 @@ object canHandleErrorSpec extends Properties {
         CanHandleError[Future]
           .handleEitherTNonFatalWith(fa)(err => Future(SomeError.someThrowable(err).asLeft[Int]))
           .value,
-        waitFor
+        waitFor,
       )
 
       val fa2 = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
@@ -370,7 +370,7 @@ object canHandleErrorSpec extends Properties {
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleEitherTNonFatalWith(fa2)(err => Future(expected)).value)
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
@@ -386,7 +386,7 @@ object canHandleErrorSpec extends Properties {
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(
         CanHandleError[Future]
           .handleEitherTNonFatalWith(fa)(err => Future(SomeError.someThrowable(err).asLeft[Int]))
@@ -408,7 +408,7 @@ object canHandleErrorSpec extends Properties {
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleEitherTNonFatalWith(fa)(_ => Future(expected)).value)
 
       actual ==== expected
@@ -425,7 +425,7 @@ object canHandleErrorSpec extends Properties {
       val expected          = 1
       val actual            = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleNonFatal(fa)(_ => expected))
 
       actual ==== expected
@@ -441,7 +441,7 @@ object canHandleErrorSpec extends Properties {
       val expected = 1
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleNonFatal(fa)(_ => 123))
 
       actual ==== expected
@@ -459,14 +459,14 @@ object canHandleErrorSpec extends Properties {
       val actualFailedResult   =
         ConcurrentSupport.futureToValue(
           CanHandleError[Future].handleNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int]),
-          waitFor
+          waitFor,
         )
 
       val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleNonFatal(fa2)(_ => expected))
 
       expectedFailedResult ==== actualFailedResult and actual ==== expected
@@ -483,7 +483,7 @@ object canHandleErrorSpec extends Properties {
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int]))
 
       actual ==== expected
@@ -500,7 +500,7 @@ object canHandleErrorSpec extends Properties {
       val expected        = expectedFailure.asLeft[Int]
       val actual          = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleNonFatal(fa)(_ => 1.asRight[SomeError]))
 
       actual ==== expected
@@ -517,7 +517,7 @@ object canHandleErrorSpec extends Properties {
       val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actualFailedResult   = ConcurrentSupport.futureToValue(
         CanHandleError[Future].handleEitherNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int]),
-        waitFor
+        waitFor,
       )
 
       val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -525,7 +525,7 @@ object canHandleErrorSpec extends Properties {
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleEitherNonFatal(fa2)(err => expected))
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
@@ -541,7 +541,7 @@ object canHandleErrorSpec extends Properties {
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleEitherNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int]))
 
       actual ==== expected
@@ -559,7 +559,7 @@ object canHandleErrorSpec extends Properties {
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleEitherNonFatal(fa)(_ => expected))
 
       actual ==== expected
@@ -576,7 +576,7 @@ object canHandleErrorSpec extends Properties {
       val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actualFailedResult   = ConcurrentSupport.futureToValue(
         CanHandleError[Future].handleEitherTNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int]).value,
-        waitFor
+        waitFor,
       )
 
       val fa2 = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
@@ -584,7 +584,7 @@ object canHandleErrorSpec extends Properties {
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleEitherTNonFatal(fa2)(err => expected).value)
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
@@ -600,7 +600,7 @@ object canHandleErrorSpec extends Properties {
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleEitherTNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int]).value)
 
       actual ==== expected
@@ -618,7 +618,7 @@ object canHandleErrorSpec extends Properties {
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleEitherTNonFatal(fa)(_ => expected).value)
 
       actual ==== expected

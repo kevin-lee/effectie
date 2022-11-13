@@ -44,44 +44,44 @@ object fxSpec extends Properties {
       property("test Fx[Task].pureOf", FxSpecs.testPureOf[Task](_.runSyncUnsafe() ==== unit)),
       property(
         "test Fx[Task].pureOrError(success case)",
-        FxSpecs.testPureOrErrorSuccessCase[Task](_.runSyncUnsafe() ==== unit)
+        FxSpecs.testPureOrErrorSuccessCase[Task](_.runSyncUnsafe() ==== unit),
       ),
       example(
         "test Fx[Task].pureOrError(error case)",
         FxSpecs.testPureOrErrorErrorCase[Task] { (io, expectedError) =>
           tools.expectThrowable(io.runSyncUnsafe(), expectedError)
-        }
+        },
       ),
       example("test Fx[Task].unitOf", FxSpecs.testUnitOf[Task](_.runSyncUnsafe() ==== unit)),
       example(
         "test Fx[Task].errorOf",
         FxSpecs.testErrorOf[Task] { (io, expectedError) =>
           tools.expectThrowable(io.runSyncUnsafe(), expectedError)
-        }
+        },
       ),
       property(
         "test Fx[Task].fromEither(Right)",
-        FxSpecs.testFromEitherRightCase[Task](assertWithAttempt[Task](_.attempt.runSyncUnsafe()))
+        FxSpecs.testFromEitherRightCase[Task](assertWithAttempt[Task](_.attempt.runSyncUnsafe())),
       ),
       property(
         "test Fx[Task].fromEither(Left)",
-        FxSpecs.testFromEitherLeftCase[Task](assertWithAttempt[Task](_.attempt.runSyncUnsafe()))
+        FxSpecs.testFromEitherLeftCase[Task](assertWithAttempt[Task](_.attempt.runSyncUnsafe())),
       ),
       property(
         "test Fx[Task].fromOption(Some)",
-        FxSpecs.testFromOptionSomeCase[Task](assertWithAttempt[Task](_.attempt.runSyncUnsafe()))
+        FxSpecs.testFromOptionSomeCase[Task](assertWithAttempt[Task](_.attempt.runSyncUnsafe())),
       ),
       property(
         "test Fx[Task].fromOption(None)",
-        FxSpecs.testFromOptionNoneCase[Task](assertWithAttempt[Task](_.attempt.runSyncUnsafe()))
+        FxSpecs.testFromOptionNoneCase[Task](assertWithAttempt[Task](_.attempt.runSyncUnsafe())),
       ),
       property(
         "test Fx[Task].fromTry(Success)",
-        FxSpecs.testFromTrySuccessCase[Task](assertWithAttempt[Task](_.attempt.runSyncUnsafe()))
+        FxSpecs.testFromTrySuccessCase[Task](assertWithAttempt[Task](_.attempt.runSyncUnsafe())),
       ),
       property(
         "test Fx[Task].fromTry(Failure)",
-        FxSpecs.testFromTryFailureCase[Task](assertWithAttempt[Task](_.attempt.runSyncUnsafe()))
+        FxSpecs.testFromTryFailureCase[Task](assertWithAttempt[Task](_.attempt.runSyncUnsafe())),
       ),
     )
   } ++
@@ -89,302 +89,302 @@ object fxSpec extends Properties {
     List(
       example(
         "test Fx[Task].catchNonFatalThrowable should catch NonFatal",
-        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalThrowableShouldCatchNonFatal
+        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalThrowableShouldCatchNonFatal,
       ),
       example(
         "test Fx[Task].catchNonFatalThrowable should not catch Fatal",
-        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalThrowableShouldNotCatchFatal
+        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalThrowableShouldNotCatchFatal,
       ),
       example(
         "test Fx[Task].catchNonFatalThrowable should return the successful result",
-        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalThrowableShouldReturnSuccessfulResult
+        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalThrowableShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].catchNonFatal should catch NonFatal",
-        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalShouldCatchNonFatal
+        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalShouldCatchNonFatal,
       ),
       example(
         "test Fx[Task].catchNonFatal should not catch Fatal",
-        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalShouldNotCatchFatal
+        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalShouldNotCatchFatal,
       ),
       example(
         "test Fx[Task].catchNonFatal should return the successful result",
-        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalShouldReturnSuccessfulResult
+        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].catchNonFatalEither should catch NonFatal",
-        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalEitherShouldCatchNonFatal
+        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalEitherShouldCatchNonFatal,
       ),
       example(
         "test Fx[Task].catchNonFatalEither should not catch Fatal",
-        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalEitherShouldNotCatchFatal
+        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalEitherShouldNotCatchFatal,
       ),
       example(
         "test Fx[Task].catchNonFatalEither should return the successful result",
-        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalEitherShouldReturnSuccessfulResult
+        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalEitherShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].catchNonFatalEither should return the failed result",
-        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalEitherShouldReturnFailedResult
+        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalEitherShouldReturnFailedResult,
       ),
       example(
         "test Fx[Task].catchNonFatalEitherT should catch NonFatal",
-        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalEitherTShouldCatchNonFatal
+        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalEitherTShouldCatchNonFatal,
       ),
       example(
         "test Fx[Task].catchNonFatalEitherT should not catch Fatal",
-        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalEitherTShouldNotCatchFatal
+        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalEitherTShouldNotCatchFatal,
       ),
       example(
         "test Fx[Task].catchNonFatalEitherT should return the successful result",
-        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalEitherTShouldReturnSuccessfulResult
+        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalEitherTShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].catchNonFatalEitherT should return the failed result",
-        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalEitherTShouldReturnFailedResult
+        TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalEitherTShouldReturnFailedResult,
       ),
     ) ++
     List(
       example(
         "test Fx[Task].handleNonFatalWith should handle NonFatal",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalWithShouldHandleNonFatalWith
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalWithShouldHandleNonFatalWith,
       ),
       example(
         "test Fx[Task].handleNonFatalWith should not handle Fatal",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalWithShouldNotHandleFatalWith
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalWithShouldNotHandleFatalWith,
       ),
       example(
         "test Fx[Task].handleNonFatalWith should return the successful result",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalWithShouldReturnSuccessfulResult
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalWithShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].handleNonFatalWithEither should handle NonFatal",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalWithEitherShouldHandleNonFatalWith
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalWithEitherShouldHandleNonFatalWith,
       ),
       example(
         "test Fx[Task].handleNonFatalWithEither should not handle Fatal",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalWithEitherShouldNotHandleFatalWith
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalWithEitherShouldNotHandleFatalWith,
       ),
       example(
         "test Fx[Task].handleNonFatalWithEither should return the successful result",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalWithEitherShouldReturnSuccessfulResult
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalWithEitherShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].handleNonFatalWithEither should return the failed result",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalWithEitherShouldReturnFailedResult
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalWithEitherShouldReturnFailedResult,
       ),
       example(
         "test Fx[Task].handleEitherNonFatalWith should handle NonFatal",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherNonFatalWithShouldHandleNonFatalWith
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherNonFatalWithShouldHandleNonFatalWith,
       ),
       example(
         "test Fx[Task].handleEitherNonFatalWith should not handle Fatal",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherNonFatalWithShouldNotHandleFatalWith
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherNonFatalWithShouldNotHandleFatalWith,
       ),
       example(
         "test Fx[Task].handleEitherNonFatalWith should return the successful result",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherNonFatalWithShouldReturnSuccessfulResult
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherNonFatalWithShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].handleEitherNonFatalWith should return the failed result",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherNonFatalWithShouldReturnFailedResult
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherNonFatalWithShouldReturnFailedResult,
       ),
       example(
         "test Fx[Task].handleEitherTNonFatalWith should handle NonFatal",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherTNonFatalWithShouldHandleNonFatalWith
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherTNonFatalWithShouldHandleNonFatalWith,
       ),
       example(
         "test Fx[Task].handleEitherTNonFatalWith should not handle Fatal",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherTNonFatalWithShouldNotHandleFatalWith
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherTNonFatalWithShouldNotHandleFatalWith,
       ),
       example(
         "test Fx[Task].handleEitherTNonFatalWith should return the successful result",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherTNonFatalWithShouldReturnSuccessfulResult
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherTNonFatalWithShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].handleEitherTNonFatalWith should return the failed result",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherTNonFatalWithShouldReturnFailedResult
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherTNonFatalWithShouldReturnFailedResult,
       ),
       example(
         "test Fx[Task].handleNonFatal should handle NonFatal",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalShouldHandleNonFatal
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalShouldHandleNonFatal,
       ),
       example(
         "test Fx[Task].handleNonFatal should not handle Fatal",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalShouldNotHandleFatal
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalShouldNotHandleFatal,
       ),
       example(
         "test Fx[Task].handleNonFatal should return the successful result",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalShouldReturnSuccessfulResult
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].handleNonFatalEither should handle NonFatal",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalEitherShouldHandleNonFatal
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalEitherShouldHandleNonFatal,
       ),
       example(
         "test Fx[Task].handleNonFatalEither should not handle Fatal",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalEitherShouldNotHandleFatal
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalEitherShouldNotHandleFatal,
       ),
       example(
         "test Fx[Task].handleNonFatalEither should return the successful result",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalEitherShouldReturnSuccessfulResult
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalEitherShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].handleNonFatalEither should return the failed result",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalEitherShouldReturnFailedResult
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleNonFatalEitherShouldReturnFailedResult,
       ),
       example(
         "test Fx[Task].handleEitherNonFatal should handle NonFatal",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherNonFatalShouldHandleNonFatal
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherNonFatalShouldHandleNonFatal,
       ),
       example(
         "test Fx[Task].handleEitherNonFatal should not handle Fatal",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherNonFatalShouldNotHandleFatal
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherNonFatalShouldNotHandleFatal,
       ),
       example(
         "test Fx[Task].handleEitherNonFatal should return the successful result",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherNonFatalShouldReturnSuccessfulResult
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherNonFatalShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].handleEitherNonFatal should return the failed result",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherNonFatalShouldReturnFailedResult
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherNonFatalShouldReturnFailedResult,
       ),
       example(
         "test Fx[Task].handleEitherTNonFatal should handle NonFatal",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherTNonFatalShouldHandleNonFatal
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherTNonFatalShouldHandleNonFatal,
       ),
       example(
         "test Fx[Task].handleEitherTNonFatal should not handle Fatal",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherTNonFatalShouldNotHandleFatal
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherTNonFatalShouldNotHandleFatal,
       ),
       example(
         "test Fx[Task].handleEitherTNonFatal should return the successful result",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherTNonFatalShouldReturnSuccessfulResult
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherTNonFatalShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].handleEitherTNonFatal should return the failed result",
-        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherTNonFatalShouldReturnFailedResult
+        TaskSpec.CanHandleErrorSpec.testCanHandleError_Task_handleEitherTNonFatalShouldReturnFailedResult,
       ),
     ) ++ List(
       example(
         "test Fx[Task].recoverFromNonFatalWith should catch NonFatal",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal,
       ),
       example(
         "test Fx[Task].recoverFromNonFatalWith should not catch Fatal",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalWithShouldNotCatchFatal
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalWithShouldNotCatchFatal,
       ),
       example(
         "test Fx[Task].recoverFromNonFatalWith should return the successful result",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalWithShouldReturnSuccessfulResult
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalWithShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].recoverFromNonFatalWithEither should catch NonFatal",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal,
       ),
       example(
         "test Fx[Task].recoverFromNonFatalWithEither should not catch Fatal",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalWithEitherShouldNotCatchFatal
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalWithEitherShouldNotCatchFatal,
       ),
       example(
         "test Fx[Task].recoverFromNonFatalWithEither should return the successful result",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].recoverFromNonFatalWithEither should return the failed result",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnFailedResult
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnFailedResult,
       ),
       example(
         "test Fx[Task].recoverEitherFromNonFatalWith should catch NonFatal",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal,
       ),
       example(
         "test Fx[Task].recoverEitherFromNonFatalWith should not catch Fatal",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherFromNonFatalWithShouldNotCatchFatal
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherFromNonFatalWithShouldNotCatchFatal,
       ),
       example(
         "test Fx[Task].recoverEitherFromNonFatalWith should return the successful result",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].recoverEitherFromNonFatalWith should return the failed result",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnFailedResult
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnFailedResult,
       ),
       example(
         "test Fx[Task].recoverEitherTFromNonFatalWith should catch NonFatal",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal,
       ),
       example(
         "test Fx[Task].recoverEitherTFromNonFatalWith should not catch Fatal",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherTFromNonFatalWithShouldNotCatchFatal
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherTFromNonFatalWithShouldNotCatchFatal,
       ),
       example(
         "test Fx[Task].recoverEitherTFromNonFatalWith should return the successful result",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].recoverEitherTFromNonFatalWith should return the failed result",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnFailedResult
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnFailedResult,
       ),
       example(
         "test Fx[Task].recoverFromNonFatal should catch NonFatal",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalShouldRecoverFromNonFatal
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalShouldRecoverFromNonFatal,
       ),
       example(
         "test Fx[Task].recoverFromNonFatal should not catch Fatal",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalShouldNotCatchFatal
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalShouldNotCatchFatal,
       ),
       example(
         "test Fx[Task].recoverFromNonFatal should return the successful result",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalShouldReturnSuccessfulResult
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].recoverFromNonFatalEither should catch NonFatal",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalEitherShouldRecoverFromNonFatal
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalEitherShouldRecoverFromNonFatal,
       ),
       example(
         "test Fx[Task].recoverFromNonFatalEither should not catch Fatal",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalEitherShouldNotCatchFatal
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalEitherShouldNotCatchFatal,
       ),
       example(
         "test Fx[Task].recoverFromNonFatalEither should return the successful result",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalEitherShouldReturnSuccessfulResult
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalEitherShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].recoverFromNonFatalEither should return the failed result",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalEitherShouldReturnFailedResult
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverFromNonFatalEitherShouldReturnFailedResult,
       ),
       example(
         "test Fx[Task].recoverEitherFromNonFatal should catch NonFatal",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherFromNonFatalShouldRecoverFromNonFatal
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherFromNonFatalShouldRecoverFromNonFatal,
       ),
       example(
         "test Fx[Task].recoverEitherFromNonFatal should not catch Fatal",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherFromNonFatalShouldNotCatchFatal
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherFromNonFatalShouldNotCatchFatal,
       ),
       example(
         "test Fx[Task].recoverEitherFromNonFatal should return the successful result",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherFromNonFatalShouldReturnSuccessfulResult
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherFromNonFatalShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].recoverEitherFromNonFatal should return the failed result",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherFromNonFatalShouldReturnFailedResult
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherFromNonFatalShouldReturnFailedResult,
       ),
       example(
         "test Fx[Task].recoverEitherTFromNonFatal should catch NonFatal",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldRecoverFromNonFatal
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldRecoverFromNonFatal,
       ),
       example(
         "test Fx[Task].recoverEitherTFromNonFatal should not catch Fatal",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldNotCatchFatal
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldNotCatchFatal,
       ),
       example(
         "test Fx[Task].recoverEitherTFromNonFatal should return the successful result",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnSuccessfulResult
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Task].recoverEitherTFromNonFatal should return the failed result",
-        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnFailedResult
+        TaskSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnFailedResult,
       ),
     )
 

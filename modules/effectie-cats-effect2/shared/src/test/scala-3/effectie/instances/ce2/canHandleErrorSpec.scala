@@ -30,123 +30,123 @@ object CanHandleErrorSpec extends Properties {
   private val ioSpecs = List(
     example(
       "test CanHandleError[IO].handleNonFatalWith should handle NonFatal",
-      IoSpec.testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith
+      IoSpec.testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[IO].handleNonFatalWith should not handle Fatal",
-      IoSpec.testCanHandleError_IO_handleNonFatalWithShouldNotHandleFatalWith
+      IoSpec.testCanHandleError_IO_handleNonFatalWithShouldNotHandleFatalWith,
     ),
     example(
       "test CanHandleError[IO].handleNonFatalWith should return the successful result",
-      IoSpec.testCanHandleError_IO_handleNonFatalWithShouldReturnSuccessfulResult
+      IoSpec.testCanHandleError_IO_handleNonFatalWithShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[IO].handleNonFatalWithEither should handle NonFatal",
-      IoSpec.testCanHandleError_IO_handleNonFatalWithEitherShouldHandleNonFatalWith
+      IoSpec.testCanHandleError_IO_handleNonFatalWithEitherShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[IO].handleNonFatalWithEither should not handle Fatal",
-      IoSpec.testCanHandleError_IO_handleNonFatalWithEitherShouldNotHandleFatalWith
+      IoSpec.testCanHandleError_IO_handleNonFatalWithEitherShouldNotHandleFatalWith,
     ),
     example(
       "test CanHandleError[IO].handleNonFatalWithEither should return the successful result",
-      IoSpec.testCanHandleError_IO_handleNonFatalWithEitherShouldReturnSuccessfulResult
+      IoSpec.testCanHandleError_IO_handleNonFatalWithEitherShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[IO].handleNonFatalWithEither should return the failed result",
-      IoSpec.testCanHandleError_IO_handleNonFatalWithEitherShouldReturnFailedResult
+      IoSpec.testCanHandleError_IO_handleNonFatalWithEitherShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[IO].handleEitherNonFatalWith should handle NonFatal",
-      IoSpec.testCanHandleError_IO_handleEitherNonFatalWithShouldHandleNonFatalWith
+      IoSpec.testCanHandleError_IO_handleEitherNonFatalWithShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[IO].handleEitherNonFatalWith should not handle Fatal",
-      IoSpec.testCanHandleError_IO_handleEitherNonFatalWithShouldNotHandleFatalWith
+      IoSpec.testCanHandleError_IO_handleEitherNonFatalWithShouldNotHandleFatalWith,
     ),
     example(
       "test CanHandleError[IO].handleEitherNonFatalWith should return the successful result",
-      IoSpec.testCanHandleError_IO_handleEitherNonFatalWithShouldReturnSuccessfulResult
+      IoSpec.testCanHandleError_IO_handleEitherNonFatalWithShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[IO].handleEitherNonFatalWith should return the failed result",
-      IoSpec.testCanHandleError_IO_handleEitherNonFatalWithShouldReturnFailedResult
+      IoSpec.testCanHandleError_IO_handleEitherNonFatalWithShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[IO].handleEitherTNonFatalWith should handle NonFatal",
-      IoSpec.testCanHandleError_IO_handleEitherTNonFatalWithShouldHandleNonFatalWith
+      IoSpec.testCanHandleError_IO_handleEitherTNonFatalWithShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[IO].handleEitherTNonFatalWith should not handle Fatal",
-      IoSpec.testCanHandleError_IO_handleEitherTNonFatalWithShouldNotHandleFatalWith
+      IoSpec.testCanHandleError_IO_handleEitherTNonFatalWithShouldNotHandleFatalWith,
     ),
     example(
       "test CanHandleError[IO].handleEitherTNonFatalWith should return the successful result",
-      IoSpec.testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnSuccessfulResult
+      IoSpec.testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[IO].handleEitherTNonFatalWith should return the failed result",
-      IoSpec.testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnFailedResult
+      IoSpec.testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[IO].handleNonFatal should handle NonFatal",
-      IoSpec.testCanHandleError_IO_handleNonFatalShouldHandleNonFatal
+      IoSpec.testCanHandleError_IO_handleNonFatalShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[IO].handleNonFatal should not handle Fatal",
-      IoSpec.testCanHandleError_IO_handleNonFatalShouldNotHandleFatal
+      IoSpec.testCanHandleError_IO_handleNonFatalShouldNotHandleFatal,
     ),
     example(
       "test CanHandleError[IO].handleNonFatal should return the successful result",
-      IoSpec.testCanHandleError_IO_handleNonFatalShouldReturnSuccessfulResult
+      IoSpec.testCanHandleError_IO_handleNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[IO].handleNonFatalEither should handle NonFatal",
-      IoSpec.testCanHandleError_IO_handleNonFatalEitherShouldHandleNonFatal
+      IoSpec.testCanHandleError_IO_handleNonFatalEitherShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[IO].handleNonFatalEither should not handle Fatal",
-      IoSpec.testCanHandleError_IO_handleNonFatalEitherShouldNotHandleFatal
+      IoSpec.testCanHandleError_IO_handleNonFatalEitherShouldNotHandleFatal,
     ),
     example(
       "test CanHandleError[IO].handleNonFatalEither should return the successful result",
-      IoSpec.testCanHandleError_IO_handleNonFatalEitherShouldReturnSuccessfulResult
+      IoSpec.testCanHandleError_IO_handleNonFatalEitherShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[IO].handleNonFatalEither should return the failed result",
-      IoSpec.testCanHandleError_IO_handleNonFatalEitherShouldReturnFailedResult
+      IoSpec.testCanHandleError_IO_handleNonFatalEitherShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[IO].handleEitherNonFatal should handle NonFatal",
-      IoSpec.testCanHandleError_IO_handleEitherNonFatalShouldHandleNonFatal
+      IoSpec.testCanHandleError_IO_handleEitherNonFatalShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[IO].handleEitherNonFatal should not handle Fatal",
-      IoSpec.testCanHandleError_IO_handleEitherNonFatalShouldNotHandleFatal
+      IoSpec.testCanHandleError_IO_handleEitherNonFatalShouldNotHandleFatal,
     ),
     example(
       "test CanHandleError[IO].handleEitherNonFatal should return the successful result",
-      IoSpec.testCanHandleError_IO_handleEitherNonFatalShouldReturnSuccessfulResult
+      IoSpec.testCanHandleError_IO_handleEitherNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[IO].handleEitherNonFatal should return the failed result",
-      IoSpec.testCanHandleError_IO_handleEitherNonFatalShouldReturnFailedResult
+      IoSpec.testCanHandleError_IO_handleEitherNonFatalShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[IO].handleEitherTNonFatal should handle NonFatal",
-      IoSpec.testCanHandleError_IO_handleEitherTNonFatalShouldHandleNonFatal
+      IoSpec.testCanHandleError_IO_handleEitherTNonFatalShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[IO].handleEitherTNonFatal should not handle Fatal",
-      IoSpec.testCanHandleError_IO_handleEitherTNonFatalShouldNotHandleFatal
+      IoSpec.testCanHandleError_IO_handleEitherTNonFatalShouldNotHandleFatal,
     ),
     example(
       "test CanHandleError[IO].handleEitherTNonFatal should return the successful result",
-      IoSpec.testCanHandleError_IO_handleEitherTNonFatalShouldReturnSuccessfulResult
+      IoSpec.testCanHandleError_IO_handleEitherTNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[IO].handleEitherTNonFatal should return the failed result",
-      IoSpec.testCanHandleError_IO_handleEitherTNonFatalShouldReturnFailedResult
+      IoSpec.testCanHandleError_IO_handleEitherTNonFatalShouldReturnFailedResult,
     ),
   )
 
@@ -154,27 +154,27 @@ object CanHandleErrorSpec extends Properties {
   private val futureSpecs = effectie.core.CanCatchSpec.futureSpecs ++ List(
     example(
       "test CanHandleError[Future].handleEitherTNonFatalWith should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldHandleNonFatalWith
+      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[Future].handleEitherTNonFatalWith should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldReturnSuccessfulResult
+      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Future].handleEitherTNonFatalWith should return the failed result",
-      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldReturnFailedResult
+      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[Future].handleEitherTNonFatal should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalShouldHandleNonFatal
+      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[Future].handleEitherTNonFatal should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalShouldReturnSuccessfulResult
+      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Future].handleEitherTNonFatal should return the failed result",
-      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalShouldReturnFailedResult
+      FutureSpec.testCanHandleError_Future_handleEitherTNonFatalShouldReturnFailedResult,
     ),
   )
 
@@ -182,124 +182,124 @@ object CanHandleErrorSpec extends Properties {
   private val idSpecs = List(
     example(
       "test CanHandleError[Id].handleNonFatalWith should handle NonFatal",
-      IdSpec.testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith
+      IdSpec.testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalWith should not handle Fatal",
-      IdSpec.testCanHandleError_Id_handleNonFatalWithShouldNotHandleFatalWith
+      IdSpec.testCanHandleError_Id_handleNonFatalWithShouldNotHandleFatalWith,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalWith should return the successful result",
-      IdSpec.testCanHandleError_Id_handleNonFatalWithShouldReturnSuccessfulResult
+      IdSpec.testCanHandleError_Id_handleNonFatalWithShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalWithEither should handle NonFatal",
-      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldHandleNonFatalWith
+      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalWithEither should not handle Fatal",
-      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldNotHandleFatalWith
+      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldNotHandleFatalWith,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalWithEither should return the successful result",
-      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldReturnSuccessfulResult
+      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalWithEither should return the failed result",
-      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldReturnFailedResult
+      IdSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[Id].handleEitherNonFatalWith should handle NonFatal",
-      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldHandleNonFatalWith
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[Id].handleEitherNonFatalWith should not handle Fatal",
-      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldNotHandleFatalWith
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldNotHandleFatalWith,
     ),
     example(
       "test CanHandleError[Id].handleEitherNonFatalWith should return the successful result",
-      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldReturnSuccessfulResult
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Id].handleEitherNonFatalWith should return the failed result",
-      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldReturnFailedResult
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatalWith should handle NonFatal",
-      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldHandleNonFatalWith
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatalWith should not handle Fatal",
-      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldNotHandleFatalWith
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldNotHandleFatalWith,
     ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatalWith should return the successful result",
-      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldReturnSuccessfulResult
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatalWith should return the failed result",
-      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldReturnFailedResult
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[Id].handleNonFatal should handle NonFatal",
-      IdSpec.testCanHandleError_Id_handleNonFatalShouldHandleNonFatal
+      IdSpec.testCanHandleError_Id_handleNonFatalShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[Id].handleNonFatal should not handle Fatal",
-      IdSpec.testCanHandleError_Id_handleNonFatalShouldNotHandleFatal
+      IdSpec.testCanHandleError_Id_handleNonFatalShouldNotHandleFatal,
     ),
     example(
       "test CanHandleError[Id].handleNonFatal should return the successful result",
-      IdSpec.testCanHandleError_Id_handleNonFatalShouldReturnSuccessfulResult
+      IdSpec.testCanHandleError_Id_handleNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalEither should handle NonFatal",
-      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldHandleNonFatal
+      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalEither should not handle Fatal",
-      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldNotHandleFatal
+      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldNotHandleFatal,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalEither should return the successful result",
-      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldReturnSuccessfulResult
+      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Id].handleNonFatalEither should return the failed result",
-      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldReturnFailedResult
+      IdSpec.testCanHandleError_Id_handleNonFatalEitherShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[Id].handleEitherNonFatal should handle NonFatal",
-      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldHandleNonFatal
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[Id].handleEitherNonFatal should not handle Fatal",
-      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldNotHandleFatal
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldNotHandleFatal,
     ),
     example(
       "test CanHandleError[Id].handleEitherNonFatal should return the successful result",
-      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldReturnSuccessfulResult
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Id].handleEitherNonFatal should return the failed result",
-      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldReturnFailedResult
+      IdSpec.testCanHandleError_Id_handleEitherNonFatalShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatal should handle NonFatal",
-      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldHandleNonFatal
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatal should not handle Fatal",
-      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldNotHandleFatal
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldNotHandleFatal,
     ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatal should return the successful result",
-      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldReturnSuccessfulResult
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Id].handleEitherTNonFatal should return the failed result",
-      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldReturnFailedResult
-    )
+      IdSpec.testCanHandleError_Id_handleEitherTNonFatalShouldReturnFailedResult,
+    ),
   )
 
   def throwThrowable[A](throwable: => Throwable): A =
@@ -754,7 +754,7 @@ object CanHandleErrorSpec extends Properties {
         CanHandleError[Future]
           .handleEitherTNonFatalWith(fa)(err => Future(SomeError.someThrowable(err).asLeft[Int]))
           .value,
-        waitFor
+        waitFor,
       )
 
       val fa2 = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
@@ -762,7 +762,7 @@ object CanHandleErrorSpec extends Properties {
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleEitherTNonFatalWith(fa2)(err => Future(expected)).value)
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
@@ -778,7 +778,7 @@ object CanHandleErrorSpec extends Properties {
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(
         CanHandleError[Future]
           .handleEitherTNonFatalWith(fa)(err => Future(SomeError.someThrowable(err).asLeft[Int]))
@@ -800,7 +800,7 @@ object CanHandleErrorSpec extends Properties {
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleEitherTNonFatalWith(fa)(_ => Future(expected)).value)
 
       actual ==== expected
@@ -817,7 +817,7 @@ object CanHandleErrorSpec extends Properties {
       val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actualFailedResult   = ConcurrentSupport.futureToValue(
         CanHandleError[Future].handleEitherTNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int]).value,
-        waitFor
+        waitFor,
       )
 
       val fa2 = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
@@ -825,7 +825,7 @@ object CanHandleErrorSpec extends Properties {
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleEitherTNonFatal(fa2)(err => expected).value)
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
@@ -841,7 +841,7 @@ object CanHandleErrorSpec extends Properties {
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleEitherTNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int]).value)
 
       actual ==== expected
@@ -859,7 +859,7 @@ object CanHandleErrorSpec extends Properties {
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleEitherTNonFatal(fa)(_ => expected).value)
 
       actual ==== expected

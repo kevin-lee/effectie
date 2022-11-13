@@ -22,7 +22,7 @@ object fromFutureSpec extends Properties {
 
   override def tests: List[Test] = List(
     property("test FromFuture[Future].toEffect", FutureSpec.testToEffect),
-    property("test FromFuture[Id].toEffect", IdSpec.testToEffect)
+    property("test FromFuture[Id].toEffect", IdSpec.testToEffect),
   )
 
   object FutureSpec {

@@ -24,16 +24,16 @@ object toFutureSpec extends Properties {
   override def tests: List[Test] = List(
     property(
       "test ToFuture[Task].unsafeToFuture",
-      TaskSpec.testUnsafeToFuture
+      TaskSpec.testUnsafeToFuture,
     ),
     property(
       "test ToFuture[IO].unsafeToFuture",
-      IoSpec.testUnsafeToFuture
+      IoSpec.testUnsafeToFuture,
     ),
     property(
       "test ToFuture[Id].unsafeToFuture",
-      IdSpec.testUnsafeToFuture
-    )
+      IdSpec.testUnsafeToFuture,
+    ),
   )
 
   object TaskSpec {
@@ -129,7 +129,7 @@ object toFutureSpec extends Properties {
               .assert(future.isInstanceOf[Future[Int]]) // scalafix:ok DisableSyntax.isInstanceOf
               .log(s"future is not an instance of Future[Int]. future.getClass: ${future.getClass.toString}"),
             actual ==== ConcurrentSupport.futureToValueAndTerminate(es, WaitFor(300.milliseconds))(expected),
-            actual ==== a
+            actual ==== a,
           )
         )
       }

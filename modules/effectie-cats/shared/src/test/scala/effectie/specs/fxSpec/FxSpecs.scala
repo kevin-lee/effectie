@@ -28,7 +28,7 @@ object FxSpecs {
         testBefore.log("testBefore"),
         testBeforeRun.log("testBeforeRun"),
         runResult.log("runResult"),
-        testAfterRun.log("testAfterRun")
+        testAfterRun.log("testAfterRun"),
       )
     )
   }
@@ -49,7 +49,7 @@ object FxSpecs {
         testBefore.log("testBefore"),
         testBeforeRun.log("testBeforeRun"),
         runResult.log("runResult"),
-        testAfterRun.log("testAfterRun")
+        testAfterRun.log("testAfterRun"),
       )
     )
   }
@@ -70,7 +70,7 @@ object FxSpecs {
         testBefore.log("testBefore"),
         testBeforeRun.log("testBeforeRun"),
         runResult.log("runResult"),
-        testAfterRun.log("testAfterRun")
+        testAfterRun.log("testAfterRun"),
       )
     )
   }

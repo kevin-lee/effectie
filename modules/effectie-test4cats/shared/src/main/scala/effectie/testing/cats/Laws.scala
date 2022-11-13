@@ -12,11 +12,11 @@ object Laws {
      */
     def identity[F[*], A](fa: F[A])(
       implicit F: Functor[F],
-      FA: Eq[F[A]]
+      FA: Eq[F[A]],
     ): Boolean =
       FA.eqv(
         F.map(fa)(scala.Predef.identity),
-        fa
+        fa,
       )
 
     /* Functors preserve composition of morphisms
@@ -24,11 +24,11 @@ object Laws {
      */
     def composition[F[*]: Functor, A, B, C](fa: F[A], f: B => C, g: A => B)(
       implicit F: Functor[F],
-      FC: Eq[F[C]]
+      FC: Eq[F[C]],
     ): Boolean =
       FC.eqv(
         F.map(fa)(f compose g),
-        F.map(F.map(fa)(g))(f)
+        F.map(F.map(fa)(g))(f),
       )
   }
   object FunctorLaws extends FunctorLaws
@@ -39,11 +39,11 @@ object Laws {
      */
     def identityAp[F[*]: Applicative, A](fa: => F[A])(
       implicit F: Functor[F],
-      FA: Eq[F[A]]
+      FA: Eq[F[A]],
     ): Boolean =
       FA.eqv(
         Applicative[F].ap[A, A](Applicative[F].pure(scala.Predef.identity))(fa),
-        fa
+        fa,
       )
 
     /* Homomorphism
@@ -51,11 +51,11 @@ object Laws {
      */
     def homomorphism[F[*]: Applicative, A, B](f: A => B, a: => A)(
       implicit F: Functor[F],
-      FB: Eq[F[B]]
+      FB: Eq[F[B]],
     ): Boolean =
       FB.eqv(
         Applicative[F].ap(Applicative[F].pure(f))(Applicative[F].pure(a)),
-        Applicative[F].pure(f(a))
+        Applicative[F].pure(f(a)),
       )
 
     /* Interchange
@@ -63,11 +63,11 @@ object Laws {
      */
     def interchange[F[*], A, B](a: => A, f: F[A => B])(
       implicit F: Applicative[F],
-      FB: Eq[F[B]]
+      FB: Eq[F[B]],
     ): Boolean =
       FB.eqv(
         F.ap[A, B](f)(F.pure(a)),
-        F.ap[A => B, B](F.pure(g => g(a)))(f)
+        F.ap[A => B, B](F.pure(g => g(a)))(f),
       )
 
     /* Composition
@@ -75,7 +75,7 @@ object Laws {
      */
     def compositionAp[F[*], A, B, C](fa: F[A], f: F[B => C], g: F[A => B])(
       implicit F: Applicative[F],
-      FC: Eq[F[C]]
+      FC: Eq[F[C]],
     ): Boolean =
       FC.eqv(
         F.ap[A, C](
@@ -87,7 +87,7 @@ object Laws {
         )(fa),
         F.ap[B, C](f)(
           F.ap[A, B](g)(fa)
-        )
+        ),
       )
   }
   object ApplicativeLaws extends ApplicativeLaws
@@ -98,11 +98,11 @@ object Laws {
      */
     def leftIdentity[F[*], A, B](a: A, f: A => F[B])(
       implicit F: Monad[F],
-      FB: Eq[F[B]]
+      FB: Eq[F[B]],
     ): Boolean =
       FB.eqv(
         F.flatMap(F.pure(a))(f),
-        f(a)
+        f(a),
       )
 
     /*
@@ -110,11 +110,11 @@ object Laws {
      */
     def rightIdentity[F[*], A](fa: F[A])(
       implicit F: Monad[F],
-      FA: Eq[F[A]]
+      FA: Eq[F[A]],
     ): Boolean =
       FA.eqv(
         F.flatMap(fa)(F.pure(_: A)),
-        fa
+        fa,
       )
 
     /*
@@ -122,11 +122,11 @@ object Laws {
      */
     def associativity[F[*], A, B, C](fa: F[A], f: A => F[B], g: B => F[C])(
       implicit F: Monad[F],
-      FC: Eq[F[C]]
+      FC: Eq[F[C]],
     ): Boolean =
       FC.eqv(
         F.flatMap(F.flatMap(fa)(f))(g),
-        F.flatMap(fa)(x => F.flatMap(f(x))(g))
+        F.flatMap(fa)(x => F.flatMap(f(x))(g)),
       )
   }
   object MonadLaws extends MonadLaws

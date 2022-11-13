@@ -41,161 +41,161 @@ object FxSpec extends Properties {
       /* Future */
       example(
         "test Fx[Future]catchNonFatalThrowable should catch NonFatal",
-        FutureSpec.CanCatchSpec.testCanCatch_Future_catchNonFatalThrowableShouldCatchNonFatal
+        FutureSpec.CanCatchSpec.testCanCatch_Future_catchNonFatalThrowableShouldCatchNonFatal,
       ),
       example(
         "test Fx[Future]catchNonFatalThrowable should return the successful result",
-        FutureSpec.CanCatchSpec.testCanCatch_Future_catchNonFatalThrowableShouldReturnSuccessfulResult
+        FutureSpec.CanCatchSpec.testCanCatch_Future_catchNonFatalThrowableShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Future]catchNonFatal should catch NonFatal",
-        FutureSpec.CanCatchSpec.testCanCatch_Future_catchNonFatalShouldCatchNonFatal
+        FutureSpec.CanCatchSpec.testCanCatch_Future_catchNonFatalShouldCatchNonFatal,
       ),
       example(
         "test Fx[Future]catchNonFatal should return the successful result",
-        FutureSpec.CanCatchSpec.testCanCatch_Future_catchNonFatalShouldReturnSuccessfulResult
+        FutureSpec.CanCatchSpec.testCanCatch_Future_catchNonFatalShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Future]catchNonFatalEither should catch NonFatal",
-        FutureSpec.CanCatchSpec.testCanCatch_Future_catchNonFatalEitherShouldCatchNonFatal
+        FutureSpec.CanCatchSpec.testCanCatch_Future_catchNonFatalEitherShouldCatchNonFatal,
       ),
       example(
         "test Fx[Future]catchNonFatalEither should return the successful result",
-        FutureSpec.CanCatchSpec.testCanCatch_Future_catchNonFatalEitherShouldReturnSuccessfulResult
+        FutureSpec.CanCatchSpec.testCanCatch_Future_catchNonFatalEitherShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Future]catchNonFatalEither should return the failed result",
-        FutureSpec.CanCatchSpec.testCanCatch_Future_catchNonFatalEitherShouldReturnFailedResult
+        FutureSpec.CanCatchSpec.testCanCatch_Future_catchNonFatalEitherShouldReturnFailedResult,
       ),
     ) ++ List(
       example(
         "test Fx[Future].handleNonFatalWith should handle NonFatal",
-        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithShouldHandleNonFatalWith
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithShouldHandleNonFatalWith,
       ),
       example(
         "test Fx[Future].handleNonFatalWith should return the successful result",
-        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithShouldReturnSuccessfulResult
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Future].handleNonFatalWithEither should handle NonFatal",
-        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldHandleNonFatalWith
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldHandleNonFatalWith,
       ),
       example(
         "test Fx[Future].handleNonFatalWithEither should return the successful result",
-        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldReturnSuccessfulResult
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Future].handleNonFatalWithEither should return the failed result",
-        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldReturnFailedResult
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldReturnFailedResult,
       ),
       example(
         "test Fx[Future].handleEitherNonFatalWith should handle NonFatal",
-        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldHandleNonFatalWith
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldHandleNonFatalWith,
       ),
       example(
         "test Fx[Future].handleEitherNonFatalWith should return the successful result",
-        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnSuccessfulResult
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Future].handleEitherNonFatalWith should return the failed result",
-        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnFailedResult
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnFailedResult,
       ),
       example(
         "test Fx[Future].handleNonFatal should handle NonFatal",
-        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalShouldHandleNonFatal
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalShouldHandleNonFatal,
       ),
       example(
         "test Fx[Future].handleNonFatal should return the successful result",
-        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalShouldReturnSuccessfulResult
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Future].handleNonFatalEither should handle NonFatal",
-        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalEitherShouldHandleNonFatal
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalEitherShouldHandleNonFatal,
       ),
       example(
         "test Fx[Future].handleNonFatalEither should return the successful result",
-        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalEitherShouldReturnSuccessfulResult
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalEitherShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Future].handleNonFatalEither should return the failed result",
-        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalEitherShouldReturnFailedResult
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleNonFatalEitherShouldReturnFailedResult,
       ),
       example(
         "test Fx[Future].handleEitherNonFatal should handle NonFatal",
-        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalShouldHandleNonFatal
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalShouldHandleNonFatal,
       ),
       example(
         "test Fx[Future].handleEitherNonFatal should return the successful result",
-        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnSuccessfulResult
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Future].handleEitherNonFatal should return the failed result",
-        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnFailedResult
+        FutureSpec.CanHandleErrorSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnFailedResult,
       ),
     ) ++ List(
       example(
         "test Fx[Future].recoverFromNonFatalWith should catch NonFatal",
-        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithShouldRecoverFromNonFatal
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithShouldRecoverFromNonFatal,
       ),
       example(
         "test Fx[Future].recoverFromNonFatalWith should return the successful result",
-        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithShouldReturnSuccessfulResult
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Future].recoverFromNonFatalWithEither should catch NonFatal",
-        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal,
       ),
       example(
         "test Fx[Future].recoverFromNonFatalWithEither should return the successful result",
-        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Future].recoverFromNonFatalWithEither should return the failed result",
-        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldReturnFailedResult
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldReturnFailedResult,
       ),
       example(
         "test Fx[Future].recoverEitherFromNonFatalWith should catch NonFatal",
-        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal,
       ),
       example(
         "test Fx[Future].recoverEitherFromNonFatalWith should return the successful result",
-        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Future].recoverEitherFromNonFatalWith should return the failed result",
-        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldReturnFailedResult
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldReturnFailedResult,
       ),
       example(
         "test Fx[Future].recoverFromNonFatal should catch NonFatal",
-        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalShouldRecoverFromNonFatal
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalShouldRecoverFromNonFatal,
       ),
       example(
         "test Fx[Future].recoverFromNonFatal should return the successful result",
-        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalShouldReturnSuccessfulResult
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Future].recoverFromNonFatalEither should catch NonFatal",
-        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldRecoverFromNonFatal
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldRecoverFromNonFatal,
       ),
       example(
         "test Fx[Future].recoverFromNonFatalEither should return the successful result",
-        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldReturnSuccessfulResult
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Future].recoverFromNonFatalEither should return the failed result",
-        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldReturnFailedResult
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldReturnFailedResult,
       ),
       example(
         "test Fx[Future].recoverEitherFromNonFatal should catch NonFatal",
-        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldRecoverFromNonFatal
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldRecoverFromNonFatal,
       ),
       example(
         "test Fx[Future].recoverEitherFromNonFatal should return the successful result",
-        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldReturnSuccessfulResult
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldReturnSuccessfulResult,
       ),
       example(
         "test Fx[Future].recoverEitherFromNonFatal should return the failed result",
-        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldReturnFailedResult
+        FutureSpec.CanRecoverSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldReturnFailedResult,
       ),
     )
 
@@ -230,7 +230,7 @@ object FxSpec extends Properties {
       Result.all(
         List(
           testBefore.log("testBefore"),
-          testAfterRun.log("testAfterRun")
+          testAfterRun.log("testAfterRun"),
         )
       )
     }
@@ -252,7 +252,7 @@ object FxSpec extends Properties {
       Result.all(
         List(
           testBefore.log("testBefore"),
-          testAfterRun.log("testAfterRun")
+          testAfterRun.log("testAfterRun"),
         )
       )
     }
@@ -274,7 +274,7 @@ object FxSpec extends Properties {
       Result.all(
         List(
           testBefore.log("testBefore"),
-          testAfterRun.log("testAfterRun")
+          testAfterRun.log("testAfterRun"),
         )
       )
     }
@@ -442,7 +442,7 @@ object FxSpec extends Properties {
         val fa     = run[Future, Int](throwThrowable[Int](expectedExpcetion))
         val actual = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].catchNonFatalThrowable(fa))
 
         actual ==== expected
@@ -460,7 +460,7 @@ object FxSpec extends Properties {
         val fa     = run[Future, Int](throwThrowable[Int](expectedExpcetion))
         val actual = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].catchNonFatal(fa)(SomeError.someThrowable))
 
         actual ==== expected
@@ -476,7 +476,7 @@ object FxSpec extends Properties {
         val expected: Either[Throwable, Int] = Right(1)
         val actual                           = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].catchNonFatalThrowable(fa))
 
         actual ==== expected
@@ -492,7 +492,7 @@ object FxSpec extends Properties {
         val expected: Either[SomeError, Int] = Right(1)
         val actual                           = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].catchNonFatal(fa)(SomeError.someThrowable))
 
         actual ==== expected
@@ -509,7 +509,7 @@ object FxSpec extends Properties {
         val expected: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
         val actual                           = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].catchNonFatalEither(fa)(SomeError.someThrowable))
 
         actual ==== expected
@@ -525,7 +525,7 @@ object FxSpec extends Properties {
         val expected: Either[SomeError, Int] = Right(1)
         val actual                           = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].catchNonFatalEither(fa)(SomeError.someThrowable))
 
         actual ==== expected
@@ -542,7 +542,7 @@ object FxSpec extends Properties {
         val expected: Either[SomeError, Int] = Left(expectedFailure)
         val actual                           = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].catchNonFatalEither(fa)(SomeError.someThrowable))
 
         actual ==== expected
@@ -568,7 +568,7 @@ object FxSpec extends Properties {
         val expected          = 1
         val actual            = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].handleNonFatalWith(fa)(_ => Future(expected)))
 
         actual ==== expected
@@ -584,7 +584,7 @@ object FxSpec extends Properties {
         val expected = 1
         val actual   = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].handleNonFatalWith(fa)(_ => Future(123)))
 
         actual ==== expected
@@ -602,14 +602,14 @@ object FxSpec extends Properties {
         val actualFailedResult                           =
           ConcurrentSupport.futureToValue(
             Fx[Future].handleNonFatalWith(fa)(err => Future(Left(SomeError.someThrowable(err)))),
-            waitFor
+            waitFor,
           )
 
         val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
         val expected: Either[SomeError, Int] = Right(1)
         val actual                           = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].handleNonFatalWith(fa2)(_ => Future(expected)))
 
         expectedFailedResult ==== actualFailedResult and actual ==== expected
@@ -626,7 +626,7 @@ object FxSpec extends Properties {
         val actual                           =
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
-            waitFor
+            waitFor,
           )(Fx[Future].handleNonFatalWith(fa)(err => Future(Left(SomeError.someThrowable(err)))))
 
         actual ==== expected
@@ -643,7 +643,7 @@ object FxSpec extends Properties {
         val expected: Either[SomeError, Int] = Left(expectedFailure)
         val actual                           = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].handleNonFatalWith(fa)(_ => Future(Right(1))))
 
         actual ==== expected
@@ -661,7 +661,7 @@ object FxSpec extends Properties {
         val actualFailedResult                           = ConcurrentSupport.futureToValue(
           Fx[Future]
             .handleEitherNonFatalWith(fa)(err => Future(Left(SomeError.someThrowable(err)))),
-          waitFor
+          waitFor,
         )
 
         val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -669,7 +669,7 @@ object FxSpec extends Properties {
         val actual                           =
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
-            waitFor
+            waitFor,
           )(Fx[Future].handleEitherNonFatalWith(fa2)(err => Future(expected)))
 
         actualFailedResult ==== expectedFailedResult and actual ==== expected
@@ -685,7 +685,7 @@ object FxSpec extends Properties {
         val expected: Either[SomeError, Int] = Right(1)
         val actual                           = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].handleEitherNonFatalWith(fa)(err => Future(Left(SomeError.someThrowable(err)))))
 
         actual ==== expected
@@ -703,7 +703,7 @@ object FxSpec extends Properties {
         val actual                           =
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
-            waitFor
+            waitFor,
           )(Fx[Future].handleEitherNonFatalWith(fa)(_ => Future(expected)))
 
         actual ==== expected
@@ -720,7 +720,7 @@ object FxSpec extends Properties {
         val expected          = 1
         val actual            = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].handleNonFatal(fa)(_ => expected))
 
         actual ==== expected
@@ -736,7 +736,7 @@ object FxSpec extends Properties {
         val expected = 1
         val actual   = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].handleNonFatal(fa)(_ => 123))
 
         actual ==== expected
@@ -754,14 +754,14 @@ object FxSpec extends Properties {
         val actualFailedResult                           =
           ConcurrentSupport.futureToValue(
             Fx[Future].handleNonFatal(fa)(err => Left(SomeError.someThrowable(err))),
-            waitFor
+            waitFor,
           )
 
         val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
         val expected: Either[SomeError, Int] = Right(1)
         val actual                           = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].handleNonFatal(fa2)(_ => expected))
 
         expectedFailedResult ==== actualFailedResult and actual ==== expected
@@ -778,7 +778,7 @@ object FxSpec extends Properties {
         val actual                           =
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
-            waitFor
+            waitFor,
           )(Fx[Future].handleNonFatal(fa)(err => Left(SomeError.someThrowable(err))))
 
         actual ==== expected
@@ -795,7 +795,7 @@ object FxSpec extends Properties {
         val expected: Either[SomeError, Int] = Left(expectedFailure)
         val actual                           = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].handleNonFatal(fa)(_ => Right(1)))
 
         actual ==== expected
@@ -812,7 +812,7 @@ object FxSpec extends Properties {
         val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
         val actualFailedResult                           = ConcurrentSupport.futureToValue(
           Fx[Future].handleEitherNonFatal(fa)(err => Left(SomeError.someThrowable(err))),
-          waitFor
+          waitFor,
         )
 
         val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -820,7 +820,7 @@ object FxSpec extends Properties {
         val actual                           =
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
-            waitFor
+            waitFor,
           )(Fx[Future].handleEitherNonFatal(fa2)(err => expected))
 
         actualFailedResult ==== expectedFailedResult and actual ==== expected
@@ -836,7 +836,7 @@ object FxSpec extends Properties {
         val expected: Either[SomeError, Int] = Right(1)
         val actual                           = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].handleEitherNonFatal(fa)(err => Left(SomeError.someThrowable(err))))
 
         actual ==== expected
@@ -854,7 +854,7 @@ object FxSpec extends Properties {
         val actual                           =
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
-            waitFor
+            waitFor,
           )(Fx[Future].handleEitherNonFatal(fa)(_ => expected))
 
         actual ==== expected
@@ -881,7 +881,7 @@ object FxSpec extends Properties {
         val expected          = 1
         val actual            = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].recoverFromNonFatalWith(fa) {
           case NonFatal(`expectedExpcetion`) => Future(expected)
         })
@@ -899,7 +899,7 @@ object FxSpec extends Properties {
         val expected = 1
         val actual   = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].recoverFromNonFatalWith(fa) {
           case NonFatal(_) => Future(123)
         })
@@ -921,7 +921,7 @@ object FxSpec extends Properties {
             Fx[Future].recoverFromNonFatalWith(fa) {
               case err => Future(Left(SomeError.someThrowable(err)))
             },
-            waitFor
+            waitFor,
           )
 
         val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -929,7 +929,7 @@ object FxSpec extends Properties {
         val actual                           =
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
-            waitFor
+            waitFor,
           )(Fx[Future].recoverFromNonFatalWith(fa2) {
             case NonFatal(`expectedExpcetion`) => Future(expected)
           })
@@ -948,7 +948,7 @@ object FxSpec extends Properties {
         val actual                           =
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
-            waitFor
+            waitFor,
           )(Fx[Future].recoverFromNonFatalWith(fa) {
             case err => Future(Left(SomeError.someThrowable(err)))
           })
@@ -968,7 +968,7 @@ object FxSpec extends Properties {
         val actual                           =
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
-            waitFor
+            waitFor,
           )(Fx[Future].recoverFromNonFatalWith(fa) {
             case NonFatal(_) => Future(Right(1))
           })
@@ -990,7 +990,7 @@ object FxSpec extends Properties {
             .recoverEitherFromNonFatalWith(fa) {
               case err => Future(Left(SomeError.someThrowable(err)))
             },
-          waitFor
+          waitFor,
         )
 
         val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -998,7 +998,7 @@ object FxSpec extends Properties {
         val actual                           =
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
-            waitFor
+            waitFor,
           )(
             Fx[Future]
               .recoverEitherFromNonFatalWith(fa2) {
@@ -1019,7 +1019,7 @@ object FxSpec extends Properties {
         val expected: Either[SomeError, Int] = Right(1)
         val actual                           = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(
           Fx[Future]
             .recoverEitherFromNonFatalWith(fa) {
@@ -1042,7 +1042,7 @@ object FxSpec extends Properties {
         val actual                           =
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
-            waitFor
+            waitFor,
           )(
             Fx[Future]
               .recoverEitherFromNonFatalWith(fa) {
@@ -1066,7 +1066,7 @@ object FxSpec extends Properties {
         val expected          = 1
         val actual            = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => expected })
 
         actual ==== expected
@@ -1082,7 +1082,7 @@ object FxSpec extends Properties {
         val expected = 1
         val actual   = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].recoverFromNonFatal(fa) { case NonFatal(_) => 123 })
 
         actual ==== expected
@@ -1102,14 +1102,14 @@ object FxSpec extends Properties {
             Fx[Future].recoverFromNonFatal(fa) {
               case err => Left(SomeError.someThrowable(err))
             },
-            waitFor
+            waitFor,
           )
 
         val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
         val expected: Either[SomeError, Int] = Right(1)
         val actual                           = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].recoverFromNonFatal(fa2) { case NonFatal(`expectedExpcetion`) => expected })
 
         expectedFailedResult ==== actualFailedResult and actual ==== expected
@@ -1126,7 +1126,7 @@ object FxSpec extends Properties {
         val actual                           =
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
-            waitFor
+            waitFor,
           )(Fx[Future].recoverFromNonFatal(fa) {
             case err => Left(SomeError.someThrowable(err))
           })
@@ -1145,7 +1145,7 @@ object FxSpec extends Properties {
         val expected: Either[SomeError, Int] = Left(expectedFailure)
         val actual                           = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(Fx[Future].recoverFromNonFatal(fa) { case NonFatal(_) => Right(1) })
 
         actual ==== expected
@@ -1165,7 +1165,7 @@ object FxSpec extends Properties {
             .recoverEitherFromNonFatal(fa) {
               case err => Left(SomeError.someThrowable(err))
             },
-          waitFor
+          waitFor,
         )
 
         val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -1173,7 +1173,7 @@ object FxSpec extends Properties {
         val actual                           =
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
-            waitFor
+            waitFor,
           )(Fx[Future].recoverEitherFromNonFatal(fa2) { case err => expected })
 
         actualFailedResult ==== expectedFailedResult and actual ==== expected
@@ -1189,7 +1189,7 @@ object FxSpec extends Properties {
         val expected: Either[SomeError, Int] = Right(1)
         val actual                           = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(
           Fx[Future]
             .recoverEitherFromNonFatal(fa) {
@@ -1212,7 +1212,7 @@ object FxSpec extends Properties {
         val actual                           =
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
-            waitFor
+            waitFor,
           )(Fx[Future].recoverEitherFromNonFatal(fa) { case NonFatal(_) => expected })
 
         actual ==== expected

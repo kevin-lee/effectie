@@ -37,7 +37,7 @@ object fxSpec extends Properties {
     property("test fx.pureOrError(success case)[Id]", IdSpec.testPureOrErrorSuccessCase),
     example("test fx.pureOrError(error case)[Id]", IdSpec.testPureOrErrorErrorCase),
     example("test fx.unitOf[Id]", IdSpec.testUnitOf),
-    example("test fx.errorOf[Id]", IdSpec.testErrorOf)
+    example("test fx.errorOf[Id]", IdSpec.testErrorOf),
   )
 
   trait FxCtorClient[F[*]] {
@@ -104,7 +104,7 @@ object fxSpec extends Properties {
           testAfterRun.log("testAfterRun"),
           testBefore2.log("testBefore2"),
           testBeforeRun2.log("testBeforeRun2"),
-          testAfterRun2.log("testAfterRun2")
+          testAfterRun2.log("testAfterRun2"),
         )
       )
     }
@@ -123,7 +123,7 @@ object fxSpec extends Properties {
         List(
           testBefore.log("testBefore"),
           testBeforeRun.log("testBeforeRun"),
-          testAfterRun.log("testAfterRun")
+          testAfterRun.log("testAfterRun"),
         )
       )
     }
@@ -142,7 +142,7 @@ object fxSpec extends Properties {
         List(
           testBefore.log("testBefore"),
           testBeforeRun.log("testBeforeRun"),
-          testAfterRun.log("testAfterRun")
+          testAfterRun.log("testAfterRun"),
         )
       )
     }
@@ -161,7 +161,7 @@ object fxSpec extends Properties {
         List(
           testBefore.log("testBefore"),
           testBeforeRun.log("testBeforeRun"),
-          testAfterRun.log("testAfterRun")
+          testAfterRun.log("testAfterRun"),
         )
       )
     }
@@ -174,7 +174,7 @@ object fxSpec extends Properties {
 
       expectThrowable(
         io.unsafeRunSync(),
-        expectedError
+        expectedError,
       )
     }
 
@@ -193,7 +193,7 @@ object fxSpec extends Properties {
 
       expectThrowable(
         io.unsafeRunSync(),
-        expectedError
+        expectedError,
       )
     }
 
@@ -243,7 +243,7 @@ object fxSpec extends Properties {
           testBefore.log("testBefore"),
           testAfterRun.log("testAfterRun"),
           testBefore2.log("testBefore2"),
-          testAfterRun2.log("testAfterRun2")
+          testAfterRun2.log("testAfterRun2"),
         )
       )
     }
@@ -264,7 +264,7 @@ object fxSpec extends Properties {
       Result.all(
         List(
           testBefore.log("testBefore"),
-          testAfterRun.log("testAfterRun")
+          testAfterRun.log("testAfterRun"),
         )
       )
     }
@@ -285,7 +285,7 @@ object fxSpec extends Properties {
       Result.all(
         List(
           testBefore.log("testBefore"),
-          testAfterRun.log("testAfterRun")
+          testAfterRun.log("testAfterRun"),
         )
       )
     }
@@ -306,7 +306,7 @@ object fxSpec extends Properties {
       Result.all(
         List(
           testBefore.log("testBefore"),
-          testAfterRun.log("testAfterRun")
+          testAfterRun.log("testAfterRun"),
         )
       )
     }
@@ -324,7 +324,7 @@ object fxSpec extends Properties {
 
       expectThrowable(
         ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future),
-        expectedError
+        expectedError,
       )
     }
 
@@ -349,7 +349,7 @@ object fxSpec extends Properties {
 
       expectThrowable(
         ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future),
-        expectedError
+        expectedError,
       )
     }
 
@@ -411,7 +411,7 @@ object fxSpec extends Properties {
       Result.all(
         List(
           testBefore.log("testBefore"),
-          testAfter.log("testAfter")
+          testAfter.log("testAfter"),
         )
       )
     }
@@ -427,7 +427,7 @@ object fxSpec extends Properties {
       Result.all(
         List(
           testBefore.log("testBefore"),
-          testAfter.log("testAfter")
+          testAfter.log("testAfter"),
         )
       )
     }

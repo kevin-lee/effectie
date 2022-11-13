@@ -35,59 +35,59 @@ object canCatchSpec extends Properties {
     /* IO */
     example(
       "test CanCatch[IO]catchNonFatalThrowable should catch NonFatal",
-      IoSpec.testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal
+      IoSpec.testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal,
     ),
     example(
       "test CanCatch[IO]catchNonFatalThrowable should not catch Fatal",
-      IoSpec.testCanCatch_IO_catchNonFatalThrowableShouldNotCatchFatal
+      IoSpec.testCanCatch_IO_catchNonFatalThrowableShouldNotCatchFatal,
     ),
     example(
       "test CanCatch[IO]catchNonFatalThrowable should return the successful result",
-      IoSpec.testCanCatch_IO_catchNonFatalThrowableShouldReturnSuccessfulResult
+      IoSpec.testCanCatch_IO_catchNonFatalThrowableShouldReturnSuccessfulResult,
     ),
     example(
       "test CanCatch[IO]catchNonFatal should catch NonFatal",
-      IoSpec.testCanCatch_IO_catchNonFatalShouldCatchNonFatal
+      IoSpec.testCanCatch_IO_catchNonFatalShouldCatchNonFatal,
     ),
     example(
       "test CanCatch[IO]catchNonFatal should not catch Fatal",
-      IoSpec.testCanCatch_IO_catchNonFatalShouldNotCatchFatal
+      IoSpec.testCanCatch_IO_catchNonFatalShouldNotCatchFatal,
     ),
     example(
       "test CanCatch[IO]catchNonFatal should return the successful result",
-      IoSpec.testCanCatch_IO_catchNonFatalShouldReturnSuccessfulResult
+      IoSpec.testCanCatch_IO_catchNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanCatch[IO]catchNonFatalEither should catch NonFatal",
-      IoSpec.testCanCatch_IO_catchNonFatalEitherShouldCatchNonFatal
+      IoSpec.testCanCatch_IO_catchNonFatalEitherShouldCatchNonFatal,
     ),
     example(
       "test CanCatch[IO]catchNonFatalEither should not catch Fatal",
-      IoSpec.testCanCatch_IO_catchNonFatalEitherShouldNotCatchFatal
+      IoSpec.testCanCatch_IO_catchNonFatalEitherShouldNotCatchFatal,
     ),
     example(
       "test CanCatch[IO]catchNonFatalEither should return the successful result",
-      IoSpec.testCanCatch_IO_catchNonFatalEitherShouldReturnSuccessfulResult
+      IoSpec.testCanCatch_IO_catchNonFatalEitherShouldReturnSuccessfulResult,
     ),
     example(
       "test CanCatch[IO]catchNonFatalEither should return the failed result",
-      IoSpec.testCanCatch_IO_catchNonFatalEitherShouldReturnFailedResult
+      IoSpec.testCanCatch_IO_catchNonFatalEitherShouldReturnFailedResult,
     ),
     example(
       "test CanCatch[IO]catchNonFatalEitherT should catch NonFatal",
-      IoSpec.testCanCatch_IO_catchNonFatalEitherTShouldCatchNonFatal
+      IoSpec.testCanCatch_IO_catchNonFatalEitherTShouldCatchNonFatal,
     ),
     example(
       "test CanCatch[IO]catchNonFatalEitherT should not catch Fatal",
-      IoSpec.testCanCatch_IO_catchNonFatalEitherTShouldNotCatchFatal
+      IoSpec.testCanCatch_IO_catchNonFatalEitherTShouldNotCatchFatal,
     ),
     example(
       "test CanCatch[IO]catchNonFatalEitherT should return the successful result",
-      IoSpec.testCanCatch_IO_catchNonFatalEitherTShouldReturnSuccessfulResult
+      IoSpec.testCanCatch_IO_catchNonFatalEitherTShouldReturnSuccessfulResult,
     ),
     example(
       "test CanCatch[IO]catchNonFatalEitherT should return the failed result",
-      IoSpec.testCanCatch_IO_catchNonFatalEitherTShouldReturnFailedResult
+      IoSpec.testCanCatch_IO_catchNonFatalEitherTShouldReturnFailedResult,
     ),
   )
 
@@ -95,15 +95,15 @@ object canCatchSpec extends Properties {
   val futureSpecs = effectie.core.CanCatchSpec.futureSpecs ++ List(
     example(
       "test CanCatch[Future]catchNonFatalEitherT should catch NonFatal",
-      FutureSpec.testCanCatch_Future_catchNonFatalEitherTShouldCatchNonFatal
+      FutureSpec.testCanCatch_Future_catchNonFatalEitherTShouldCatchNonFatal,
     ),
     example(
       "test CanCatch[Future]catchNonFatalEitherT should return the successful result",
-      FutureSpec.testCanCatch_Future_catchNonFatalEitherTShouldReturnSuccessfulResult
+      FutureSpec.testCanCatch_Future_catchNonFatalEitherTShouldReturnSuccessfulResult,
     ),
     example(
       "test CanCatch[Future]catchNonFatalEitherT should return the failed result",
-      FutureSpec.testCanCatch_Future_catchNonFatalEitherTShouldReturnFailedResult
+      FutureSpec.testCanCatch_Future_catchNonFatalEitherTShouldReturnFailedResult,
     ),
   )
 
@@ -111,60 +111,60 @@ object canCatchSpec extends Properties {
   val idSpecs = List(
     example(
       "test CanCatch[Id]catchNonFatalThrowable should catch NonFatal",
-      IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal
+      IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal,
     ),
     example(
       "test CanCatch[Id]catchNonFatalThrowable should not catch Fatal",
-      IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldNotCatchFatal
+      IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldNotCatchFatal,
     ),
     example(
       "test CanCatch[Id]catchNonFatalThrowable should return the successful result",
-      IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldReturnSuccessfulResult
+      IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldReturnSuccessfulResult,
     ),
     example(
       "test CanCatch[Id]catchNonFatal should catch NonFatal",
-      IdSpec.testCanCatch_Id_catchNonFatalShouldCatchNonFatal
+      IdSpec.testCanCatch_Id_catchNonFatalShouldCatchNonFatal,
     ),
     example(
       "test CanCatch[Id]catchNonFatal should not catch Fatal",
-      IdSpec.testCanCatch_Id_catchNonFatalShouldNotCatchFatal
+      IdSpec.testCanCatch_Id_catchNonFatalShouldNotCatchFatal,
     ),
     example(
       "test CanCatch[Id]catchNonFatal should return the successful result",
-      IdSpec.testCanCatch_Id_catchNonFatalShouldReturnSuccessfulResult
+      IdSpec.testCanCatch_Id_catchNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanCatch[Id]catchNonFatalEither should catch NonFatal",
-      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldCatchNonFatal
+      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldCatchNonFatal,
     ),
     example(
       "test CanCatch[Id]catchNonFatalEither should not catch Fatal",
-      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldNotCatchFatal
+      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldNotCatchFatal,
     ),
     example(
       "test CanCatch[Id]catchNonFatalEither should return the successful result",
-      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldReturnSuccessfulResult
+      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldReturnSuccessfulResult,
     ),
     example(
       "test CanCatch[Id]catchNonFatalEither should return the failed result",
-      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldReturnFailedResult
+      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldReturnFailedResult,
     ),
     example(
       "test CanCatch[Id]catchNonFatalEitherT should catch NonFatal",
-      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldCatchNonFatal
+      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldCatchNonFatal,
     ),
     example(
       "test CanCatch[Id]catchNonFatalEitherT should not catch Fatal",
-      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldNotCatchFatal
+      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldNotCatchFatal,
     ),
     example(
       "test CanCatch[Id]catchNonFatalEitherT should return the successful result",
-      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldReturnSuccessfulResult
+      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldReturnSuccessfulResult,
     ),
     example(
       "test CanCatch[Id]catchNonFatalEitherT should return the failed result",
-      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldReturnFailedResult
-    )
+      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldReturnFailedResult,
+    ),
   )
 
   @SuppressWarnings(Array("org.wartremover.warts.Throw"))
@@ -414,7 +414,7 @@ object canCatchSpec extends Properties {
       val expected          = expectedExpcetion.asLeft[Int]
       val actual            = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanCatch[Future].catchNonFatalThrowable(fa))
 
       actual ==== expected
@@ -430,7 +430,7 @@ object canCatchSpec extends Properties {
       val expected = 1.asRight[Throwable]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanCatch[Future].catchNonFatalThrowable(fa))
 
       actual ==== expected
@@ -447,7 +447,7 @@ object canCatchSpec extends Properties {
       val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actual            = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanCatch[Future].catchNonFatal(fa)(SomeError.someThrowable))
 
       actual ==== expected
@@ -463,7 +463,7 @@ object canCatchSpec extends Properties {
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanCatch[Future].catchNonFatal(fa)(SomeError.someThrowable))
 
       actual ==== expected
@@ -480,7 +480,7 @@ object canCatchSpec extends Properties {
       val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanCatch[Future].catchNonFatalEither(fa)(SomeError.someThrowable))
 
       actual ==== expected
@@ -496,7 +496,7 @@ object canCatchSpec extends Properties {
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanCatch[Future].catchNonFatalEither(fa)(SomeError.someThrowable))
 
       actual ==== expected
@@ -513,7 +513,7 @@ object canCatchSpec extends Properties {
       val expected        = expectedFailure.asLeft[Int]
       val actual          = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanCatch[Future].catchNonFatalEither(fa)(SomeError.someThrowable))
 
       actual ==== expected
@@ -530,7 +530,7 @@ object canCatchSpec extends Properties {
       val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanCatch[Future].catchNonFatalEitherT(fa)(SomeError.someThrowable).value)
 
       actual ==== expected
@@ -546,7 +546,7 @@ object canCatchSpec extends Properties {
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanCatch[Future].catchNonFatalEitherT(fa)(SomeError.someThrowable).value)
 
       actual ==== expected
@@ -563,7 +563,7 @@ object canCatchSpec extends Properties {
       val expected        = expectedFailure.asLeft[Int]
       val actual          = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanCatch[Future].catchNonFatalEitherT(fa)(SomeError.someThrowable).value)
 
       actual ==== expected
