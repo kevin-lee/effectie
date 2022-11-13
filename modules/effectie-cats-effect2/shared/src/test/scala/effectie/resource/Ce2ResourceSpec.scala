@@ -33,7 +33,7 @@ object Ce2ResourceSpec extends Properties {
                    .map(_.toVector)
                    .log("content")
     } yield ReleasableResourceSpec
-      .testFromAutoCloseable[F, BracketThrow](content, _ => F.unit, none, Ce2Resource.fromAutoCloseable)
+      .testFromAutoCloseable[F](content, _ => F.unit, none, Ce2Resource.fromAutoCloseable)
       .unsafeRunSync()
 
   def testFromAutoCloseableErrorCase: Property =
@@ -44,7 +44,7 @@ object Ce2ResourceSpec extends Properties {
                    .map(_.toVector)
                    .log("content")
     } yield ReleasableResourceSpec
-      .testFromAutoCloseable[F, BracketThrow](
+      .testFromAutoCloseable[F](
         content,
         _ => F.raiseError(TestException(123)),
         Option({

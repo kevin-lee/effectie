@@ -38,11 +38,11 @@ object UsingResourceSpec extends Properties {
     } yield {
 
       ReleasableResourceSpec
-        .testFromAutoCloseable[Try, ReleasableResource.UnusedHandleError](
+        .testFromAutoCloseable[Try](
           content,
           _ => Try(()),
           none,
-          UsingResource.fromTry[TestResource],
+          ReleasableResource.usingResourceFromTry[TestResource],
         )
         .fold(err => Result.failure.log(s"Unexpected error: ${err.toString}"), identity)
     }
@@ -57,7 +57,7 @@ object UsingResourceSpec extends Properties {
     } yield {
 
       ReleasableResourceSpec
-        .testFromAutoCloseable[Try, ReleasableResource.UnusedHandleError](
+        .testFromAutoCloseable[Try](
           content,
           _ => Failure(TestException(123)),
           Option({

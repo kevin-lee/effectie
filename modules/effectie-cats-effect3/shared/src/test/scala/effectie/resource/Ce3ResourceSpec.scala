@@ -35,7 +35,7 @@ object Ce3ResourceSpec extends Properties {
                    .map(_.toVector)
                    .log("content")
     } yield ReleasableResourceSpec
-      .testFromAutoCloseable[F, MonadCancelThrow](content, _ => F.unit, none, Ce3Resource.fromAutoCloseable)
+      .testFromAutoCloseable[F](content, _ => F.unit, none, Ce3Resource.fromAutoCloseable)
       .unsafeRunSync()
 
   def testFromAutoCloseableErrorCase: Property =
@@ -46,7 +46,7 @@ object Ce3ResourceSpec extends Properties {
                    .map(_.toVector)
                    .log("content")
     } yield ReleasableResourceSpec
-      .testFromAutoCloseable[F, MonadCancelThrow](
+      .testFromAutoCloseable[F](
         content,
         _ => F.raiseError(TestException(123)),
         Option({

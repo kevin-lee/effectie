@@ -22,7 +22,7 @@ object ReleasableFutureResourceSpec extends Properties {
     property(
       "test ReleasableFutureResource[A] - error case",
       testReleasableFutureResourceErrorCase,
-    )
+    ),
   )
 
   def testReleasableFutureResource: Property =
@@ -51,11 +51,11 @@ object ReleasableFutureResourceSpec extends Properties {
         waitFor,
       )(
         ReleasableResourceSpec
-          .testFromAutoCloseable[Future, ReleasableResource.UnusedHandleError](
+          .testFromAutoCloseable[Future](
             content,
             _ => Future.successful(()),
             none,
-            ReleasableFutureResource.apply,
+            ReleasableResource.futureResource,
           )
       )
 
@@ -87,7 +87,7 @@ object ReleasableFutureResourceSpec extends Properties {
         waitFor,
       )(
         ReleasableResourceSpec
-          .testFromAutoCloseable[Future, ReleasableResource.UnusedHandleError](
+          .testFromAutoCloseable[Future](
             content,
             _ => Future.failed(TestException(123)),
             Option({
@@ -97,7 +97,7 @@ object ReleasableFutureResourceSpec extends Properties {
                   .failure
                   .log(s"TestException was expected but it is ${ex.getClass.getSimpleName}. Error: ${ex.toString}")
             }),
-            ReleasableFutureResource.apply,
+            ReleasableResource.futureResource,
           )
       )
 
