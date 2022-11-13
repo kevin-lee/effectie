@@ -1,0 +1,4 @@
+# .git-blame-ignore-revs
+# Remove scalafmt formatting
+2bcde6f9df141d693f7c6e98bdd0fc0e5c33f877
+
