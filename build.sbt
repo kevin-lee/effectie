@@ -72,7 +72,16 @@ lazy val effectie = (project in file("."))
 lazy val core = module(ProjectName("core"), crossProject(JVMPlatform, JSPlatform))
   .settings(
     description         := "Effect Utils - Core",
-    libraryDependencies ++= List(libs.extrasConcurrent, libs.extrasConcurrentTesting),
+    libraryDependencies ++= List(
+      libs.extrasConcurrent,
+      libs.extrasConcurrentTesting,
+      libs.libCatsCore(props.catsVersion),
+    ) ++ (
+      if (scalaVersion.value.startsWith("2.12"))
+        List("org.scala-lang.modules" %% "scala-collection-compat" % "2.8.1")
+      else
+        List.empty
+      ),
     libraryDependencies :=
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
   )
@@ -90,7 +99,7 @@ lazy val syntax    = module(ProjectName("syntax"), crossProject(JVMPlatform, JSP
     libraryDependencies ++= List(
       libs.libCatsCore(props.catsVersion),
       libs.extrasConcurrent,
-      libs.extrasConcurrentTesting
+      libs.extrasConcurrentTesting,
     ),
     libraryDependencies :=
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
@@ -107,7 +116,7 @@ lazy val cats = module(ProjectName("cats"), crossProject(JVMPlatform, JSPlatform
     libraryDependencies ++= List(
       libs.libCatsCore(props.catsVersion),
       libs.extrasConcurrent,
-      libs.extrasConcurrentTesting
+      libs.extrasConcurrentTesting,
     ),
     libraryDependencies :=
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
@@ -115,7 +124,7 @@ lazy val cats = module(ProjectName("cats"), crossProject(JVMPlatform, JSPlatform
   .dependsOn(
     core         % props.IncludeTest,
     syntax,
-    testing4Cats % Test
+    testing4Cats % Test,
   )
 
 lazy val catsJvm = cats.jvm
@@ -129,7 +138,7 @@ lazy val testing4Cats    = module(ProjectName("test4cats"), crossProject(JVMPlat
     description         := "Effect's test utils for Cats",
     libraryDependencies :=
       libraryDependencies.value ++ List(
-        libs.libCatsCore(props.catsVersion),
+        libs.libCatsCore(props.catsVersion)
       ) ++ List(libs.hedgehogCore, libs.hedgehogRunner),
     libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
@@ -152,16 +161,16 @@ lazy val catsEffect2    = module(ProjectName("cats-effect2"), crossProject(JVMPl
               Minor(0),
               Patch(0),
               Some(PreRelease(List(Dsv(List(Anh.Alphabet("RC"), Anh.Num("1")))))),
-              _
+              _,
             ) =>
           libraryDependencies.value ++ Seq(
             libs.libCatsCore(props.catsVersion),
-            libs.libCatsEffect(props.catsEffect2Version)
+            libs.libCatsEffect(props.catsEffect2Version),
           )
         case x =>
           libraryDependencies.value ++ Seq(
             libs.libCatsCore(props.catsVersion),
-            libs.libCatsEffect(props.catsEffect2LatestVersion)
+            libs.libCatsEffect(props.catsEffect2LatestVersion),
           )
       }),
     libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
@@ -243,7 +252,7 @@ lazy val docs = (project in file("generated-docs"))
     ),
     libraryDependencies := libraryDependenciesPostProcess(
       isScala3(scalaVersion.value),
-      libraryDependencies.value
+      libraryDependencies.value,
     ),
     mdocVariables       := Map(
 //      "VERSION"                  -> {
@@ -375,7 +384,7 @@ def isScala3(scalaVersion: String): Boolean = scalaVersion.startsWith("3")
 
 def libraryDependenciesPostProcess(
   isDotty: Boolean,
-  libraries: Seq[ModuleID]
+  libraries: Seq[ModuleID],
 ): Seq[ModuleID] =
   if (isDotty)
     libraries.filterNot(props.removeDottyIncompatible)
@@ -387,10 +396,10 @@ def module(projectName: ProjectName, crossProject: CrossProject.Builder): CrossP
   crossProject
     .in(file(s"modules/$prefixedName"))
     .settings(
-      name                                    := prefixedName,
-      fork                                    := true,
+      name                              := prefixedName,
+      fork                              := true,
       scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
-      scalafixConfig                          := (
+      scalafixConfig                    := (
         if (scalaVersion.value.startsWith("3"))
           ((ThisBuild / baseDirectory).value / ".scalafix-scala3.conf").some
         else
@@ -402,15 +411,15 @@ def module(projectName: ProjectName, crossProject: CrossProject.Builder): CrossP
       //      Test / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
       wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
       //      , wartremoverErrors ++= Warts.all
-      Compile / console / wartremoverErrors   := List.empty,
-      Compile / console / wartremoverWarnings := List.empty,
-      Compile / console / scalacOptions       :=
+//      Compile / console / wartremoverErrors   := List.empty,
+//      Compile / console / wartremoverWarnings := List.empty,
+      Compile / console / scalacOptions :=
         (console / scalacOptions)
           .value
           .filterNot(option => option.contains("wartremover") || option.contains("import")),
-      Test / console / wartremoverErrors      := List.empty,
-      Test / console / wartremoverWarnings    := List.empty,
-      Test / console / scalacOptions          :=
+//      Test / console / wartremoverErrors      := List.empty,
+//      Test / console / wartremoverWarnings    := List.empty,
+      Test / console / scalacOptions    :=
         (console / scalacOptions)
           .value
           .filterNot(option => option.contains("wartremover") || option.contains("import")),
@@ -465,14 +474,14 @@ def module(projectName: ProjectName, crossProject: CrossProject.Builder): CrossP
         else
           Seq.empty
       },
-      licenses                                := props.licenses,
+      licenses                          := props.licenses,
       /* Coveralls { */
-      coverageHighlighting                    := (CrossVersion.partialVersion(scalaVersion.value) match {
+      coverageHighlighting              := (CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, 10)) | Some((2, 11)) =>
           false
         case _ =>
           true
-      })
+      }),
       /* } Coveralls */
     )
     .settings(mavenCentralPublishSettings)
@@ -486,5 +495,5 @@ lazy val jsSettingsForFuture: SettingsDefinition = List(
 )
 
 lazy val jsSettings: SettingsDefinition = List(
-  Test / fork := false,
+  Test / fork := false
 )
