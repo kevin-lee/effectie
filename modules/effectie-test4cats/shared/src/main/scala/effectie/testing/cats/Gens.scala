@@ -24,7 +24,7 @@ object Gens {
       x => x * x,
       x => x + 100,
       x => x - 100,
-      x => x * 100
+      x => x * 100,
     )
 
   def genAToMonadA[F[*]: Monad, A](genF: Gen[A => A]): Gen[A => F[A]] =

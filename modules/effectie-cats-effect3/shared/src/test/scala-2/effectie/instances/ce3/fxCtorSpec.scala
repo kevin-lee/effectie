@@ -33,7 +33,7 @@ object fxCtorSpec extends Properties {
         import CatsEffectRunner._
         implicit val ticket: Ticker = Ticker(TestContext())
         io.completeAs(())
-      }
+      },
     ),
     property(
       "test FxCtor[IO].pureOf",
@@ -41,7 +41,7 @@ object fxCtorSpec extends Properties {
         import CatsEffectRunner._
         implicit val ticket: Ticker = Ticker(TestContext())
         io.completeAs(())
-      }
+      },
     ),
     property(
       "test FxCtor[IO].pureOrError(success case)",
@@ -49,7 +49,7 @@ object fxCtorSpec extends Properties {
         import CatsEffectRunner._
         implicit val ticket: Ticker = Ticker(TestContext())
         io.completeAs(())
-      }
+      },
     ),
     example(
       "test FxCtor[IO].pureOrError(error case)",
@@ -57,7 +57,7 @@ object fxCtorSpec extends Properties {
         import CatsEffectRunner._
         implicit val ticket: Ticker = Ticker(TestContext())
         io.expectError(expectedError)
-      }
+      },
     ),
     example(
       "test FxCtor[IO].unitOf",
@@ -65,7 +65,7 @@ object fxCtorSpec extends Properties {
         import CatsEffectRunner._
         implicit val ticket: Ticker = Ticker(TestContext())
         io.completeAs(())
-      }
+      },
     ),
     example(
       "test FxCtor[IO].errorOf",
@@ -73,31 +73,31 @@ object fxCtorSpec extends Properties {
         import CatsEffectRunner._
         implicit val ticket: Ticker = Ticker(TestContext())
         io.expectError(expectedError)
-      }
+      },
     ),
     property(
       "test FxCtor[IO].fromEither(Right)",
-      FxCtorSpecs.testFromEitherRightCase[IO](assertWithAttempt)
+      FxCtorSpecs.testFromEitherRightCase[IO](assertWithAttempt),
     ),
     property(
       "test FxCtor[IO].fromEither(Left)",
-      FxCtorSpecs.testFromEitherLeftCase[IO](assertWithAttempt)
+      FxCtorSpecs.testFromEitherLeftCase[IO](assertWithAttempt),
     ),
     property(
       "test FxCtor[IO].fromOption(Some)",
-      FxCtorSpecs.testFromOptionSomeCase[IO](assertWithAttempt)
+      FxCtorSpecs.testFromOptionSomeCase[IO](assertWithAttempt),
     ),
     property(
       "test FxCtor[IO].fromOption(None)",
-      FxCtorSpecs.testFromOptionNoneCase[IO](assertWithAttempt)
+      FxCtorSpecs.testFromOptionNoneCase[IO](assertWithAttempt),
     ),
     property(
       "test FxCtor[IO].fromTry(Success)",
-      FxCtorSpecs.testFromTrySuccessCase[IO](assertWithAttempt)
+      FxCtorSpecs.testFromTrySuccessCase[IO](assertWithAttempt),
     ),
     property(
       "test FxCtor[IO].fromTry(Failure)",
-      FxCtorSpecs.testFromTryFailureCase[IO](assertWithAttempt)
+      FxCtorSpecs.testFromTryFailureCase[IO](assertWithAttempt),
     ),
   )
 

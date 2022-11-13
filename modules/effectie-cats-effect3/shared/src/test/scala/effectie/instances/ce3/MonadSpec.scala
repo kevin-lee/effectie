@@ -12,7 +12,7 @@ object MonadSpec {
     Specs
       .MonadLaws
       .identity[F](
-        Gens.genFA[F, Int](Gens.genInt(Int.MinValue, Int.MaxValue)),
+        Gens.genFA[F, Int](Gens.genInt(Int.MinValue, Int.MaxValue))
       )
 
   def test2_Composition[F[*]: Fx: Monad](implicit eqF: Eq[F[Int]]): Property =
@@ -27,7 +27,7 @@ object MonadSpec {
     Specs
       .MonadLaws
       .identityAp[F](
-        Gens.genFA[F, Int](Gens.genInt(Int.MinValue, Int.MaxValue)),
+        Gens.genFA[F, Int](Gens.genInt(Int.MinValue, Int.MaxValue))
       )
 
   def test4_Homomorphism[F[*]: Fx: Monad](implicit eqF: Eq[F[Int]]): Property =
@@ -59,14 +59,14 @@ object MonadSpec {
       .MonadLaws
       .leftIdentity[F](
         Gens.genIntFromMinToMax,
-        Gens.genAToMonadA(Gens.genIntToInt)
+        Gens.genAToMonadA(Gens.genIntToInt),
       )
 
   def test8_RightIdentity[F[*]: Fx: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws
       .rightIdentity[F](
-        Gens.genFA[F, Int](Gens.genInt(Int.MinValue, Int.MaxValue)),
+        Gens.genFA[F, Int](Gens.genInt(Int.MinValue, Int.MaxValue))
       )
 
   def test9_Associativity[F[*]: Fx: Monad](implicit eqF: Eq[F[Int]]): Property =
@@ -74,7 +74,7 @@ object MonadSpec {
       .MonadLaws
       .associativity[F](
         Gens.genFA[F, Int](Gens.genInt(Int.MinValue, Int.MaxValue)),
-        Gens.genAToMonadA(Gens.genIntToInt)
+        Gens.genAToMonadA(Gens.genIntToInt),
       )
 
 }

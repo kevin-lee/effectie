@@ -19,67 +19,67 @@ object CanHandleErrorSpec extends Properties {
   val futureSpecs = List(
     example(
       "test CanHandleError[Future].handleNonFatalWith should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleNonFatalWithShouldHandleNonFatalWith
+      FutureSpec.testCanHandleError_Future_handleNonFatalWithShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[Future].handleNonFatalWith should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleNonFatalWithShouldReturnSuccessfulResult
+      FutureSpec.testCanHandleError_Future_handleNonFatalWithShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Future].handleNonFatalWithEither should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldHandleNonFatalWith
+      FutureSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[Future].handleNonFatalWithEither should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldReturnSuccessfulResult
+      FutureSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Future].handleNonFatalWithEither should return the failed result",
-      FutureSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldReturnFailedResult
+      FutureSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[Future].handleEitherNonFatalWith should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldHandleNonFatalWith
+      FutureSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[Future].handleEitherNonFatalWith should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnSuccessfulResult
+      FutureSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Future].handleEitherNonFatalWith should return the failed result",
-      FutureSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnFailedResult
+      FutureSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[Future].handleNonFatal should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleNonFatalShouldHandleNonFatal
+      FutureSpec.testCanHandleError_Future_handleNonFatalShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[Future].handleNonFatal should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleNonFatalShouldReturnSuccessfulResult
+      FutureSpec.testCanHandleError_Future_handleNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Future].handleNonFatalEither should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleNonFatalEitherShouldHandleNonFatal
+      FutureSpec.testCanHandleError_Future_handleNonFatalEitherShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[Future].handleNonFatalEither should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleNonFatalEitherShouldReturnSuccessfulResult
+      FutureSpec.testCanHandleError_Future_handleNonFatalEitherShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Future].handleNonFatalEither should return the failed result",
-      FutureSpec.testCanHandleError_Future_handleNonFatalEitherShouldReturnFailedResult
+      FutureSpec.testCanHandleError_Future_handleNonFatalEitherShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[Future].handleEitherNonFatal should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleEitherNonFatalShouldHandleNonFatal
+      FutureSpec.testCanHandleError_Future_handleEitherNonFatalShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[Future].handleEitherNonFatal should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnSuccessfulResult
+      FutureSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Future].handleEitherNonFatal should return the failed result",
-      FutureSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnFailedResult
+      FutureSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnFailedResult,
     ),
   )
 
@@ -111,7 +111,7 @@ object CanHandleErrorSpec extends Properties {
       val expected          = 1
       val actual            = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleNonFatalWith(fa)(_ => Future(expected)))
 
       actual ==== expected
@@ -127,7 +127,7 @@ object CanHandleErrorSpec extends Properties {
       val expected = 1
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleNonFatalWith(fa)(_ => Future(123)))
 
       actual ==== expected
@@ -146,7 +146,7 @@ object CanHandleErrorSpec extends Properties {
       val actualFailedResult =
         ConcurrentSupport.futureToValue(
           CanHandleError[Future].handleNonFatalWith(fa)(err => Future(Left(SomeError.someThrowable(err)))),
-          waitFor
+          waitFor,
         )
 
       val expected: Either[SomeError, Int] = Right(1)
@@ -154,7 +154,7 @@ object CanHandleErrorSpec extends Properties {
       val fa2    = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val actual = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleNonFatalWith(fa2)(_ => Future(expected)))
 
       expectedFailedResult ==== actualFailedResult and actual ==== expected
@@ -172,7 +172,7 @@ object CanHandleErrorSpec extends Properties {
       val actual =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleNonFatalWith(fa)(err => Future(Left(SomeError.someThrowable(err)))))
 
       actual ==== expected
@@ -190,7 +190,7 @@ object CanHandleErrorSpec extends Properties {
       val fa     = run[Future, Either[SomeError, Int]](Left(expectedFailure))
       val actual = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleNonFatalWith(fa)(_ => Future(Right(1))))
 
       actual ==== expected
@@ -209,7 +209,7 @@ object CanHandleErrorSpec extends Properties {
       val actualFailedResult = ConcurrentSupport.futureToValue(
         CanHandleError[Future]
           .handleEitherNonFatalWith(fa)(err => Future(Left(SomeError.someThrowable(err)))),
-        waitFor
+        waitFor,
       )
 
       val expected: Either[SomeError, Int] = Right(1)
@@ -218,7 +218,7 @@ object CanHandleErrorSpec extends Properties {
       val actual =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleEitherNonFatalWith(fa2)(_ => Future(expected)))
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
@@ -235,7 +235,7 @@ object CanHandleErrorSpec extends Properties {
       val fa     = run[Future, Either[SomeError, Int]](Right(1))
       val actual = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(
         CanHandleError[Future]
           .handleEitherNonFatalWith(fa)(err => Future(Left(SomeError.someThrowable(err))))
@@ -257,7 +257,7 @@ object CanHandleErrorSpec extends Properties {
       val actual =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleEitherNonFatalWith(fa)(_ => Future(expected)))
 
       actual ==== expected
@@ -274,7 +274,7 @@ object CanHandleErrorSpec extends Properties {
       val expected          = 1
       val actual            = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleNonFatal(fa)(_ => expected))
 
       actual ==== expected
@@ -290,7 +290,7 @@ object CanHandleErrorSpec extends Properties {
       val expected = 1
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleNonFatal(fa)(_ => 123))
 
       actual ==== expected
@@ -309,7 +309,7 @@ object CanHandleErrorSpec extends Properties {
       val actualFailedResult =
         ConcurrentSupport.futureToValue(
           CanHandleError[Future].handleNonFatal(fa)(err => Left(SomeError.someThrowable(err))),
-          waitFor
+          waitFor,
         )
 
       val expected: Either[SomeError, Int] = Right(1)
@@ -317,7 +317,7 @@ object CanHandleErrorSpec extends Properties {
       val fa2    = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val actual = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleNonFatal(fa2)(_ => expected))
 
       expectedFailedResult ==== actualFailedResult and actual ==== expected
@@ -335,7 +335,7 @@ object CanHandleErrorSpec extends Properties {
       val actual =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleNonFatal(fa)(err => Left(SomeError.someThrowable(err))))
 
       actual ==== expected
@@ -353,7 +353,7 @@ object CanHandleErrorSpec extends Properties {
       val fa     = run[Future, Either[SomeError, Int]](Left(expectedFailure))
       val actual = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleNonFatal(fa)(_ => Right(1)))
 
       actual ==== expected
@@ -371,7 +371,7 @@ object CanHandleErrorSpec extends Properties {
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val actualFailedResult = ConcurrentSupport.futureToValue(
         CanHandleError[Future].handleEitherNonFatal(fa)(err => Left(SomeError.someThrowable(err))),
-        waitFor
+        waitFor,
       )
 
       val expected: Either[SomeError, Int] = Right(1)
@@ -380,7 +380,7 @@ object CanHandleErrorSpec extends Properties {
       val actual =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleEitherNonFatal(fa2)(_ => expected))
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
@@ -397,7 +397,7 @@ object CanHandleErrorSpec extends Properties {
       val fa     = run[Future, Either[SomeError, Int]](Right(1))
       val actual = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanHandleError[Future].handleEitherNonFatal(fa)(err => Left(SomeError.someThrowable(err))))
 
       actual ==== expected
@@ -416,7 +416,7 @@ object CanHandleErrorSpec extends Properties {
       val actual =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(CanHandleError[Future].handleEitherNonFatal(fa)(_ => expected))
 
       actual ==== expected

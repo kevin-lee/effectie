@@ -38,7 +38,7 @@ object IdSpecs {
     Result.all(
       List(
         testBefore.log("testBefore"),
-        testAfter.log("testAfter")
+        testAfter.log("testAfter"),
       )
     )
   }
@@ -55,7 +55,7 @@ object IdSpecs {
     Result.all(
       List(
         testBefore.log("testBefore"),
-        testAfter.log("testAfter")
+        testAfter.log("testAfter"),
       )
     )
   }

@@ -18,7 +18,7 @@ object FromFutureSpec extends Properties {
   private val waitFor300Millis = WaitFor(300.milliseconds)
 
   override def tests: List[Test] = List(
-    property("test FromFuture[Future].toEffect", FutureSpec.testToEffect),
+    property("test FromFuture[Future].toEffect", FutureSpec.testToEffect)
   )
 
   object FutureSpec {

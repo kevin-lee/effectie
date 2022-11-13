@@ -27,31 +27,31 @@ object CanCatchSyntaxSpec {
     /* Future */
     example(
       "test CanCatch[Future]catchNonFatalThrowable should catch NonFatal",
-      FutureSpec.testCanCatch_Future_catchNonFatalThrowableShouldCatchNonFatal
+      FutureSpec.testCanCatch_Future_catchNonFatalThrowableShouldCatchNonFatal,
     ),
     example(
       "test CanCatch[Future]catchNonFatalThrowable should return the successful result",
-      FutureSpec.testCanCatch_Future_catchNonFatalThrowableShouldReturnSuccessfulResult
+      FutureSpec.testCanCatch_Future_catchNonFatalThrowableShouldReturnSuccessfulResult,
     ),
     example(
       "test CanCatch[Future]catchNonFatal should catch NonFatal",
-      FutureSpec.testCanCatch_Future_catchNonFatalShouldCatchNonFatal
+      FutureSpec.testCanCatch_Future_catchNonFatalShouldCatchNonFatal,
     ),
     example(
       "test CanCatch[Future]catchNonFatal should return the successful result",
-      FutureSpec.testCanCatch_Future_catchNonFatalShouldReturnSuccessfulResult
+      FutureSpec.testCanCatch_Future_catchNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanCatch[Future]catchNonFatalEither should catch NonFatal",
-      FutureSpec.testCanCatch_Future_catchNonFatalEitherShouldCatchNonFatal
+      FutureSpec.testCanCatch_Future_catchNonFatalEitherShouldCatchNonFatal,
     ),
     example(
       "test CanCatch[Future]catchNonFatalEither should return the successful result",
-      FutureSpec.testCanCatch_Future_catchNonFatalEitherShouldReturnSuccessfulResult
+      FutureSpec.testCanCatch_Future_catchNonFatalEitherShouldReturnSuccessfulResult,
     ),
     example(
       "test CanCatch[Future]catchNonFatalEither should return the failed result",
-      FutureSpec.testCanCatch_Future_catchNonFatalEitherShouldReturnFailedResult
+      FutureSpec.testCanCatch_Future_catchNonFatalEitherShouldReturnFailedResult,
     ),
   )
 
@@ -83,7 +83,7 @@ object CanCatchSyntaxSpec {
       val expected          = expectedExpcetion.asLeft[Int]
       val actual            = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.catchNonFatalThrowable)
 
       actual ==== expected
@@ -99,7 +99,7 @@ object CanCatchSyntaxSpec {
       val expected = 1.asRight[Throwable]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.catchNonFatalThrowable)
 
       actual ==== expected
@@ -116,7 +116,7 @@ object CanCatchSyntaxSpec {
       val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actual            = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.catchNonFatal(SomeError.someThrowable))
 
       actual ==== expected
@@ -132,7 +132,7 @@ object CanCatchSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.catchNonFatal(SomeError.someThrowable))
 
       actual ==== expected
@@ -149,7 +149,7 @@ object CanCatchSyntaxSpec {
       val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.catchNonFatalEither(SomeError.someThrowable))
 
       actual ==== expected
@@ -165,7 +165,7 @@ object CanCatchSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.catchNonFatalEither(SomeError.someThrowable))
 
       actual ==== expected
@@ -182,7 +182,7 @@ object CanCatchSyntaxSpec {
       val expected        = expectedFailure.asLeft[Int]
       val actual          = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.catchNonFatalEither(SomeError.someThrowable))
 
       actual ==== expected
@@ -199,67 +199,67 @@ object CanHandleErrorSyntaxSpec {
     /* Future */
     example(
       "test CanHandleError[Future].handleNonFatalWith should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleNonFatalWithShouldHandleNonFatalWith
+      FutureSpec.testCanHandleError_Future_handleNonFatalWithShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[Future].handleNonFatalWith should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleNonFatalWithShouldReturnSuccessfulResult
+      FutureSpec.testCanHandleError_Future_handleNonFatalWithShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Future].handleNonFatalWithEither should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldHandleNonFatalWith
+      FutureSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[Future].handleNonFatalWithEither should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldReturnSuccessfulResult
+      FutureSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Future].handleNonFatalWithEither should return the failed result",
-      FutureSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldReturnFailedResult
+      FutureSpec.testCanHandleError_Future_handleNonFatalWithEitherShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[Future].handleEitherNonFatalWith should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldHandleNonFatalWith
+      FutureSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldHandleNonFatalWith,
     ),
     example(
       "test CanHandleError[Future].handleEitherNonFatalWith should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnSuccessfulResult
+      FutureSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Future].handleEitherNonFatalWith should return the failed result",
-      FutureSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnFailedResult
+      FutureSpec.testCanHandleError_Future_handleEitherNonFatalWithShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[Future].handleNonFatal should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleNonFatalShouldHandleNonFatal
+      FutureSpec.testCanHandleError_Future_handleNonFatalShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[Future].handleNonFatal should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleNonFatalShouldReturnSuccessfulResult
+      FutureSpec.testCanHandleError_Future_handleNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Future].handleNonFatalEither should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleNonFatalEitherShouldHandleNonFatal
+      FutureSpec.testCanHandleError_Future_handleNonFatalEitherShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[Future].handleNonFatalEither should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleNonFatalEitherShouldReturnSuccessfulResult
+      FutureSpec.testCanHandleError_Future_handleNonFatalEitherShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Future].handleNonFatalEither should return the failed result",
-      FutureSpec.testCanHandleError_Future_handleNonFatalEitherShouldReturnFailedResult
+      FutureSpec.testCanHandleError_Future_handleNonFatalEitherShouldReturnFailedResult,
     ),
     example(
       "test CanHandleError[Future].handleEitherNonFatal should handle NonFatal",
-      FutureSpec.testCanHandleError_Future_handleEitherNonFatalShouldHandleNonFatal
+      FutureSpec.testCanHandleError_Future_handleEitherNonFatalShouldHandleNonFatal,
     ),
     example(
       "test CanHandleError[Future].handleEitherNonFatal should return the successful result",
-      FutureSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnSuccessfulResult
+      FutureSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanHandleError[Future].handleEitherNonFatal should return the failed result",
-      FutureSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnFailedResult
+      FutureSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnFailedResult,
     ),
   )
 
@@ -291,7 +291,7 @@ object CanHandleErrorSyntaxSpec {
       val expected          = 1
       val actual            = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.handleNonFatalWith(_ => Future(expected)))
 
       actual ==== expected
@@ -307,7 +307,7 @@ object CanHandleErrorSyntaxSpec {
       val expected = 1
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.handleNonFatalWith(_ => Future(123)))
 
       actual ==== expected
@@ -325,14 +325,14 @@ object CanHandleErrorSyntaxSpec {
       val actualFailedResult   =
         ConcurrentSupport.futureToValue(
           fa.handleNonFatalWith(err => Future(SomeError.someThrowable(err).asLeft[Int])),
-          waitFor
+          waitFor,
         )
 
       val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa2.handleNonFatalWith(_ => Future(expected)))
 
       expectedFailedResult ==== actualFailedResult and actual ==== expected
@@ -349,7 +349,7 @@ object CanHandleErrorSyntaxSpec {
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(fa.handleNonFatalWith(err => Future(SomeError.someThrowable(err).asLeft[Int])))
 
       actual ==== expected
@@ -366,7 +366,7 @@ object CanHandleErrorSyntaxSpec {
       val expected        = expectedFailure.asLeft[Int]
       val actual          = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.handleNonFatalWith(_ => Future(1.asRight[SomeError])))
 
       actual ==== expected
@@ -383,7 +383,7 @@ object CanHandleErrorSyntaxSpec {
       val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actualFailedResult   = ConcurrentSupport.futureToValue(
         fa.handleEitherNonFatalWith(err => Future(SomeError.someThrowable(err).asLeft[Int])),
-        waitFor
+        waitFor,
       )
 
       val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -391,7 +391,7 @@ object CanHandleErrorSyntaxSpec {
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(fa2.handleEitherNonFatalWith(err => Future(expected)))
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
@@ -407,7 +407,7 @@ object CanHandleErrorSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.handleEitherNonFatalWith(err => Future(SomeError.someThrowable(err).asLeft[Int])))
 
       actual ==== expected
@@ -425,7 +425,7 @@ object CanHandleErrorSyntaxSpec {
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(fa.handleEitherNonFatalWith(_ => Future(expected)))
 
       actual ==== expected
@@ -442,7 +442,7 @@ object CanHandleErrorSyntaxSpec {
       val expected          = 1
       val actual            = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.handleNonFatal(_ => expected))
 
       actual ==== expected
@@ -458,7 +458,7 @@ object CanHandleErrorSyntaxSpec {
       val expected = 1
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.handleNonFatal(_ => 123))
 
       actual ==== expected
@@ -476,14 +476,14 @@ object CanHandleErrorSyntaxSpec {
       val actualFailedResult   =
         ConcurrentSupport.futureToValue(
           fa.handleNonFatal(err => SomeError.someThrowable(err).asLeft[Int]),
-          waitFor
+          waitFor,
         )
 
       val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa2.handleNonFatal(_ => expected))
 
       expectedFailedResult ==== actualFailedResult and actual ==== expected
@@ -500,7 +500,7 @@ object CanHandleErrorSyntaxSpec {
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(fa.handleNonFatal(err => SomeError.someThrowable(err).asLeft[Int]))
 
       actual ==== expected
@@ -517,7 +517,7 @@ object CanHandleErrorSyntaxSpec {
       val expected        = expectedFailure.asLeft[Int]
       val actual          = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.handleNonFatal(_ => 1.asRight[SomeError]))
 
       actual ==== expected
@@ -534,7 +534,7 @@ object CanHandleErrorSyntaxSpec {
       val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actualFailedResult   = ConcurrentSupport.futureToValue(
         fa.handleEitherNonFatal(err => SomeError.someThrowable(err).asLeft[Int]),
-        waitFor
+        waitFor,
       )
 
       val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -542,7 +542,7 @@ object CanHandleErrorSyntaxSpec {
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(fa2.handleEitherNonFatal(err => expected))
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
@@ -558,7 +558,7 @@ object CanHandleErrorSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.handleEitherNonFatal(err => SomeError.someThrowable(err).asLeft[Int]))
 
       actual ==== expected
@@ -576,7 +576,7 @@ object CanHandleErrorSyntaxSpec {
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(fa.handleEitherNonFatal(_ => expected))
 
       actual ==== expected
@@ -592,67 +592,67 @@ object CanRecoverSyntaxSpec {
     /* Future */
     example(
       "test CanRecover[Future].recoverFromNonFatalWith should catch NonFatal",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalWithShouldRecoverFromNonFatal
+      FutureSpec.testCanRecover_Future_recoverFromNonFatalWithShouldRecoverFromNonFatal,
     ),
     example(
       "test CanRecover[Future].recoverFromNonFatalWith should return the successful result",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalWithShouldReturnSuccessfulResult
+      FutureSpec.testCanRecover_Future_recoverFromNonFatalWithShouldReturnSuccessfulResult,
     ),
     example(
       "test CanRecover[Future].recoverFromNonFatalWithEither should catch NonFatal",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal
+      FutureSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal,
     ),
     example(
       "test CanRecover[Future].recoverFromNonFatalWithEither should return the successful result",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult
+      FutureSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult,
     ),
     example(
       "test CanRecover[Future].recoverFromNonFatalWithEither should return the failed result",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldReturnFailedResult
+      FutureSpec.testCanRecover_Future_recoverFromNonFatalWithEitherShouldReturnFailedResult,
     ),
     example(
       "test CanRecover[Future].recoverEitherFromNonFatalWith should catch NonFatal",
-      FutureSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal
+      FutureSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal,
     ),
     example(
       "test CanRecover[Future].recoverEitherFromNonFatalWith should return the successful result",
-      FutureSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult
+      FutureSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult,
     ),
     example(
       "test CanRecover[Future].recoverEitherFromNonFatalWith should return the failed result",
-      FutureSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldReturnFailedResult
+      FutureSpec.testCanRecover_Future_recoverEitherFromNonFatalWithShouldReturnFailedResult,
     ),
     example(
       "test CanRecover[Future].recoverFromNonFatal should catch NonFatal",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalShouldRecoverFromNonFatal
+      FutureSpec.testCanRecover_Future_recoverFromNonFatalShouldRecoverFromNonFatal,
     ),
     example(
       "test CanRecover[Future].recoverFromNonFatal should return the successful result",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalShouldReturnSuccessfulResult
+      FutureSpec.testCanRecover_Future_recoverFromNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanRecover[Future].recoverFromNonFatalEither should catch NonFatal",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldRecoverFromNonFatal
+      FutureSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldRecoverFromNonFatal,
     ),
     example(
       "test CanRecover[Future].recoverFromNonFatalEither should return the successful result",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldReturnSuccessfulResult
+      FutureSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldReturnSuccessfulResult,
     ),
     example(
       "test CanRecover[Future].recoverFromNonFatalEither should return the failed result",
-      FutureSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldReturnFailedResult
+      FutureSpec.testCanRecover_Future_recoverFromNonFatalEitherShouldReturnFailedResult,
     ),
     example(
       "test CanRecover[Future].recoverEitherFromNonFatal should catch NonFatal",
-      FutureSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldRecoverFromNonFatal
+      FutureSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldRecoverFromNonFatal,
     ),
     example(
       "test CanRecover[Future].recoverEitherFromNonFatal should return the successful result",
-      FutureSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldReturnSuccessfulResult
+      FutureSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanRecover[Future].recoverEitherFromNonFatal should return the failed result",
-      FutureSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldReturnFailedResult
+      FutureSpec.testCanRecover_Future_recoverEitherFromNonFatalShouldReturnFailedResult,
     ),
   )
 
@@ -685,7 +685,7 @@ object CanRecoverSyntaxSpec {
       val expected          = 1
       val actual            = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.recoverFromNonFatalWith {
         case NonFatal(`expectedExpcetion`) => Future(expected)
       })
@@ -703,7 +703,7 @@ object CanRecoverSyntaxSpec {
       val expected = 1
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.recoverFromNonFatalWith {
         case NonFatal(_) => Future(123)
       })
@@ -725,7 +725,7 @@ object CanRecoverSyntaxSpec {
           fa.recoverFromNonFatalWith {
             case err => Future(SomeError.someThrowable(err).asLeft[Int])
           },
-          waitFor
+          waitFor,
         )
 
       val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -733,7 +733,7 @@ object CanRecoverSyntaxSpec {
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(fa2.recoverFromNonFatalWith {
           case NonFatal(`expectedExpcetion`) => Future(expected)
         })
@@ -752,7 +752,7 @@ object CanRecoverSyntaxSpec {
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(fa.recoverFromNonFatalWith {
           case err => Future(SomeError.someThrowable(err).asLeft[Int])
         })
@@ -772,7 +772,7 @@ object CanRecoverSyntaxSpec {
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(fa.recoverFromNonFatalWith {
           case NonFatal(_) => Future(1.asRight[SomeError])
         })
@@ -793,7 +793,7 @@ object CanRecoverSyntaxSpec {
         fa.recoverEitherFromNonFatalWith {
           case err => Future(SomeError.someThrowable(err).asLeft[Int])
         },
-        waitFor
+        waitFor,
       )
 
       val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -801,7 +801,7 @@ object CanRecoverSyntaxSpec {
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(fa2.recoverEitherFromNonFatalWith {
           case err => Future(expected)
         })
@@ -819,7 +819,7 @@ object CanRecoverSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.recoverEitherFromNonFatalWith {
         case err => Future(SomeError.someThrowable(err).asLeft[Int])
       })
@@ -839,7 +839,7 @@ object CanRecoverSyntaxSpec {
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(fa.recoverEitherFromNonFatalWith {
           case NonFatal(_) => Future(expected)
         })
@@ -860,7 +860,7 @@ object CanRecoverSyntaxSpec {
       val expected          = 1
       val actual            = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.recoverFromNonFatal { case NonFatal(`expectedExpcetion`) => expected })
 
       actual ==== expected
@@ -876,7 +876,7 @@ object CanRecoverSyntaxSpec {
       val expected = 1
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.recoverFromNonFatal { case NonFatal(_) => 123 })
 
       actual ==== expected
@@ -898,14 +898,14 @@ object CanRecoverSyntaxSpec {
             fa.recoverFromNonFatal {
               case err => SomeError.someThrowable(err).asLeft[Int]
             },
-            waitFor
+            waitFor,
           )
 
         val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
         val expected = 1.asRight[SomeError]
         val actual   = ConcurrentSupport.futureToValue(
           fa2.recoverFromNonFatal { case NonFatal(`expectedExpcetion`) => expected },
-          waitFor
+          waitFor,
         )
 
         expectedFailedResult ==== actualFailedResult and actual ==== expected
@@ -923,7 +923,7 @@ object CanRecoverSyntaxSpec {
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(fa.recoverFromNonFatal {
           case err => SomeError.someThrowable(err).asLeft[Int]
         })
@@ -942,7 +942,7 @@ object CanRecoverSyntaxSpec {
       val expected        = expectedFailure.asLeft[Int]
       val actual          = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.recoverFromNonFatal { case NonFatal(_) => 1.asRight[SomeError] })
 
       actual ==== expected
@@ -961,7 +961,7 @@ object CanRecoverSyntaxSpec {
         fa.recoverEitherFromNonFatal {
           case err => SomeError.someThrowable(err).asLeft[Int]
         },
-        waitFor
+        waitFor,
       )
 
       val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -969,7 +969,7 @@ object CanRecoverSyntaxSpec {
       val actual   =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(fa2.recoverEitherFromNonFatal { case err => expected })
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
@@ -985,7 +985,7 @@ object CanRecoverSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(fa.recoverEitherFromNonFatal {
         case err => SomeError.someThrowable(err).asLeft[Int]
       })
@@ -1005,7 +1005,7 @@ object CanRecoverSyntaxSpec {
       val actual          =
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
-          waitFor
+          waitFor,
         )(fa.recoverEitherFromNonFatal { case NonFatal(_) => expected })
 
       actual ==== expected

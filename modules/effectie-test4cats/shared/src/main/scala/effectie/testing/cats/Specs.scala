@@ -17,7 +17,7 @@ object Specs {
 
     def composition[F[*]](
       genM: Gen[F[Int]],
-      genF: Gen[Int => Int]
+      genF: Gen[Int => Int],
     )(implicit functor: Functor[F], eqM: Eq[F[Int]]): Property = for {
       m  <- genM.log("m: F[Int]")
       f  <- genF.log("f: Int => Int")
@@ -39,7 +39,7 @@ object Specs {
     }
     def composition[F[*]](
       genM: Gen[F[Int]],
-      genF: Gen[Int => Int]
+      genF: Gen[Int => Int],
     )(implicit applicative: Applicative[F], eqM: Eq[F[Int]]): Property = for {
       m  <- genM.log("m: F[Int]")
       f  <- genF.log("f: Int => Int")
@@ -58,7 +58,7 @@ object Specs {
     }
     def homomorphism[F[*]](
       genInt: Gen[Int],
-      genF: Gen[Int => Int]
+      genF: Gen[Int => Int],
     )(implicit applicative: Applicative[F], eqM: Eq[F[Int]]): Property = for {
       x <- genInt.log("x: Int")
       f <- genF.log("f: Int => Int")
@@ -68,7 +68,7 @@ object Specs {
     }
     def interchange[F[*]](
       genInt: Gen[Int],
-      genF: Gen[Int => Int]
+      genF: Gen[Int => Int],
     )(implicit applicative: Applicative[F], eqM: Eq[F[Int]]): Property = for {
       x <- genInt.log("x: Int")
       f <- genF.log("f: Int => Int")
@@ -78,7 +78,7 @@ object Specs {
     }
     def compositionAp[F[*]](
       genM: Gen[F[Int]],
-      genF: Gen[Int => Int]
+      genF: Gen[Int => Int],
     )(implicit applicative: Applicative[F], eqM: Eq[F[Int]]): Property = for {
       m  <- genM.log("m: F[Int]")
       f  <- genF.log("f: Int => Int")
@@ -91,7 +91,7 @@ object Specs {
 
   object MonadLaws {
     def identity[F[*]](
-      genM: Gen[F[Int]],
+      genM: Gen[F[Int]]
     )(implicit monad: Monad[F], eqM: Eq[F[Int]]): Property = for {
       m <- genM.log("m: F[Int]")
     } yield {
@@ -112,7 +112,7 @@ object Specs {
     }
 
     def identityAp[F[*]](
-      genM: Gen[F[Int]],
+      genM: Gen[F[Int]]
     )(implicit monad: Monad[F], eqM: Eq[F[Int]]): Property = for {
       m <- genM.log("m: F[Int]")
     } yield {
@@ -156,7 +156,7 @@ object Specs {
 
     def leftIdentity[F[*]](
       genInt: Gen[Int],
-      genFm: Gen[Int => F[Int]]
+      genFm: Gen[Int => F[Int]],
     )(implicit monad: Monad[F], eqM: Eq[F[Int]]): Property = for {
       x  <- genInt.log("x: Int")
       fm <- genFm.log("fm: Int => F[Int]")
@@ -166,7 +166,7 @@ object Specs {
     }
 
     def rightIdentity[F[*]](
-      genM: Gen[F[Int]],
+      genM: Gen[F[Int]]
     )(implicit monad: Monad[F], eqM: Eq[F[Int]]): Property = for {
       m <- genM.log("m: F[Int]")
     } yield {
@@ -176,7 +176,7 @@ object Specs {
 
     def associativity[F[*]](
       genM: Gen[F[Int]],
-      genFm: Gen[Int => F[Int]]
+      genFm: Gen[Int => F[Int]],
     )(implicit monad: Monad[F], eqM: Eq[F[Int]]): Property = for {
       m   <- genM.log("m: F[Int]")
       fm  <- genFm.log("fm: Int => F[Int]")

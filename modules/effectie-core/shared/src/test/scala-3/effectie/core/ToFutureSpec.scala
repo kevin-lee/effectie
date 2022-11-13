@@ -18,7 +18,7 @@ object ToFutureSpec extends Properties {
   override def tests: List[Test] = List(
     property(
       "test ToFuture[Future].unsafeToFuture",
-      FutureSpec.testUnsafeToFuture
+      FutureSpec.testUnsafeToFuture,
     )
   )
 
@@ -44,7 +44,7 @@ object ToFutureSpec extends Properties {
               .assert(future.isInstanceOf[Future[Int]]) // scalafix:ok DisableSyntax.isInstanceOf
               .log(s"future is not an instance of Future[Int]. future.getClass: ${future.getClass.toString}"),
             actual ==== ConcurrentSupport.futureToValueAndTerminate(es, WaitFor(300.milliseconds))(expected),
-            actual ==== a
+            actual ==== a,
           )
         )
       }

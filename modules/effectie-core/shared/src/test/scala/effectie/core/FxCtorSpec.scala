@@ -60,7 +60,7 @@ object FxCtorSpec extends Properties {
       Result.all(
         List(
           testBefore.log("testBefore"),
-          testAfterRun.log("testAfterRun")
+          testAfterRun.log("testAfterRun"),
         )
       )
     }
@@ -82,7 +82,7 @@ object FxCtorSpec extends Properties {
       Result.all(
         List(
           testBefore.log("testBefore"),
-          testAfterRun.log("testAfterRun")
+          testAfterRun.log("testAfterRun"),
         )
       )
     }
@@ -104,7 +104,7 @@ object FxCtorSpec extends Properties {
       Result.all(
         List(
           testBefore.log("testBefore"),
-          testAfterRun.log("testAfterRun")
+          testAfterRun.log("testAfterRun"),
         )
       )
     }
@@ -120,7 +120,7 @@ object FxCtorSpec extends Properties {
       val future = FxCtor[Future].pureOrError[Unit](throw expectedError) // scalafix:ok DisableSyntax.throw
       tools.expectThrowable(
         ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future),
-        expectedError
+        expectedError,
       )
     }
 
@@ -145,7 +145,7 @@ object FxCtorSpec extends Properties {
       val future = FxCtor[Future].errorOf[Unit](expectedError)
       tools.expectThrowable(
         ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future),
-        expectedError
+        expectedError,
       )
     }
 

@@ -30,15 +30,15 @@ object canCatchSpec extends Properties {
   val futureSpecs = effectie.core.CanCatchSpec.futureSpecs ++ List(
     example(
       "test CanCatch[Future]catchNonFatalEitherT should catch NonFatal",
-      FutureSpec.testCanCatch_Future_catchNonFatalEitherTShouldCatchNonFatal
+      FutureSpec.testCanCatch_Future_catchNonFatalEitherTShouldCatchNonFatal,
     ),
     example(
       "test CanCatch[Future]catchNonFatalEitherT should return the successful result",
-      FutureSpec.testCanCatch_Future_catchNonFatalEitherTShouldReturnSuccessfulResult
+      FutureSpec.testCanCatch_Future_catchNonFatalEitherTShouldReturnSuccessfulResult,
     ),
     example(
       "test CanCatch[Future]catchNonFatalEitherT should return the failed result",
-      FutureSpec.testCanCatch_Future_catchNonFatalEitherTShouldReturnFailedResult
+      FutureSpec.testCanCatch_Future_catchNonFatalEitherTShouldReturnFailedResult,
     ),
   )
 
@@ -46,60 +46,60 @@ object canCatchSpec extends Properties {
   val idSpecs = List(
     example(
       "test CanCatch[Id]catchNonFatalThrowable should catch NonFatal",
-      IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal
+      IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal,
     ),
     example(
       "test CanCatch[Id]catchNonFatalThrowable should not catch Fatal",
-      IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldNotCatchFatal
+      IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldNotCatchFatal,
     ),
     example(
       "test CanCatch[Id]catchNonFatalThrowable should return the successful result",
-      IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldReturnSuccessfulResult
+      IdSpec.testCanCatch_Id_catchNonFatalThrowableShouldReturnSuccessfulResult,
     ),
     example(
       "test CanCatch[Id]catchNonFatal should catch NonFatal",
-      IdSpec.testCanCatch_Id_catchNonFatalShouldCatchNonFatal
+      IdSpec.testCanCatch_Id_catchNonFatalShouldCatchNonFatal,
     ),
     example(
       "test CanCatch[Id]catchNonFatal should not catch Fatal",
-      IdSpec.testCanCatch_Id_catchNonFatalShouldNotCatchFatal
+      IdSpec.testCanCatch_Id_catchNonFatalShouldNotCatchFatal,
     ),
     example(
       "test CanCatch[Id]catchNonFatal should return the successful result",
-      IdSpec.testCanCatch_Id_catchNonFatalShouldReturnSuccessfulResult
+      IdSpec.testCanCatch_Id_catchNonFatalShouldReturnSuccessfulResult,
     ),
     example(
       "test CanCatch[Id]catchNonFatalEither should catch NonFatal",
-      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldCatchNonFatal
+      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldCatchNonFatal,
     ),
     example(
       "test CanCatch[Id]catchNonFatalEither should not catch Fatal",
-      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldNotCatchFatal
+      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldNotCatchFatal,
     ),
     example(
       "test CanCatch[Id]catchNonFatalEither should return the successful result",
-      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldReturnSuccessfulResult
+      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldReturnSuccessfulResult,
     ),
     example(
       "test CanCatch[Id]catchNonFatalEither should return the failed result",
-      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldReturnFailedResult
+      IdSpec.testCanCatch_Id_catchNonFatalEitherShouldReturnFailedResult,
     ),
     example(
       "test CanCatch[Id]catchNonFatalEitherT should catch NonFatal",
-      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldCatchNonFatal
+      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldCatchNonFatal,
     ),
     example(
       "test CanCatch[Id]catchNonFatalEitherT should not catch Fatal",
-      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldNotCatchFatal
+      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldNotCatchFatal,
     ),
     example(
       "test CanCatch[Id]catchNonFatalEitherT should return the successful result",
-      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldReturnSuccessfulResult
+      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldReturnSuccessfulResult,
     ),
     example(
       "test CanCatch[Id]catchNonFatalEitherT should return the failed result",
-      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldReturnFailedResult
-    )
+      IdSpec.testCanCatch_Id_catchNonFatalEitherTShouldReturnFailedResult,
+    ),
   )
 
   @SuppressWarnings(Array("org.wartremover.warts.Throw"))
@@ -246,7 +246,7 @@ object canCatchSpec extends Properties {
       val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanCatch[Future].catchNonFatalEitherT(fa)(SomeError.someThrowable).value)
 
       actual ==== expected
@@ -262,7 +262,7 @@ object canCatchSpec extends Properties {
       val expected = 1.asRight[SomeError]
       val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanCatch[Future].catchNonFatalEitherT(fa)(SomeError.someThrowable).value)
 
       actual ==== expected
@@ -279,7 +279,7 @@ object canCatchSpec extends Properties {
       val expected        = expectedFailure.asLeft[Int]
       val actual          = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
-        waitFor
+        waitFor,
       )(CanCatch[Future].catchNonFatalEitherT(fa)(SomeError.someThrowable).value)
 
       actual ==== expected

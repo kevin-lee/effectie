@@ -34,44 +34,44 @@ object fxCtorSpec extends Properties {
     property("test FxCtor[IO].pureOf", FxCtorSpecs.testPureOf[IO](_.unsafeRunSync() ==== unit)),
     property(
       "test FxCtor[IO].pureOrError(success case)",
-      FxCtorSpecs.testPureOrErrorSuccessCase[IO](_.unsafeRunSync() ==== unit)
+      FxCtorSpecs.testPureOrErrorSuccessCase[IO](_.unsafeRunSync() ==== unit),
     ),
     example(
       "test FxCtor[IO].pureOrError(error case)",
       FxCtorSpecs.testPureOrErrorErrorCase[IO] { (io, expected) =>
         tools.expectThrowable(io.unsafeRunSync(), expected)
-      }
+      },
     ),
     example("test FxCtor[IO].unitOf", FxCtorSpecs.testUnitOf[IO](_.unsafeRunSync() ==== unit)),
     example(
       "test FxCtor[IO].errorOf",
       FxCtorSpecs.testErrorOf[IO] { (io, expected) =>
         tools.expectThrowable(io.unsafeRunSync(), expected)
-      }
+      },
     ),
     property(
       "test FxCtor[IO].fromEither(Right)",
-      FxCtorSpecs.testFromEitherRightCase[IO](assertWithAttempt)
+      FxCtorSpecs.testFromEitherRightCase[IO](assertWithAttempt),
     ),
     property(
       "test FxCtor[IO].fromEither(Left)",
-      FxCtorSpecs.testFromEitherLeftCase[IO](assertWithAttempt)
+      FxCtorSpecs.testFromEitherLeftCase[IO](assertWithAttempt),
     ),
     property(
       "test FxCtor[IO].fromOption(Some)",
-      FxCtorSpecs.testFromOptionSomeCase[IO](assertWithAttempt)
+      FxCtorSpecs.testFromOptionSomeCase[IO](assertWithAttempt),
     ),
     property(
       "test FxCtor[IO].fromOption(None)",
-      FxCtorSpecs.testFromOptionNoneCase[IO](assertWithAttempt)
+      FxCtorSpecs.testFromOptionNoneCase[IO](assertWithAttempt),
     ),
     property(
       "test FxCtor[IO].fromTry(Success)",
-      FxCtorSpecs.testFromTrySuccessCase[IO](assertWithAttempt)
+      FxCtorSpecs.testFromTrySuccessCase[IO](assertWithAttempt),
     ),
     property(
       "test FxCtor[IO].fromTry(Failure)",
-      FxCtorSpecs.testFromTryFailureCase[IO](assertWithAttempt)
+      FxCtorSpecs.testFromTryFailureCase[IO](assertWithAttempt),
     ),
   )
 
