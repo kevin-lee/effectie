@@ -6,8 +6,9 @@ import scala.util.{Failure, Success, Try}
 /** @author Kevin Lee
   * @since 2022-11-12
   */
-private[resource] final class ReleasableFutureResource[A <: AutoCloseable] private (resource: Future[A])(implicit ec: ExecutionContext)
-    extends ReleasableResource[Future, A] {
+private[resource] final class ReleasableFutureResource[A <: AutoCloseable] private (resource: Future[A])(
+  implicit ec: ExecutionContext
+) extends ReleasableResource[Future, A] {
   override def use[B](f: A => Future[B]): Future[B] = {
     val promise = Promise[B]()
     val future  = promise.future

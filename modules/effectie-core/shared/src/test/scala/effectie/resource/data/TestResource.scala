@@ -6,7 +6,10 @@ package effectie.resource.data
 
 import TestResource._
 
-final class TestResource(private var _content: Vector[String], private var _closeStatus: CloseStatus) // scalafix:ok DisableSyntax.var
+final class TestResource(
+  private var _content: Vector[String],
+  private var _closeStatus: CloseStatus,
+) // scalafix:ok DisableSyntax.var
     extends AutoCloseable {
 
   def content: Vector[String] = _content
