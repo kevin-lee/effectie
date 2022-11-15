@@ -81,7 +81,7 @@ lazy val core = module(ProjectName("core"), crossProject(JVMPlatform, JSPlatform
         List("org.scala-lang.modules" %% "scala-collection-compat" % "2.8.1")
       else
         List.empty
-      ),
+    ),
     libraryDependencies :=
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
   )

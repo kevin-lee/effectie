@@ -8,7 +8,8 @@ on:
       - '*'
 
 env:
-  GH_JAVA_VERSION: "adopt@1.11"
+  GH_JAVA_VERSION: "11"
+  GH_JAVA_DISTRIBUTION: "temurin"
   GH_JVM_OPTS: "-Xss64m -Xms1024m -XX:MaxMetaspaceSize=1G -Xmx2G -XX:MaxInlineLevel=18 -XX:+UnlockExperimentalVMOptions -XX:+UseJVMCICompiler"
 
 
@@ -20,15 +21,16 @@ jobs:
     strategy:
       matrix:
         scala:
-          - { name: "Scala 2", version: "2.12.13",   binary-version: "2.12",      java-version: "adopt@1.11", report: "" }
-          - { name: "Scala 2", version: "2.13.6",    binary-version: "2.13",      java-version: "adopt@1.11", report: "report" }
-          - { name: "Scala 3", version: "3.0.2",     binary-version: "3",         java-version: "adopt@1.11", report: "" }
+          - { name: "Scala 2", version: "2.12.13", binary-version: "2.12", java-version: "11", java-distribution: "temurin", report: "" }
+          - { name: "Scala 2", version: "2.13.6",  binary-version: "2.13", java-version: "11", java-distribution: "temurin", report: "report" }
+          - { name: "Scala 3", version: "3.0.2",   binary-version: "3",    java-version: "11", java-distribution: "temurin", report: "" }
 
     steps:
       - uses: actions/checkout@v3.1.0
-      - uses: olafurpg/setup-scala@v13
+      - uses: actions/setup-java@v3
         with:
           java-version: ${{ matrix.scala.java-version }}
+          distribution: ${{ matrix.scala.java-distribution }}
 
       - name: Cache SBT
         uses: actions/cache@v3.0.11
@@ -71,13 +73,14 @@ jobs:
     strategy:
       matrix:
         scala:
-          - { name: "Scala 2", version: "2.13.6", binary-version: "2.13", java-version: "adopt@1.11", report: "report" }
+          - { name: "Scala 2", version: "2.13.6", binary-version: "2.13", java-version: "11", java-distribution: "temurin", report: "report" }
 
     steps:
       - uses: actions/checkout@v3.1.0
-      - uses: olafurpg/setup-scala@v13
+      - uses: actions/setup-java@v3
         with:
           java-version: ${{ matrix.scala.java-version }}
+          distribution: ${{ matrix.scala.java-distribution }}
 
       - name: Cache SBT
         uses: actions/cache@v3.0.11
@@ -115,9 +118,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3.1.0
-    - uses: olafurpg/setup-scala@v13
+    - uses: actions/setup-java@v3
       with:
         java-version: ${{ env.GH_JAVA_VERSION }}
+        distribution: ${{ env.GH_JAVA_DISTRIBUTION }}
 
     - name: Cache SBT
       uses: actions/cache@v3.0.11
@@ -151,9 +155,10 @@ jobs:
       - uses: actions/checkout@v3.1.0
         with:
           fetch-depth: 0
-      - uses: olafurpg/setup-scala@v13
+      - uses: actions/setup-java@v3
         with:
           java-version: ${{ env.GH_JAVA_VERSION }}
+          distribution: ${{ env.GH_JAVA_DISTRIBUTION }}
       - uses: olafurpg/setup-gpg@v3
 
       - name: Cache SBT
@@ -201,9 +206,10 @@ jobs:
       - uses: actions/checkout@v3.1.0
         with:
           fetch-depth: 0
-      - uses: olafurpg/setup-scala@v13
+      - uses: actions/setup-java@v3
         with:
           java-version: ${{ env.GH_JAVA_VERSION }}
+          distribution: ${{ env.GH_JAVA_DISTRIBUTION }}
       - uses: olafurpg/setup-gpg@v3
 
       - name: Cache SBT
