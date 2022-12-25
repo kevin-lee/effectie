@@ -13,27 +13,27 @@ import scala.concurrent.Future
   If you want to use IO from cats-effect 2, try effectie-cats-effect2.
     import effectie.instances.ce2.toFuture._
     // for Scala 3
-    import effectie.instances.ce2.toFuture.*
+    import effectie.instances.ce2.toFuture.given
 
   For cats-effect 3, try effectie-cats-effect3.
     import effectie.instances.ce3.toFuture._
     // for Scala 3
-    import effectie.instances.ce3.toFuture.*
+    import effectie.instances.ce3.toFuture.given
 
   If you want to use Task from Monix 3, try effectie-monix3.
     import effectie.instances.monix3.toFuture._
     // for Scala 3
-    import effectie.instances.monix3.toFuture.*
+    import effectie.instances.monix3.toFuture.given
 
   For Scala's Future, It is just
     import effectie.instances.future.toFuture._
     // for Scala 3
-    import effectie.instances.future.toFuture.*
+    import effectie.instances.future.toFuture.given
 
   If you don't want to use any effect but the raw data, you can use the instance for cats.Id
     import effectie.instances.id.toFuture._
     // for Scala 3
-    import effectie.instances.id.toFuture.*
+    import effectie.instances.id.toFuture.given
   ---
   """
 )
