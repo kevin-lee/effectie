@@ -90,7 +90,7 @@ object UsingResourceSpec extends Properties {
 
     override def fromTry[A](tryA: Try[A]): Try[A] = tryA
 
-    override def mapFa[A, B](fa: Try[A])(f: A => B): Try[B] = fa.map(f)
+    override def flatMapFa[A, B](fa: Try[A])(f: A => Try[B]): Try[B] = fa.flatMap(f)
 
     override def catchNonFatalThrowable[A](fa: => Try[A]): Try[Either[Throwable, A]] =
       fa.fold(err => Try(err.asLeft[A]), a => Try(a.asRight[Throwable]))

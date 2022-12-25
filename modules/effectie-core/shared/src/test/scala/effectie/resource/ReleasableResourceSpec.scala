@@ -54,22 +54,23 @@ object ReleasableResourceSpec {
               _ <- useF(resource)
             } yield ()
           }
-      ) { err =>
-        Result.all(
-          List(
-            (closeStatusBefore ==== TestResource.CloseStatus.notClosed.some)
-              .log("Before: TestResource.closeStatus should be NotClosed but it is not."),
-            (contentBefore ==== Vector.empty.some)
-              .log("Before: TestResource.content should be empty but it is not."),
-            (testResource.closeStatus ==== TestResource.CloseStatus.closed)
-              .log("After: TestResource.closeStatus should Closed but it is not."),
-            (testResource.content ==== content)
-              .log("After: TestResource.content should have the expected content but it is empty."),
-            errorTest.fold(
-              Result.failure.log(s"Error was expected but no expected error was given. Error: ${err.toString}")
-            )(_(err)),
+      ) {
+        case err =>
+          Result.all(
+            List(
+              (closeStatusBefore ==== TestResource.CloseStatus.notClosed.some)
+                .log("Before: TestResource.closeStatus should be NotClosed but it is not."),
+              (contentBefore ==== Vector.empty.some)
+                .log("Before: TestResource.content should be empty but it is not."),
+              (testResource.closeStatus ==== TestResource.CloseStatus.closed)
+                .log("After: TestResource.closeStatus should Closed but it is not."),
+              (testResource.content ==== content)
+                .log("After: TestResource.content should have the expected content but it is empty."),
+              errorTest.fold(
+                Result.failure.log(s"Error was expected but no expected error was given. Error: ${err.toString}")
+              )(_(err)),
+            )
           )
-        )
       }
       .map {
         //          println(

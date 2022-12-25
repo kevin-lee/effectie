@@ -2,7 +2,7 @@ package effectie.syntax
 
 import cats.data.EitherT
 import effectie.syntax.*
-import effectie.core.{CanCatch, CanHandleError, CanRecover, Fx}
+import effectie.core.{CanCatch, CanHandleError, CanRecover, Fx, FxCtor}
 
 /** @author Kevin Lee
   * @since 2021-10-16
@@ -17,9 +17,10 @@ trait error {
       canCatch.catchNonFatalThrowable[B](fb)
 
     def catchNonFatal[A](
-      f: Throwable => A
+      f: PartialFunction[Throwable, A]
     )(
-      using canCatch: CanCatch[F]
+      using canCatch: CanCatch[F],
+      fxCtor: FxCtor[F],
     ): F[Either[A, B]] =
       canCatch.catchNonFatal[A, B](fb)(f)
 
@@ -51,9 +52,10 @@ trait error {
   extension [F[*], A, B](fab: => F[Either[A, B]]) {
 
     def catchNonFatalEither[AA >: A](
-      f: Throwable => AA
+      f: PartialFunction[Throwable, AA]
     )(
-      using canCatch: CanCatch[F]
+      using canCatch: CanCatch[F],
+      fxCtor: FxCtor[F],
     ): F[Either[AA, B]] =
       canCatch.catchNonFatalEither[A, AA, B](fab)(f)
 
@@ -89,9 +91,10 @@ trait error {
   extension [F[*], A, B](efab: => EitherT[F, A, B]) {
 
     def catchNonFatalEitherT[AA >: A](
-      f: Throwable => AA
+      f: PartialFunction[Throwable, AA]
     )(
-      using canCatch: CanCatch[F]
+      using canCatch: CanCatch[F],
+      fxCtor: FxCtor[F],
     ): EitherT[F, AA, B] =
       effectie.syntax.error.catchNonFatalEitherT(canCatch)[A, AA, B](efab)(f)
 
@@ -127,7 +130,9 @@ trait error {
 
   extension [F[*]](canCatch: effectie.core.CanCatch[F]) {
 
-    def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(f: Throwable => AA): EitherT[F, AA, B] =
+    def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(
+      f: PartialFunction[Throwable, AA]
+    )(using fxCtor: FxCtor[F]): EitherT[F, AA, B] =
       EitherT(canCatch.catchNonFatalEither[A, AA, B](fab.value)(f))
 
   }
@@ -170,7 +175,9 @@ trait error {
 
   extension [F[*]](fx: Fx[F]) {
 
-    def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(f: Throwable => AA): EitherT[F, AA, B] =
+    def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(f: PartialFunction[Throwable, AA])(
+      using fxCtor: FxCtor[F]
+    ): EitherT[F, AA, B] =
       EitherT(fx.catchNonFatalEither[A, AA, B](fab.value)(f))
 
   }

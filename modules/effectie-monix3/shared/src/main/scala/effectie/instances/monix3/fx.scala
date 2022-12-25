@@ -30,7 +30,7 @@ object fx {
 
     @inline override final def fromTry[A](tryA: Try[A]): Task[A] = fxCtor.taskFxCtor.fromTry(tryA)
 
-    @inline override final def mapFa[A, B](fa: Task[A])(f: A => B): Task[B] = fa.map(f)
+    @inline override final def flatMapFa[A, B](fa: Task[A])(f: A => Task[B]): Task[B] = fa.flatMap(f)
 
     @inline override final def catchNonFatalThrowable[A](fa: => Task[A]): Task[Either[Throwable, A]] =
       canCatch.canCatchTask.catchNonFatalThrowable(fa)

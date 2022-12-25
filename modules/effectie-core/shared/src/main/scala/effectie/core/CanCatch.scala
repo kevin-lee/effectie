@@ -35,15 +35,34 @@ import scala.annotation.implicitNotFound
 )
 trait CanCatch[F[*]] {
 
-  def mapFa[A, B](fa: F[A])(f: A => B): F[B]
+  def flatMapFa[A, B](fa: F[A])(f: A => F[B]): F[B]
 
   def catchNonFatalThrowable[A](fa: => F[A]): F[Either[Throwable, A]]
 
-  @inline final def catchNonFatal[A, B](fb: => F[B])(f: Throwable => A): F[Either[A, B]] =
-    mapFa(catchNonFatalThrowable[B](fb))(ab => ab.left.map(f))
+  @inline final def catchNonFatal[A, B](
+    fb: => F[B]
+  )(f: PartialFunction[Throwable, A])(implicit fxCtor: FxCtor[F]): F[Either[A, B]] =
+    flatMapFa(catchNonFatalThrowable[B](fb)) { ab =>
+      ab.fold[F[Either[A, B]]](
+        err => {
+          f.andThen(a => fxCtor.pureOf(Left(a): Either[A, B]))
+            .applyOrElse(err, fxCtor.errorOf)
+        },
+        b => fxCtor.pureOf(Right(b)),
+      )
+    }
 
-  @inline final def catchNonFatalEither[A, AA >: A, B](fab: => F[Either[A, B]])(f: Throwable => AA): F[Either[AA, B]] =
-    mapFa(catchNonFatal(fab)(f))(_.joinRight)
+  @inline final def catchNonFatalEither[A, AA >: A, B](fab: => F[Either[A, B]])(
+    f: PartialFunction[Throwable, AA]
+  )(implicit fxCtor: FxCtor[F]): F[Either[AA, B]] =
+    flatMapFa(catchNonFatalThrowable(fab)) { ab =>
+      ab.fold(
+        err =>
+          f.andThen(aa => fxCtor.pureOf(Left(aa): Either[AA, B]))
+            .applyOrElse(err, fxCtor.errorOf),
+        fxCtor.pureOf,
+      )
+    }
 
 }
 
