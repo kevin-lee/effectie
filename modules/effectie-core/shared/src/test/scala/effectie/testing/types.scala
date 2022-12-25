@@ -13,7 +13,9 @@ object types {
     final case class SomeThrowable(throwable: Throwable) extends SomeError
     final case class Message(message: String) extends SomeError
 
-    def someThrowable(throwable: Throwable): SomeError = SomeThrowable(throwable)
+    def someThrowable: PartialFunction[Throwable, SomeError] = {
+      case throwable => SomeThrowable(throwable)
+    }
 
     def message(message: String): SomeError = Message(message)
 

@@ -26,7 +26,7 @@ object fx {
 
     @inline override final def fromTry[A](tryA: Try[A]): Id[A] = fxCtor.idFxCtor.fromTry(tryA)
 
-    @inline override final def mapFa[A, B](fa: Id[A])(f: A => B): Id[B] = f(fa)
+    @inline override final def flatMapFa[A, B](fa: Id[A])(f: A => Id[B]): Id[B] = f(fa)
 
     @inline override final def catchNonFatalThrowable[A](fa: => Id[A]): Id[Either[Throwable, A]] =
       canCatch.canCatchId.catchNonFatalThrowable(fa)

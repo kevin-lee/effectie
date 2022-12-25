@@ -11,9 +11,9 @@ object canCatch {
 
   implicit object canCatchId extends CanCatch[Id] {
 
-    @inline override final def mapFa[A, B](fa: Id[A])(f: A => B): Id[B] = f(fa)
+    @inline override final def flatMapFa[A, B](fa: Id[A])(f: A => Id[B]): Id[B] = f(fa)
 
-    @inline override def catchNonFatalThrowable[A](fa: => Id[A]): Id[Either[Throwable, A]] =
+    @inline override final def catchNonFatalThrowable[A](fa: => Id[A]): Id[Either[Throwable, A]] =
       scala.util.Try(fa) match {
         case scala.util.Success(a) =>
           a.asRight[Throwable]
