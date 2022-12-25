@@ -9,27 +9,27 @@ import scala.annotation.implicitNotFound
   If you want to use IO from cats-effect 2, try effectie-cats-effect2.
     import effectie.instances.ce2.fxCtor._
     // for Scala 3
-    import effectie.instances.ce2.fxCtor.*
+    import effectie.instances.ce2.fxCtor.given
 
   For cats-effect 3, try effectie-cats-effect3.
     import effectie.instances.ce3.fxCtor._
     // for Scala 3
-    import effectie.instances.ce3.fxCtor.*
+    import effectie.instances.ce3.fxCtor.given
 
   If you want to use Task from Monix 3, try effectie-monix3.
     import effectie.instances.monix3.fxCtor._
     // for Scala 3
-    import effectie.instances.monix3.fxCtor.*
+    import effectie.instances.monix3.fxCtor.given
 
   For Scala's Future, It is just
     import effectie.instances.future.fxCtor._
     // for Scala 3
-    import effectie.instances.future.fxCtor.*
+    import effectie.instances.future.fxCtor.given
 
   If you don't want to use any effect but the raw data, you can use the instance for cats.Id
     import effectie.instances.id.fxCtor._
     // for Scala 3
-    import effectie.instances.id.fxCtor.*
+    import effectie.instances.id.fxCtor.given
   ---
   """
 )
