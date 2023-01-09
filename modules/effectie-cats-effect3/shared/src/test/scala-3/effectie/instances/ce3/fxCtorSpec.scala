@@ -11,7 +11,7 @@ import effectie.testing.tools
 import effectie.testing.types.SomeThrowableError
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
-import extras.hedgehog.cats.effect.CatsEffectRunner
+import extras.hedgehog.ce3.syntax.runner._
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -21,11 +21,10 @@ import hedgehog.runner.*
 object FxCtorSpec extends Properties {
 
   private val assertWithAttempt: (IO[Int], Either[Throwable, Int]) => Result = { (ioA, expected) =>
-    import CatsEffectRunner.*
-    given ticket: Ticker = Ticker(TestContext())
-
-    ioA.attempt.completeThen { actual =>
-      (actual ==== expected).log(s"$actual does not equal to $expected")
+    withIO { implicit ticker =>
+      ioA.attempt.completeThen { actual =>
+        (actual ==== expected).log(s"$actual does not equal to $expected")
+      }
     }
   }
 
@@ -35,50 +34,49 @@ object FxCtorSpec extends Properties {
     property(
       "test FxCtor[IO].effectOf",
       FxCtorSpecs.testEffectOf[IO] { io =>
-        import CatsEffectRunner.*
-        given ticket: Ticker = Ticker(TestContext())
-        io.completeAs(())
+        withIO { implicit ticker =>
+          io.completeAs(())
+        }
       },
     ),
     property(
       "test FxCtor[IO].pureOf",
       FxCtorSpecs.testPureOf[IO] { io =>
-        import CatsEffectRunner.*
-        given ticket: Ticker = Ticker(TestContext())
-        io.completeAs(())
+        withIO { implicit ticker =>
+          io.completeAs(())
+        }
       },
     ),
     property(
       "test FxCtor[IO].pureOrError(success case)",
       FxCtorSpecs.testPureOrErrorSuccessCase[IO] { io =>
-        import CatsEffectRunner.*
-        given ticket: Ticker = Ticker(TestContext())
-        io.completeAs(())
+        withIO { implicit ticker =>
+          io.completeAs(())
+        }
       },
     ),
     example(
       "test FxCtor[IO].pureOrError(error case)",
       FxCtorSpecs.testPureOrErrorErrorCase[IO] { (io, expectedError) =>
-        import CatsEffectRunner.*
-        given ticket: Ticker = Ticker(TestContext())
-
-        io.expectError(expectedError)
+        withIO { implicit ticker =>
+          io.expectError(expectedError)
+        }
       },
     ),
     example(
       "test FxCtor[IO].unitOf",
       FxCtorSpecs.testUnitOf[IO] { io =>
-        import CatsEffectRunner.*
-        given ticket: Ticker = Ticker(TestContext())
-        io.completeAs(())
+        withIO { implicit ticker =>
+          io.completeAs(())
+        }
       },
     ),
     example(
       "test FxCtor[IO].errorOf",
       FxCtorSpecs.testErrorOf[IO] { (io, expectedError) =>
-        import CatsEffectRunner.*
-        given ticket: Ticker = Ticker(TestContext())
-        io.expectError(expectedError)
+        withIO { implicit ticker =>
+          io.expectError(expectedError)
+        }
       },
     ),
     property(

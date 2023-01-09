@@ -3,16 +3,16 @@ package effectie.syntax
 import cats.Id
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
+import effectie.core.{Fx, FxCtor}
+import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
 import effectie.instances.ce3.fx._
+import effectie.instances.ce3.testing.IoAppUtils
 import effectie.syntax.fx._
 import effectie.testing.tools.{dropResult, expectThrowable}
 import effectie.testing.types.SomeThrowableError
-import effectie.core.{Fx, FxCtor}
-import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
-import effectie.instances.ce3.testing.IoAppUtils
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
-import extras.hedgehog.cats.effect.CatsEffectRunner
+import extras.hedgehog.ce3.syntax.runner._
 import hedgehog._
 import hedgehog.runner._
 
@@ -88,157 +88,144 @@ object fxSpec extends Properties {
     implicit val rt: IORuntime = IoAppUtils.runtime(compat.es)
 
     @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
-    def testAll: Property = for {
-      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
-    } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual                  = before // scalafix:ok DisableSyntax.var
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual2                 = before // scalafix:ok DisableSyntax.var
-      val testBefore              = actual ==== before
-      val testBefore2             = actual2 ==== before
-      val eftClient               = FxCtorClient[IO]
-      val effectConstructorClient = FxClient[IO]
-      val io                      =
-        for {
-          _  <- effectOf[IO]({ actual = after; () })
-          _  <- pureOf[IO]({ actual2 = after; () })
-          n  <- eftClient.eftOf(1)
-          n2 <- eftClient.of(n)
-          i  <- effectConstructorClient.eftOf(1)
-          i2 <- effectConstructorClient.of(1)
-          _  <- eftClient.unit
-          _  <- effectConstructorClient.unit
-        } yield ()
-      val testBeforeRun           = actual ==== before
-      val testBeforeRun2          = actual2 ==== before
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
-      val runResult               = io.completeAs(())
-      val testAfterRun            = actual ==== after
-      val testAfterRun2           = actual2 ==== after
-      Result.all(
-        List(
-          testBefore.log("testBefore"),
-          testBefore2.log("testBefore2"),
-          testBeforeRun.log("testBeforeRun"),
-          testBeforeRun2.log("testBeforeRun2"),
-          runResult,
-          testAfterRun.log("testAfterRun"),
-          testAfterRun2.log("testAfterRun2"),
+    def testAll: Property =
+      for {
+        before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+        after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+      } yield withIO { implicit ticker =>
+        @SuppressWarnings(Array("org.wartremover.warts.Var"))
+        var actual                  = before // scalafix:ok DisableSyntax.var
+        @SuppressWarnings(Array("org.wartremover.warts.Var"))
+        var actual2                 = before // scalafix:ok DisableSyntax.var
+        val testBefore              = actual ==== before
+        val testBefore2             = actual2 ==== before
+        val eftClient               = FxCtorClient[IO]
+        val effectConstructorClient = FxClient[IO]
+        val io                      =
+          for {
+            _  <- effectOf[IO]({ actual = after; () })
+            _  <- pureOf[IO]({ actual2 = after; () })
+            n  <- eftClient.eftOf(1)
+            n2 <- eftClient.of(n)
+            i  <- effectConstructorClient.eftOf(1)
+            i2 <- effectConstructorClient.of(1)
+            _  <- eftClient.unit
+            _  <- effectConstructorClient.unit
+          } yield ()
+        val testBeforeRun           = actual ==== before
+        val testBeforeRun2          = actual2 ==== before
+        val runResult               = io.completeAs(())
+        val testAfterRun            = actual ==== after
+        val testAfterRun2           = actual2 ==== after
+        Result.all(
+          List(
+            testBefore.log("testBefore"),
+            testBefore2.log("testBefore2"),
+            testBeforeRun.log("testBeforeRun"),
+            testBeforeRun2.log("testBeforeRun2"),
+            runResult,
+            testAfterRun.log("testAfterRun"),
+            testAfterRun2.log("testAfterRun2"),
+          )
         )
-      )
-    }
+      }
 
     @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
-    def testEffectOf: Property = for {
-      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
-    } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual        = before // scalafix:ok DisableSyntax.var
-      val testBefore    = actual ==== before
-      val io            = effectOf[IO]({ actual = after; () })
-      val testBeforeRun = actual ==== before
+    def testEffectOf: Property =
+      for {
+        before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+        after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+      } yield withIO { implicit ticker =>
+        @SuppressWarnings(Array("org.wartremover.warts.Var"))
+        var actual        = before // scalafix:ok DisableSyntax.var
+        val testBefore    = actual ==== before
+        val io            = effectOf[IO]({ actual = after; () })
+        val testBeforeRun = actual ==== before
 
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
-      val runResult               = io.completeAs(())
+        val runResult = io.completeAs(())
 
-      val testAfterRun = actual ==== after
-      Result.all(
-        List(
-          testBefore.log("testBefore"),
-          testBeforeRun.log("testBeforeRun"),
-          runResult,
-          testAfterRun.log("testAfterRun"),
+        val testAfterRun = actual ==== after
+        Result.all(
+          List(
+            testBefore.log("testBefore"),
+            testBeforeRun.log("testBeforeRun"),
+            runResult,
+            testAfterRun.log("testAfterRun"),
+          )
         )
-      )
-    }
+      }
 
-    def testPureOf: Property = for {
-      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
-    } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual        = before // scalafix:ok DisableSyntax.var
-      val testBefore    = actual ==== before
-      val io            = pureOf[IO]({ actual = after; () })
-      val testBeforeRun = actual ==== after
+    def testPureOf: Property =
+      for {
+        before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+        after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+      } yield withIO { implicit ticker =>
+        @SuppressWarnings(Array("org.wartremover.warts.Var"))
+        var actual        = before // scalafix:ok DisableSyntax.var
+        val testBefore    = actual ==== before
+        val io            = pureOf[IO]({ actual = after; () })
+        val testBeforeRun = actual ==== after
 
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
-      val runResult               = io.completeAs(())
+        val runResult = io.completeAs(())
 
-      val testAfterRun = actual ==== after
-      Result.all(
-        List(
-          testBefore.log("testBefore"),
-          testBeforeRun.log("testBeforeRun"),
-          runResult,
-          testAfterRun.log("testAfterRun"),
+        val testAfterRun = actual ==== after
+        Result.all(
+          List(
+            testBefore.log("testBefore"),
+            testBeforeRun.log("testBeforeRun"),
+            runResult,
+            testAfterRun.log("testAfterRun"),
+          )
         )
-      )
-    }
+      }
 
-    def testPureOrErrorSuccessCase: Property = for {
-      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
-    } yield {
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual        = before // scalafix:ok DisableSyntax.var
-      val testBefore    = actual ==== before
-      val io            = pureOrError[IO]({ actual = after; () })
-      val testBeforeRun = actual ==== after
+    def testPureOrErrorSuccessCase: Property =
+      for {
+        before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+        after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+      } yield withIO { implicit ticker =>
+        @SuppressWarnings(Array("org.wartremover.warts.Var"))
+        var actual        = before // scalafix:ok DisableSyntax.var
+        val testBefore    = actual ==== before
+        val io            = pureOrError[IO]({ actual = after; () })
+        val testBeforeRun = actual ==== after
 
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
-      val runResult               = io.completeAs(())
+        val runResult = io.completeAs(())
 
-      val testAfterRun = actual ==== after
-      Result.all(
-        List(
-          testBefore.log("testBefore"),
-          testBeforeRun.log("testBeforeRun"),
-          runResult,
-          testAfterRun.log("testAfterRun"),
+        val testAfterRun = actual ==== after
+        Result.all(
+          List(
+            testBefore.log("testBefore"),
+            testBeforeRun.log("testBeforeRun"),
+            runResult,
+            testAfterRun.log("testAfterRun"),
+          )
         )
-      )
-    }
+      }
 
     @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
-    def testPureOrErrorErrorCase: Result = {
+    def testPureOrErrorErrorCase: Result = withIO { implicit ticker =>
       val expectedMessage = "This is a throwable test error."
       val expectedError   = SomeThrowableError.message(expectedMessage)
 
       val io = pureOrError[IO][Unit](throw expectedError) // scalafix:ok DisableSyntax.throw
 
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
-
       io.expectError(expectedError)
     }
 
-    def testUnitOf: Result = {
+    def testUnitOf: Result = withIO { implicit ticker =>
       val io             = unitOf[IO]
       val expected: Unit = ()
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
 
       io.completeAs(expected)
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
-    def testErrorOf: Result = {
+    def testErrorOf: Result = withIO { implicit ticker =>
       val expectedMessage = "This is a throwable test error."
       val expectedError   = SomeThrowableError.message(expectedMessage)
 
       val io = errorOf[IO][Unit](expectedError)
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
 
       io.expectError(expectedError)
     }
@@ -247,10 +234,11 @@ object fxSpec extends Properties {
 
   object FutureSpec {
 
+    import effectie.instances.future.fx._
+
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
-    import effectie.instances.future.fx._
 
     val waitFor = WaitFor(1.second)
 

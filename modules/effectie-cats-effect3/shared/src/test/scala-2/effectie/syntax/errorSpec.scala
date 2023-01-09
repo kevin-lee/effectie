@@ -16,7 +16,7 @@ import effectie.syntax.fx._
 import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
-import extras.hedgehog.cats.effect.CatsEffectRunner
+import extras.hedgehog.ce3.syntax.runner._
 import hedgehog._
 import hedgehog.runner._
 
@@ -202,7 +202,7 @@ object CanCatchSyntaxSpec {
 
   object IoSpec {
 
-    def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
+    def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -212,8 +212,6 @@ object CanCatchSyntaxSpec {
       val expected          = expectedExpcetion.asLeft[Int]
       val actual            = fa.catchNonFatalThrowable
 
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
@@ -239,7 +237,7 @@ object CanCatchSyntaxSpec {
 
     }
 
-    def testCanCatch_IO_catchNonFatalThrowableShouldReturnSuccessfulResult: Result = {
+    def testCanCatch_IO_catchNonFatalThrowableShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -248,12 +246,10 @@ object CanCatchSyntaxSpec {
       val expected    = 1.asRight[Throwable]
       val actual      = fa.catchNonFatalThrowable
 
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanCatch_IO_catchNonFatalShouldCatchNonFatal: Result = {
+    def testCanCatch_IO_catchNonFatalShouldCatchNonFatal: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -263,8 +259,6 @@ object CanCatchSyntaxSpec {
       val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actual            = fa.catchNonFatal(SomeError.someThrowable)
 
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
@@ -290,7 +284,7 @@ object CanCatchSyntaxSpec {
 
     }
 
-    def testCanCatch_IO_catchNonFatalShouldReturnSuccessfulResult: Result = {
+    def testCanCatch_IO_catchNonFatalShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -299,12 +293,10 @@ object CanCatchSyntaxSpec {
       val expected    = 1.asRight[SomeError]
       val actual      = fa.catchNonFatal(SomeError.someThrowable)
 
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanCatch_IO_catchNonFatalEitherShouldCatchNonFatal: Result = {
+    def testCanCatch_IO_catchNonFatalEitherShouldCatchNonFatal: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -314,8 +306,6 @@ object CanCatchSyntaxSpec {
       val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actual            = fa.catchNonFatalEither(SomeError.someThrowable)
 
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
@@ -341,7 +331,7 @@ object CanCatchSyntaxSpec {
 
     }
 
-    def testCanCatch_IO_catchNonFatalEitherShouldReturnSuccessfulResult: Result = {
+    def testCanCatch_IO_catchNonFatalEitherShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -350,12 +340,10 @@ object CanCatchSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   = fa.catchNonFatalEither(SomeError.someThrowable)
 
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanCatch_IO_catchNonFatalEitherShouldReturnFailedResult: Result = {
+    def testCanCatch_IO_catchNonFatalEitherShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -365,12 +353,10 @@ object CanCatchSyntaxSpec {
       val expected        = expectedFailure.asLeft[Int]
       val actual          = fa.catchNonFatalEither(SomeError.someThrowable)
 
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanCatch_IO_catchNonFatalEitherTShouldCatchNonFatal: Result = {
+    def testCanCatch_IO_catchNonFatalEitherTShouldCatchNonFatal: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -380,8 +366,6 @@ object CanCatchSyntaxSpec {
       val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
       val actual   = fa.catchNonFatalEitherT(SomeError.someThrowable).value
 
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
@@ -407,7 +391,7 @@ object CanCatchSyntaxSpec {
 
     }
 
-    def testCanCatch_IO_catchNonFatalEitherTShouldReturnSuccessfulResult: Result = {
+    def testCanCatch_IO_catchNonFatalEitherTShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -416,12 +400,10 @@ object CanCatchSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   = fa.catchNonFatalEitherT(SomeError.someThrowable).value
 
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanCatch_IO_catchNonFatalEitherTShouldReturnFailedResult: Result = {
+    def testCanCatch_IO_catchNonFatalEitherTShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -431,8 +413,6 @@ object CanCatchSyntaxSpec {
       val expected        = expectedFailure.asLeft[Int]
       val actual          = fa.catchNonFatalEitherT(SomeError.someThrowable).value
 
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
@@ -1140,7 +1120,7 @@ object CanHandleErrorSyntaxSpec {
 
   object IoSpec {
 
-    def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
+    def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = IoAppUtils.runtime(es)
@@ -1153,9 +1133,6 @@ object CanHandleErrorSyntaxSpec {
           case NonFatal(`expectedExpcetion`) =>
             IO.pure(expected)
         }
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
@@ -1181,7 +1158,7 @@ object CanHandleErrorSyntaxSpec {
 
     }
 
-    def testCanHandleError_IO_handleNonFatalWithShouldReturnSuccessfulResult: Result = {
+    def testCanHandleError_IO_handleNonFatalWithShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1189,13 +1166,10 @@ object CanHandleErrorSyntaxSpec {
       val fa       = run[IO, Int](1)
       val expected = 1
       val actual   = fa.handleNonFatalWith(_ => IO.pure(999))
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanHandleError_IO_handleNonFatalWithEitherShouldHandleNonFatalWith: Result = {
+    def testCanHandleError_IO_handleNonFatalWithEitherShouldHandleNonFatalWith: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1209,9 +1183,6 @@ object CanHandleErrorSyntaxSpec {
       val expectedSuccessResult = 1.asRight[SomeError]
       val actualSuccessResult   =
         fa.handleNonFatalWith(_ => IO.pure(1.asRight[SomeError]))
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
@@ -1237,7 +1208,7 @@ object CanHandleErrorSyntaxSpec {
 
     }
 
-    def testCanHandleError_IO_handleNonFatalWithEitherShouldReturnSuccessfulResult: Result = {
+    def testCanHandleError_IO_handleNonFatalWithEitherShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1245,13 +1216,10 @@ object CanHandleErrorSyntaxSpec {
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual   = fa.handleNonFatalWith(_ => IO(999.asRight[SomeError]))
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanHandleError_IO_handleNonFatalWithEitherShouldReturnFailedResult: Result = {
+    def testCanHandleError_IO_handleNonFatalWithEitherShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1260,13 +1228,10 @@ object CanHandleErrorSyntaxSpec {
       val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
       val actual          = fa.handleNonFatalWith(_ => IO.pure(123.asRight[SomeError]))
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanHandleError_IO_handleEitherNonFatalWithShouldHandleNonFatalWith: Result = {
+    def testCanHandleError_IO_handleEitherNonFatalWithShouldHandleNonFatalWith: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1280,9 +1245,6 @@ object CanHandleErrorSyntaxSpec {
       val expectedSuccessResult = 123.asRight[SomeError]
       val actualSuccessResult   =
         fa.handleEitherNonFatalWith(_ => IO.pure(123.asRight[SomeError]))
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
 
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
@@ -1311,7 +1273,7 @@ object CanHandleErrorSyntaxSpec {
 
     }
 
-    def testCanHandleError_IO_handleEitherNonFatalWithShouldReturnSuccessfulResult: Result = {
+    def testCanHandleError_IO_handleEitherNonFatalWithShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1320,13 +1282,10 @@ object CanHandleErrorSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   =
         fa.handleEitherNonFatalWith(_ => IO.pure(123.asRight[SomeError]))
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanHandleError_IO_handleEitherNonFatalWithShouldReturnFailedResult: Result = {
+    def testCanHandleError_IO_handleEitherNonFatalWithShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1336,13 +1295,10 @@ object CanHandleErrorSyntaxSpec {
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         fa.handleEitherNonFatalWith(_ => IO.pure(123.asRight[SomeError]))
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanHandleError_IO_handleEitherTNonFatalWithShouldHandleNonFatalWith: Result = {
+    def testCanHandleError_IO_handleEitherTNonFatalWithShouldHandleNonFatalWith: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1357,9 +1313,6 @@ object CanHandleErrorSyntaxSpec {
       val expectedSuccessResult = 123.asRight[SomeError]
       val actualSuccessResult   =
         fa.handleEitherTNonFatalWith(_ => IO.pure(123.asRight[SomeError])).value
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
 
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
@@ -1389,22 +1342,20 @@ object CanHandleErrorSyntaxSpec {
 
     }
 
-    def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnSuccessfulResult: Result = {
+    def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnSuccessfulResult: Result =
+      withIO { implicit ticker =>
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
-      implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
+        val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
+        implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
 
-      val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
-      val expected = 1.asRight[SomeError]
-      val actual   =
-        fa.handleEitherTNonFatalWith(_ => IO.pure(123.asRight[SomeError])).value
+        val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
+        val expected = 1.asRight[SomeError]
+        val actual   =
+          fa.handleEitherTNonFatalWith(_ => IO.pure(123.asRight[SomeError])).value
+        actual.completeAs(expected)
+      }
 
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
-      actual.completeAs(expected)
-    }
-
-    def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnFailedResult: Result = {
+    def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1414,13 +1365,10 @@ object CanHandleErrorSyntaxSpec {
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         fa.handleEitherTNonFatalWith(_ => IO.pure(123.asRight[SomeError])).value
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanHandleError_IO_handleNonFatalShouldHandleNonFatal: Result = {
+    def testCanHandleError_IO_handleNonFatalShouldHandleNonFatal: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1433,9 +1381,6 @@ object CanHandleErrorSyntaxSpec {
           case NonFatal(`expectedExpcetion`) =>
             expected
         }
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
@@ -1461,7 +1406,7 @@ object CanHandleErrorSyntaxSpec {
 
     }
 
-    def testCanHandleError_IO_handleNonFatalShouldReturnSuccessfulResult: Result = {
+    def testCanHandleError_IO_handleNonFatalShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1469,13 +1414,10 @@ object CanHandleErrorSyntaxSpec {
       val fa       = run[IO, Int](1)
       val expected = 1
       val actual   = fa.handleNonFatal(_ => 999)
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanHandleError_IO_handleNonFatalEitherShouldHandleNonFatal: Result = {
+    def testCanHandleError_IO_handleNonFatalEitherShouldHandleNonFatal: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1487,9 +1429,6 @@ object CanHandleErrorSyntaxSpec {
 
       val expectedSuccessResult = 1.asRight[SomeError]
       val actualSuccessResult   = fa.handleNonFatal(_ => 1.asRight[SomeError])
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
 
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
@@ -1516,7 +1455,7 @@ object CanHandleErrorSyntaxSpec {
 
     }
 
-    def testCanHandleError_IO_handleNonFatalEitherShouldReturnSuccessfulResult: Result = {
+    def testCanHandleError_IO_handleNonFatalEitherShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1524,13 +1463,10 @@ object CanHandleErrorSyntaxSpec {
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual   = fa.handleNonFatal(_ => 999.asRight[SomeError])
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanHandleError_IO_handleNonFatalEitherShouldReturnFailedResult: Result = {
+    def testCanHandleError_IO_handleNonFatalEitherShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1539,13 +1475,10 @@ object CanHandleErrorSyntaxSpec {
       val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
       val actual          = fa.handleNonFatal(_ => 123.asRight[SomeError])
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanHandleError_IO_handleEitherNonFatalShouldHandleNonFatal: Result = {
+    def testCanHandleError_IO_handleEitherNonFatalShouldHandleNonFatal: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1558,9 +1491,6 @@ object CanHandleErrorSyntaxSpec {
       val expectedSuccessResult = 123.asRight[SomeError]
       val actualSuccessResult   =
         fa.handleEitherNonFatal(_ => 123.asRight[SomeError])
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
 
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
@@ -1589,7 +1519,7 @@ object CanHandleErrorSyntaxSpec {
 
     }
 
-    def testCanHandleError_IO_handleEitherNonFatalShouldReturnSuccessfulResult: Result = {
+    def testCanHandleError_IO_handleEitherNonFatalShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1597,13 +1527,10 @@ object CanHandleErrorSyntaxSpec {
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual   = fa.handleEitherNonFatal(_ => 123.asRight[SomeError])
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanHandleError_IO_handleEitherNonFatalShouldReturnFailedResult: Result = {
+    def testCanHandleError_IO_handleEitherNonFatalShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1613,13 +1540,10 @@ object CanHandleErrorSyntaxSpec {
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         fa.handleEitherNonFatal(_ => 123.asRight[SomeError])
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanHandleError_IO_handleEitherTNonFatalShouldHandleNonFatal: Result = {
+    def testCanHandleError_IO_handleEitherTNonFatalShouldHandleNonFatal: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1631,9 +1555,6 @@ object CanHandleErrorSyntaxSpec {
 
       val expectedSuccessResult = 123.asRight[SomeError]
       val actualSuccessResult   = fa.handleEitherTNonFatal(_ => 123.asRight[SomeError]).value
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
 
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
@@ -1663,7 +1584,7 @@ object CanHandleErrorSyntaxSpec {
 
     }
 
-    def testCanHandleError_IO_handleEitherTNonFatalShouldReturnSuccessfulResult: Result = {
+    def testCanHandleError_IO_handleEitherTNonFatalShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1671,13 +1592,10 @@ object CanHandleErrorSyntaxSpec {
       val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
       val expected = 1.asRight[SomeError]
       val actual   = fa.handleEitherTNonFatal(_ => 123.asRight[SomeError]).value
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanHandleError_IO_handleEitherTNonFatalShouldReturnFailedResult: Result = {
+    def testCanHandleError_IO_handleEitherTNonFatalShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
       val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
@@ -1687,9 +1605,6 @@ object CanHandleErrorSyntaxSpec {
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         fa.handleEitherTNonFatal(_ => 123.asRight[SomeError]).value
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
@@ -2875,7 +2790,7 @@ object CanRecoverSyntaxSpec {
 
   object IOSpec {
 
-    def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
+    def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
       val compat                 = new CatsEffectIoCompatForFuture
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -2887,9 +2802,6 @@ object CanRecoverSyntaxSpec {
         case NonFatal(`expectedExpcetion`) =>
           IO.pure(expected)
       }
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
@@ -2916,7 +2828,7 @@ object CanRecoverSyntaxSpec {
 
     }
 
-    def testCanRecover_IO_recoverFromNonFatalWithShouldReturnSuccessfulResult: Result = {
+    def testCanRecover_IO_recoverFromNonFatalWithShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
       val compat                 = new CatsEffectIoCompatForFuture
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -2927,13 +2839,10 @@ object CanRecoverSyntaxSpec {
         .recoverFromNonFatalWith {
           case NonFatal(_) => IO.pure(999)
         }
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanRecover_IO_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal: Result = {
+    def testCanRecover_IO_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
       val compat                 = new CatsEffectIoCompatForFuture
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
@@ -2948,9 +2857,6 @@ object CanRecoverSyntaxSpec {
       val actualSuccessResult   = fa.recoverFromNonFatalWith {
         case NonFatal(`expectedExpcetion`) => IO.pure(1.asRight[SomeError])
       }
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
 
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
@@ -2980,24 +2886,22 @@ object CanRecoverSyntaxSpec {
 
     }
 
-    def testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult: Result = {
+    def testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult: Result =
+      withIO { implicit ticker =>
 
-      val compat                 = new CatsEffectIoCompatForFuture
-      implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+        val compat                 = new CatsEffectIoCompatForFuture
+        implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
-      val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
-      val expected = 1.asRight[SomeError]
-      val actual   = fa
-        .recoverFromNonFatalWith {
-          case NonFatal(_) => IO(999.asRight[SomeError])
-        }
+        val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
+        val expected = 1.asRight[SomeError]
+        val actual   = fa
+          .recoverFromNonFatalWith {
+            case NonFatal(_) => IO(999.asRight[SomeError])
+          }
+        actual.completeAs(expected)
+      }
 
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
-      actual.completeAs(expected)
-    }
-
-    def testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnFailedResult: Result = {
+    def testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
       val compat                 = new CatsEffectIoCompatForFuture
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -3009,13 +2913,10 @@ object CanRecoverSyntaxSpec {
         .recoverFromNonFatalWith {
           case NonFatal(_) => IO.pure(123.asRight[SomeError])
         }
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanRecover_IO_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal: Result = {
+    def testCanRecover_IO_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
       val compat                 = new CatsEffectIoCompatForFuture
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -3031,9 +2932,6 @@ object CanRecoverSyntaxSpec {
       val actualSuccessResult   = fa.recoverEitherFromNonFatalWith {
         case NonFatal(`expectedExpcetion`) => IO.pure(123.asRight[SomeError])
       }
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
 
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
@@ -3063,24 +2961,22 @@ object CanRecoverSyntaxSpec {
 
     }
 
-    def testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult: Result = {
+    def testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult: Result =
+      withIO { implicit ticker =>
 
-      val compat                 = new CatsEffectIoCompatForFuture
-      implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+        val compat                 = new CatsEffectIoCompatForFuture
+        implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
-      val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
-      val expected = 1.asRight[SomeError]
-      val actual   = fa
-        .recoverEitherFromNonFatalWith {
-          case NonFatal(_) => IO.pure(123.asRight[SomeError])
-        }
+        val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
+        val expected = 1.asRight[SomeError]
+        val actual   = fa
+          .recoverEitherFromNonFatalWith {
+            case NonFatal(_) => IO.pure(123.asRight[SomeError])
+          }
+        actual.completeAs(expected)
+      }
 
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
-      actual.completeAs(expected)
-    }
-
-    def testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnFailedResult: Result = {
+    def testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
       val compat                 = new CatsEffectIoCompatForFuture
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -3092,13 +2988,10 @@ object CanRecoverSyntaxSpec {
         fa.recoverEitherFromNonFatalWith {
           case NonFatal(_) => IO.pure(123.asRight[SomeError])
         }
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal: Result = {
+    def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
       val compat                 = new CatsEffectIoCompatForFuture
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -3114,9 +3007,6 @@ object CanRecoverSyntaxSpec {
       val actualSuccessResult   = fa.recoverEitherTFromNonFatalWith {
         case NonFatal(`expectedExpcetion`) => IO.pure(123.asRight[SomeError])
       }.value
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
 
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
@@ -3146,23 +3036,21 @@ object CanRecoverSyntaxSpec {
 
     }
 
-    def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult: Result = {
+    def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult: Result =
+      withIO { implicit ticker =>
 
-      val compat                 = new CatsEffectIoCompatForFuture
-      implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+        val compat                 = new CatsEffectIoCompatForFuture
+        implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
-      val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
-      val expected = 1.asRight[SomeError]
-      val actual   = fa.recoverEitherTFromNonFatalWith {
-        case NonFatal(_) => IO.pure(123.asRight[SomeError])
-      }.value
+        val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
+        val expected = 1.asRight[SomeError]
+        val actual   = fa.recoverEitherTFromNonFatalWith {
+          case NonFatal(_) => IO.pure(123.asRight[SomeError])
+        }.value
+        actual.completeAs(expected)
+      }
 
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
-      actual.completeAs(expected)
-    }
-
-    def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnFailedResult: Result = {
+    def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
       val compat                 = new CatsEffectIoCompatForFuture
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -3174,15 +3062,12 @@ object CanRecoverSyntaxSpec {
         fa.recoverEitherTFromNonFatalWith {
           case NonFatal(_) => IO.pure(123.asRight[SomeError])
         }.value
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
     // /
 
-    def testCanRecover_IO_recoverFromNonFatalShouldRecoverFromNonFatal: Result = {
+    def testCanRecover_IO_recoverFromNonFatalShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
       val compat                 = new CatsEffectIoCompatForFuture
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -3195,9 +3080,6 @@ object CanRecoverSyntaxSpec {
           case NonFatal(`expectedExpcetion`) =>
             expected
         }
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
@@ -3224,7 +3106,7 @@ object CanRecoverSyntaxSpec {
 
     }
 
-    def testCanRecover_IO_recoverFromNonFatalShouldReturnSuccessfulResult: Result = {
+    def testCanRecover_IO_recoverFromNonFatalShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
       val compat                 = new CatsEffectIoCompatForFuture
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -3232,13 +3114,10 @@ object CanRecoverSyntaxSpec {
       val fa       = run[IO, Int](1)
       val expected = 1
       val actual   = fa.recoverFromNonFatal { case NonFatal(_) => 999 }
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanRecover_IO_recoverFromNonFatalEitherShouldRecoverFromNonFatal: Result = {
+    def testCanRecover_IO_recoverFromNonFatalEitherShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
       val compat                 = new CatsEffectIoCompatForFuture
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -3250,9 +3129,6 @@ object CanRecoverSyntaxSpec {
 
       val expectedSuccessResult = 1.asRight[SomeError]
       val actualSuccessResult   = fa.recoverFromNonFatal { case NonFatal(`expectedExpcetion`) => 1.asRight[SomeError] }
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
 
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
@@ -3280,7 +3156,7 @@ object CanRecoverSyntaxSpec {
 
     }
 
-    def testCanRecover_IO_recoverFromNonFatalEitherShouldReturnSuccessfulResult: Result = {
+    def testCanRecover_IO_recoverFromNonFatalEitherShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
       val compat                 = new CatsEffectIoCompatForFuture
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -3288,13 +3164,10 @@ object CanRecoverSyntaxSpec {
       val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
       val expected = 1.asRight[SomeError]
       val actual   = fa.recoverFromNonFatal { case NonFatal(_) => 999.asRight[SomeError] }
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanRecover_IO_recoverFromNonFatalEitherShouldReturnFailedResult: Result = {
+    def testCanRecover_IO_recoverFromNonFatalEitherShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
       val compat                 = new CatsEffectIoCompatForFuture
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -3303,13 +3176,10 @@ object CanRecoverSyntaxSpec {
       val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
       val expected        = expectedFailure.asLeft[Int]
       val actual          = fa.recoverFromNonFatal { case NonFatal(_) => 123.asRight[SomeError] }
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanRecover_IO_recoverEitherFromNonFatalShouldRecoverFromNonFatal: Result = {
+    def testCanRecover_IO_recoverEitherFromNonFatalShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
       val compat                 = new CatsEffectIoCompatForFuture
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -3325,9 +3195,6 @@ object CanRecoverSyntaxSpec {
       val actualSuccessResult   = fa.recoverEitherFromNonFatal {
         case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError]
       }
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
 
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
@@ -3358,7 +3225,7 @@ object CanRecoverSyntaxSpec {
 
     }
 
-    def testCanRecover_IO_recoverEitherFromNonFatalShouldReturnSuccessfulResult: Result = {
+    def testCanRecover_IO_recoverEitherFromNonFatalShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
       val compat                 = new CatsEffectIoCompatForFuture
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -3367,13 +3234,10 @@ object CanRecoverSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   =
         fa.recoverEitherFromNonFatal { case NonFatal(_) => 123.asRight[SomeError] }
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanRecover_IO_recoverEitherFromNonFatalShouldReturnFailedResult: Result = {
+    def testCanRecover_IO_recoverEitherFromNonFatalShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
       val compat                 = new CatsEffectIoCompatForFuture
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -3383,13 +3247,10 @@ object CanRecoverSyntaxSpec {
       val expected        = expectedFailure.asLeft[Int]
       val actual          =
         fa.recoverEitherFromNonFatal { case NonFatal(_) => 123.asRight[SomeError] }
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanRecover_IO_recoverEitherTFromNonFatalShouldRecoverFromNonFatal: Result = {
+    def testCanRecover_IO_recoverEitherTFromNonFatalShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
       val compat                 = new CatsEffectIoCompatForFuture
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -3405,9 +3266,6 @@ object CanRecoverSyntaxSpec {
       val actualSuccessResult   = fa.recoverEitherTFromNonFatal {
         case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError]
       }.value
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
 
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
@@ -3438,7 +3296,7 @@ object CanRecoverSyntaxSpec {
 
     }
 
-    def testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnSuccessfulResult: Result = {
+    def testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
       val compat                 = new CatsEffectIoCompatForFuture
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -3447,13 +3305,10 @@ object CanRecoverSyntaxSpec {
       val expected = 1.asRight[SomeError]
       val actual   =
         fa.recoverEitherTFromNonFatal { case NonFatal(_) => 123.asRight[SomeError] }.value
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
-    def testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnFailedResult: Result = {
+    def testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
       val compat                 = new CatsEffectIoCompatForFuture
       implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
@@ -3462,9 +3317,6 @@ object CanRecoverSyntaxSpec {
       val fa              = EitherT(run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
       val expected        = expectedFailure.asLeft[Int]
       val actual          = fa.recoverEitherTFromNonFatal { case NonFatal(_) => 123.asRight[SomeError] }.value
-
-      import CatsEffectRunner._
-      implicit val ticket: Ticker = Ticker(TestContext())
       actual.completeAs(expected)
     }
 
