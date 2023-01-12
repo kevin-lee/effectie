@@ -3,7 +3,7 @@ package effectie.instances.ce3
 import cats.data.EitherT
 import cats.effect._
 import cats.effect.unsafe.IORuntime
-import cats.syntax.either.catsSyntaxEitherId
+import cats.syntax.all._
 import cats.{Eq, Functor, Id, Monad}
 import effectie.SomeControlThrowable
 import effectie.core._
@@ -13,7 +13,7 @@ import effectie.syntax.error._
 import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
-import extras.hedgehog.cats.effect.CatsEffectRunner
+import extras.hedgehog.ce3.syntax.runner._
 import fx._
 import hedgehog._
 import hedgehog.runner._
@@ -29,11 +29,10 @@ object fxSpec extends Properties {
   private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
   private val assertWithAttempt: (IO[Int], Either[Throwable, Int]) => Result = { (ioA, expected) =>
-    import CatsEffectRunner._
-    implicit val ticket: Ticker = Ticker(TestContext())
-
-    ioA.attempt.completeThen { actual =>
-      (actual ==== expected).log(s"$actual does not equal to $expected")
+    withIO { implicit ticker =>
+      ioA.attempt.completeThen { actual =>
+        (actual ==== expected).log(s"$actual does not equal to $expected")
+      }
     }
   }
 
@@ -44,49 +43,49 @@ object fxSpec extends Properties {
     property(
       "test Fx[IO].effectOf",
       FxSpecs.testEffectOf[IO] { io =>
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
-        io.completeAs(())
+        withIO { implicit ticker =>
+          io.completeAs(())
+        }
       },
     ),
     property(
       "test Fx[IO].pureOf",
       FxSpecs.testPureOf[IO] { io =>
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
-        io.completeAs(())
+        withIO { implicit ticker =>
+          io.completeAs(())
+        }
       },
     ),
     property(
       "test Fx[IO].pureOrError(success case)",
       FxSpecs.testPureOrErrorSuccessCase[IO] { io =>
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
-        io.completeAs(())
+        withIO { implicit ticker =>
+          io.completeAs(())
+        }
       },
     ),
     example(
       "test Fx[IO].pureOrError(error case)",
       FxSpecs.testPureOrErrorErrorCase[IO] { (io, expectedError) =>
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
-        io.expectError(expectedError)
+        withIO { implicit ticker =>
+          io.expectError(expectedError)
+        }
       },
     ),
     example(
       "test Fx[IO].unitOf",
       FxSpecs.testUnitOf[IO] { io =>
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
-        io.completeAs(())
+        withIO { implicit ticker =>
+          io.completeAs(())
+        }
       },
     ),
     example(
       "test Fx[IO].errorOf",
       FxSpecs.testErrorOf[IO] { (io, expectedError) =>
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
-        io.expectError(expectedError)
+        withIO { implicit ticker =>
+          io.expectError(expectedError)
+        }
       },
     ),
     property("test Fx[IO].fromEither(Right)", FxSpecs.testFromEitherRightCase[IO](assertWithAttempt)),
@@ -815,9 +814,8 @@ object fxSpec extends Properties {
   object IoSpec {
 
     def testMonadLaws1_Identity: Property = {
-      import CatsEffectRunner._
       import cats.syntax.eq._
-      implicit val ticket: Ticker = Ticker(TestContext())
+      implicit val ticket: Ticker = Ticker.withNewTestContext()
 
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).completeAndEqualTo(true)
@@ -826,9 +824,8 @@ object fxSpec extends Properties {
     }
 
     def testMonadLaws2_Composition: Property = {
-      import CatsEffectRunner._
       import cats.syntax.eq._
-      implicit val ticket: Ticker = Ticker(TestContext())
+      implicit val ticket: Ticker = Ticker.withNewTestContext()
 
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).completeAndEqualTo(true)
@@ -837,9 +834,8 @@ object fxSpec extends Properties {
     }
 
     def testMonadLaws3_IdentityAp: Property = {
-      import CatsEffectRunner._
       import cats.syntax.eq._
-      implicit val ticket: Ticker = Ticker(TestContext())
+      implicit val ticket: Ticker = Ticker.withNewTestContext()
 
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).completeAndEqualTo(true)
@@ -848,9 +844,8 @@ object fxSpec extends Properties {
     }
 
     def testMonadLaws4_Homomorphism: Property = {
-      import CatsEffectRunner._
       import cats.syntax.eq._
-      implicit val ticket: Ticker = Ticker(TestContext())
+      implicit val ticket: Ticker = Ticker.withNewTestContext()
 
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).completeAndEqualTo(true)
@@ -859,9 +854,8 @@ object fxSpec extends Properties {
     }
 
     def testMonadLaws5_Interchange: Property = {
-      import CatsEffectRunner._
       import cats.syntax.eq._
-      implicit val ticket: Ticker = Ticker(TestContext())
+      implicit val ticket: Ticker = Ticker.withNewTestContext()
 
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).completeAndEqualTo(true)
@@ -870,9 +864,8 @@ object fxSpec extends Properties {
     }
 
     def testMonadLaws6_CompositionAp: Property = {
-      import CatsEffectRunner._
       import cats.syntax.eq._
-      implicit val ticket: Ticker = Ticker(TestContext())
+      implicit val ticket: Ticker = Ticker.withNewTestContext()
 
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).completeAndEqualTo(true)
@@ -881,9 +874,8 @@ object fxSpec extends Properties {
     }
 
     def testMonadLaws7_LeftIdentity: Property = {
-      import CatsEffectRunner._
       import cats.syntax.eq._
-      implicit val ticket: Ticker = Ticker(TestContext())
+      implicit val ticket: Ticker = Ticker.withNewTestContext()
 
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).completeAndEqualTo(true)
@@ -892,9 +884,8 @@ object fxSpec extends Properties {
     }
 
     def testMonadLaws8_RightIdentity: Property = {
-      import CatsEffectRunner._
       import cats.syntax.eq._
-      implicit val ticket: Ticker = Ticker(TestContext())
+      implicit val ticket: Ticker = Ticker.withNewTestContext()
 
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).completeAndEqualTo(true)
@@ -903,9 +894,8 @@ object fxSpec extends Properties {
     }
 
     def testMonadLaws9_Associativity: Property = {
-      import CatsEffectRunner._
       import cats.syntax.eq._
-      implicit val ticket: Ticker = Ticker(TestContext())
+      implicit val ticket: Ticker = Ticker.withNewTestContext()
 
       implicit val eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).completeAndEqualTo(true)
@@ -917,10 +907,7 @@ object fxSpec extends Properties {
 
     object CanCatchSpec {
 
-      def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = withIO { implicit ticker =>
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
@@ -952,10 +939,7 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanCatch_IO_catchNonFatalThrowableShouldReturnSuccessfulResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanCatch_IO_catchNonFatalThrowableShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
         val fa: IO[Int] = run[IO, Int](1)
         val expected    = 1.asRight[Throwable]
@@ -964,10 +948,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanCatch_IO_catchNonFatalShouldCatchNonFatal: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanCatch_IO_catchNonFatalShouldCatchNonFatal: Result = withIO { implicit ticker =>
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
@@ -999,10 +980,7 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanCatch_IO_catchNonFatalShouldReturnSuccessfulResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanCatch_IO_catchNonFatalShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
         val fa: IO[Int] = run[IO, Int](1)
         val expected    = 1.asRight[SomeError]
@@ -1011,10 +989,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanCatch_IO_catchNonFatalEitherShouldCatchNonFatal: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanCatch_IO_catchNonFatalEitherShouldCatchNonFatal: Result = withIO { implicit ticker =>
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa       = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -1046,10 +1021,7 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanCatch_IO_catchNonFatalEitherShouldReturnSuccessfulResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanCatch_IO_catchNonFatalEitherShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
         val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
         val expected = 1.asRight[SomeError]
@@ -1058,10 +1030,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanCatch_IO_catchNonFatalEitherShouldReturnFailedResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanCatch_IO_catchNonFatalEitherShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
         val expectedFailure = SomeError.message("Failed")
         val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
@@ -1071,10 +1040,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanCatch_IO_catchNonFatalEitherTShouldCatchNonFatal: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanCatch_IO_catchNonFatalEitherTShouldCatchNonFatal: Result = withIO { implicit ticker =>
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
@@ -1106,10 +1072,7 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanCatch_IO_catchNonFatalEitherTShouldReturnSuccessfulResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanCatch_IO_catchNonFatalEitherTShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
         val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
         val expected = 1.asRight[SomeError]
@@ -1118,10 +1081,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanCatch_IO_catchNonFatalEitherTShouldReturnFailedResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanCatch_IO_catchNonFatalEitherTShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
         val expectedFailure = SomeError.message("Failed")
         val fa              = EitherT(run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
@@ -1135,10 +1095,7 @@ object fxSpec extends Properties {
 
     object CanHandleErrorSpec {
 
-      def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = withIO { implicit ticker =>
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
@@ -1174,10 +1131,7 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanHandleError_IO_handleNonFatalWithShouldReturnSuccessfulResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanHandleError_IO_handleNonFatalWithShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
         val fa       = run[IO, Int](1)
         val expected = 1
@@ -1186,10 +1140,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanHandleError_IO_handleNonFatalWithEitherShouldHandleNonFatalWith: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanHandleError_IO_handleNonFatalWithEitherShouldHandleNonFatalWith: Result = withIO { implicit ticker =>
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -1226,22 +1177,17 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanHandleError_IO_handleNonFatalWithEitherShouldReturnSuccessfulResult: Result = {
+      def testCanHandleError_IO_handleNonFatalWithEitherShouldReturnSuccessfulResult: Result =
+        withIO { implicit ticker =>
 
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+          val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
+          val expected = 1.asRight[SomeError]
+          val actual   = Fx[IO].handleNonFatalWith(fa)(_ => IO(999.asRight[SomeError]))
 
-        val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
-        val expected = 1.asRight[SomeError]
-        val actual   = Fx[IO].handleNonFatalWith(fa)(_ => IO(999.asRight[SomeError]))
+          actual.completeAs(expected)
+        }
 
-        actual.completeAs(expected)
-      }
-
-      def testCanHandleError_IO_handleNonFatalWithEitherShouldReturnFailedResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanHandleError_IO_handleNonFatalWithEitherShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
         val expectedFailure = SomeError.message("Failed")
         val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
@@ -1251,10 +1197,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanHandleError_IO_handleEitherNonFatalWithShouldHandleNonFatalWith: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanHandleError_IO_handleEitherNonFatalWithShouldHandleNonFatalWith: Result = withIO { implicit ticker =>
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -1294,23 +1237,18 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanHandleError_IO_handleEitherNonFatalWithShouldReturnSuccessfulResult: Result = {
+      def testCanHandleError_IO_handleEitherNonFatalWithShouldReturnSuccessfulResult: Result =
+        withIO { implicit ticker =>
 
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+          val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
+          val expected = 1.asRight[SomeError]
+          val actual   =
+            Fx[IO].handleEitherNonFatalWith(fa)(_ => IO.pure(123.asRight[SomeError]))
 
-        val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
-        val expected = 1.asRight[SomeError]
-        val actual   =
-          Fx[IO].handleEitherNonFatalWith(fa)(_ => IO.pure(123.asRight[SomeError]))
+          actual.completeAs(expected)
+        }
 
-        actual.completeAs(expected)
-      }
-
-      def testCanHandleError_IO_handleEitherNonFatalWithShouldReturnFailedResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanHandleError_IO_handleEitherNonFatalWithShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
         val expectedFailure = SomeError.message("Failed")
         val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
@@ -1321,10 +1259,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanHandleError_IO_handleEitherTNonFatalWithShouldHandleNonFatalWith: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanHandleError_IO_handleEitherTNonFatalWithShouldHandleNonFatalWith: Result = withIO { implicit ticker =>
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
@@ -1366,23 +1301,18 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnSuccessfulResult: Result = {
+      def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnSuccessfulResult: Result =
+        withIO { implicit ticker =>
 
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+          val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
+          val expected = 1.asRight[SomeError]
+          val actual   =
+            Fx[IO].handleEitherTNonFatalWith(fa)(_ => IO.pure(123.asRight[SomeError])).value
 
-        val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
-        val expected = 1.asRight[SomeError]
-        val actual   =
-          Fx[IO].handleEitherTNonFatalWith(fa)(_ => IO.pure(123.asRight[SomeError])).value
+          actual.completeAs(expected)
+        }
 
-        actual.completeAs(expected)
-      }
-
-      def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnFailedResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
         val expectedFailure = SomeError.message("Failed")
         val fa              = EitherT(run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
@@ -1393,10 +1323,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanHandleError_IO_handleNonFatalShouldHandleNonFatal: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanHandleError_IO_handleNonFatalShouldHandleNonFatal: Result = withIO { implicit ticker =>
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
@@ -1432,10 +1359,7 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanHandleError_IO_handleNonFatalShouldReturnSuccessfulResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanHandleError_IO_handleNonFatalShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
         val fa       = run[IO, Int](1)
         val expected = 1
@@ -1444,10 +1368,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanHandleError_IO_handleNonFatalEitherShouldHandleNonFatal: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanHandleError_IO_handleNonFatalEitherShouldHandleNonFatal: Result = withIO { implicit ticker =>
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -1482,10 +1403,7 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanHandleError_IO_handleNonFatalEitherShouldReturnSuccessfulResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanHandleError_IO_handleNonFatalEitherShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
         val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
         val expected = 1.asRight[SomeError]
@@ -1494,10 +1412,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanHandleError_IO_handleNonFatalEitherShouldReturnFailedResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanHandleError_IO_handleNonFatalEitherShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
         val expectedFailure = SomeError.message("Failed")
         val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
@@ -1507,10 +1422,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanHandleError_IO_handleEitherNonFatalShouldHandleNonFatal: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanHandleError_IO_handleEitherNonFatalShouldHandleNonFatal: Result = withIO { implicit ticker =>
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -1550,10 +1462,7 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanHandleError_IO_handleEitherNonFatalShouldReturnSuccessfulResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanHandleError_IO_handleEitherNonFatalShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
         val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
         val expected = 1.asRight[SomeError]
@@ -1562,10 +1471,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanHandleError_IO_handleEitherNonFatalShouldReturnFailedResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanHandleError_IO_handleEitherNonFatalShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
         val expectedFailure = SomeError.message("Failed")
         val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
@@ -1576,10 +1482,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanHandleError_IO_handleEitherTNonFatalShouldHandleNonFatal: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanHandleError_IO_handleEitherTNonFatalShouldHandleNonFatal: Result = withIO { implicit ticker =>
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
@@ -1621,10 +1524,7 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanHandleError_IO_handleEitherTNonFatalShouldReturnSuccessfulResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanHandleError_IO_handleEitherTNonFatalShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
         val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
         val expected = 1.asRight[SomeError]
@@ -1633,10 +1533,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanHandleError_IO_handleEitherTNonFatalShouldReturnFailedResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanHandleError_IO_handleEitherTNonFatalShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
         val expectedFailure = SomeError.message("Failed")
         val fa              = EitherT(run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
@@ -1651,10 +1548,7 @@ object fxSpec extends Properties {
 
     object CanRecoverSpec {
 
-      def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
@@ -1690,10 +1584,7 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanRecover_IO_recoverFromNonFatalWithShouldReturnSuccessfulResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanRecover_IO_recoverFromNonFatalWithShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
         val expected = 1
         val fa       = run[IO, Int](expected)
@@ -1705,9 +1596,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanRecover_IO_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal: Result = {
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanRecover_IO_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -1751,25 +1640,20 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult: Result = {
+      def testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult: Result =
+        withIO { implicit ticker =>
 
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+          val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
+          val expected = 1.asRight[SomeError]
+          val actual   = Fx[IO]
+            .recoverFromNonFatalWith(fa) {
+              case NonFatal(_) => IO(999.asRight[SomeError])
+            }
 
-        val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
-        val expected = 1.asRight[SomeError]
-        val actual   = Fx[IO]
-          .recoverFromNonFatalWith(fa) {
-            case NonFatal(_) => IO(999.asRight[SomeError])
-          }
+          actual.completeAs(expected)
+        }
 
-        actual.completeAs(expected)
-      }
-
-      def testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnFailedResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
         val expectedFailure = SomeError.message("Failed")
         val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
@@ -1782,10 +1666,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanRecover_IO_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanRecover_IO_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -1829,25 +1710,20 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult: Result = {
+      def testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult: Result =
+        withIO { implicit ticker =>
 
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+          val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
+          val expected = 1.asRight[SomeError]
+          val actual   = Fx[IO]
+            .recoverEitherFromNonFatalWith(fa) {
+              case NonFatal(_) => IO.pure(123.asRight[SomeError])
+            }
 
-        val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
-        val expected = 1.asRight[SomeError]
-        val actual   = Fx[IO]
-          .recoverEitherFromNonFatalWith(fa) {
-            case NonFatal(_) => IO.pure(123.asRight[SomeError])
-          }
+          actual.completeAs(expected)
+        }
 
-        actual.completeAs(expected)
-      }
-
-      def testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnFailedResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
         val expectedFailure = SomeError.message("Failed")
         val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
@@ -1861,29 +1737,27 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal: Result = {
+      def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal: Result =
+        withIO { implicit ticker =>
 
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+          val expectedExpcetion = new RuntimeException("Something's wrong")
+          val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+          val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+          val actualFailedResult   = Fx[IO]
+            .recoverEitherTFromNonFatalWith(fa) {
+              case err => IO.pure(SomeError.someThrowable(err).asLeft[Int])
+            }
+            .value
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-        val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
-        val actualFailedResult   = Fx[IO]
-          .recoverEitherTFromNonFatalWith(fa) {
-            case err => IO.pure(SomeError.someThrowable(err).asLeft[Int])
-          }
-          .value
+          val expectedSuccessResult = 123.asRight[SomeError]
+          val actualSuccessResult   = Fx[IO]
+            .recoverEitherTFromNonFatalWith(fa) {
+              case NonFatal(`expectedExpcetion`) => IO.pure(123.asRight[SomeError])
+            }
+            .value
 
-        val expectedSuccessResult = 123.asRight[SomeError]
-        val actualSuccessResult   = Fx[IO]
-          .recoverEitherTFromNonFatalWith(fa) {
-            case NonFatal(`expectedExpcetion`) => IO.pure(123.asRight[SomeError])
-          }
-          .value
-
-        actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
-      }
+          actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
+        }
 
       @SuppressWarnings(Array("org.wartremover.warts.ToString"))
       def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldNotCatchFatal: Result = {
@@ -1910,26 +1784,21 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult: Result = {
+      def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult: Result =
+        withIO { implicit ticker =>
 
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+          val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
+          val expected = 1.asRight[SomeError]
+          val actual   = Fx[IO]
+            .recoverEitherTFromNonFatalWith(fa) {
+              case NonFatal(_) => IO.pure(123.asRight[SomeError])
+            }
+            .value
 
-        val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
-        val expected = 1.asRight[SomeError]
-        val actual   = Fx[IO]
-          .recoverEitherTFromNonFatalWith(fa) {
-            case NonFatal(_) => IO.pure(123.asRight[SomeError])
-          }
-          .value
+          actual.completeAs(expected)
+        }
 
-        actual.completeAs(expected)
-      }
-
-      def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnFailedResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
         val expectedFailure = SomeError.message("Failed")
         val fa              = EitherT(run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
@@ -1946,10 +1815,7 @@ object fxSpec extends Properties {
 
       // /
 
-      def testCanRecover_IO_recoverFromNonFatalShouldRecoverFromNonFatal: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanRecover_IO_recoverFromNonFatalShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
@@ -1986,10 +1852,7 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanRecover_IO_recoverFromNonFatalShouldReturnSuccessfulResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanRecover_IO_recoverFromNonFatalShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
         val fa       = run[IO, Int](1)
         val expected = 1
@@ -1998,10 +1861,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanRecover_IO_recoverFromNonFatalEitherShouldRecoverFromNonFatal: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanRecover_IO_recoverFromNonFatalEitherShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -2039,10 +1899,7 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanRecover_IO_recoverFromNonFatalEitherShouldReturnSuccessfulResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanRecover_IO_recoverFromNonFatalEitherShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
         val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
         val expected = 1.asRight[SomeError]
@@ -2051,10 +1908,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanRecover_IO_recoverFromNonFatalEitherShouldReturnFailedResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanRecover_IO_recoverFromNonFatalEitherShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
         val expectedFailure = SomeError.message("Failed")
         val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
@@ -2064,10 +1918,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanRecover_IO_recoverEitherFromNonFatalShouldRecoverFromNonFatal: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanRecover_IO_recoverEitherFromNonFatalShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -2112,10 +1963,7 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanRecover_IO_recoverEitherFromNonFatalShouldReturnSuccessfulResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanRecover_IO_recoverEitherFromNonFatalShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
         val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
         val expected = 1.asRight[SomeError]
@@ -2126,10 +1974,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanRecover_IO_recoverEitherFromNonFatalShouldReturnFailedResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanRecover_IO_recoverEitherFromNonFatalShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
         val expectedFailure = SomeError.message("Failed")
         val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
@@ -2141,10 +1986,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanRecover_IO_recoverEitherTFromNonFatalShouldRecoverFromNonFatal: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanRecover_IO_recoverEitherTFromNonFatalShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
@@ -2191,10 +2033,7 @@ object fxSpec extends Properties {
 
       }
 
-      def testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnSuccessfulResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
         val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
         val expected = 1.asRight[SomeError]
@@ -2206,10 +2045,7 @@ object fxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnFailedResult: Result = {
-
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+      def testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
         val expectedFailure = SomeError.message("Failed")
         val fa              = EitherT(run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int]))

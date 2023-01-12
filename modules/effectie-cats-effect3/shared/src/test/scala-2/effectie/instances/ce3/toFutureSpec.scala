@@ -6,7 +6,7 @@ import toFuture._
 import effectie.core.ToFuture
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
-import extras.hedgehog.cats.effect.CatsEffectRunner
+import extras.hedgehog.ce3.syntax.runner._
 import hedgehog._
 import hedgehog.runner._
 
@@ -45,8 +45,7 @@ object toFutureSpec extends Properties {
       implicit val ec                  =
         ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
       ConcurrentSupport.runAndShutdown(es, WaitFor(800.milliseconds)) {
-        import CatsEffectRunner._
-        implicit val ticket: Ticker = Ticker(TestContext())
+        implicit val ticket: Ticker = Ticker.withNewTestContext()
 
         val future   = ToFuture[IO].unsafeToFuture(fa)
         val ioResult = fa.completeAs(expected)

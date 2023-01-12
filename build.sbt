@@ -323,7 +323,7 @@ lazy val props =
 
     final val catsEffect2Version       = "2.4.1"
     final val catsEffect2LatestVersion = "2.5.4"
-    final val catsEffect3Version       = "3.3.5"
+    final val catsEffect3Version       = "3.3.14"
 
     final val cats2_0_0Version       = "2.0.0"
     final val catsEffect2_0_0Version = "2.0.0"
@@ -331,7 +331,7 @@ lazy val props =
     final val monixVersion3_3_0 = "3.3.0"
     final val monixVersion      = "3.4.0"
 
-    final val ExtrasVersion = "0.4.0"
+    final val ExtrasVersion = "0.25.0"
   }
 
 lazy val libs =
@@ -366,7 +366,7 @@ lazy val libs =
     lazy val extrasConcurrent        = "io.kevinlee" %% "extras-concurrent"         % props.ExtrasVersion % Test
     lazy val extrasConcurrentTesting = "io.kevinlee" %% "extras-concurrent-testing" % props.ExtrasVersion % Test
 
-    lazy val extrasHedgehogCatsEffect3 = "io.kevinlee" %% "extras-hedgehog-cats-effect3" % props.ExtrasVersion % Test
+    lazy val extrasHedgehogCatsEffect3 = "io.kevinlee" %% "extras-hedgehog-ce3" % props.ExtrasVersion % Test
   }
 
 lazy val mavenCentralPublishSettings: SettingsDefinition = List(

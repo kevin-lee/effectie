@@ -8,7 +8,7 @@ import effectie.instances.ce3.toFuture.given
 import effectie.core.ToFuture
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
-import extras.hedgehog.cats.effect.CatsEffectRunner
+import extras.hedgehog.ce3.syntax.runner._
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -43,9 +43,9 @@ object toFutureSpec extends Properties {
       given es: ExecutorService  = ConcurrentSupport.newExecutorService(2)
       given ec: ExecutionContext =
         ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
+
       ConcurrentSupport.runAndShutdown(es, WaitFor(800.milliseconds)) {
-        import CatsEffectRunner.*
-        given ticket: Ticker = Ticker(TestContext())
+        given ticket: Ticker = Ticker.withNewTestContext()
 
         val future   = ToFuture[IO].unsafeToFuture(fa)
         val ioResult = fa.completeAs(expected)

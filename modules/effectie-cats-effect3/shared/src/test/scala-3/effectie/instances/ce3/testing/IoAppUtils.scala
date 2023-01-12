@@ -11,13 +11,13 @@ import java.util.concurrent.ExecutorService
   */
 object IoAppUtils {
 
-  def runtime(es: ExecutorService): IORuntime = {
-    lazy val runtime: IORuntime = {
-//      val computeWorkerThreadCount = Math.max(2, Runtime.getRuntime().availableProcessors() >> 2)
-//      val (compute, compDown) =
-//        IORuntime.createDefaultComputeThreadPool(runtime, threads = computeWorkerThreadCount)
+  def runtime(es: ExecutorService): IORuntime = runtime()
 
-      val ec = ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
+  def runtime(): IORuntime = {
+    lazy val runtime: IORuntime = {
+
+      val (compute, compDown) =
+        IORuntime.createDefaultComputeThreadPool(runtime)
 
       val (blocking, blockDown) =
         IORuntime.createDefaultBlockingExecutionContext()
@@ -26,11 +26,11 @@ object IoAppUtils {
         IORuntime.createDefaultScheduler()
 
       IORuntime(
-        ec,
+        compute,
         blocking,
         scheduler,
         { () =>
-          es.shutdown()
+          compDown()
           blockDown()
           schedDown()
         },
