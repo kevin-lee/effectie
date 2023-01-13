@@ -1,6 +1,6 @@
 package effectie.resource
 
-import cats.effect.kernel.MonadCancelThrow
+import cats.effect.MonadCancelThrow
 import cats.effect.{Resource, Sync}
 
 /** @author Kevin Lee
