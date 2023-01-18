@@ -1,4 +1,5 @@
 ---
+sidebar_position: 1
 id: getting-started
 title: Getting Started
 slug: "/"
@@ -16,10 +17,10 @@ import TabItem from '@theme/TabItem';
 
 | Project | Maven Central |
 | ------: | ------------- |
-| effectie-cats-effect3 | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kevinlee/effectie-cats-effect3_2.13/badge.svg)](https://search.maven.org/artifact/io.kevinlee/effectie-cats-effect3_2.13) |
-| effectie-cats-effect | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kevinlee/effectie-cats-effect_2.13/badge.svg)](https://search.maven.org/artifact/io.kevinlee/effectie-cats-effect_2.13) |
-| effectie-monix | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kevinlee/effectie-monix_2.13/badge.svg)](https://search.maven.org/artifact/io.kevinlee/effectie-monix_2.13) |
-| effectie-scalaz-effect | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kevinlee/effectie-scalaz-effect_2.13/badge.svg)](https://search.maven.org/artifact/io.kevinlee/effectie-scalaz-effect_2.13) |
+| effectie-cats-effect3 | [![Maven Central](https://img.shields.io/maven-central/v/io.kevinlee/effectie-cats-effect3_2.13?versionPrefix=1)](https://search.maven.org/artifact/io.kevinlee/effectie-cats-effect3_2.13) |
+| effectie-cats-effect | [![Maven Central](https://img.shields.io/maven-central/v/io.kevinlee/effectie-cats-effect_2.13?versionPrefix=1)](https://search.maven.org/artifact/io.kevinlee/effectie-cats-effect_2.13) |
+| effectie-monix | [![Maven Central](https://img.shields.io/maven-central/v/io.kevinlee/effectie-monix_2.13?versionPrefix=1)](https://search.maven.org/artifact/io.kevinlee/effectie-monix_2.13) |
+| effectie-scalaz-effect | [![Maven Central](https://img.shields.io/maven-central/v/io.kevinlee/effectie-scalaz-effect_2.13?versionPrefix=1)](https://search.maven.org/artifact/io.kevinlee/effectie-scalaz-effect_2.13) |
 
 * Supported Scala Versions: @SUPPORTED_SCALA_VERSIONS@
 
