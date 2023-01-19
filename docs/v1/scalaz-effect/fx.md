@@ -1,4 +1,5 @@
 ---
+sidebar_position: 1
 layout: docs
 id: fx
 title: "Fx"

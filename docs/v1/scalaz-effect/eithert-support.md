@@ -1,4 +1,5 @@
 ---
+sidebar_position: 4
 layout: docs
 title: "EitherTSupport"
 ---

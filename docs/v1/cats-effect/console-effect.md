@@ -1,4 +1,5 @@
 ---
+sidebar_position: 7
 id: console-effect
 title: "ConsoleEffect"
 ---
