@@ -288,6 +288,15 @@ lazy val docsV1 = (project in file("docs-gen-tmp/docs-v1"))
   )
   .settings(noPublish)
 
+addCommandAlias(
+  "docsCleanAll",
+  "; docs/clean; docsV1/clean",
+)
+addCommandAlias(
+  "docsMdocAll",
+  "; docs/mdoc; docsV1/mdoc",
+)
+
 def getTheLatestTaggedVersion(): String = {
   import sys.process._
   "git fetch --tags".!
