@@ -73,8 +73,8 @@ lazy val core = module(ProjectName("core"), crossProject(JVMPlatform, JSPlatform
   .settings(
     description         := "Effect Utils - Core",
     libraryDependencies ++= List(
-      libs.extrasConcurrent,
-      libs.extrasConcurrentTesting,
+      libs.tests.extrasConcurrent,
+      libs.tests.extrasConcurrentTesting,
       libs.libCatsCore(props.catsVersion),
     ) ++ (
       if (scalaVersion.value.startsWith("2.12"))
@@ -98,8 +98,8 @@ lazy val syntax    = module(ProjectName("syntax"), crossProject(JVMPlatform, JSP
     description         := "Effect Utils - Syntax",
     libraryDependencies ++= List(
       libs.libCatsCore(props.catsVersion),
-      libs.extrasConcurrent,
-      libs.extrasConcurrentTesting,
+      libs.tests.extrasConcurrent,
+      libs.tests.extrasConcurrentTesting,
     ),
     libraryDependencies :=
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
@@ -115,8 +115,8 @@ lazy val cats = module(ProjectName("cats"), crossProject(JVMPlatform, JSPlatform
     description         := "Effect Utils - Cats",
     libraryDependencies ++= List(
       libs.libCatsCore(props.catsVersion),
-      libs.extrasConcurrent,
-      libs.extrasConcurrentTesting,
+      libs.tests.extrasConcurrent,
+      libs.tests.extrasConcurrentTesting,
     ),
     libraryDependencies :=
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
@@ -240,10 +240,40 @@ lazy val monix3Js  = monix3
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
 
-lazy val docs = (project in file("generated-docs"))
+lazy val docs = (project in file("docs-gen-tmp/docs"))
   .enablePlugins(MdocPlugin, DocusaurPlugin)
   .settings(
-    name                := prefixedProjectName("docs"),
+    name                := "docs",
+    mdocIn              := file("docs/latest"),
+    mdocOut             := file("generated-docs/docs"),
+    cleanFiles += ((ThisBuild / baseDirectory).value / "generated-docs" / "docs"),
+    scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
+    libraryDependencies ++= {
+      val latestTag = getTheLatestTaggedVersion()
+      List(
+        "io.kevinlee" %% "effectie-cats-effect2" % latestTag,
+        "io.kevinlee" %% "effectie-monix3"       % latestTag,
+        libs.extrasCats,
+        libs.extrasConcurrent,
+      )
+    },
+    libraryDependencies := libraryDependenciesPostProcess(
+      isScala3(scalaVersion.value),
+      libraryDependencies.value,
+    ),
+    mdocVariables       := createMdocVariables(none),
+    docusaurDir         := (ThisBuild / baseDirectory).value / "website",
+    docusaurBuildDir    := docusaurDir.value / "build",
+  )
+  .settings(noPublish)
+
+lazy val docsV1 = (project in file("docs-gen-tmp/docs-v1"))
+  .enablePlugins(MdocPlugin)
+  .settings(
+    name                := "docs",
+    mdocIn              := file("docs/v1"),
+    mdocOut             := file("website/versioned_docs/version-v1/docs"),
+    cleanFiles += ((ThisBuild / baseDirectory).value / "website" / "versioned_docs" / "version-v1"),
     scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
     libraryDependencies ++= List(
       "io.kevinlee" %% "effectie-cats-effect"   % "1.16.0",
@@ -254,29 +284,33 @@ lazy val docs = (project in file("generated-docs"))
       isScala3(scalaVersion.value),
       libraryDependencies.value,
     ),
-    mdocVariables       := Map(
-//      "VERSION"                  -> {
-//        import sys.process._
-//        "git fetch --tags".!
-//        val tag = "git rev-list --tags --max-count=1".!!.trim
-//        s"git describe --tags $tag".!!.trim.stripPrefix("v")
-//      },
-      "VERSION"                  -> "1.16.0",
-      "SUPPORTED_SCALA_VERSIONS" -> {
-        val versions = props
-          .CrossScalaVersions
-          .map(CrossVersion.binaryScalaVersion)
-          .map(binVer => s"`$binVer`")
-        if (versions.length > 1)
-          s"${versions.init.mkString(", ")} and ${versions.last}"
-        else
-          versions.mkString
-      },
-    ),
-    docusaurDir         := (ThisBuild / baseDirectory).value / "website",
-    docusaurBuildDir    := docusaurDir.value / "build",
+    mdocVariables       := createMdocVariables("1.16.0".some),
   )
   .settings(noPublish)
+
+def getTheLatestTaggedVersion(): String = {
+  import sys.process._
+  "git fetch --tags".!
+  val tag = "git rev-list --tags --max-count=1".!!.trim
+  s"git describe --tags $tag".!!.trim.stripPrefix("v")
+}
+
+def createMdocVariables(version: Option[String]): Map[String, String] = Map(
+  "VERSION"                  -> (version match {
+    case Some(version) => version
+    case None => getTheLatestTaggedVersion()
+  }),
+  "SUPPORTED_SCALA_VERSIONS" -> {
+    val versions = props
+      .CrossScalaVersions
+      .map(CrossVersion.binaryScalaVersion)
+      .map(binVer => s"`$binVer`")
+    if (versions.length > 1)
+      s"${versions.init.mkString(", ")} and ${versions.last}"
+    else
+      versions.mkString
+  },
+)
 
 lazy val props =
   new {
@@ -363,10 +397,15 @@ lazy val libs =
 
     lazy val extrasCats = "io.kevinlee" %% "extras-cats" % props.ExtrasVersion
 
-    lazy val extrasConcurrent        = "io.kevinlee" %% "extras-concurrent"         % props.ExtrasVersion % Test
-    lazy val extrasConcurrentTesting = "io.kevinlee" %% "extras-concurrent-testing" % props.ExtrasVersion % Test
+    lazy val extrasConcurrent        = "io.kevinlee" %% "extras-concurrent"         % props.ExtrasVersion
+    lazy val extrasConcurrentTesting = "io.kevinlee" %% "extras-concurrent-testing" % props.ExtrasVersion
 
     lazy val extrasHedgehogCatsEffect3 = "io.kevinlee" %% "extras-hedgehog-ce3" % props.ExtrasVersion % Test
+
+    object tests {
+      lazy val extrasConcurrent        = "io.kevinlee" %% "extras-concurrent"         % props.ExtrasVersion % Test
+      lazy val extrasConcurrentTesting = "io.kevinlee" %% "extras-concurrent-testing" % props.ExtrasVersion % Test
+    }
   }
 
 lazy val mavenCentralPublishSettings: SettingsDefinition = List(
