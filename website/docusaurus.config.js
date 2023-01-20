@@ -46,6 +46,17 @@ const websiteConfig = {
           position: 'left',
         },
         {
+          type: 'docsVersionDropdown',
+          position: 'right',
+          dropdownActiveClassDisabled: true,
+          dropdownItemsAfter: [
+            {
+              to: '/versions',
+              label: 'All versions',
+            },
+          ],
+        },
+        {
           href: 'https://github.com/Kevin-Lee/effectie',
           className: 'header-github-link',
           'aria-label': 'GitHub',
@@ -65,11 +76,11 @@ const websiteConfig = {
             },
             {
               label: 'For Cats Effect',
-              to: 'docs/cats-effect',
+              to: 'docs/cats-effect2',
             },
             {
               label: 'For Scalaz Effect',
-              to: 'docs/scalaz-effect',
+              to: 'docs/monix3',
             },
           ],
         },
@@ -99,8 +110,18 @@ const websiteConfig = {
       '@docusaurus/preset-classic',
       {
         docs: {
-          path: '../generated-docs/target/mdoc/',
+          path: '../generated-docs/docs/',
           sidebarPath: require.resolve('./sidebars.js'),
+          "lastVersion": "current",
+          "versions": {
+            "v1": {
+              "label": "v1",
+              "path": "v1",
+            },
+            "current": {
+              "label": "2.0.0-beta5",
+            },
+          }
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
