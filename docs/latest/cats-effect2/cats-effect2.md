@@ -7,7 +7,7 @@ title: "For Cats Effect"
 
 * [Fx](fx.md)
 * [ConsoleEffect](console-effect.md)
-* [CanCatch](cats-effect2/can-catch.md)
+* [CanCatch](can-catch.md)
 * [CanHandleError](can-handle-error.md)
 * [FromFuture](from-future.md)
 
