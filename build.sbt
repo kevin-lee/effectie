@@ -270,7 +270,7 @@ lazy val docs = (project in file("docs-gen-tmp/docs"))
 lazy val docsV1 = (project in file("docs-gen-tmp/docs-v1"))
   .enablePlugins(MdocPlugin)
   .settings(
-    name                := "docs",
+    name                := "docsV1",
     mdocIn              := file("docs/v1"),
     mdocOut             := file("website/versioned_docs/version-v1/docs"),
     cleanFiles += ((ThisBuild / baseDirectory).value / "website" / "versioned_docs" / "version-v1"),

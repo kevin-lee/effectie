@@ -4,9 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       java-version:
-        description: 'Java Version (e.g. adopt@1.8, adopt@1.11, etc.)'
+        description: 'Java Version (e.g. 11, 17, etc.)'
         required: true
-        default: 'adopt@1.11'
+        default: '11'
+      java-distribution:
+        description: 'Java distribution (e.g. temurin)'
+        required: true
+        default: 'temurin'
       scala-version:
         description: 'Scala Version'
         required: true
@@ -33,9 +37,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3.3.0
-      - uses: olafurpg/setup-scala@v13
+      - uses: actions/setup-java@v3
         with:
           java-version: ${{ matrix.scala.java-version }}
+          distribution: ${{ matrix.scala.java-distribution }}
 
       - name: Cache SBT
         uses: actions/cache@v3.2.3
