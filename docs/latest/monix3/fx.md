@@ -40,10 +40,10 @@ val get1 = Something[Task].get(1)
 get1.runSyncUnsafe()
 ```
 
-If you feel it's too cumbersome to repeat `Fx[F].effectOf()`, consider using [Effectful](#effectful)
+If you feel it's too cumbersome to repeat `Fx[F].effectOf()`, consider using `effectie.syntax`.
 
 
-## Effectful
+## Syntax
 
 If you're sick of repeating `Fx[F].effectOf()` and looking for more convenient ways?, use `Effectful` instead.
 
