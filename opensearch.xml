@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/"
+                       xmlns:moz="http://www.mozilla.org/2006/browser/search/">
+  <ShortName>Effectie</ShortName>
+  <Description>Search Effectie</Description>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Image width="16" height="16" type="image/x-icon">https://effectie.kevinly.dev/img/favicon.png</Image>
+  <Url type="text/html" method="get" template="https://effectie.kevinly.dev/search?q={searchTerms}"/>
+  <Url type="application/opensearchdescription+xml" rel="self" template="https://effectie.kevinly.dev/opensearch.xml" />
+  <moz:SearchForm>https://effectie.kevinly.dev/</moz:SearchForm>
+</OpenSearchDescription>
