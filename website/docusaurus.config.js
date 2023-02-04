@@ -130,9 +130,7 @@ const websiteConfig = {
       },
     ],
   ],
-  plugins: [
-    require.resolve('docusaurus-lunr-search'),
-  ],
+  plugins: [],
 };
 
 if (isSearchable) {
