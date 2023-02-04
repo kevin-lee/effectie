@@ -149,6 +149,9 @@ import effectie.syntax.all._
 import effectie.instances.ce2.fx._
 
 effectOf[IO](println("Hello"))
+
+// effectOf can handle exception properly.
+effectOf[IO][Int](throw new RuntimeException("ERROR"))
 ```
 
   </TabItem>
@@ -162,10 +165,102 @@ import effectie.core._
 import effectie.instances.ce2.fx._
 
 Fx[IO].effectOf(println("Hello"))
+
+// effectOf can handle exception properly.
+Fx[IO].effectOf[Int](throw new RuntimeException("ERROR"))
 ```
 
   </TabItem>
 </Tabs>
+
+## pureOrError
+To construct `F[A]` for a pure value, but it can also throw an exception, you can use `pureOrError` instead of `effectOf`.
+
+If an expression returns a pure value, and it's always the same so there's no point in using `effectOf` for referential transparency, you can use `pureOf`. However, if that expression can also throw an exception, `pureOf` can handle it properly. In this case, `pureOrError` is the right one.
+ 
+e.g.)
+```scala
+val s: String = "abc"
+pureOf[IO](s.substring(5))
+// This immediately throws a StringIndexOutOfBoundsException even though F[_] here is IO.
+```
+
+```scala
+val s: String = "abc"
+pureOrError[IO](s.substring(5))
+// StringIndexOutOfBoundsException is now captured by IO.
+```
+
+
+<Tabs
+groupId="fx"
+defaultValue="syntax"
+values={[
+{label: 'with syntax', value: 'syntax'},
+{label: 'without syntax', value: 'mo-syntax'},
+]}>
+<TabItem value="syntax">
+
+```scala mdoc:reset
+import effectie.core._
+import effectie.syntax.all._
+
+def foo[F[_]: Fx]: F[Int] = pureOrError(1)
+def bar[F[_]: Fx](s: String): F[String] = pureOrError(s.substring(5))
+```
+
+  </TabItem>
+
+  <TabItem value="mo-syntax">
+
+```scala mdoc:reset
+import effectie.core._
+
+def foo[F[_]: Fx]: F[Int] = Fx[F].pureOrError(1)
+def bar[F[_]: Fx](s: String): F[String] = Fx[F].pureOrError(s.substring(5))
+```
+
+  </TabItem>
+</Tabs>
+
+<Tabs
+groupId="fx"
+defaultValue="syntax"
+values={[
+{label: 'with syntax', value: 'syntax'},
+{label: 'without syntax', value: 'mo-syntax'},
+]}>
+<TabItem value="syntax">
+
+```scala mdoc:reset
+import cats.effect._
+import effectie.syntax.all._
+
+import effectie.instances.ce2.fx._
+
+pureOrError[IO](1)
+
+pureOrError[IO]("abc".substring(5))
+```
+
+  </TabItem>
+
+  <TabItem value="mo-syntax">
+
+```scala mdoc:reset
+import cats.effect._
+import effectie.core._
+
+import effectie.instances.ce2.fx._
+
+Fx[IO].pureOrError(1)
+
+Fx[IO].pureOrError("abc".substring(5))
+```
+
+  </TabItem>
+</Tabs>
+
 
 ***
 
