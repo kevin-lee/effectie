@@ -64,14 +64,14 @@ Done
 ```
 
 
-## ConsoleEffectful
+## Syntax
 
-```scala
+```scala modc:compile-only
 import cats._
 import cats.syntax.all._
 
-import effectie.cats.ConsoleEffectful._
 import effectie.core._
+import effectie.syntax.all._
 import effectie.YesNo
 
 trait Something[F[_]] {
