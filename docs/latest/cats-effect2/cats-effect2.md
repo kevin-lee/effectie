@@ -5,10 +5,10 @@ title: "For Cats Effect"
 
 ## Effectie for Cats Effect
 
-* [Fx](fx.md)
+* [Fx](fx/fx.md)
 * [ConsoleEffect](console-effect.md)
-* [CanCatch](can-catch.md)
-* [CanHandleError](can-handle-error.md)
+* [CanCatch](fx/error-handling/can-catch.md)
+* [CanHandleError](fx/error-handling/can-handle-error.md)
 * [FromFuture](from-future.md)
 
 ## All in One Example

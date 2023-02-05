@@ -10,18 +10,55 @@ import TabItem from '@theme/TabItem';
 `CanCatch` lets you catch `NonFatal` `Throwable` in the `F[A]`
  and turned it into `F[Either[Throwable, A]]`. It takes a function from `Throwable` 
  to your own error type, yet it can handle only `NonFatal` ones as already mentioned.
+
+`CanCatch` looks like this.
  
 ```scala
 trait CanCatch[F[_]] {
-  def catchNonFatal[A, B](fb: => F[B])(f: Throwable => A): F[Either[A, B]]
+  def catchNonFatal[A, B](fb: => F[B])(f: PartialFunction[Throwable, A]): F[Either[A, B]]
 
-  def catchNonFatalEither[A, B](fab: => F[Either[A, B]])(f: Throwable => A): F[Either[A, B]]
-
-  def catchNonFatalEitherT[A, B](fab: => EitherT[F, A, B])(f: Throwable => A): EitherT[F, A, B]
+  def catchNonFatalEither[A, AA >: A, B](fab: => F[Either[A, B]])(
+    f: PartialFunction[Throwable, AA]
+  ): F[Either[AA, B]]
 }
 ```
 
+In practice, you don't need to use it directly because `Fx` is already `CanCatch` as well.
+
 ## CanCatch.catchNonFatal
+<Tabs
+  groupId="can-catch"
+  defaultValue="fx"
+  values={[
+    {label: 'Fx', value: 'fx'},
+    {label: 'CanCatch', value: 'cancatch'},
+  ]}>
+  <TabItem value="fx">
+
+```scala
+val fa: F[A] = ...
+Fx[F].catchNonFatal(fa) {
+  case SomeException(message) =>
+    SomeError(message)
+} // F[Either[SomeError, A]
+```
+
+  </TabItem>
+  
+  <TabItem value="cancatch">
+
+```scala
+val fa: F[A] = ...
+CanCatch[F].catchNonFatal(fa) {
+  case SomeException(message) =>
+    SomeError(message)
+} // F[Either[SomeError, A]
+```
+
+  </TabItem>
+</Tabs>
+
+
 `CanCatch[F].catchNonFatal[A, B]` lets you catch `NonFatal` `Throwable` from `F[B]`
  and returns `F[Either[A, B]]`.
 

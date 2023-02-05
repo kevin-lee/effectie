@@ -1,7 +1,7 @@
 ---
 sidebar_position: 1
-id: fx
-title: "Fx"
+id: construct
+title: "Construct - F[A]"
 ---
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
