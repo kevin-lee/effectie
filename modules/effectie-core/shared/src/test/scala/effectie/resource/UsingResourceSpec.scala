@@ -73,6 +73,9 @@ object UsingResourceSpec extends Properties {
     }
 
   object TryFxCtor extends FxCtor[Try] with CanCatch[Try] {
+
+    override implicit protected def fxCtor: FxCtor[Try] = this
+
     override def effectOf[A](a: => A): Try[A] = Try(a)
 
     override def pureOf[A](a: A): Try[A] = Try(a)

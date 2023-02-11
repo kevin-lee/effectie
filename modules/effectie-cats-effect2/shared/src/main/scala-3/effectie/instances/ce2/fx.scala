@@ -2,7 +2,7 @@ package effectie.instances.ce2
 
 import cats.effect.{IO, Sync}
 import cats.{Applicative, Id, Monad}
-import effectie.core.Fx
+import effectie.core.{Fx, FxCtor}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -11,22 +11,24 @@ object fx {
 
   given ioFx: Fx[IO] with {
 
-    inline override final def effectOf[A](a: => A): IO[A] = fxCtor.ioFxCtor.effectOf(a)
+    override implicit protected val fxCtor: FxCtor[IO] = effectie.instances.ce2.fxCtor.ioFxCtor
 
-    inline override final def pureOf[A](a: A): IO[A] = fxCtor.ioFxCtor.pureOf(a)
+    inline override final def effectOf[A](a: => A): IO[A] = fxCtor.effectOf(a)
 
-    inline override final def pureOrError[A](a: => A): IO[A] = fxCtor.ioFxCtor.pureOrError(a)
+    inline override final def pureOf[A](a: A): IO[A] = fxCtor.pureOf(a)
 
-    inline override final def unitOf: IO[Unit] = fxCtor.ioFxCtor.unitOf
+    inline override final def pureOrError[A](a: => A): IO[A] = fxCtor.pureOrError(a)
 
-    inline override final def errorOf[A](throwable: Throwable): IO[A] = fxCtor.ioFxCtor.errorOf(throwable)
+    inline override final def unitOf: IO[Unit] = fxCtor.unitOf
 
-    inline override final def fromEither[A](either: Either[Throwable, A]): IO[A] = fxCtor.ioFxCtor.fromEither(either)
+    inline override final def errorOf[A](throwable: Throwable): IO[A] = fxCtor.errorOf(throwable)
+
+    inline override final def fromEither[A](either: Either[Throwable, A]): IO[A] = fxCtor.fromEither(either)
 
     inline override final def fromOption[A](option: Option[A])(orElse: => Throwable): IO[A] =
-      fxCtor.ioFxCtor.fromOption(option)(orElse)
+      fxCtor.fromOption(option)(orElse)
 
-    inline override final def fromTry[A](tryA: Try[A]): IO[A] = fxCtor.ioFxCtor.fromTry(tryA)
+    inline override final def fromTry[A](tryA: Try[A]): IO[A] = fxCtor.fromTry(tryA)
 
     inline override final def flatMapFa[A, B](fa: IO[A])(f: A => IO[B]): IO[B] = fa.flatMap(f)
 
