@@ -2,7 +2,7 @@ package effectie.instances.id
 
 import cats.Id
 import cats.syntax.all._
-import effectie.core.CanCatch
+import effectie.core.{CanCatch, FxCtor}
 
 /** @author Kevin Lee
   * @since 2020-06-07
@@ -10,6 +10,8 @@ import effectie.core.CanCatch
 object canCatch {
 
   implicit object canCatchId extends CanCatch[Id] {
+
+    override implicit protected val fxCtor: FxCtor[Id] = effectie.instances.id.fxCtor.idFxCtor
 
     @inline override final def flatMapFa[A, B](fa: Id[A])(f: A => Id[B]): Id[B] = f(fa)
 
@@ -24,7 +26,6 @@ object canCatch {
         case scala.util.Failure(ex) =>
           throw ex // scalafix:ok DisableSyntax.throw
       }
-
   }
 
 }

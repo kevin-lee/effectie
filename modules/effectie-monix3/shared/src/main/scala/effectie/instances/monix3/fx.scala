@@ -1,6 +1,6 @@
 package effectie.instances.monix3
 
-import effectie.core.Fx
+import effectie.core.{Fx, FxCtor}
 import monix.eval.Task
 
 import scala.util.Try
@@ -12,23 +12,25 @@ object fx {
 
   implicit object taskFx extends Fx[Task] {
 
-    @inline override final def effectOf[A](a: => A): Task[A] = fxCtor.taskFxCtor.effectOf(a)
+    override implicit protected val fxCtor: FxCtor[Task] = effectie.instances.monix3.fxCtor.taskFxCtor
 
-    @inline override final def pureOf[A](a: A): Task[A] = fxCtor.taskFxCtor.pureOf(a)
+    @inline override final def effectOf[A](a: => A): Task[A] = fxCtor.effectOf(a)
 
-    @inline override final def pureOrError[A](a: => A): Task[A] = fxCtor.taskFxCtor.pureOrError(a)
+    @inline override final def pureOf[A](a: A): Task[A] = fxCtor.pureOf(a)
 
-    @inline override val unitOf: Task[Unit] = fxCtor.taskFxCtor.unitOf
+    @inline override final def pureOrError[A](a: => A): Task[A] = fxCtor.pureOrError(a)
 
-    @inline override final def errorOf[A](throwable: Throwable): Task[A] = fxCtor.taskFxCtor.errorOf(throwable)
+    @inline override val unitOf: Task[Unit] = fxCtor.unitOf
+
+    @inline override final def errorOf[A](throwable: Throwable): Task[A] = fxCtor.errorOf(throwable)
 
     @inline override final def fromEither[A](either: Either[Throwable, A]): Task[A] =
-      fxCtor.taskFxCtor.fromEither(either)
+      fxCtor.fromEither(either)
 
     @inline override final def fromOption[A](option: Option[A])(orElse: => Throwable): Task[A] =
-      fxCtor.taskFxCtor.fromOption(option)(orElse)
+      fxCtor.fromOption(option)(orElse)
 
-    @inline override final def fromTry[A](tryA: Try[A]): Task[A] = fxCtor.taskFxCtor.fromTry(tryA)
+    @inline override final def fromTry[A](tryA: Try[A]): Task[A] = fxCtor.fromTry(tryA)
 
     @inline override final def flatMapFa[A, B](fa: Task[A])(f: A => Task[B]): Task[B] = fa.flatMap(f)
 

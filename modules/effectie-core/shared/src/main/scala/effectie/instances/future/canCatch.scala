@@ -1,6 +1,6 @@
 package effectie.instances.future
 
-import effectie.core.CanCatch
+import effectie.core.{CanCatch, FxCtor}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -10,7 +10,10 @@ import scala.concurrent.{ExecutionContext, Future}
 object canCatch {
 
   trait FutureCanCatch extends CanCatch[Future] {
+
     implicit def EC0: ExecutionContext
+
+    override implicit protected val fxCtor: FxCtor[Future] = effectie.instances.future.fxCtor.fxCtorFuture
 
     @inline override final def flatMapFa[A, B](fa: Future[A])(f: A => Future[B]): Future[B] =
       fa.flatMap(f)(EC0)

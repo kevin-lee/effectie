@@ -4,7 +4,7 @@ import cats.Id
 import cats.data.EitherT
 import cats.effect.IO
 import cats.syntax.all.*
-import effectie.core.CanCatch
+import effectie.core.{CanCatch, FxCtor}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -15,11 +15,12 @@ object canCatch {
 
   given canCatchIo: CanCatch[IO] with {
 
+    override implicit protected val fxCtor: FxCtor[IO] = effectie.instances.ce2.fxCtor.ioFxCtor
+
     inline override final def flatMapFa[A, B](fa: IO[A])(f: A => IO[B]): IO[B] = fa.flatMap(f)
 
     inline override final def catchNonFatalThrowable[A](fa: => IO[A]): IO[Either[Throwable, A]] =
       fa.attempt
-
   }
 
 }

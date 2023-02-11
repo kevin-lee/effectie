@@ -3,7 +3,7 @@ package effectie.instances.ce3
 import cats.data.EitherT
 import cats.effect.IO
 import cats.syntax.all.*
-import effectie.core.CanCatch
+import effectie.core.{CanCatch, FxCtor}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -13,6 +13,8 @@ import scala.concurrent.{ExecutionContext, Future}
 object canCatch {
 
   given canCatchIo: CanCatch[IO] with {
+
+    override implicit protected val fxCtor: FxCtor[IO] = effectie.instances.ce3.fxCtor.ioFxCtor
 
     inline override final def flatMapFa[A, B](fa: IO[A])(f: A => IO[B]): IO[B] = fa.flatMap(f)
 

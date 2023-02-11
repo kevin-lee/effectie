@@ -1,7 +1,7 @@
 package effectie.instances.id
 
 import cats.Id
-import effectie.core.Fx
+import effectie.core.{Fx, FxCtor}
 
 import scala.util.Try
 
@@ -9,22 +9,24 @@ object fx {
 
   implicit object idFx extends Fx[Id] {
 
-    @inline override final def effectOf[A](a: => A): Id[A] = fxCtor.idFxCtor.effectOf(a)
+    override implicit protected val fxCtor: FxCtor[Id] = effectie.instances.id.fxCtor.idFxCtor
 
-    @inline override final def pureOf[A](a: A): Id[A] = fxCtor.idFxCtor.pureOf(a)
+    @inline override final def effectOf[A](a: => A): Id[A] = fxCtor.effectOf(a)
 
-    @inline override final def pureOrError[A](a: => A): Id[A] = fxCtor.idFxCtor.pureOrError(a)
+    @inline override final def pureOf[A](a: A): Id[A] = fxCtor.pureOf(a)
 
-    @inline override val unitOf: Id[Unit] = fxCtor.idFxCtor.unitOf
+    @inline override final def pureOrError[A](a: => A): Id[A] = fxCtor.pureOrError(a)
 
-    @inline override final def errorOf[A](throwable: Throwable): Id[A] = fxCtor.idFxCtor.errorOf(throwable)
+    @inline override val unitOf: Id[Unit] = fxCtor.unitOf
 
-    @inline override final def fromEither[A](either: Either[Throwable, A]): Id[A] = fxCtor.idFxCtor.fromEither(either)
+    @inline override final def errorOf[A](throwable: Throwable): Id[A] = fxCtor.errorOf(throwable)
+
+    @inline override final def fromEither[A](either: Either[Throwable, A]): Id[A] = fxCtor.fromEither(either)
 
     @inline override final def fromOption[A](option: Option[A])(orElse: => Throwable): Id[A] =
-      fxCtor.idFxCtor.fromOption(option)(orElse)
+      fxCtor.fromOption(option)(orElse)
 
-    @inline override final def fromTry[A](tryA: Try[A]): Id[A] = fxCtor.idFxCtor.fromTry(tryA)
+    @inline override final def fromTry[A](tryA: Try[A]): Id[A] = fxCtor.fromTry(tryA)
 
     @inline override final def flatMapFa[A, B](fa: Id[A])(f: A => Id[B]): Id[B] = f(fa)
 
