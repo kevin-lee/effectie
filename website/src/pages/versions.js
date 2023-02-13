@@ -24,6 +24,10 @@ function Version() {
     (version) => version !== latestVersion && version.name !== 'current',
   ).concat([
     {
+      "name": "2.0.0-beta5",
+      "label": "2.0.0-beta5",
+    },
+    {
       "name": "2.0.0-beta4",
       "label": "2.0.0-beta4",
     },
@@ -50,19 +54,19 @@ function Version() {
         const aVersion = parseInt(a.name.substring(1).split(".")[0]);
         if (b.name.includes("v")) {
           const bVersion = parseInt(b.name.substring(1).split(".")[0]);
-          return aVersion - bVersion;
+          return bVersion - aVersion;
         } else {
           const bVersion = parseInt(b.name.split(".")[0]);
-          return aVersion - bVersion;
+          return bVersion - aVersion;
         }
       } else {
         const aVersion = parseInt(a.name.split(".")[0]);
         if (b.name.includes("v")) {
           const bVersion = parseInt(b.name.substring(1).split(".")[0]);
-          return aVersion - bVersion;
+          return bVersion - aVersion;
         } else {
           const bVersion = parseInt(b.name.split(".")[0]);
-          return aVersion - bVersion;
+          return bVersion - aVersion;
         }
       }
     }
@@ -105,6 +109,8 @@ function Version() {
   const repoUrl = `https://github.com/${siteConfig.organizationName}/${siteConfig.projectName}`;
 
   const docLink = path => path ? <Link to={path}>Documentation</Link> : <span>&nbsp;</span>;
+
+  const releaseLink = version => version.label !== "v1" ? <a href={`${repoUrl}/releases/tag/v${version.name}`}>Release Notes</a> : <span>&nbsp;</span>;
 
   const spaces = howMany => <span dangerouslySetInnerHTML={{__html: "&nbsp;".repeat(howMany)}} />;
 
@@ -174,9 +180,7 @@ function Version() {
                     {docLink(version.path)}
                   </td>
                   <td>
-                    <a href={`${repoUrl}/releases/tag/v${version.name}`}>
-                      Release Notes
-                    </a>
+                    {releaseLink(version)}
                   </td>
                 </tr>
               ))}
