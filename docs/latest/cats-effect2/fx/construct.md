@@ -18,7 +18,7 @@ To construct `F[A]` for a pure value `A`, you can use `pureOf`.
   defaultValue="syntax"
   values={[
     {label: 'with syntax', value: 'syntax'},
-    {label: 'without syntax', value: 'mo-syntax'},
+    {label: 'without syntax', value: 'no-syntax'},
   ]}>
   <TabItem value="syntax">
 
@@ -31,7 +31,7 @@ def foo[F[_]: Fx]: F[Int] = pureOf(1)
 
   </TabItem>
   
-  <TabItem value="mo-syntax">
+  <TabItem value="no-syntax">
 
 ```scala mdoc:reset
 import effectie.core._
@@ -47,7 +47,7 @@ def foo[F[_]: Fx]: F[Int] = Fx[F].pureOf(1)
   defaultValue="syntax"
   values={[
     {label: 'with syntax', value: 'syntax'},
-    {label: 'without syntax', value: 'mo-syntax'},
+    {label: 'without syntax', value: 'no-syntax'},
   ]}>
   <TabItem value="syntax">
 
@@ -62,7 +62,7 @@ pureOf[IO](1)
 
   </TabItem>
   
-  <TabItem value="mo-syntax">
+  <TabItem value="no-syntax">
 
 ```scala mdoc:reset
 import cats.effect._
@@ -85,7 +85,7 @@ To construct `F[A]` for an operation with referential transparency, you can use 
   defaultValue="syntax"
   values={[
     {label: 'with syntax', value: 'syntax'},
-    {label: 'without syntax', value: 'mo-syntax'},
+    {label: 'without syntax', value: 'no-syntax'},
   ]}>
   <TabItem value="syntax">
 
@@ -110,7 +110,7 @@ import effectie.instances.ce2.fx._
 
   </TabItem>
   
-  <TabItem value="mo-syntax">
+  <TabItem value="no-syntax">
 
 ```scala mdoc:reset
 import effectie.core._
@@ -138,7 +138,7 @@ import effectie.instances.ce2.fx._
   defaultValue="syntax"
   values={[
     {label: 'with syntax', value: 'syntax'},
-    {label: 'without syntax', value: 'mo-syntax'},
+    {label: 'without syntax', value: 'no-syntax'},
   ]}>
   <TabItem value="syntax">
 
@@ -156,7 +156,7 @@ effectOf[IO][Int](throw new RuntimeException("ERROR"))
 
   </TabItem>
   
-  <TabItem value="mo-syntax">
+  <TabItem value="no-syntax">
 
 ```scala mdoc:reset:height=4
 import cats.effect._
@@ -197,7 +197,7 @@ groupId="fx"
 defaultValue="syntax"
 values={[
 {label: 'with syntax', value: 'syntax'},
-{label: 'without syntax', value: 'mo-syntax'},
+{label: 'without syntax', value: 'no-syntax'},
 ]}>
 <TabItem value="syntax">
 
@@ -211,7 +211,7 @@ def bar[F[_]: Fx](s: String): F[String] = pureOrError(s.substring(5))
 
   </TabItem>
 
-  <TabItem value="mo-syntax">
+  <TabItem value="no-syntax">
 
 ```scala mdoc:reset
 import effectie.core._
@@ -228,7 +228,7 @@ groupId="fx"
 defaultValue="syntax"
 values={[
 {label: 'with syntax', value: 'syntax'},
-{label: 'without syntax', value: 'mo-syntax'},
+{label: 'without syntax', value: 'no-syntax'},
 ]}>
 <TabItem value="syntax">
 
@@ -245,7 +245,7 @@ pureOrError[IO]("abc".substring(5))
 
   </TabItem>
 
-  <TabItem value="mo-syntax">
+  <TabItem value="no-syntax">
 
 ```scala mdoc:reset
 import cats.effect._
@@ -264,6 +264,92 @@ Fx[IO].pureOrError("abc".substring(5))
 
 ***
 
+## unitOf
+If you just return `F[Unit]`, you can use `unitOf`.
+
+e.g.)
+```scala
+unitOf[IO] // IO[Unit]
+```
+
+<Tabs
+groupId="fx"
+defaultValue="syntax"
+values={[
+{label: 'with syntax', value: 'syntax'},
+{label: 'without syntax', value: 'no-syntax'},
+]}>
+<TabItem value="syntax">
+
+```scala mdoc:reset
+import cats._
+import cats.syntax.all._
+
+import effectie.core._
+import effectie.syntax.all._
+
+def foo[F[_]: Fx]: F[Unit] = unitOf
+
+def bar[F[_]: Fx: Monad]: F[Unit] =
+  effectOf(println("Hello")) *> unitOf // You can do effectOf(println("Hello")).void instead
+```
+
+  </TabItem>
+
+  <TabItem value="no-syntax">
+
+```scala mdoc:reset
+import cats._
+import cats.syntax.all._
+
+import effectie.core._
+
+def foo[F[_]: Fx]: F[Unit] = Fx[F].unitOf
+
+def bar[F[_]: Fx: Monad]: F[Unit] =
+  Fx[F].effectOf(println("Hello")) *> Fx[F].unitOf // You can do Fx[F].effectOf(println("Hello")).void instead
+```
+
+  </TabItem>
+</Tabs>
+
+<Tabs
+groupId="fx"
+defaultValue="syntax"
+values={[
+{label: 'with syntax', value: 'syntax'},
+{label: 'without syntax', value: 'no-syntax'},
+]}>
+<TabItem value="syntax">
+
+```scala mdoc:reset
+import cats.effect._
+import effectie.syntax.all._
+
+import effectie.instances.ce2.fx._
+
+unitOf[IO]
+```
+
+  </TabItem>
+
+  <TabItem value="no-syntax">
+
+```scala mdoc:reset
+import cats.effect._
+import effectie.core._
+
+import effectie.instances.ce2.fx._
+
+Fx[IO].unitOf
+```
+
+  </TabItem>
+</Tabs>
+
+
+***
+
 ## Example
 
 <Tabs
@@ -271,7 +357,7 @@ groupId="fx"
 defaultValue="syntax"
 values={[
 {label: 'with syntax', value: 'syntax'},
-{label: 'without syntax', value: 'mo-syntax'},
+{label: 'without syntax', value: 'no-syntax'},
 ]}>
 <TabItem value="syntax">
 
@@ -310,7 +396,7 @@ get1.unsafeRunSync()
 
   </TabItem>
 
-  <TabItem value="mo-syntax">
+  <TabItem value="no-syntax">
 
 ```scala mdoc:reset-object:height=4
 import effectie.core._

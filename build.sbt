@@ -32,7 +32,7 @@ ThisBuild / scmInfo    :=
   )
 ThisBuild / licenses   := props.licenses
 
-ThisBuild / resolvers += "sonatype-snapshots" at s"https://${props.SonatypeCredentialHost}/content/repositories/snapshots"
+ThisBuild / resolvers += props.SonatypeSnapshots
 
 ThisBuild / scalafixConfig := (
   if (scalaVersion.value.startsWith("3"))
@@ -343,6 +343,8 @@ lazy val props =
 
     val SonatypeCredentialHost = "s01.oss.sonatype.org"
     val SonatypeRepository     = s"https://$SonatypeCredentialHost/service/local"
+
+    val SonatypeSnapshots = "sonatype-snapshots" at s"https://$SonatypeCredentialHost/content/repositories/snapshots"
 
     val removeDottyIncompatible: ModuleID => Boolean =
       m =>
