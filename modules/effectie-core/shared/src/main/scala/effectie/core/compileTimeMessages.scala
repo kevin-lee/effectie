@@ -1,13 +1,12 @@
 package effectie.core
 
-import scala.annotation.implicitNotFound
-
 /** @author Kevin Lee
-  * @since 2021-11-03
+  * @since 2023-02-23
   */
-@implicitNotFound(
-  """
-  Could not find an implicit Fx[${F}]. You can probably find it from the effectie.instances package.
+private[core] object compileTimeMessages {
+  // $COVERAGE-OFF$
+  final val ListOfFxInstances = // scalafix:ok DisableSyntax.noFinalVal
+    """
   ---
   If you want to use IO from cats-effect 2, try effectie-cats-effect2.
     import effectie.instances.ce2.fx._
@@ -50,11 +49,5 @@ import scala.annotation.implicitNotFound
     import effectie.instances.id.fx.idFx
   ---
   """
-)
-trait Fx[F[*]] extends FxCtor[F] with CanCatch[F] with CanHandleError[F] with CanRecover[F]
-
-object Fx {
-
-  def apply[F[*]: Fx]: Fx[F] = implicitly[Fx[F]]
-
+  // $COVERAGE-ON$
 }

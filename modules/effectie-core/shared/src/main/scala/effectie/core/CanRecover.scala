@@ -7,34 +7,9 @@ import scala.annotation.implicitNotFound
   */
 @implicitNotFound(
   """
-  Could not find an implicit CanRecover[${F}]. You can probably find it from the effectie.instance package.
-  ---
-  If you want to use IO from cats-effect 2, try effectie-cats-effect2.
-    import effectie.instances.ce2.canRecover._
-    // for Scala 3
-    import effectie.instances.ce2.canRecover.given
-
-  For cats-effect 3, try effectie-cats-effect3.
-    import effectie.instances.ce3.canRecover._
-    // for Scala 3
-    import effectie.instances.ce3.canRecover.given
-
-  If you want to use Task from Monix 3, try effectie-monix3.
-    import effectie.instances.monix3.canRecover._
-    // for Scala 3
-    import effectie.instances.monix3.canRecover.given
-
-  For Scala's Future, It is just
-    import effectie.instances.future.canRecover._
-    // for Scala 3
-    import effectie.instances.future.canRecover.given
-
-  If you don't want to use any effect but the raw data, you can use the instance for cats.Id
-    import effectie.instances.id.canRecover._
-    // for Scala 3
-    import effectie.instances.id.canRecover.given
-  ---
-  """
+  Could not find an implicit CanRecover[${F}]. You can probably find it from the effectie.instances package.
+  It is recommended to use an instance for Fx instead of an instance for CanRecover.""" +
+    compileTimeMessages.ListOfFxInstances
 )
 trait CanRecover[F[*]] {
 

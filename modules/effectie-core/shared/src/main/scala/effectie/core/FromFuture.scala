@@ -9,7 +9,7 @@ import scala.concurrent.duration.Duration
   */
 @implicitNotFound(
   """
-  Could not find an implicit FromFuture[${F}]. You can probably find it from the effectie.instance package.
+  Could not find an implicit FromFuture[${F}]. You can probably find it from the effectie.instances package.
   ---
   If you want to use IO from cats-effect 2, try effectie-cats-effect2.
     import effectie.instances.ce2.fromFuture._
