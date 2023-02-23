@@ -4,34 +4,9 @@ import scala.annotation.implicitNotFound
 
 @implicitNotFound(
   """
-  Could not find an implicit FxCtor[${F}]. You can probably find it from the effectie.instance package.
-  ---
-  If you want to use IO from cats-effect 2, try effectie-cats-effect2.
-    import effectie.instances.ce2.fxCtor._
-    // for Scala 3
-    import effectie.instances.ce2.fxCtor.given
-
-  For cats-effect 3, try effectie-cats-effect3.
-    import effectie.instances.ce3.fxCtor._
-    // for Scala 3
-    import effectie.instances.ce3.fxCtor.given
-
-  If you want to use Task from Monix 3, try effectie-monix3.
-    import effectie.instances.monix3.fxCtor._
-    // for Scala 3
-    import effectie.instances.monix3.fxCtor.given
-
-  For Scala's Future, It is just
-    import effectie.instances.future.fxCtor._
-    // for Scala 3
-    import effectie.instances.future.fxCtor.given
-
-  If you don't want to use any effect but the raw data, you can use the instance for cats.Id
-    import effectie.instances.id.fxCtor._
-    // for Scala 3
-    import effectie.instances.id.fxCtor.given
-  ---
-  """
+  Could not find an implicit FxCtor[${F}]. You can probably find it from the effectie.instances package.
+  It is recommended to use an instance for Fx instead of an instance for FxCtor.""" +
+    compileTimeMessages.ListOfFxInstances
 )
 trait FxCtor[F[*]] {
   def effectOf[A](a: => A): F[A]
