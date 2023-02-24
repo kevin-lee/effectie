@@ -176,7 +176,7 @@ Fx[IO].effectOf[Int](throw new RuntimeException("ERROR"))
 ## pureOrError
 To construct `F[A]` for a pure value, but it can also throw an exception, you can use `pureOrError` instead of `effectOf`.
 
-If an expression returns a pure value, and it's always the same so there's no point in using `effectOf` for referential transparency, you can use `pureOf`. However, if that expression can also throw an exception, `pureOf` can handle it properly. In this case, `pureOrError` is the right one.
+If an expression returns a pure value, and it's always the same so there's no point in using `effectOf` for referential transparency, you can use `pureOf`. However, if that expression can also throw an exception, `pureOf` cannot handle it properly. In this case, `pureOrError` is the right one.
  
 e.g.)
 ```scala
