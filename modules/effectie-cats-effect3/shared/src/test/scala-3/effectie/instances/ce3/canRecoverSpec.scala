@@ -406,17 +406,18 @@ object canRecoverSpec extends Properties {
 
     }
 
-    def testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
+    def testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult: Result =
+      withIO { implicit ticker =>
 
-      val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
-      val expected = 1.asRight[SomeError]
-      val actual   = CanRecover[IO]
-        .recoverFromNonFatalWith(fa) {
-          case NonFatal(_) => IO(999.asRight[SomeError])
-        }
+        val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
+        val expected = 1.asRight[SomeError]
+        val actual   = CanRecover[IO]
+          .recoverFromNonFatalWith(fa) {
+            case NonFatal(_) => IO(999.asRight[SomeError])
+          }
 
-      actual.completeAs(expected)
-    }
+        actual.completeAs(expected)
+      }
 
     def testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
@@ -474,17 +475,18 @@ object canRecoverSpec extends Properties {
 
     }
 
-    def testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
+    def testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult: Result =
+      withIO { implicit ticker =>
 
-      val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
-      val expected = 1.asRight[SomeError]
-      val actual   = CanRecover[IO]
-        .recoverEitherFromNonFatalWith(fa) {
-          case NonFatal(_) => IO.pure(123.asRight[SomeError])
-        }
+        val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
+        val expected = 1.asRight[SomeError]
+        val actual   = CanRecover[IO]
+          .recoverEitherFromNonFatalWith(fa) {
+            case NonFatal(_) => IO.pure(123.asRight[SomeError])
+          }
 
-      actual.completeAs(expected)
-    }
+        actual.completeAs(expected)
+      }
 
     def testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
@@ -546,18 +548,19 @@ object canRecoverSpec extends Properties {
 
     }
 
-    def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
+    def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult: Result =
+      withIO { implicit ticker =>
 
-      val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
-      val expected = 1.asRight[SomeError]
-      val actual   = CanRecover[IO]
-        .recoverEitherTFromNonFatalWith(fa) {
-          case NonFatal(_) => IO.pure(123.asRight[SomeError])
-        }
-        .value
+        val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
+        val expected = 1.asRight[SomeError]
+        val actual   = CanRecover[IO]
+          .recoverEitherTFromNonFatalWith(fa) {
+            case NonFatal(_) => IO.pure(123.asRight[SomeError])
+          }
+          .value
 
-      actual.completeAs(expected)
-    }
+        actual.completeAs(expected)
+      }
 
     def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnFailedResult: Result = withIO { implicit ticker =>
 

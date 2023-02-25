@@ -817,55 +817,57 @@ object FxSpec extends Properties {
 
   object IoSpec {
 
-    def testEffectOf: Property = for {
-      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
-    } yield withIO { implicit ticker =>
+    def testEffectOf: Property =
+      for {
+        before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+        after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+      } yield withIO { implicit ticker =>
 
-      @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual        = before // scalafix:ok DisableSyntax.var
-      val testBefore    = actual ==== before
-      val io            = Fx[IO].effectOf({ actual = after; () })
-      val testBeforeRun = actual ==== before
+        @SuppressWarnings(Array("org.wartremover.warts.Var"))
+        var actual        = before // scalafix:ok DisableSyntax.var
+        val testBefore    = actual ==== before
+        val io            = Fx[IO].effectOf({ actual = after; () })
+        val testBeforeRun = actual ==== before
 
-      val done         = io.completeAs(())
-      val testAfterRun = actual ==== after
+        val done         = io.completeAs(())
+        val testAfterRun = actual ==== after
 
-      Result.all(
-        List(
-          done,
-          testBefore.log("testBefore"),
-          testBeforeRun.log("testBeforeRun"),
-          testAfterRun.log("testAfterRun"),
+        Result.all(
+          List(
+            done,
+            testBefore.log("testBefore"),
+            testBeforeRun.log("testBeforeRun"),
+            testAfterRun.log("testAfterRun"),
+          )
         )
-      )
-    }
+      }
 
-    def testPureOf: Property = for {
-      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
-    } yield withIO { implicit ticker =>
+    def testPureOf: Property =
+      for {
+        before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+        after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+      } yield withIO { implicit ticker =>
 
-      var actual        = before // scalafix:ok DisableSyntax.var
-      val testBefore    = actual ==== before
-      val io            = Fx[IO].pureOf({ actual = after; () })
-      val testBeforeRun = actual ==== after
+        var actual        = before // scalafix:ok DisableSyntax.var
+        val testBefore    = actual ==== before
+        val io            = Fx[IO].pureOf({ actual = after; () })
+        val testBeforeRun = actual ==== after
 
-      val done         = io.completeAs(())
-      val testAfterRun = actual ==== after
-      Result.all(
-        List(
-          done,
-          testBefore.log("testBefore"),
-          testBeforeRun.log("testBeforeRun"),
-          testAfterRun.log("testAfterRun"),
+        val done         = io.completeAs(())
+        val testAfterRun = actual ==== after
+        Result.all(
+          List(
+            done,
+            testBefore.log("testBefore"),
+            testBeforeRun.log("testBeforeRun"),
+            testAfterRun.log("testAfterRun"),
+          )
         )
-      )
-    }
+      }
 
     def testUnitOf: Result = withIO { implicit ticker =>
-      val io               = Fx[IO].unitOf
-      val expected: Unit   = ()
+      val io             = Fx[IO].unitOf
+      val expected: Unit = ()
       io.completeAs(expected)
     }
 
@@ -934,7 +936,7 @@ object FxSpec extends Properties {
       MonadSpec.test6_CompositionAp[IO]
     }
 
-    def testMonadLaws7_LeftIdentity: Property =  {
+    def testMonadLaws7_LeftIdentity: Property = {
       given ticker: Ticker = Ticker.withNewTestContext()
 
       given eqIo: Eq[IO[Int]] =
@@ -943,7 +945,7 @@ object FxSpec extends Properties {
       MonadSpec.test7_LeftIdentity[IO]
     }
 
-    def testMonadLaws8_RightIdentity: Property =  {
+    def testMonadLaws8_RightIdentity: Property = {
       given ticker: Ticker = Ticker.withNewTestContext()
 
       given eqIo: Eq[IO[Int]] =
@@ -952,7 +954,7 @@ object FxSpec extends Properties {
       MonadSpec.test8_RightIdentity[IO]
     }
 
-    def testMonadLaws9_Associativity: Property =  {
+    def testMonadLaws9_Associativity: Property = {
       given ticker: Ticker = Ticker.withNewTestContext()
 
       given eqIo: Eq[IO[Int]] =
@@ -1257,14 +1259,15 @@ object FxSpec extends Properties {
 
       }
 
-      def testCanHandleError_IO_handleNonFatalWithEitherShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
+      def testCanHandleError_IO_handleNonFatalWithEitherShouldReturnSuccessfulResult: Result =
+        withIO { implicit ticker =>
 
-        val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
-        val expected = 1.asRight[SomeError]
-        val actual   = Fx[IO].handleNonFatalWith(fa)(_ => IO(999.asRight[SomeError]))
+          val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
+          val expected = 1.asRight[SomeError]
+          val actual   = Fx[IO].handleNonFatalWith(fa)(_ => IO(999.asRight[SomeError]))
 
-        actual.completeAs(expected)
-      }
+          actual.completeAs(expected)
+        }
 
       def testCanHandleError_IO_handleNonFatalWithEitherShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
@@ -1315,15 +1318,16 @@ object FxSpec extends Properties {
 
       }
 
-      def testCanHandleError_IO_handleEitherNonFatalWithShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
+      def testCanHandleError_IO_handleEitherNonFatalWithShouldReturnSuccessfulResult: Result =
+        withIO { implicit ticker =>
 
-        val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
-        val expected = 1.asRight[SomeError]
-        val actual   =
-          Fx[IO].handleEitherNonFatalWith(fa)(_ => IO.pure(123.asRight[SomeError]))
+          val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
+          val expected = 1.asRight[SomeError]
+          val actual   =
+            Fx[IO].handleEitherNonFatalWith(fa)(_ => IO.pure(123.asRight[SomeError]))
 
-        actual.completeAs(expected)
-      }
+          actual.completeAs(expected)
+        }
 
       def testCanHandleError_IO_handleEitherNonFatalWithShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
@@ -1377,15 +1381,16 @@ object FxSpec extends Properties {
 
       }
 
-      def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
+      def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnSuccessfulResult: Result =
+        withIO { implicit ticker =>
 
-        val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
-        val expected = 1.asRight[SomeError]
-        val actual   =
-          Fx[IO].handleEitherTNonFatalWith(fa)(_ => IO.pure(123.asRight[SomeError])).value
+          val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
+          val expected = 1.asRight[SomeError]
+          val actual   =
+            Fx[IO].handleEitherTNonFatalWith(fa)(_ => IO.pure(123.asRight[SomeError])).value
 
-        actual.completeAs(expected)
-      }
+          actual.completeAs(expected)
+        }
 
       def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
@@ -1710,17 +1715,18 @@ object FxSpec extends Properties {
 
       }
 
-      def testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
+      def testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult: Result =
+        withIO { implicit ticker =>
 
-        val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
-        val expected = 1.asRight[SomeError]
-        val actual   = Fx[IO]
-          .recoverFromNonFatalWith(fa) {
-            case NonFatal(_) => IO(999.asRight[SomeError])
-          }
+          val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
+          val expected = 1.asRight[SomeError]
+          val actual   = Fx[IO]
+            .recoverFromNonFatalWith(fa) {
+              case NonFatal(_) => IO(999.asRight[SomeError])
+            }
 
-        actual.completeAs(expected)
-      }
+          actual.completeAs(expected)
+        }
 
       def testCanRecover_IO_recoverFromNonFatalWithEitherShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
@@ -1778,17 +1784,18 @@ object FxSpec extends Properties {
 
       }
 
-      def testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
+      def testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult: Result =
+        withIO { implicit ticker =>
 
-        val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
-        val expected = 1.asRight[SomeError]
-        val actual   = Fx[IO]
-          .recoverEitherFromNonFatalWith(fa) {
-            case NonFatal(_) => IO.pure(123.asRight[SomeError])
-          }
+          val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
+          val expected = 1.asRight[SomeError]
+          val actual   = Fx[IO]
+            .recoverEitherFromNonFatalWith(fa) {
+              case NonFatal(_) => IO.pure(123.asRight[SomeError])
+            }
 
-        actual.completeAs(expected)
-      }
+          actual.completeAs(expected)
+        }
 
       def testCanRecover_IO_recoverEitherFromNonFatalWithShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
@@ -1804,27 +1811,28 @@ object FxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
+      def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal: Result =
+        withIO { implicit ticker =>
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-        val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+          val expectedExpcetion = new RuntimeException("Something's wrong")
+          val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+          val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
 
-        val actualFailedResult = Fx[IO]
-          .recoverEitherTFromNonFatalWith(fa) {
-            case err => IO.pure(SomeError.someThrowable(err).asLeft[Int])
-          }
-          .value
+          val actualFailedResult = Fx[IO]
+            .recoverEitherTFromNonFatalWith(fa) {
+              case err => IO.pure(SomeError.someThrowable(err).asLeft[Int])
+            }
+            .value
 
-        val expectedSuccessResult = 123.asRight[SomeError]
-        val actualSuccessResult   = Fx[IO]
-          .recoverEitherTFromNonFatalWith(fa) {
-            case NonFatal(`expectedExpcetion`) => IO.pure(123.asRight[SomeError])
-          }
-          .value
+          val expectedSuccessResult = 123.asRight[SomeError]
+          val actualSuccessResult   = Fx[IO]
+            .recoverEitherTFromNonFatalWith(fa) {
+              case NonFatal(`expectedExpcetion`) => IO.pure(123.asRight[SomeError])
+            }
+            .value
 
-        actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
-      }
+          actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
+        }
 
       def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldNotCatchFatal: Result = {
 
@@ -1850,18 +1858,19 @@ object FxSpec extends Properties {
 
       }
 
-      def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
+      def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult: Result =
+        withIO { implicit ticker =>
 
-        val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
-        val expected = 1.asRight[SomeError]
-        val actual   = Fx[IO]
-          .recoverEitherTFromNonFatalWith(fa) {
-            case NonFatal(_) => IO.pure(123.asRight[SomeError])
-          }
-          .value
+          val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
+          val expected = 1.asRight[SomeError]
+          val actual   = Fx[IO]
+            .recoverEitherTFromNonFatalWith(fa) {
+              case NonFatal(_) => IO.pure(123.asRight[SomeError])
+            }
+            .value
 
-        actual.completeAs(expected)
-      }
+          actual.completeAs(expected)
+        }
 
       def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
@@ -2557,32 +2566,34 @@ object FxSpec extends Properties {
   object IdSpec {
     import effectie.instances.id.fx.*
 
-    def testEffectOf: Property = for {
-      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
-    } yield {
-      var actual     = before // scalafix:ok DisableSyntax.var
-      val testBefore = actual ==== before
-      Fx[Id].effectOf({ actual = after; () })
-      val testAfter  = actual ==== after
-      testBefore.log("testBefore") ==== testAfter.log("testAfter")
-    }
+    def testEffectOf: Property =
+      for {
+        before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+        after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+      } yield {
+        var actual     = before // scalafix:ok DisableSyntax.var
+        val testBefore = actual ==== before
+        Fx[Id].effectOf({ actual = after; () })
+        val testAfter  = actual ==== after
+        testBefore.log("testBefore") ==== testAfter.log("testAfter")
+      }
 
-    def testPureOf: Property = for {
-      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
-      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
-    } yield {
-      var actual     = before // scalafix:ok DisableSyntax.var
-      val testBefore = actual ==== before
-      Fx[Id].pureOf({ actual = after; () })
-      val testAfter  = actual ==== after
-      Result.all(
-        List(
-          testBefore.log("testBefore"),
-          testAfter.log("testAfter"),
+    def testPureOf: Property =
+      for {
+        before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+        after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+      } yield {
+        var actual     = before // scalafix:ok DisableSyntax.var
+        val testBefore = actual ==== before
+        Fx[Id].pureOf({ actual = after; () })
+        val testAfter  = actual ==== after
+        Result.all(
+          List(
+            testBefore.log("testBefore"),
+            testAfter.log("testAfter"),
+          )
         )
-      )
-    }
+      }
 
     def testUnitOf: Result = {
       val expected: Unit = ()
