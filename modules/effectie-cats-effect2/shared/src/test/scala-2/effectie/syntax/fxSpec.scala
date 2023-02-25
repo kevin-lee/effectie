@@ -1,9 +1,9 @@
 package effectie.syntax
 
 import cats.Id
-import cats.effect.IO
-import effectie.instances.ce2.fx._
+import cats.syntax.all._
 import effectie.core.{Fx, FxCtor}
+import effectie.instances.ce2.fx._
 import effectie.syntax.fx._
 import effectie.testing.tools.{dropResult, expectThrowable}
 import effectie.testing.types.SomeThrowableError
@@ -26,6 +26,12 @@ object fxSpec extends Properties {
     example("test fx.pureOrError[IO](error case)", IoSpec.testPureOrErrorErrorCase),
     example("test fx.unitOf[IO]", IoSpec.testUnitOf),
     example("test fx.errorOf[IO]", IoSpec.testErrorOf),
+    property("test fx.pureOfOption[IO]", IoSpec.testPureOfOption),
+    property("test fx.pureOfSome[IO]", IoSpec.testPureOfSome),
+    example("test fx.pureOfNone[IO]", IoSpec.testPureOfNone),
+    property("test fx.pureOfRight[IO]", IoSpec.testPureOfRight),
+    property("test fx.pureOfLeft[IO]", IoSpec.testPureOfLeft),
+    //
     property("test fx.{effectOf, pureOf, unitOf} for Future", FutureSpec.testAll),
     property("test fx.effectOf[Future]", FutureSpec.testEffectOf),
     property("test fx.pureOf[Future]", FutureSpec.testPureOf),
@@ -33,6 +39,12 @@ object fxSpec extends Properties {
     example("test fx.pureOrError[Future](error case)", FutureSpec.testPureOrErrorErrorCase),
     example("test fx.unitOf[Future]", FutureSpec.testUnitOf),
     example("test fx.errorOf[Future]", FutureSpec.testErrorOf),
+    property("test fx.pureOfOption[Future]", FutureSpec.testPureOfOption),
+    property("test fx.pureOfSome[Future]", FutureSpec.testPureOfSome),
+    example("test fx.pureOfNone[Future]", FutureSpec.testPureOfNone),
+    property("test fx.pureOfRight[Future]", FutureSpec.testPureOfRight),
+    property("test fx.pureOfLeft[Future]", FutureSpec.testPureOfLeft),
+    //
     property("test fx.{effectOf, pureOf, unitOf} for Id", IdSpec.testAll),
     property("test fx.effectOf[Id]", IdSpec.testEffectOf),
     property("test fx.pureOf[Id]", IdSpec.testPureOf),
@@ -40,6 +52,11 @@ object fxSpec extends Properties {
     example("test fx.pureOrError[Id](error case)", IdSpec.testPureOrErrorErrorCase),
     example("test fx.unitOf[Id]", IdSpec.testUnitOf),
     example("test fx.errorOf[Id]", IdSpec.testErrorOf),
+    property("test fx.pureOfOption[Id]", IdSpec.testPureOfOption),
+    property("test fx.pureOfSome[Id]", IdSpec.testPureOfSome),
+    example("test fx.pureOfNone[Id]", IdSpec.testPureOfNone),
+    property("test fx.pureOfRight[Id]", IdSpec.testPureOfRight),
+    property("test fx.pureOfLeft[Id]", IdSpec.testPureOfLeft),
   )
 
   trait FxCtorClient[F[*]] {
@@ -74,6 +91,7 @@ object fxSpec extends Properties {
   }
 
   object IoSpec {
+    import cats.effect.IO
 
     @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
     def testAll: Property = for {
@@ -200,14 +218,120 @@ object fxSpec extends Properties {
       expectThrowable(io.unsafeRunSync(), expectedError)
     }
 
+    def testPureOfOption: Property =
+      for {
+        s <- Gen
+               .string(Gen.unicode, Range.linear(1, 10))
+               .option
+               .log("s")
+      } yield {
+        val expected = s
+
+        val input = s.orNull
+
+        val io  = input.pureOfOption[IO]
+        val io2 = pureOfOption[IO](input)
+        (for {
+          actual  <- io
+          actual2 <- io2
+        } yield {
+          Result.all(
+            List(
+              actual ==== expected,
+              actual2 ==== expected,
+            )
+          )
+        })
+          .unsafeRunSync()
+      }
+
+    def testPureOfSome: Property =
+      for {
+        s <- Gen
+               .string(Gen.unicode, Range.linear(1, 10))
+               .log("s")
+      } yield {
+        val expected = s.some
+
+        val io  = s.pureOfSome[IO]
+        val io2 = pureOfSome[IO](s)
+        (for {
+          actual  <- io
+          actual2 <- io2
+        } yield Result.all(
+          List(
+            actual ==== expected,
+            actual2 ==== expected,
+          )
+        ))
+          .unsafeRunSync()
+      }
+
+    def testPureOfNone: Result = {
+      val expected = none[String]
+
+      val io = pureOfNone[IO, String]
+      (for {
+        actual <- io
+      } yield actual ==== expected)
+        .unsafeRunSync()
+    }
+
+    def testPureOfRight: Property =
+      for {
+        n <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")
+      } yield {
+        val expected = n.asRight[String]
+
+        val io  = n.pureOfRight[IO, String]
+        val io2 = pureOfRight[IO, String](n)
+        (for {
+          actual  <- io
+          actual2 <- io2
+        } yield {
+          Result.all(
+            List(
+              actual ==== expected,
+              actual2 ==== expected,
+            )
+          )
+        })
+          .unsafeRunSync()
+      }
+
+    def testPureOfLeft: Property =
+      for {
+        s <- Gen
+               .string(Gen.unicode, Range.linear(1, 10))
+               .log("s")
+      } yield {
+        val expected = s.asLeft[Int]
+
+        val io  = s.pureOfLeft[IO, Int]
+        val io2 = pureOfLeft[IO, Int](s)
+        (for {
+          actual  <- io
+          actual2 <- io2
+        } yield {
+          Result.all(
+            List(
+              actual ==== expected,
+              actual2 ==== expected,
+            )
+          )
+        })
+          .unsafeRunSync()
+      }
+
   }
 
   object FutureSpec {
 
+    import effectie.instances.future.fx._
+
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
-    import effectie.instances.future.fx._
 
     val waitFor = WaitFor(1.second)
 
@@ -351,6 +475,116 @@ object fxSpec extends Properties {
       expectThrowable(ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future), expectedError)
     }
 
+    def testPureOfOption: Property =
+      for {
+        s <- Gen
+               .string(Gen.unicode, Range.linear(1, 10))
+               .option
+               .log("s")
+      } yield {
+        implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+        implicit val ec: ExecutionContext             =
+          ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+        val expected = s
+        val input    = s.orNull
+        val future   = input.pureOfOption[Future]
+        val future2  = pureOfOption[Future](input)
+        val actual   = ConcurrentSupport.futureToValue(future, waitFor)
+        val actual2  = ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future2)
+
+        Result.all(
+          List(
+            actual ==== expected,
+            actual2 ==== expected,
+          )
+        )
+      }
+
+    def testPureOfSome: Property = for {
+      s <- Gen
+             .string(Gen.unicode, Range.linear(1, 10))
+             .log("s")
+    } yield {
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      val expected = s.some
+      val future   = s.pureOfSome[Future]
+      val future2  = pureOfSome[Future](s)
+      val actual   = ConcurrentSupport.futureToValue(future, waitFor)
+      val actual2  = ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future2)
+
+      Result.all(
+        List(
+          actual ==== expected,
+          actual2 ==== expected,
+        )
+      )
+    }
+
+    def testPureOfNone: Result = {
+      val expected = none[String]
+
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      val future = pureOfNone[Future, String]
+      val actual = ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
+
+      actual ==== expected
+    }
+
+    def testPureOfRight: Property =
+      for {
+        n <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")
+      } yield {
+        val expected = n.asRight[String]
+
+        implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+        implicit val ec: ExecutionContext             =
+          ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+        val future  = n.pureOfRight[Future, String]
+        val future2 = pureOfRight[Future, String](n)
+        val actual  = ConcurrentSupport.futureToValue(future, waitFor)
+        val actual2 = ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future2)
+
+        Result.all(
+          List(
+            actual ==== expected,
+            actual2 ==== expected,
+          )
+        )
+      }
+
+    def testPureOfLeft: Property =
+      for {
+        s <- Gen
+               .string(Gen.unicode, Range.linear(1, 10))
+               .log("s")
+      } yield {
+        val expected = s.asLeft[Int]
+
+        implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+        implicit val ec: ExecutionContext             =
+          ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+        val future  = s.pureOfLeft[Future, Int]
+        val future2 = pureOfLeft[Future, Int](s)
+        val actual  = ConcurrentSupport.futureToValue(future, waitFor)
+        val actual2 = ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future2)
+
+        Result.all(
+          List(
+            actual ==== expected,
+            actual2 ==== expected,
+          )
+        )
+      }
+
   }
 
   object IdSpec {
@@ -456,6 +690,86 @@ object fxSpec extends Properties {
       lazy val actual = errorOf[Id][Unit](expectedError)
       expectThrowable(actual, expectedError)
     }
+
+    def testPureOfOption: Property =
+      for {
+        s <- Gen
+               .string(Gen.unicode, Range.linear(1, 10))
+               .option
+               .log("s")
+      } yield {
+        val expected = s
+
+        val input = s.orNull
+
+        val actual  = input.pureOfOption[Id]
+        val actual2 = pureOfOption[Id](input)
+        Result.all(
+          List(
+            actual ==== expected,
+            actual2 ==== expected,
+          )
+        )
+      }
+
+    def testPureOfSome: Property =
+      for {
+        s <- Gen
+               .string(Gen.unicode, Range.linear(1, 10))
+               .log("s")
+      } yield {
+        val expected = s.some
+
+        val actual  = s.pureOfSome[Id]
+        val actual2 = pureOfSome[Id](s)
+        Result.all(
+          List(
+            actual ==== expected,
+            actual2 ==== expected,
+          )
+        )
+      }
+
+    def testPureOfNone: Result = {
+      val expected = none[String]
+
+      val actual = pureOfNone[Id, String]
+      actual ==== expected
+    }
+
+    def testPureOfRight: Property =
+      for {
+        n <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")
+      } yield {
+        val expected = n.asRight[String]
+
+        val actual  = n.pureOfRight[Id, String]
+        val actual2 = pureOfRight[Id, String](n)
+        Result.all(
+          List(
+            actual ==== expected,
+            actual2 ==== expected,
+          )
+        )
+      }
+
+    def testPureOfLeft: Property =
+      for {
+        s <- Gen
+               .string(Gen.unicode, Range.linear(1, 10))
+               .log("s")
+      } yield {
+        val expected = s.asLeft[Int]
+
+        val actual  = s.pureOfLeft[Id, Int]
+        val actual2 = pureOfLeft[Id, Int](s)
+        Result.all(
+          List(
+            actual ==== expected,
+            actual2 ==== expected,
+          )
+        )
+      }
 
   }
 

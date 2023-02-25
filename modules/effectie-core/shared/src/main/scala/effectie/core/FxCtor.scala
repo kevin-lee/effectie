@@ -1,5 +1,7 @@
 package effectie.core
 
+import effectie.core.FxCtor.{PureOfLeft, PureOfRight}
+
 import scala.annotation.implicitNotFound
 
 @implicitNotFound(
@@ -20,9 +22,35 @@ trait FxCtor[F[*]] {
   def fromEither[A](either: Either[Throwable, A]): F[A]
   def fromOption[A](option: Option[A])(orElse: => Throwable): F[A]
   def fromTry[A](tryA: scala.util.Try[A]): F[A]
+
+  @inline def pureOfOption[A](a: A): F[Option[A]] = pureOf(Option(a))
+
+  @inline def pureOfSome[A](a: A): F[Option[A]] = pureOf(Some(a))
+
+  @inline def pureOfNone[A]: F[Option[A]] = pureOf(None)
+
+  private val _pureOfRight: PureOfRight[F, Any] = new PureOfRight(this)
+  @inline def pureOfRight[A]: PureOfRight[F, A] =
+    _pureOfRight.asInstanceOf[PureOfRight[F, A]] // scalafix:ok DisableSyntax.asInstanceOf
+
+  private val _pureOfLeft: PureOfLeft[F, Any] = new PureOfLeft(this)
+  @inline def pureOfLeft[B]: PureOfLeft[F, B] =
+    _pureOfLeft.asInstanceOf[PureOfLeft[F, B]] // scalafix:ok DisableSyntax.asInstanceOf
 }
 
 object FxCtor {
+
+  private[FxCtor] final class PureOfRight[F[*], A](
+    private val F: FxCtor[F]
+  ) extends AnyVal {
+    def apply[B](b: B): F[Either[A, B]] = F.pureOf(Right(b))
+  }
+
+  private[FxCtor] final class PureOfLeft[F[*], B](
+    private val F: FxCtor[F]
+  ) extends AnyVal {
+    def apply[A](a: A): F[Either[A, B]] = F.pureOf(Left(a))
+  }
 
   def apply[F[*]: FxCtor]: FxCtor[F] = implicitly[FxCtor[F]]
 

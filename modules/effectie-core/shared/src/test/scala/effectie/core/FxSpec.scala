@@ -29,6 +29,11 @@ object FxSpec extends Properties {
     example("test Fx[Future].pureOrError(error case)", FutureSpec.testPureOrErrorErrorCase),
     example("test Fx[Future].unitOf", FutureSpec.testUnitOf),
     example("test Fx[Future].errorOf", FutureSpec.testErrorOf),
+    property("test fx.pureOfOption[Future]", FutureSpec.testPureOfOption),
+    property("test fx.pureOfSome[Future]", FutureSpec.testPureOfSome),
+    example("test fx.pureOfNone[Future]", FutureSpec.testPureOfNone),
+    property("test fx.pureOfRight[Future]", FutureSpec.testPureOfRight),
+    property("test fx.pureOfLeft[Future]", FutureSpec.testPureOfLeft),
     property("test Fx[Future].fromEither(Right)", FutureSpec.testFromEitherRightCase),
     property("test Fx[Future].fromEither(Left)", FutureSpec.testFromEitherLeftCase),
     property("test Fx[Future].fromOption(Some)", FutureSpec.testFromOptionSomeCase),
@@ -300,6 +305,104 @@ object FxSpec extends Properties {
       val actual: Unit = ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
       actual ==== expected
     }
+
+    def testPureOfOption: Property =
+      for {
+        s <- Gen
+               .string(Gen.unicode, Range.linear(1, 10))
+               .option
+               .log("s")
+      } yield {
+        implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+        implicit val ec: ExecutionContext             =
+          ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+        val expected = s
+        val input    = s.orNull
+        val future   = Fx[Future].pureOfOption(input)
+        val actual   = ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
+
+        Result.all(
+          List(
+            actual ==== expected
+          )
+        )
+      }
+
+    def testPureOfSome: Property = for {
+      s <- Gen
+             .string(Gen.unicode, Range.linear(1, 10))
+             .log("s")
+    } yield {
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      val expected = s.some
+      val future   = Fx[Future].pureOfSome(s)
+      val actual   = ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
+
+      Result.all(
+        List(
+          actual ==== expected
+        )
+      )
+    }
+
+    def testPureOfNone: Result = {
+      val expected = none[String]
+
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      val future = Fx[Future].pureOfNone[String]
+      val actual = ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
+
+      actual ==== expected
+    }
+
+    def testPureOfRight: Property =
+      for {
+        n <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")
+      } yield {
+        val expected = n.asRight[String]
+
+        implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+        implicit val ec: ExecutionContext             =
+          ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+        val future = Fx[Future].pureOfRight[String](n)
+        val actual = ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
+
+        Result.all(
+          List(
+            actual ==== expected
+          )
+        )
+      }
+
+    def testPureOfLeft: Property =
+      for {
+        s <- Gen
+               .string(Gen.unicode, Range.linear(1, 10))
+               .log("s")
+      } yield {
+        val expected = s.asLeft[Int]
+
+        implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+        implicit val ec: ExecutionContext             =
+          ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+        val future = Fx[Future].pureOfLeft[Int](s)
+        val actual = ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
+
+        Result.all(
+          List(
+            actual ==== expected
+          )
+        )
+      }
 
     def testErrorOf: Result = {
       val expectedMessage = "This is a throwable test error."

@@ -516,15 +516,16 @@ object canHandleErrorSpec extends Properties {
 
     }
 
-    def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
+    def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnSuccessfulResult: Result =
+      withIO { implicit ticker =>
 
-      val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
-      val expected = 1.asRight[SomeError]
-      val actual   =
-        CanHandleError[IO].handleEitherTNonFatalWith(fa)(_ => IO.pure(123.asRight[SomeError])).value
+        val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
+        val expected = 1.asRight[SomeError]
+        val actual   =
+          CanHandleError[IO].handleEitherTNonFatalWith(fa)(_ => IO.pure(123.asRight[SomeError])).value
 
-      actual.completeAs(expected)
-    }
+        actual.completeAs(expected)
+      }
 
     def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnFailedResult: Result = withIO { implicit ticker =>
 
