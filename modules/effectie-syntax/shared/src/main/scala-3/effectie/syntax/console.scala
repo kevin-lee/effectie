@@ -2,23 +2,23 @@ package effectie.syntax
 
 import cats.*
 import cats.syntax.all.*
-import effectie.core.{ConsoleEffect, FxCtor, YesNo}
+import effectie.core.{ConsoleFx, FxCtor, YesNo}
 
 trait console {
 
-  inline def readLn[F[*]: ConsoleEffect]: F[String] = ConsoleEffect[F].readLn
+  inline def readLn[F[*]: ConsoleFx]: F[String] = ConsoleFx[F].readLn
 
-  inline def readPassword[F[*]: ConsoleEffect]: F[Array[Char]] = ConsoleEffect[F].readPassword
+  inline def readPassword[F[*]: ConsoleFx]: F[Array[Char]] = ConsoleFx[F].readPassword
 
-  inline def putStr[F[*]: ConsoleEffect](value: String): F[Unit] = ConsoleEffect[F].putStr(value)
+  inline def putStr[F[*]: ConsoleFx](value: String): F[Unit] = ConsoleFx[F].putStr(value)
 
-  inline def putStrLn[F[*]: ConsoleEffect](value: String): F[Unit] = ConsoleEffect[F].putStrLn(value)
+  inline def putStrLn[F[*]: ConsoleFx](value: String): F[Unit] = ConsoleFx[F].putStrLn(value)
 
-  inline def putErrStr[F[*]: ConsoleEffect](value: String): F[Unit] = ConsoleEffect[F].putErrStr(value)
+  inline def putErrStr[F[*]: ConsoleFx](value: String): F[Unit] = ConsoleFx[F].putErrStr(value)
 
-  inline def putErrStrLn[F[*]: ConsoleEffect](value: String): F[Unit] = ConsoleEffect[F].putErrStrLn(value)
+  inline def putErrStrLn[F[*]: ConsoleFx](value: String): F[Unit] = ConsoleFx[F].putErrStrLn(value)
 
-  inline def readYesNo[F[*]: ConsoleEffect](prompt: String): F[YesNo] = ConsoleEffect[F].readYesNo(prompt)
+  inline def readYesNo[F[*]: ConsoleFx](prompt: String): F[YesNo] = ConsoleFx[F].readYesNo(prompt)
 
 }
 
