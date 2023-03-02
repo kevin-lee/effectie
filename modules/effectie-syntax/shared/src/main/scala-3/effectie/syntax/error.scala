@@ -2,7 +2,7 @@ package effectie.syntax
 
 import cats.data.EitherT
 import effectie.syntax.*
-import effectie.core.{CanCatch, CanHandleError, CanRecover, Fx, FxCtor}
+import effectie.core.{CanCatch, CanHandleError, CanRecover, Fx}
 
 /** @author Kevin Lee
   * @since 2021-10-16
@@ -19,8 +19,7 @@ trait error {
     def catchNonFatal[A](
       f: PartialFunction[Throwable, A]
     )(
-      using canCatch: CanCatch[F],
-      fxCtor: FxCtor[F],
+      using canCatch: CanCatch[F]
     ): F[Either[A, B]] =
       canCatch.catchNonFatal[A, B](fb)(f)
 
@@ -54,8 +53,7 @@ trait error {
     def catchNonFatalEither[AA >: A](
       f: PartialFunction[Throwable, AA]
     )(
-      using canCatch: CanCatch[F],
-      fxCtor: FxCtor[F],
+      using canCatch: CanCatch[F]
     ): F[Either[AA, B]] =
       canCatch.catchNonFatalEither[A, AA, B](fab)(f)
 
@@ -93,8 +91,7 @@ trait error {
     def catchNonFatalEitherT[AA >: A](
       f: PartialFunction[Throwable, AA]
     )(
-      using canCatch: CanCatch[F],
-      fxCtor: FxCtor[F],
+      using canCatch: CanCatch[F]
     ): EitherT[F, AA, B] =
       effectie.syntax.error.catchNonFatalEitherT(canCatch)[A, AA, B](efab)(f)
 
@@ -132,7 +129,7 @@ trait error {
 
     def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(
       f: PartialFunction[Throwable, AA]
-    )(using fxCtor: FxCtor[F]): EitherT[F, AA, B] =
+    ): EitherT[F, AA, B] =
       EitherT(canCatch.catchNonFatalEither[A, AA, B](fab.value)(f))
 
   }
@@ -175,8 +172,8 @@ trait error {
 
   extension [F[*]](fx: Fx[F]) {
 
-    def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(f: PartialFunction[Throwable, AA])(
-      using fxCtor: FxCtor[F]
+    def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(
+      f: PartialFunction[Throwable, AA]
     ): EitherT[F, AA, B] =
       EitherT(fx.catchNonFatalEither[A, AA, B](fab.value)(f))
 
