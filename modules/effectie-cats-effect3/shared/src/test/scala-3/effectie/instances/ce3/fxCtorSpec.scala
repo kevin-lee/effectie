@@ -103,6 +103,14 @@ object FxCtorSpec extends Properties {
       "test FxCtor[IO].fromTry(Failure)",
       FxCtorSpecs.testFromTryFailureCase[IO](assertWithAttempt),
     ),
+    property(
+      "test FxCtor[IO].flatMapFa(IO[A])(A => IO[B])",
+      FxCtorSpecs.testFlatMapFx[IO] { (fb, expected) =>
+        runIO {
+          fb.map(_ ==== expected)
+        }
+      },
+    ),
   )
 
   private val futureSpecs = effectie.core.FxCtorSpec.futureSpecs
@@ -122,6 +130,7 @@ object FxCtorSpec extends Properties {
       property("test FxCtor[Id].fromOption(None)", IdSpecs.testFromOptionNoneCase),
       property("test FxCtor[Id].fromTry(Success)", IdSpecs.testFromTrySuccessCase),
       property("test FxCtor[Id].fromTry(Failure)", IdSpecs.testFromTryFailureCase),
+      property("test FxCtor[Id].flatMapFa(Id[A])", IdSpecs.testFlatMapFa),
     )
   }
 

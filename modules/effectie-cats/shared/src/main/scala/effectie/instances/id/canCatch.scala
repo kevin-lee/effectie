@@ -13,8 +13,6 @@ object canCatch {
 
     override implicit protected val fxCtor: FxCtor[Id] = effectie.instances.id.fxCtor.idFxCtor
 
-    @inline override final def flatMapFa[A, B](fa: Id[A])(f: A => Id[B]): Id[B] = f(fa)
-
     @inline override final def catchNonFatalThrowable[A](fa: => Id[A]): Id[Either[Throwable, A]] =
       scala.util.Try(fa) match {
         case scala.util.Success(a) =>

@@ -45,6 +45,7 @@ object fxCtor {
 
     @inline override final def fromTry[A](tryA: Try[A]): Task[A] = Task.fromTry(tryA)
 
+    @inline override final def flatMapFa[A, B](fa: Task[A])(f: A => Task[B]): Task[B] = fa.flatMap(f)
   }
 
 }

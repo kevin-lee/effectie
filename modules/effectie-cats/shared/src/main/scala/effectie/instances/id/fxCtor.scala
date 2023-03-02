@@ -32,6 +32,7 @@ object fxCtor {
 
     @inline override final def fromTry[A](tryA: Try[A]): Id[A] = tryA.fold(errorOf, pureOf)
 
+    @inline override final def flatMapFa[A, B](fa: Id[A])(f: A => Id[B]): Id[B] = f(fa)
   }
 
 }

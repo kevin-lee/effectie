@@ -15,9 +15,6 @@ object canCatch {
 
     override implicit protected val fxCtor: FxCtor[Future] = effectie.instances.future.fxCtor.fxCtorFuture
 
-    @inline override final def flatMapFa[A, B](fa: Future[A])(f: A => Future[B]): Future[B] =
-      fa.flatMap(f)(EC0)
-
     @inline override final def catchNonFatalThrowable[A](fa: => Future[A]): Future[Either[Throwable, A]] =
       fa.transform {
         case scala.util.Success(a) =>

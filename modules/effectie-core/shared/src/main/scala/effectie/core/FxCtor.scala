@@ -36,6 +36,8 @@ trait FxCtor[F[*]] {
   private val _pureOfLeft: PureOfLeft[F, Any] = new PureOfLeft(this)
   @inline def pureOfLeft[B]: PureOfLeft[F, B] =
     _pureOfLeft.asInstanceOf[PureOfLeft[F, B]] // scalafix:ok DisableSyntax.asInstanceOf
+
+  def flatMapFa[A, B](fa: F[A])(f: A => F[B]): F[B]
 }
 
 object FxCtor {

@@ -162,4 +162,15 @@ object FxSpecs {
     run(ioA, expected)
   }
 
+  def testFlatMapFx[F[*]: Fx](run: (F[String], String) => Result): Property =
+    for {
+      n      <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")
+      prefix <- Gen.constant("n is ").log("prefix")
+    } yield {
+      val expected = prefix + n.toString
+      val fa       = Fx[F].pureOf(n)
+      val fb       = Fx[F].flatMapFa(fa)(n => Fx[F].pureOf(prefix + n.toString))
+      run(fb, expected)
+    }
+
 }

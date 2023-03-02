@@ -99,6 +99,14 @@ object FxSpec extends Properties {
     property("test Fx[IO].fromOption(None)", FxSpecs.testFromOptionNoneCase[IO](assertWithAttempt)),
     property("test Fx[IO].fromTry(Success)", FxSpecs.testFromTrySuccessCase[IO](assertWithAttempt)),
     property("test Fx[IO].fromTry(Failure)", FxSpecs.testFromTryFailureCase[IO](assertWithAttempt)),
+    property(
+      "test Fx[IO].flatMapFa(IO[A])(A => IO[B])",
+      FxSpecs.testFlatMapFx[IO] { (fb, expected) =>
+        runIO {
+          fb.map(_ ==== expected)
+        }
+      },
+    ),
     property("test Fx[IO] Monad laws - Identity", IoSpec.testMonadLaws1_Identity),
     property("test Fx[IO] Monad laws - Composition", IoSpec.testMonadLaws2_Composition),
     property("test Fx[IO] Monad laws - IdentityAp", IoSpec.testMonadLaws3_IdentityAp),
@@ -496,6 +504,7 @@ object FxSpec extends Properties {
       property("test Fx[Id].fromOption(None)", IdSpecs.testFromOptionNoneCase),
       property("test Fx[Id].fromTry(Success)", IdSpecs.testFromTrySuccessCase),
       property("test Fx[Id].fromTry(Failure)", IdSpecs.testFromTryFailureCase),
+      property("test Fx[Id].flatMapFa(Id[A])", IdSpecs.testFlatMapFa),
       property("test Fx[Id] Monad laws - Identity", IdSpec.testMonadLaws1_Identity),
       property("test Fx[Id] Monad laws - Composition", IdSpec.testMonadLaws2_Composition),
       property("test Fx[Id] Monad laws - IdentityAp", IdSpec.testMonadLaws3_IdentityAp),
