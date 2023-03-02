@@ -1,7 +1,7 @@
 package effectie.syntax
 
 import _root_.cats.data.EitherT
-import effectie.core.{CanCatch, CanHandleError, CanRecover, FxCtor}
+import effectie.core.{CanCatch, CanHandleError, CanRecover}
 
 /** @author Kevin Lee
   * @since 2021-10-16
@@ -41,8 +41,7 @@ object error extends error {
     def catchNonFatal[A](
       f: PartialFunction[Throwable, A]
     )(
-      implicit canCatch: CanCatch[F],
-      fxCtor: FxCtor[F],
+      implicit canCatch: CanCatch[F]
     ): F[Either[A, B]] =
       canCatch.catchNonFatal[A, B](fb())(f)
 
@@ -76,8 +75,7 @@ object error extends error {
     def catchNonFatalEither[AA >: A](
       f: PartialFunction[Throwable, AA]
     )(
-      implicit canCatch: CanCatch[F],
-      fxCtor: FxCtor[F],
+      implicit canCatch: CanCatch[F]
     ): F[Either[AA, B]] =
       canCatch.catchNonFatalEither[A, AA, B](fab())(f)
 
@@ -115,8 +113,7 @@ object error extends error {
     def catchNonFatalEitherT[AA >: A](
       f: PartialFunction[Throwable, AA]
     )(
-      implicit canCatch: CanCatch[F],
-      fxCtor: FxCtor[F],
+      implicit canCatch: CanCatch[F]
     ): EitherT[F, AA, B] =
       canCatch.catchNonFatalEitherT[A, AA, B](efab())(f)
 
@@ -151,8 +148,8 @@ object error extends error {
 
   final class CanCatchOps[F[*]](private val canCatch: effectie.core.CanCatch[F]) extends AnyVal {
 
-    def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(f: PartialFunction[Throwable, AA])(
-      implicit fxCtor: FxCtor[F]
+    def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(
+      f: PartialFunction[Throwable, AA]
     ): EitherT[F, AA, B] =
       EitherT(canCatch.catchNonFatalEither[A, AA, B](fab.value)(f))
 
@@ -198,7 +195,7 @@ object error extends error {
 
     def catchNonFatalEitherT[A, AA >: A, B](fab: => EitherT[F, A, B])(
       f: PartialFunction[Throwable, AA]
-    )(implicit fxCtor: FxCtor[F]): EitherT[F, AA, B] =
+    ): EitherT[F, AA, B] =
       EitherT(fx.catchNonFatalEither[A, AA, B](fab.value)(f))
 
   }
