@@ -2,15 +2,15 @@ package effectie.instances
 
 import cats.FlatMap
 import cats.syntax.all._
-import effectie.core.ConsoleEffect.ConsoleEffectWithoutFlatMap
-import effectie.core.{ConsoleEffect, FxCtor, YesNo}
+import effectie.core.ConsoleFx.ConsoleFxWithoutFlatMap
+import effectie.core.{ConsoleFx, FxCtor, YesNo}
 
 /** @author Kevin Lee
   * @since 2020-03-31
   */
 object console {
-  implicit def consoleEffectF[F[*]: FxCtor: FlatMap]: ConsoleEffect[F] =
-    new ConsoleEffectWithoutFlatMap[F] with ConsoleEffect[F] {
+  implicit def consoleFxF[F[*]: FxCtor: FlatMap]: ConsoleFx[F] =
+    new ConsoleFxWithoutFlatMap[F] with ConsoleFx[F] {
 
       @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
       override def readYesNo(prompt: String): F[YesNo] = for {

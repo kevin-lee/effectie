@@ -12,11 +12,11 @@ import scala.annotation.implicitNotFound
     import effectie.instances.console.*
 
     // then probably need to import Fx or FxCtor instances from one of
-    - effectie.instance.ce2
-    - effectie.instance.ce3
-    - effectie.instance.monix3
-    - effectie.instance.future
-    - effectie.instance.id
+    - effectie.instances.ce2
+    - effectie.instances.ce3
+    - effectie.instances.monix3
+    - effectie.instances.future
+    - effectie.instances.id
     depending on what effect you want to use
 
     e.g.)
@@ -47,7 +47,7 @@ import scala.annotation.implicitNotFound
   ---
   """
 )
-trait ConsoleEffect[F[*]] {
+trait ConsoleFx[F[*]] {
   def readLn: F[String]
 
   def readPassword: F[Array[Char]]
@@ -63,27 +63,27 @@ trait ConsoleEffect[F[*]] {
   def readYesNo(prompt: String): F[YesNo]
 }
 
-object ConsoleEffect {
-  def apply[F[*]: ConsoleEffect]: ConsoleEffect[F] = implicitly[ConsoleEffect[F]]
+object ConsoleFx {
+  def apply[F[*]: ConsoleFx]: ConsoleFx[F] = implicitly[ConsoleFx[F]]
 
-  abstract class ConsoleEffectWithoutFlatMap[F[*]: FxCtor] extends ConsoleEffect[F] {
+  abstract class ConsoleFxWithoutFlatMap[F[*]: FxCtor] extends ConsoleFx[F] {
 
     override def readLn: F[String] =
-      implicitly[FxCtor[F]].effectOf(scala.io.StdIn.readLine())
+      FxCtor[F].effectOf(scala.io.StdIn.readLine())
 
     override def readPassword: F[Array[Char]] =
-      implicitly[FxCtor[F]].effectOf(System.console().readPassword())
+      FxCtor[F].effectOf(System.console().readPassword())
 
     override def putStr(value: String): F[Unit] =
-      implicitly[FxCtor[F]].effectOf(Console.out.print(value))
+      FxCtor[F].effectOf(Console.out.print(value))
 
     override def putStrLn(value: String): F[Unit] =
-      implicitly[FxCtor[F]].effectOf(Console.out.println(value))
+      FxCtor[F].effectOf(Console.out.println(value))
 
     override def putErrStr(value: String): F[Unit] =
-      implicitly[FxCtor[F]].effectOf(Console.err.print(value))
+      FxCtor[F].effectOf(Console.err.print(value))
 
     override def putErrStrLn(value: String): F[Unit] =
-      implicitly[FxCtor[F]].effectOf(Console.err.println(value))
+      FxCtor[F].effectOf(Console.err.println(value))
   }
 }
