@@ -153,4 +153,15 @@ object IdSpecs {
     (actual ==== expected).log(s"$actual does not equal to $expected")
   }
 
+  def testFlatMapFa(implicit idFx: Fx[Id]): Property =
+    for {
+      n      <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")
+      prefix <- Gen.constant("n is ").log("prefix")
+    } yield {
+      val expected = prefix + n.toString
+      val fa       = idFx.pureOf(n)
+      val actual   = idFx.flatMapFa(fa)(n => idFx.pureOf(prefix + n.toString))
+      actual ==== expected
+    }
+
 }

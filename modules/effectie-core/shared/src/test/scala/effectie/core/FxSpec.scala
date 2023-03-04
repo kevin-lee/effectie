@@ -40,6 +40,7 @@ object FxSpec extends Properties {
     property("test Fx[Future].fromOption(None)", FutureSpec.testFromOptionNoneCase),
     property("test Fx[Future].fromTry(Success)", FutureSpec.testFromTrySuccessCase),
     property("test Fx[Future].fromTry(Failure)", FutureSpec.testFromTryFailureCase),
+    property("test Fx[Future].flatMapFa(Future[A])(A => IO[B])", FutureSpec.testFlatMapFx),
   ) ++
     FutureSpec.testMonadLaws ++
     List(
@@ -211,10 +212,11 @@ object FxSpec extends Properties {
     Fx[F].effectOf(a)
 
   object FutureSpec {
+    import effectie.instances.future.fx._
+
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
-    import effectie.instances.future.fx._
 
     val waitFor = WaitFor(1.second)
 
@@ -508,6 +510,23 @@ object FxSpec extends Properties {
       val actual = Try(ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)).toEither
       (actual ==== expected).log(s"$actual does not equal to $expected")
     }
+
+    def testFlatMapFx: Property =
+      for {
+        n      <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")
+        prefix <- Gen.constant("n is ").log("prefix")
+      } yield {
+        val expected = prefix + n.toString
+
+        implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+        implicit val ec: ExecutionContext             =
+          ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+        val fa     = Fx[Future].pureOf(n)
+        val fb     = Fx[Future].flatMapFa(fa)(n => Fx[Future].pureOf(prefix + n.toString))
+        val actual = Try(ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(fb)).toEither
+        (actual ==== expected.asRight).log(s"$actual does not equal to $expected")
+      }
 
     def testMonadLaws: List[Test] = {
 

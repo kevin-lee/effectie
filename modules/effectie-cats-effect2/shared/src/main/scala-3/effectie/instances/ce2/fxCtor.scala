@@ -28,6 +28,8 @@ object fxCtor {
 
     inline override final def fromTry[A](tryA: Try[A]): IO[A] = IO.fromTry(tryA)
 
+    inline override final def flatMapFa[A, B](fa: IO[A])(f: A => IO[B]): IO[B] = fa.flatMap(f)
+
   }
 
 }

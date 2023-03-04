@@ -12,8 +12,6 @@ object canCatch {
 
     override implicit protected val fxCtor: FxCtor[Task] = effectie.instances.monix3.fxCtor.taskFxCtor
 
-    @inline override final def flatMapFa[A, B](fa: Task[A])(f: A => Task[B]): Task[B] = fa.flatMap(f)
-
     @inline override def catchNonFatalThrowable[A](fa: => Task[A]): Task[Either[Throwable, A]] =
       fa.attempt
 
