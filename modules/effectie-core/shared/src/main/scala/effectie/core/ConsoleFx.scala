@@ -4,7 +4,7 @@ import scala.annotation.implicitNotFound
 
 @implicitNotFound(
   """
-  Could not find an implicit ConsoleEffect[${F}]. You can probably find it from the effectie.instances package.
+  Could not find an implicit ConsoleFx[${F}]. You can probably find it from the effectie.instances package.
   ---
   You can simply,
     import effectie.instances.console._
