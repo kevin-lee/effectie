@@ -1,46 +1,48 @@
 package effectie.core
 
 trait ConsoleFx[F[*]] {
-  def readLn: F[String]
+  def readLn(implicit fxCtor: FxCtor[F]): F[String]
 
-  def readPassword: F[Array[Char]]
+  def readPassword(implicit fxCtor: FxCtor[F]): F[Array[Char]]
 
-  def putStr(value: String): F[Unit]
+  def putStr(value: String)(implicit fxCtor: FxCtor[F]): F[Unit]
 
-  def putStrLn(value: String): F[Unit]
+  def putStrLn(value: String)(implicit fxCtor: FxCtor[F]): F[Unit]
 
-  def putErrStr(value: String): F[Unit]
+  def putErrStr(value: String)(implicit fxCtor: FxCtor[F]): F[Unit]
 
-  def putErrStrLn(value: String): F[Unit]
+  def putErrStrLn(value: String)(implicit fxCtor: FxCtor[F]): F[Unit]
 
-  def readYesNo(prompt: String): F[YesNo]
+  def readYesNo(prompt: String)(implicit fxCtor: FxCtor[F]): F[YesNo]
 }
 
 object ConsoleFx {
-  def apply[F[*]: FxCtor]: ConsoleFx[F] = new ConsoleFxF[F]
+  def apply[F[*]]: ConsoleFx[F] = consoleFx.asInstanceOf[ConsoleFx[F]] // scalafix:ok DisableSyntax.asInstanceOf
 
-  private class ConsoleFxF[F[*]](implicit fxCtor: FxCtor[F]) extends ConsoleFx[F] {
+  private final val consoleFx = new ConsoleFxF // scalafix:ok DisableSyntax.noFinalVal
 
-    override def readLn: F[String] =
-      FxCtor[F].effectOf(scala.io.StdIn.readLine())
+  private final class ConsoleFxF[F[*]] extends ConsoleFx[F] {
 
-    override def readPassword: F[Array[Char]] =
-      FxCtor[F].effectOf(System.console().readPassword())
+    override def readLn(implicit fxCtor: FxCtor[F]): F[String] =
+      fxCtor.effectOf(scala.io.StdIn.readLine())
 
-    override def putStr(value: String): F[Unit] =
-      FxCtor[F].effectOf(Console.out.print(value))
+    override def readPassword(implicit fxCtor: FxCtor[F]): F[Array[Char]] =
+      fxCtor.effectOf(System.console().readPassword())
 
-    override def putStrLn(value: String): F[Unit] =
-      FxCtor[F].effectOf(Console.out.println(value))
+    override def putStr(value: String)(implicit fxCtor: FxCtor[F]): F[Unit] =
+      fxCtor.effectOf(Console.out.print(value))
 
-    override def putErrStr(value: String): F[Unit] =
-      FxCtor[F].effectOf(Console.err.print(value))
+    override def putStrLn(value: String)(implicit fxCtor: FxCtor[F]): F[Unit] =
+      fxCtor.effectOf(Console.out.println(value))
 
-    override def putErrStrLn(value: String): F[Unit] =
-      FxCtor[F].effectOf(Console.err.println(value))
+    override def putErrStr(value: String)(implicit fxCtor: FxCtor[F]): F[Unit] =
+      fxCtor.effectOf(Console.err.print(value))
+
+    override def putErrStrLn(value: String)(implicit fxCtor: FxCtor[F]): F[Unit] =
+      fxCtor.effectOf(Console.err.println(value))
 
     @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
-    override def readYesNo(prompt: String): F[YesNo] =
+    override def readYesNo(prompt: String)(implicit fxCtor: FxCtor[F]): F[YesNo] =
       fxCtor.flatMapFa(putStrLn(prompt)) { _ =>
         fxCtor.flatMapFa(readLn) {
           case "y" | "Y" =>
