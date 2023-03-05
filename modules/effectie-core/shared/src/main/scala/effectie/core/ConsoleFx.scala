@@ -1,52 +1,5 @@
 package effectie.core
 
-import scala.annotation.implicitNotFound
-
-@implicitNotFound(
-  """
-  Could not find an implicit ConsoleFx[${F}]. You can probably find it from the effectie.instances package.
-  ---
-  You can simply,
-    import effectie.instances.console._
-    // for Scala 3
-    import effectie.instances.console.*
-
-    // then probably need to import Fx or FxCtor instances from one of
-    - effectie.instances.ce2
-    - effectie.instances.ce3
-    - effectie.instances.monix3
-    - effectie.instances.future
-    - effectie.instances.id
-    depending on what effect you want to use
-
-    e.g.)
-    If you want to use IO from cats-effect 2, try effectie-cats-effect2.
-    import effectie.instances.ce2.fx._
-    // for Scala 3
-    import effectie.instances.ce2.fx.given
-
-    For cats-effect 3, try effectie-cats-effect3.
-      import effectie.instances.ce3.fx._
-      // for Scala 3
-      import effectie.instances.ce3.fx.given
-
-    If you want to use Task from Monix 3, try effectie-monix3.
-      import effectie.instances.monix3.fx._
-      // for Scala 3
-      import effectie.instances.monix3.fx.given
-
-    For Scala's Future, It is just
-      import effectie.instances.future.fx._
-      // for Scala 3
-      import effectie.instances.future.fx.given
-
-    If you don't want to use any effect but the raw data, you can use the instance for cats.Id
-      import effectie.instances.id.fx._
-      // for Scala 3
-      import effectie.instances.id.fx.given
-  ---
-  """
-)
 trait ConsoleFx[F[*]] {
   def readLn: F[String]
 
@@ -64,9 +17,9 @@ trait ConsoleFx[F[*]] {
 }
 
 object ConsoleFx {
-  def apply[F[*]: ConsoleFx]: ConsoleFx[F] = implicitly[ConsoleFx[F]]
+  def apply[F[*]: FxCtor]: ConsoleFx[F] = new ConsoleFxF[F]
 
-  abstract class ConsoleFxWithoutFlatMap[F[*]: FxCtor] extends ConsoleFx[F] {
+  private class ConsoleFxF[F[*]](implicit fxCtor: FxCtor[F]) extends ConsoleFx[F] {
 
     override def readLn: F[String] =
       FxCtor[F].effectOf(scala.io.StdIn.readLine())
@@ -85,5 +38,19 @@ object ConsoleFx {
 
     override def putErrStrLn(value: String): F[Unit] =
       FxCtor[F].effectOf(Console.err.println(value))
+
+    @SuppressWarnings(Array("org.wartremover.warts.Recursion"))
+    override def readYesNo(prompt: String): F[YesNo] =
+      fxCtor.flatMapFa(putStrLn(prompt)) { _ =>
+        fxCtor.flatMapFa(readLn) {
+          case "y" | "Y" =>
+            FxCtor[F].pureOf(YesNo.yes)
+          case "n" | "N" =>
+            FxCtor[F].pureOf(YesNo.no)
+          case _ =>
+            readYesNo(prompt)
+        }
+      }
   }
+
 }
