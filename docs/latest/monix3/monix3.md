@@ -32,10 +32,10 @@ object Something {
   def apply[F[_]: Something]: Something[F] =
     implicitly[Something[F]]
 
-  implicit def something[F[_]: Fx: ConsoleEffect: Monad]: Something[F] =
+  implicit def something[F[_]: Fx: Monad]: Something[F] =
     new SomethingF[F]
 
-  final class SomethingF[F[_]: Fx: ConsoleEffect: Monad]
+  final class SomethingF[F[_]: Fx: Monad]
     extends Something[F] {
 
     override def foo[A: Semigroup](a: A): F[A] =
@@ -77,7 +77,6 @@ object Something {
 import monix.execution.Scheduler.Implicits.global
 
 import effectie.instances.monix3.fx._
-import effectie.instances.console._
 
 println(Something[Task].foo(1).runSyncUnsafe())
 
