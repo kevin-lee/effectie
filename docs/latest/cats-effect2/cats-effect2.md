@@ -6,7 +6,7 @@ title: "For Cats Effect"
 ## Effectie for Cats Effect
 
 * [Fx](fx/fx.md)
-* [ConsoleEffect](console-effect.md)
+* [ConsoleFx](console-fx.md)
 * [CanCatch](fx/error-handling/can-catch.md)
 * [CanHandleError](fx/error-handling/can-handle-error.md)
 * [FromFuture](from-future.md)
@@ -35,10 +35,10 @@ object Something {
   def apply[F[_]: Something]: Something[F] =
     implicitly[Something[F]]
 
-  implicit def something[F[_]: Fx: ConsoleEffect: Monad]: Something[F] =
+  implicit def something[F[_]: Fx: Monad]: Something[F] =
     new SomethingF[F]
 
-  final class SomethingF[F[_]: Fx: ConsoleEffect: Monad]
+  final class SomethingF[F[_]: Fx: Monad]
     extends Something[F] {
 
     override def foo[A: Semigroup](a: A): F[A] =
@@ -79,7 +79,6 @@ object Something {
 }
 
 import effectie.instances.ce2.fx._
-import effectie.instances.console._
 
 println(Something[IO].foo(1).unsafeRunSync())
 

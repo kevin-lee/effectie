@@ -1,10 +1,10 @@
 ---
 sidebar_position: 5
 id: console-effect
-title: "ConsoleEffect"
+title: "ConsoleFx"
 ---
 
-## ConsoleEffect
+## ConsoleFx
 
 ```scala mdoc:compile-only
 import cats._
@@ -22,29 +22,28 @@ object Something {
   def apply[F[_]: Something]: Something[F] =
     implicitly[Something[F]]
 
-  implicit def something[F[_]: ConsoleEffect: Monad]: Something[F] =
+  implicit def something[F[_]: Fx: Monad]: Something[F] =
     new SomethingF[F]
 
-  final class SomethingF[F[_]: ConsoleEffect: Monad]
+  final class SomethingF[F[_]: Fx: Monad]
     extends Something[F] {
 
     def foo[A](): F[Unit] = for {
-      _ <- ConsoleEffect[F].putStrLn("Hello")
-      answer <- ConsoleEffect[F].readYesNo("Would you like to proceed?")
+      _ <- ConsoleFx[F].putStrLn("Hello")
+      answer <- ConsoleFx[F].readYesNo("Would you like to proceed?")
       result = answer match {
             case YesNo.Yes =>
               "Done"
             case YesNo.No =>
               "Cancelled"
           }
-      _ <- ConsoleEffect[F].putStrLn(result)
+      _ <- ConsoleFx[F].putStrLn(result)
     } yield ()
   }
 }
 
 import cats.effect._
 import effectie.instances.ce2.fx._
-import effectie.instances.console._
 
 val foo = Something[IO].foo()
 foo.unsafeRunSync()
@@ -83,10 +82,10 @@ object Something {
   def apply[F[_]: Something]: Something[F] =
     implicitly[Something[F]]
 
-  implicit def something[F[_]: ConsoleEffect: Monad]: Something[F] =
+  implicit def something[F[_]: Fx: Monad]: Something[F] =
     new SomethingF[F]
 
-  final class SomethingF[F[_]: ConsoleEffect: Monad]
+  final class SomethingF[F[_]: Fx: Monad]
     extends Something[F] {
 
     def foo[A](): F[Unit] = for {
