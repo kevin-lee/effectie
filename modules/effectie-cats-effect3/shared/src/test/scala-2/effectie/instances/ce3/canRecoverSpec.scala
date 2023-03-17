@@ -159,7 +159,7 @@ object canRecoverSpec extends Properties {
   )
 
   /* Future */
-  val futureSpecs = effectie.core.CanRecoverSpec.futureSpecs ++ List(
+  val futureSpecs = effectie.instances.future.canRecoverSpec.futureSpecs ++ List(
     example(
       "test CanRecover[Future].recoverEitherTFromNonFatalWith should catch NonFatal",
       FutureSpec.testCanRecover_Future_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal,

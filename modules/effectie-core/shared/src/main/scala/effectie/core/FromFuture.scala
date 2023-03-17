@@ -47,4 +47,6 @@ object FromFuture {
   def apply[F[*]: FromFuture]: FromFuture[F] = implicitly[FromFuture[F]]
 
   final case class FromFutureToIdTimeout(fromFutureToIdTimeout: Duration)
+
+  final case class FromFutureToTryTimeout(fromFutureToTryTimeout: Duration)
 }

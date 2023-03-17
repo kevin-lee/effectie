@@ -416,7 +416,7 @@ object fxSpec extends Properties {
     )
 
   /* Future */
-  private val futureSpecs = effectie.core.FxSpec.futureSpecs ++
+  private val futureSpecs = effectie.instances.future.fxSpec.futureSpecs ++
     List(
       example(
         "test Fx[Future]catchNonFatalEitherT should catch NonFatal",

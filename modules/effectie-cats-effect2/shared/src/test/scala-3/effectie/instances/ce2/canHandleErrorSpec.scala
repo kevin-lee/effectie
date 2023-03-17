@@ -151,7 +151,7 @@ object CanHandleErrorSpec extends Properties {
   )
 
   /* Future */
-  private val futureSpecs = effectie.core.CanCatchSpec.futureSpecs ++ List(
+  private val futureSpecs = effectie.instances.future.canCatchSpec.futureSpecs ++ List(
     example(
       "test CanHandleError[Future].handleEitherTNonFatalWith should handle NonFatal",
       FutureSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldHandleNonFatalWith,

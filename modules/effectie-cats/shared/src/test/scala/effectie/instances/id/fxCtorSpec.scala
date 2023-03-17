@@ -12,7 +12,7 @@ object fxCtorSpec extends Properties {
     futureSpecs ++
       idSpecs
 
-  private val futureSpecs = effectie.core.FxCtorSpec.futureSpecs
+  private val futureSpecs = effectie.instances.future.fxCtorSpec.futureSpecs
 
   import effectie.instances.id.fxCtor._
 

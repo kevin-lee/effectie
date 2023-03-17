@@ -26,7 +26,7 @@ object canHandleErrorSpec extends Properties {
   override def tests: List[Test] = futureSpecs ++ idSpecs
 
   /* Future */
-  private val futureSpecs = effectie.core.CanHandleErrorSpec.futureSpecs ++ List(
+  private val futureSpecs = effectie.instances.future.canHandleErrorSpec.futureSpecs ++ List(
     example(
       "test CanHandleError[Future].handleEitherTNonFatalWith should handle NonFatal",
       FutureSpec.testCanHandleError_Future_handleEitherTNonFatalWithShouldHandleNonFatalWith,
