@@ -1,5 +1,6 @@
-package effectie.core
+package effectie.instances.future
 
+import effectie.core.{CanRecover, FxCtor}
 import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
@@ -9,7 +10,7 @@ import hedgehog.runner._
 /** @author Kevin Lee
   * @since 2022-01-06
   */
-object CanRecoverSpec extends Properties {
+object canRecoverSpec extends Properties {
   implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
   override def tests: List[Test] = futureSpecs

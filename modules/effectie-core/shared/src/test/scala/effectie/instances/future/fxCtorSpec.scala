@@ -1,6 +1,7 @@
-package effectie.core
+package effectie.instances.future
 
 import cats.syntax.all._
+import effectie.core.FxCtor
 import effectie.testing.tools
 import effectie.testing.types.SomeThrowableError
 import extras.concurrent.testing.ConcurrentSupport
@@ -13,7 +14,7 @@ import scala.util.Try
 /** @author Kevin Lee
   * @since 2022-01-06
   */
-object FxCtorSpec extends Properties {
+object fxCtorSpec extends Properties {
 
   implicit private val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 

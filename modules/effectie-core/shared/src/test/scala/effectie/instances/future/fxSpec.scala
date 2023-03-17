@@ -1,7 +1,8 @@
-package effectie.core
+package effectie.instances.future
 
 import cats.Eq
 import cats.syntax.all._
+import effectie.core.Fx
 import effectie.testing.cats.MonadSpec
 import effectie.testing.tools.expectThrowable
 import effectie.testing.types.{SomeError, SomeThrowableError}
@@ -16,7 +17,7 @@ import scala.util.Try
 /** @author Kevin Lee
   * @since 2022-01-06
   */
-object FxSpec extends Properties {
+object fxSpec extends Properties {
   implicit private val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
   override def tests: List[Test] = futureSpecs

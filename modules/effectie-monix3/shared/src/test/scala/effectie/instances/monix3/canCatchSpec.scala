@@ -152,7 +152,7 @@ object canCatchSpec extends Properties {
       IoSpec.testCanCatch_IO_catchNonFatalEitherTShouldReturnFailedResult,
     ),
   )
-  val futureSpecs = effectie.core.CanCatchSpec.futureSpecs ++ List(
+  val futureSpecs = effectie.instances.future.canCatchSpec.futureSpecs ++ List(
     /* Future */
     example(
       "test CanCatch[Future].catchNonFatalEitherT should catch NonFatal",

@@ -1,5 +1,6 @@
-package effectie.core
+package effectie.instances.future
 
+import effectie.core.FromFuture
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._
@@ -12,7 +13,7 @@ import scala.concurrent.{ExecutionContext, Future}
 /** @author Kevin Lee
   * @since 2020-09-22
   */
-object FromFutureSpec extends Properties {
+object fromFutureSpec extends Properties {
   implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
   private val waitFor300Millis = WaitFor(300.milliseconds)
