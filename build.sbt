@@ -75,7 +75,7 @@ lazy val core = module(ProjectName("core"), crossProject(JVMPlatform, JSPlatform
     libraryDependencies ++= List(
       libs.tests.extrasConcurrent,
       libs.tests.extrasConcurrentTesting,
-      libs.libCatsCore(props.catsVersion),
+      libs.libCatsCore(props.catsVersion) % Test,
     ) ++ (
       if (scalaVersion.value.startsWith("2.12"))
         List("org.scala-lang.modules" %% "scala-collection-compat" % "2.8.1")
