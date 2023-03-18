@@ -5,9 +5,9 @@ import just.semver.AdditionalInfo.PreRelease
 import kevinlee.sbt.SbtCommon.crossVersionProps
 import sbtcrossproject.CrossProject
 
-ThisBuild / scalaVersion       := props.ProjectScalaVersion
-ThisBuild / organization       := "io.kevinlee"
-ThisBuild / organizationName   := "Kevin's Code"
+ThisBuild / scalaVersion := props.ProjectScalaVersion
+ThisBuild / organization := "io.kevinlee"
+ThisBuild / organizationName := "Kevin's Code"
 ThisBuild / crossScalaVersions := props.CrossScalaVersions
 
 ThisBuild / testFrameworks ~=
@@ -22,15 +22,15 @@ ThisBuild / developers := List(
   )
 )
 
-ThisBuild / homepage   := Some(url(s"https://github.com/${props.GitHubUsername}/${props.RepoName}"))
-ThisBuild / scmInfo    :=
+ThisBuild / homepage := Some(url(s"https://github.com/${props.GitHubUsername}/${props.RepoName}"))
+ThisBuild / scmInfo :=
   Some(
     ScmInfo(
       url(s"https://github.com/${props.GitHubUsername}/${props.RepoName}"),
       s"git@github.com:${props.GitHubUsername}/${props.RepoName}.git",
     )
   )
-ThisBuild / licenses   := props.licenses
+ThisBuild / licenses := props.licenses
 
 ThisBuild / resolvers += props.SonatypeSnapshots
 
@@ -44,8 +44,8 @@ ThisBuild / scalafixConfig := (
 lazy val effectie = (project in file("."))
   .enablePlugins(DevOopsGitHubReleasePlugin)
   .settings(
-    name                := prefixedProjectName(""),
-    description         := "Effect Utils",
+    name := prefixedProjectName(""),
+    description := "Effect Utils",
     libraryDependencies :=
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     devOopsPackagedArtifacts += s"*/*/*/target/scala-*/${devOopsArtifactNamePrefix.value}*.jar",
@@ -71,7 +71,7 @@ lazy val effectie = (project in file("."))
 
 lazy val core = module(ProjectName("core"), crossProject(JVMPlatform, JSPlatform))
   .settings(
-    description         := "Effect Utils - Core",
+    description := "Effect Utils - Core",
     libraryDependencies ++= List(
       libs.tests.extrasConcurrent,
       libs.tests.extrasConcurrentTesting,
@@ -95,7 +95,7 @@ lazy val coreJs  = core
 
 lazy val syntax    = module(ProjectName("syntax"), crossProject(JVMPlatform, JSPlatform))
   .settings(
-    description         := "Effect Utils - Syntax",
+    description := "Effect Utils - Syntax",
     libraryDependencies ++= List(
       libs.libCatsCore(props.catsVersion),
       libs.tests.extrasConcurrent,
@@ -112,7 +112,7 @@ lazy val syntaxJs  = syntax
 
 lazy val cats = module(ProjectName("cats"), crossProject(JVMPlatform, JSPlatform))
   .settings(
-    description         := "Effect Utils - Cats",
+    description := "Effect Utils - Cats",
     libraryDependencies ++= List(
       libs.libCatsCore(props.catsVersion),
       libs.tests.extrasConcurrent,
@@ -135,7 +135,7 @@ lazy val catsJs  = cats
 
 lazy val testing4Cats    = module(ProjectName("test4cats"), crossProject(JVMPlatform, JSPlatform))
   .settings(
-    description         := "Effect's test utils for Cats",
+    description := "Effect's test utils for Cats",
     libraryDependencies :=
       libraryDependencies.value ++ List(
         libs.libCatsCore(props.catsVersion)
@@ -151,7 +151,7 @@ lazy val testing4CatsJs  = testing4Cats
 
 lazy val catsEffect2    = module(ProjectName("cats-effect2"), crossProject(JVMPlatform, JSPlatform))
   .settings(
-    description         := "Effect Utils - Cats Effect 2",
+    description := "Effect Utils - Cats Effect 2",
     libraryDependencies :=
       (SemVer.parseUnsafe(scalaVersion.value) match {
         case SemVer(Major(2), Minor(11), _, _, _) =>
@@ -189,12 +189,12 @@ lazy val catsEffect2Js  = catsEffect2
 
 lazy val catsEffect3    = module(ProjectName("cats-effect3"), crossProject(JVMPlatform, JSPlatform))
   .settings(
-    description         := "Effect Utils - Cats Effect 3",
+    description := "Effect Utils - Cats Effect 3",
     libraryDependencies ++= List(
       libs.libCatsCore(props.catsVersion),
       libs.libCatsEffect(props.catsEffect3Version),
       libs.libCatsEffectTestKit % Test excludeAll ("org.scalacheck"),
-      libs.extrasHedgehogCatsEffect3,
+      libs.tests.extrasHedgehogCatsEffect3,
     ),
     libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
@@ -214,7 +214,7 @@ lazy val catsEffect3Js  = catsEffect3
 
 lazy val monix3    = module(ProjectName("monix3"), crossProject(JVMPlatform, JSPlatform))
   .settings(
-    description         := "Effect Utils - Monix 3",
+    description := "Effect Utils - Monix 3",
     libraryDependencies :=
       crossVersionProps(
         List.empty,
@@ -243,9 +243,9 @@ lazy val monix3Js  = monix3
 lazy val docs = (project in file("docs-gen-tmp/docs"))
   .enablePlugins(MdocPlugin, DocusaurPlugin)
   .settings(
-    name                := "docs",
-    mdocIn              := file("docs/latest"),
-    mdocOut             := file("generated-docs/docs"),
+    name := "docs",
+    mdocIn := file("docs/latest"),
+    mdocOut := file("generated-docs/docs"),
     cleanFiles += ((ThisBuild / baseDirectory).value / "generated-docs" / "docs"),
     scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
     libraryDependencies ++= {
@@ -261,18 +261,18 @@ lazy val docs = (project in file("docs-gen-tmp/docs"))
       isScala3(scalaVersion.value),
       libraryDependencies.value,
     ),
-    mdocVariables       := createMdocVariables(none),
-    docusaurDir         := (ThisBuild / baseDirectory).value / "website",
-    docusaurBuildDir    := docusaurDir.value / "build",
+    mdocVariables := createMdocVariables(none),
+    docusaurDir := (ThisBuild / baseDirectory).value / "website",
+    docusaurBuildDir := docusaurDir.value / "build",
   )
   .settings(noPublish)
 
 lazy val docsV1 = (project in file("docs-gen-tmp/docs-v1"))
   .enablePlugins(MdocPlugin)
   .settings(
-    name                := "docsV1",
-    mdocIn              := file("docs/v1"),
-    mdocOut             := file("website/versioned_docs/version-v1/docs"),
+    name := "docsV1",
+    mdocIn := file("docs/v1"),
+    mdocOut := file("website/versioned_docs/version-v1/docs"),
     cleanFiles += ((ThisBuild / baseDirectory).value / "website" / "versioned_docs" / "version-v1"),
     scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
     libraryDependencies ++= List(
@@ -284,7 +284,7 @@ lazy val docsV1 = (project in file("docs-gen-tmp/docs-v1"))
       isScala3(scalaVersion.value),
       libraryDependencies.value,
     ),
-    mdocVariables       := createMdocVariables("1.16.0".some),
+    mdocVariables := createMdocVariables("1.16.0".some),
   )
   .settings(noPublish)
 
@@ -411,18 +411,17 @@ lazy val libs =
     lazy val extrasConcurrent        = "io.kevinlee" %% "extras-concurrent"         % props.ExtrasVersion
     lazy val extrasConcurrentTesting = "io.kevinlee" %% "extras-concurrent-testing" % props.ExtrasVersion
 
-    lazy val extrasHedgehogCatsEffect3 = "io.kevinlee" %% "extras-hedgehog-ce3" % props.ExtrasVersion % Test
-
-    object tests {
-      lazy val extrasConcurrent        = "io.kevinlee" %% "extras-concurrent"         % props.ExtrasVersion % Test
-      lazy val extrasConcurrentTesting = "io.kevinlee" %% "extras-concurrent-testing" % props.ExtrasVersion % Test
+    lazy val tests = new {
+      lazy val extrasHedgehogCatsEffect3 = "io.kevinlee" %% "extras-hedgehog-ce3"       % props.ExtrasVersion % Test
+      lazy val extrasConcurrent          = "io.kevinlee" %% "extras-concurrent"         % props.ExtrasVersion % Test
+      lazy val extrasConcurrentTesting   = "io.kevinlee" %% "extras-concurrent-testing" % props.ExtrasVersion % Test
     }
   }
 
 lazy val mavenCentralPublishSettings: SettingsDefinition = List(
   /* Publish to Maven Central { */
   sonatypeCredentialHost := props.SonatypeCredentialHost,
-  sonatypeRepository     := props.SonatypeRepository,
+  sonatypeRepository := props.SonatypeRepository,
   /* } Publish to Maven Central */
 )
 
@@ -446,10 +445,10 @@ def module(projectName: ProjectName, crossProject: CrossProject.Builder): CrossP
   crossProject
     .in(file(s"modules/$prefixedName"))
     .settings(
-      name                              := prefixedName,
-      fork                              := true,
+      name := prefixedName,
+      fork := true,
       scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
-      scalafixConfig                    := (
+      scalafixConfig := (
         if (scalaVersion.value.startsWith("3"))
           ((ThisBuild / baseDirectory).value / ".scalafix-scala3.conf").some
         else
@@ -469,7 +468,7 @@ def module(projectName: ProjectName, crossProject: CrossProject.Builder): CrossP
           .filterNot(option => option.contains("wartremover") || option.contains("import")),
 //      Test / console / wartremoverErrors      := List.empty,
 //      Test / console / wartremoverWarnings    := List.empty,
-      Test / console / scalacOptions    :=
+      Test / console / scalacOptions :=
         (console / scalacOptions)
           .value
           .filterNot(option => option.contains("wartremover") || option.contains("import")),
@@ -524,9 +523,9 @@ def module(projectName: ProjectName, crossProject: CrossProject.Builder): CrossP
         else
           Seq.empty
       },
-      licenses                          := props.licenses,
+      licenses := props.licenses,
       /* Coveralls { */
-      coverageHighlighting              := (CrossVersion.partialVersion(scalaVersion.value) match {
+      coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, 10)) | Some((2, 11)) =>
           false
         case _ =>
