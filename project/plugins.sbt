@@ -13,6 +13,11 @@ addSbtPlugin("io.kevinlee"   % "sbt-docusaur"  % "0.18.0")
 addSbtPlugin("org.scala-js"       % "sbt-scalajs"              % "1.18.2")
 addSbtPlugin("org.portable-scala" % "sbt-scalajs-crossproject" % "1.3.2")
 
+addSbtPlugin("org.scala-native" % "sbt-scala-native" % "0.5.8")
+addSbtPlugin("org.portable-scala" % "sbt-scala-native-crossproject" % "1.3.2")
+
+addSbtPlugin("org.scalameta" % "sbt-native-image" % "0.3.2")
+
 val sbtDevOopsVersion = "3.3.1"
 addSbtPlugin("io.kevinlee" % "sbt-devoops-scala"     % sbtDevOopsVersion)
 addSbtPlugin("io.kevinlee" % "sbt-devoops-sbt-extra" % sbtDevOopsVersion)

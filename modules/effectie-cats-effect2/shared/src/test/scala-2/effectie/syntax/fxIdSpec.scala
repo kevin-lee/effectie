@@ -6,7 +6,6 @@ import effectie.core.{Fx, FxCtor}
 import effectie.syntax.fx._
 import effectie.testing.tools.{dropResult, expectThrowable}
 import effectie.testing.types.SomeThrowableError
-import extras.concurrent.testing.types.ErrorLogger
 import hedgehog._
 import hedgehog.runner._
 
@@ -14,7 +13,6 @@ import hedgehog.runner._
   * @since 2021-05-16
   */
 object fxIdSpec extends Properties {
-  implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
   override def tests: List[Test] = List(
     property("test fx.{effectOf, pureOf, unitOf} for Id", IdSpec.testAll),

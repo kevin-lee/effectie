@@ -53,27 +53,34 @@ lazy val effectie = (project in file("."))
   .aggregate(
     testing4CatsJvm,
     testing4CatsJs,
+    testing4CatsNative,
     coreJvm,
     coreJs,
+    coreNative,
     syntaxJvm,
     syntaxJs,
+    syntaxNative,
     catsJvm,
     catsJs,
+    catsNative,
     timeJvm,
     timeJs,
+    timeNative,
     timeCatsEffect2Jvm,
     timeCatsEffect2Js,
     timeCatsEffect3Jvm,
     timeCatsEffect3Js,
+    timeCatsEffect3Native,
     catsEffect2Jvm,
     catsEffect2Js,
     catsEffect3Jvm,
     catsEffect3Js,
+    catsEffect3Native,
     monix3Jvm,
     monix3Js,
   )
 
-lazy val core = module(ProjectName("core"), crossProject(JVMPlatform, JSPlatform))
+lazy val core = module(ProjectName("core"), crossProject(JVMPlatform, JSPlatform, NativePlatform))
   .settings(
     description := "Effect Utils - Core",
     libraryDependencies ++= List(
@@ -90,7 +97,7 @@ lazy val core = module(ProjectName("core"), crossProject(JVMPlatform, JSPlatform
   )
   .dependsOn(testing4Cats % Test)
 
-lazy val coreJvm = core
+lazy val coreJvm    = core
   .jvm
   .settings(
     libraryDependencies ++= List(
@@ -98,7 +105,7 @@ lazy val coreJvm = core
       libs.tests.extrasConcurrentTesting.value,
     )
   )
-lazy val coreJs  = core
+lazy val coreJs     = core
   .js
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
@@ -107,31 +114,50 @@ lazy val coreJs  = core
       libs.tests.munit.value
     )
   )
+lazy val coreNative = core.native.settings(nativeSettings)
+  .settings(
+    libraryDependencies ++= List(
+      libs.tests.extrasConcurrent.value,
+      libs.tests.extrasConcurrentTesting.value,
+    )
+  )
 
-lazy val syntax    = module(ProjectName("syntax"), crossProject(JVMPlatform, JSPlatform))
+lazy val syntax       = module(ProjectName("syntax"), crossProject(JVMPlatform, JSPlatform, NativePlatform))
   .settings(
     description := "Effect Utils - Syntax",
     libraryDependencies ++= List(
       libs.libCatsCore(props.catsVersion).value,
       libs.tests.extrasConcurrent.value,
-      libs.tests.extrasConcurrentTesting.value,
     ),
     libraryDependencies :=
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
   )
   .dependsOn(core % props.IncludeTest)
-lazy val syntaxJvm = syntax.jvm
-lazy val syntaxJs  = syntax
+lazy val syntaxJvm    = syntax
+  .jvm
+  .settings(
+    libraryDependencies ++= List(
+      libs.tests.extrasConcurrentTesting.value
+    )
+  )
+lazy val syntaxJs     = syntax
   .js
   .settings(jsSettings)
+lazy val syntaxNative = syntax
+  .native
+  .settings(nativeSettings)
+  .settings(
+    libraryDependencies ++= List(
+      libs.tests.extrasConcurrentTesting.value
+    )
+  )
 
-lazy val cats = module(ProjectName("cats"), crossProject(JVMPlatform, JSPlatform))
+lazy val cats = module(ProjectName("cats"), crossProject(JVMPlatform, JSPlatform, NativePlatform))
   .settings(
     description := "Effect Utils - Cats",
     libraryDependencies ++= List(
       libs.libCatsCore(props.catsVersion).value,
       libs.tests.extrasConcurrent.value,
-      libs.tests.extrasConcurrentTesting.value,
     ),
     libraryDependencies :=
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
@@ -142,13 +168,27 @@ lazy val cats = module(ProjectName("cats"), crossProject(JVMPlatform, JSPlatform
     testing4Cats % Test,
   )
 
-lazy val catsJvm = cats.jvm
-lazy val catsJs  = cats
+lazy val catsJvm    = cats
+  .jvm
+  .settings(
+    libraryDependencies ++= List(
+      libs.tests.extrasConcurrentTesting.value
+    )
+  )
+lazy val catsJs     = cats
   .js
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
+lazy val catsNative = cats
+  .native
+  .settings(nativeSettings)
+  .settings(
+    libraryDependencies ++= List(
+      libs.tests.extrasConcurrentTesting.value
+    )
+  )
 
-lazy val testing4Cats    = module(ProjectName("test4cats"), crossProject(JVMPlatform, JSPlatform))
+lazy val testing4Cats       = module(ProjectName("test4cats"), crossProject(JVMPlatform, JSPlatform, NativePlatform))
   .settings(
     description := "Effect's test utils for Cats",
     libraryDependencies :=
@@ -159,8 +199,8 @@ lazy val testing4Cats    = module(ProjectName("test4cats"), crossProject(JVMPlat
     console / initialCommands :=
       """import effectie.testing.cats._""",
   )
-lazy val testing4CatsJvm = testing4Cats.jvm
-lazy val testing4CatsJs  = testing4Cats
+lazy val testing4CatsJvm    = testing4Cats.jvm
+lazy val testing4CatsJs     = testing4Cats
   .js
   .settings(jsSettings)
   .settings(
@@ -168,19 +208,14 @@ lazy val testing4CatsJs  = testing4Cats
       libs.munit.value
     )
   )
+lazy val testing4CatsNative = testing4Cats.native.settings(nativeSettings)
 
-lazy val time = module(ProjectName("time"), crossProject(JVMPlatform, JSPlatform))
+lazy val time = module(ProjectName("time"), crossProject(JVMPlatform, JSPlatform, NativePlatform))
   .settings(
     description := "Effect Utils - Time",
     libraryDependencies ++= List(
       libs.libCatsCore(props.catsVersion).value,
       libs.tests.extrasConcurrent.value,
-      libs.tests.extrasConcurrentTesting.value,
-    ) ++ (
-      if (scalaVersion.value.startsWith("2.12"))
-        List(libs.libCatsEffect(props.catsEffect2Version).value       % Test)
-      else
-        List(libs.libCatsEffect(props.catsEffect2LatestVersion).value % Test)
     ),
     libraryDependencies :=
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
@@ -188,12 +223,25 @@ lazy val time = module(ProjectName("time"), crossProject(JVMPlatform, JSPlatform
   .dependsOn(
     core         % props.IncludeTest,
     syntax,
-    catsEffect2  % Test,
     testing4Cats % Test,
   )
 
-lazy val timeJvm = time.jvm
-lazy val timeJs  = time
+lazy val timeJvm    = time
+  .jvm
+  .settings(
+    libraryDependencies ++= List(
+      libs.tests.extrasConcurrentTesting.value
+    ) ++ (
+      if (scalaVersion.value.startsWith("2.12"))
+        List(libs.libCatsEffect(props.catsEffect2Version).value       % Test)
+      else
+        List(libs.libCatsEffect(props.catsEffect2LatestVersion).value % Test)
+    )
+  )
+  .dependsOn(
+    catsEffect2.jvm % Test
+  )
+lazy val timeJs     = time
   .js
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
@@ -202,38 +250,62 @@ lazy val timeJs  = time
       libs.scalaJavaTime.value
     )
   )
-
-lazy val timeCatsEffect2    = module(ProjectName("time-cats-effect2"), crossProject(JVMPlatform, JSPlatform))
   .settings(
-    description := "Effect Utils - Time with Cats Effect 2",
-    libraryDependencies :=
-      (SemVer.parseUnsafe(scalaVersion.value) match {
-        case SemVer(Major(2), Minor(11), _, _, _) =>
-          libraryDependencies.value ++ Seq(libs.libCatsCore_2_0_0.value, libs.libCatsEffect_2_0_0.value)
-        case SemVer(
-              Major(3),
-              Minor(0),
-              Patch(0),
-              Some(PreRelease(List(Dsv(List(Anh.Alphabet("RC"), Anh.Num("1")))))),
-              _,
-            ) =>
-          libraryDependencies.value ++ Seq(
-            libs.libCatsCore(props.catsVersion).value,
-            libs.libCatsEffect(props.catsEffect2Version).value,
-          )
-        case x =>
-          libraryDependencies.value ++ Seq(
-            libs.libCatsCore(props.catsVersion).value,
-            libs.libCatsEffect(props.catsEffect2LatestVersion).value,
-          )
-      }),
-    libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
+    libraryDependencies ++= (
+      if (scalaVersion.value.startsWith("2.12"))
+        List(libs.libCatsEffect(props.catsEffect2Version).value       % Test)
+      else
+        List(libs.libCatsEffect(props.catsEffect2LatestVersion).value % Test)
+    )
   )
   .dependsOn(
-    core   % props.IncludeTest,
-    syntax % props.IncludeTest,
-    time,
+    catsEffect2.js % Test
   )
+lazy val timeNative = time
+  .native
+  .settings(nativeSettings)
+  .settings(
+    libraryDependencies ++= List(
+      libs.tests.extrasConcurrentTesting.value,
+      libs.libCatsEffect(props.catsEffect3ForNativeVersion).value % Test,
+    )
+  )
+  .dependsOn(
+    catsEffect3.native % Test
+  )
+
+lazy val timeCatsEffect2    =
+  module(ProjectName("time-cats-effect2"), crossProject(JVMPlatform, JSPlatform))
+    .settings(
+      description := "Effect Utils - Time with Cats Effect 2",
+      libraryDependencies :=
+        (SemVer.parseUnsafe(scalaVersion.value) match {
+          case SemVer(Major(2), Minor(11), _, _, _) =>
+            libraryDependencies.value ++ Seq(libs.libCatsCore_2_0_0.value, libs.libCatsEffect_2_0_0.value)
+          case SemVer(
+                Major(3),
+                Minor(0),
+                Patch(0),
+                Some(PreRelease(List(Dsv(List(Anh.Alphabet("RC"), Anh.Num("1")))))),
+                _,
+              ) =>
+            libraryDependencies.value ++ Seq(
+              libs.libCatsCore(props.catsVersion).value,
+              libs.libCatsEffect(props.catsEffect2Version).value,
+            )
+          case x =>
+            libraryDependencies.value ++ Seq(
+              libs.libCatsCore(props.catsVersion).value,
+              libs.libCatsEffect(props.catsEffect2LatestVersion).value,
+            )
+        }),
+      libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
+    )
+    .dependsOn(
+      core   % props.IncludeTest,
+      syntax % props.IncludeTest,
+      time,
+    )
 lazy val timeCatsEffect2Jvm = timeCatsEffect2.jvm
 lazy val timeCatsEffect2Js  = timeCatsEffect2
   .js
@@ -245,30 +317,47 @@ lazy val timeCatsEffect2Js  = timeCatsEffect2
     )
   )
 
-lazy val timeCatsEffect3    = module(ProjectName("time-cats-effect3"), crossProject(JVMPlatform, JSPlatform))
+lazy val timeCatsEffect3       =
+  module(ProjectName("time-cats-effect3"), crossProject(JVMPlatform, JSPlatform, NativePlatform))
+    .settings(
+      description := "Effect Utils - Time with Cats Effect 3",
+      libraryDependencies ++= List(
+        libs.libCatsCore(props.catsVersion).value,
+        libs.tests.extrasHedgehogCatsEffect3.value,
+      ),
+      libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
+    )
+    .dependsOn(
+      core   % props.IncludeTest,
+      syntax % props.IncludeTest,
+      time,
+    )
+lazy val timeCatsEffect3Jvm    = timeCatsEffect3
+  .jvm
   .settings(
-    description := "Effect Utils - Time with Cats Effect 3",
     libraryDependencies ++= List(
-      libs.libCatsCore(props.catsVersion).value,
       libs.libCatsEffect(props.catsEffect3Version).value,
-      libs.libCatsEffectTestKit.value % Test excludeAll ("org.scalacheck"),
-      libs.tests.extrasHedgehogCatsEffect3.value,
-    ),
-    libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
+      libs.libCatsEffectTestKit(props.catsEffect3Version).value % Test excludeAll ("org.scalacheck"),
+    )
   )
-  .dependsOn(
-    core   % props.IncludeTest,
-    syntax % props.IncludeTest,
-    time,
-  )
-lazy val timeCatsEffect3Jvm = timeCatsEffect3.jvm
-lazy val timeCatsEffect3Js  = timeCatsEffect3
+lazy val timeCatsEffect3Js     = timeCatsEffect3
   .js
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
   .settings(
     libraryDependencies ++= List(
-      libs.scalaJavaTime.value
+      libs.scalaJavaTime.value,
+      libs.libCatsEffect(props.catsEffect3Version).value,
+      libs.libCatsEffectTestKit(props.catsEffect3Version).value % Test excludeAll ("org.scalacheck"),
+    )
+  )
+lazy val timeCatsEffect3Native = timeCatsEffect3
+  .native
+  .settings(nativeSettings)
+  .settings(
+    libraryDependencies ++= List(
+      libs.libCatsEffect(props.catsEffect3ForNativeVersion).value,
+      libs.libCatsEffectTestKit(props.catsEffect3ForNativeVersion).value % Test excludeAll ("org.scalacheck"),
     )
   )
 
@@ -310,13 +399,11 @@ lazy val catsEffect2Js  = catsEffect2
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
 
-lazy val catsEffect3    = module(ProjectName("cats-effect3"), crossProject(JVMPlatform, JSPlatform))
+lazy val catsEffect3    = module(ProjectName("cats-effect3"), crossProject(JVMPlatform, JSPlatform, NativePlatform))
   .settings(
     description := "Effect Utils - Cats Effect 3",
     libraryDependencies ++= List(
       libs.libCatsCore(props.catsVersion).value,
-      libs.libCatsEffect(props.catsEffect3Version).value,
-      libs.libCatsEffectTestKit.value % Test excludeAll ("org.scalacheck"),
       libs.tests.extrasHedgehogCatsEffect3.value,
     ),
     libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
@@ -329,13 +416,34 @@ lazy val catsEffect3    = module(ProjectName("cats-effect3"), crossProject(JVMPl
     cats         % props.IncludeTest,
     testing4Cats % Test,
   )
-lazy val catsEffect3Jvm = catsEffect3.jvm
+lazy val catsEffect3Jvm = catsEffect3
+  .jvm
+  .settings(
+    libraryDependencies ++= List(
+      libs.libCatsEffect(props.catsEffect3Version).value,
+      libs.libCatsEffectTestKit(props.catsEffect3Version).value % Test excludeAll ("org.scalacheck"),
+    )
+  )
 lazy val catsEffect3Js  = catsEffect3
   .js
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
   .settings(
-    libraryDependencies ++= List(libs.tests.munitCatsEffect3.value)
+    libraryDependencies ++= List(
+      libs.tests.munitCatsEffect3.value,
+      libs.libCatsEffect(props.catsEffect3Version).value,
+      libs.libCatsEffectTestKit(props.catsEffect3Version).value % Test excludeAll ("org.scalacheck"),
+    )
+  )
+
+lazy val catsEffect3Native = catsEffect3
+  .native
+  .settings(nativeSettings)
+  .settings(
+    libraryDependencies ++= List(
+      libs.libCatsEffect(props.catsEffect3ForNativeVersion).value,
+      libs.libCatsEffectTestKit(props.catsEffect3ForNativeVersion).value % Test excludeAll ("org.scalacheck"),
+    )
   )
 
 lazy val monix3    = module(ProjectName("monix3"), crossProject(JVMPlatform, JSPlatform))
@@ -497,7 +605,7 @@ def createMdocVariables(version: Option[String]): Map[String, String] = {
     },
     "SUPPORTED_SCALA_VERSIONS_FOR_SCALA_JS" -> {
       val versions = props
-        .CrossScalaVersionsForScalaJs
+        .CrossScalaVersionsForScalaJsAndNative
         .map(CrossVersion.binaryScalaVersion)
         .map(binVer => s"`$binVer`")
       if (versions.length > 1)
@@ -524,8 +632,8 @@ lazy val props =
     final val Scala3Version = "3.3.3"
 
 //    final val ProjectScalaVersion = "2.12.13"
-    final val ProjectScalaVersion = Scala2Version
-//    final val ProjectScalaVersion = Scala3Version
+//    final val ProjectScalaVersion = Scala2Version
+    final val ProjectScalaVersion = Scala3Version
 
     lazy val licenses = List("MIT" -> url("http://opensource.org/licenses/MIT"))
 
@@ -542,7 +650,7 @@ lazy val props =
 
     val CrossScalaVersions = (Scala3Version :: Scala2Versions).distinct
 
-    val CrossScalaVersionsForScalaJs = CrossScalaVersions.filterNot(_.startsWith("2.12"))
+    val CrossScalaVersionsForScalaJsAndNative = CrossScalaVersions.filterNot(_.startsWith("2.12"))
 
     final val IncludeTest = "compile->compile;test->test"
 
@@ -552,11 +660,13 @@ lazy val props =
 
     val MunitCatsEffectVersion = "1.0.7"
 
-    final val catsVersion = "2.7.0"
+    val catsVersion = "2.12.0"
 
-    final val catsEffect2Version       = "2.4.1"
-    final val catsEffect2LatestVersion = "2.5.4"
-    final val catsEffect3Version       = "3.3.14"
+    val catsEffect2Version       = "2.4.1"
+    val catsEffect2LatestVersion = "2.5.4"
+
+    val catsEffect3Version          = "3.3.14"
+    val catsEffect3ForNativeVersion = "3.7.0-RC1"
 
     final val cats2_0_0Version       = "2.0.0"
     final val catsEffect2_0_0Version = "2.0.0"
@@ -564,7 +674,7 @@ lazy val props =
     final val monixVersion3_3_0 = "3.3.0"
     final val monixVersion      = "3.4.0"
 
-    final val ExtrasVersion = "0.25.0"
+    final val ExtrasVersion = "0.49.0"
 
     val ScalaJsMacrotaskExecutorVersion = "1.1.1"
 
@@ -593,8 +703,8 @@ lazy val libs =
 
     def libCatsEffect(catsEffectVersion: String) = Def.setting("org.typelevel" %%% "cats-effect" % catsEffectVersion)
 
-    lazy val libCatsEffectTestKit =
-      Def.setting("org.typelevel" %%% "cats-effect-kernel-testkit" % props.catsEffect3Version)
+    def libCatsEffectTestKit(catsEffect3Version: String) =
+      Def.setting("org.typelevel" %%% "cats-effect-kernel-testkit" % catsEffect3Version)
 
     lazy val libCatsCore_2_0_0   = Def.setting("org.typelevel" %%% "cats-core" % props.cats2_0_0Version)
     lazy val libCatsEffect_2_0_0 = Def.setting("org.typelevel" %%% "cats-effect" % props.catsEffect2_0_0Version)
@@ -752,7 +862,13 @@ lazy val jsSettingsForFuture: SettingsDefinition = List(
 //)
 
 lazy val jsSettings: SettingsDefinition = List(
-  crossScalaVersions := props.CrossScalaVersionsForScalaJs,
+  crossScalaVersions := props.CrossScalaVersionsForScalaJsAndNative,
+  Test / fork := false,
+  coverageEnabled := false,
+)
+
+lazy val nativeSettings: SettingsDefinition = List(
+  crossScalaVersions := props.CrossScalaVersionsForScalaJsAndNative,
   Test / fork := false,
   coverageEnabled := false,
 )

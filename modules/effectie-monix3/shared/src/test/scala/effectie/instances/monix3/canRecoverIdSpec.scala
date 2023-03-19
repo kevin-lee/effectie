@@ -8,7 +8,6 @@ import effectie.core._
 import effectie.syntax.error._
 import effectie.syntax.fx._
 import effectie.testing.types.SomeError
-import extras.concurrent.testing.types.ErrorLogger
 import hedgehog._
 import hedgehog.runner._
 
@@ -18,8 +17,6 @@ import scala.util.control.{ControlThrowable, NonFatal}
   * @since 2020-08-17
   */
 object canRecoverIdSpec extends Properties {
-
-  implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
   override def tests: List[Test] = List(
     /* Id */
