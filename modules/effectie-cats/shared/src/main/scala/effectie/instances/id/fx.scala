@@ -13,6 +13,8 @@ object fx {
 
     @inline override final def effectOf[A](a: => A): Id[A] = fxCtor.effectOf(a)
 
+    @inline override final def fromEffect[A](fa: => Id[A]): Id[A] = fxCtor.fromEffect(fa)
+
     @inline override final def pureOf[A](a: A): Id[A] = fxCtor.pureOf(a)
 
     @inline override final def pureOrError[A](a: => A): Id[A] = fxCtor.pureOrError(a)

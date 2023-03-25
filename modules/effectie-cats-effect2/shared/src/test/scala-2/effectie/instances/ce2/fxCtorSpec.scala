@@ -1,12 +1,10 @@
 package effectie.instances.ce2
 
 import cats.effect._
-import fxCtor._
 import effectie.specs.fxCtorSpec.FxCtorSpecs
-import effectie.specs.fxCtorSpec.IdSpecs
 import effectie.testing.tools
 import extras.concurrent.testing.types.ErrorLogger
-
+import fxCtor._
 import hedgehog._
 import hedgehog.runner._
 
@@ -16,9 +14,7 @@ import hedgehog.runner._
 object fxCtorSpec extends Properties {
 
   override def tests: List[Test] =
-    ioSpecs ++
-      futureSpecs ++
-      idSpecs
+    ioSpecs
 
   private val assertWithAttempt: (IO[Int], Either[Throwable, Int]) => Result = { (io, expected) =>
     val actual = io.attempt.unsafeRunSync()
@@ -31,6 +27,8 @@ object fxCtorSpec extends Properties {
 
   private val ioSpecs = List(
     property("test FxCtor[IO].effectOf", FxCtorSpecs.testEffectOf[IO](_.unsafeRunSync() ==== unit)),
+    property("test FxCtor[IO].fromEffect(effectOf)", FxCtorSpecs.testFromEffect[IO](_.unsafeRunSync() ==== unit)),
+    property("test FxCtor[IO].fromEffect(pureOf)", FxCtorSpecs.testFromEffectWithPure[IO](_.unsafeRunSync() ==== unit)),
     property("test FxCtor[IO].pureOf", FxCtorSpecs.testPureOf[IO](_.unsafeRunSync() ==== unit)),
     property(
       "test FxCtor[IO].pureOrError(success case)",
@@ -74,25 +72,5 @@ object fxCtorSpec extends Properties {
       FxCtorSpecs.testFromTryFailureCase[IO](assertWithAttempt),
     ),
   )
-
-  private val futureSpecs = effectie.instances.future.fxCtorSpec.futureSpecs
-
-  private val idSpecs = {
-    import effectie.instances.id.fxCtor._
-    List(
-      property("test FxCtor[Id].effectOf", IdSpecs.testEffectOf),
-      property("test FxCtor[Id].pureOf", IdSpecs.testPureOf),
-      property("test FxCtor[Id].pureOrError(success case)", IdSpecs.testPureOrErrorSuccessCase),
-      example("test FxCtor[Id].pureOrError(error case)", IdSpecs.testPureOrErrorErrorCase),
-      example("test FxCtor[Id].unitOf", IdSpecs.testUnitOf),
-      example("test FxCtor[Id].errorOf", IdSpecs.testErrorOf),
-      property("test FxCtor[Id].fromEither(Right)", IdSpecs.testFromEitherRightCase),
-      property("test FxCtor[Id].fromEither(Left)", IdSpecs.testFromEitherLeftCase),
-      property("test FxCtor[Id].fromOption(Some)", IdSpecs.testFromOptionSomeCase),
-      property("test FxCtor[Id].fromOption(None)", IdSpecs.testFromOptionNoneCase),
-      property("test FxCtor[Id].fromTry(Success)", IdSpecs.testFromTrySuccessCase),
-      property("test FxCtor[Id].fromTry(Failure)", IdSpecs.testFromTryFailureCase),
-    )
-  }
 
 }

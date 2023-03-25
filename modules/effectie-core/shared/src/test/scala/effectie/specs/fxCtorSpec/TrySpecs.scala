@@ -4,6 +4,7 @@ import cats.syntax.all._
 import effectie.core.FxCtor
 import effectie.testing.types.SomeThrowableError
 import hedgehog._
+import hedgehog.runner._
 
 import scala.util.{Failure, Success, Try}
 
@@ -12,15 +13,32 @@ import scala.util.{Failure, Success, Try}
   */
 object TrySpecs {
 
-  def testEffectOf(implicit tryFxCtor: FxCtor[Try]): Property = for {
+  def trySpecs(implicit tryFxCtor: FxCtor[Try]): List[Test] = List(
+    property("test FxCtor[Try].effectOf", TrySpecs.testEffectOf),
+    property("test FxCtor[Try].fromEffect(effectOf)", TrySpecs.testFromEffect),
+    property("test FxCtor[Try].fromEffect(pureOf)", TrySpecs.testFromEffectWithPure),
+    property("test FxCtor[Try].pureOf", TrySpecs.testPureOf),
+    property("test FxCtor[Try].pureOrError(success case)", TrySpecs.testPureOrErrorSuccessCase),
+    example("test FxCtor[Try].pureOrError(error case)", TrySpecs.testPureOrErrorErrorCase),
+    example("test FxCtor[Try].unitOf", TrySpecs.testUnitOf),
+    example("test FxCtor[Try].errorOf", TrySpecs.testErrorOf),
+    property("test FxCtor[Try].fromEither(Right)", TrySpecs.testFromEitherRightCase),
+    property("test FxCtor[Try].fromEither(Left)", TrySpecs.testFromEitherLeftCase),
+    property("test FxCtor[Try].fromOption(Some)", TrySpecs.testFromOptionSomeCase),
+    property("test FxCtor[Try].fromOption(None)", TrySpecs.testFromOptionNoneCase),
+    property("test FxCtor[Try].fromTry(Success)", TrySpecs.testFromTrySuccessCase),
+    property("test FxCtor[Try].fromTry(Failure)", TrySpecs.testFromTryFailureCase),
+  )
+
+  private def testEffectOf(implicit tryFxCtor: FxCtor[Try]): Property = for {
     before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
     after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
   } yield {
 
     var actual       = before // scalafix:ok DisableSyntax.var
-    val testBefore   = (actual ==== before).log("before pureOrError")
+    val testBefore   = (actual ==== before).log("before effectOf")
     val fa           = tryFxCtor.effectOf({ actual = after; () })
-    val testAfterRun = (actual ==== after).log("after pureOrError and run")
+    val testAfterRun = (actual ==== after).log("after effectOf and run")
     Result.all(
       List(
         testBefore.log("testBefore"),
@@ -29,7 +47,41 @@ object TrySpecs {
     )
   }
 
-  def testPureOf(implicit tryFxCtor: FxCtor[Try]): Property = for {
+  private def testFromEffect(implicit tryFxCtor: FxCtor[Try]): Property = for {
+    before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+    after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+  } yield {
+
+    var actual       = before // scalafix:ok DisableSyntax.var
+    val testBefore   = (actual ==== before).log("before effectOf")
+    val afterFrom    = tryFxCtor.fromEffect(tryFxCtor.effectOf({ actual = after; () }))
+    val testAfterRun = (actual ==== after).log("after fromEffect")
+    Result.all(
+      List(
+        testBefore.log("testBefore"),
+        testAfterRun.log("testAfterRun"),
+      )
+    )
+  }
+
+  private def testFromEffectWithPure(implicit tryFxCtor: FxCtor[Try]): Property = for {
+    before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+    after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+  } yield {
+
+    var actual       = before // scalafix:ok DisableSyntax.var
+    val testBefore   = (actual ==== before).log("before effectOf")
+    val afterFrom    = tryFxCtor.fromEffect(tryFxCtor.pureOf({ actual = after; () }))
+    val testAfterRun = (actual ==== after).log("after fromEffect")
+    Result.all(
+      List(
+        testBefore.log("testBefore"),
+        testAfterRun.log("testAfterRun"),
+      )
+    )
+  }
+
+  private def testPureOf(implicit tryFxCtor: FxCtor[Try]): Property = for {
     before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
     after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
   } yield {
@@ -46,7 +98,7 @@ object TrySpecs {
     )
   }
 
-  def testPureOrErrorSuccessCase(implicit tryFxCtor: FxCtor[Try]): Property = for {
+  private def testPureOrErrorSuccessCase(implicit tryFxCtor: FxCtor[Try]): Property = for {
     before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
     after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
   } yield {
@@ -63,7 +115,7 @@ object TrySpecs {
     )
   }
 
-  def testPureOrErrorErrorCase(implicit tryFxCtor: FxCtor[Try]): Result = {
+  private def testPureOrErrorErrorCase(implicit tryFxCtor: FxCtor[Try]): Result = {
     val expectedMessage = "This is a throwable test error."
     val expectedError   = SomeThrowableError.message(expectedMessage)
 
@@ -71,12 +123,12 @@ object TrySpecs {
     fa ==== Failure(expectedError)
   }
 
-  def testUnitOf(implicit tryFxCtor: FxCtor[Try]): Result = {
+  private def testUnitOf(implicit tryFxCtor: FxCtor[Try]): Result = {
     val fa = tryFxCtor.unitOf
     fa ==== Success(())
   }
 
-  def testErrorOf(implicit tryFxCtor: FxCtor[Try]): Result = {
+  private def testErrorOf(implicit tryFxCtor: FxCtor[Try]): Result = {
     val expectedMessage = "This is a throwable test error."
     val expectedError   = SomeThrowableError.message(expectedMessage)
 
@@ -84,7 +136,7 @@ object TrySpecs {
     fa ==== Failure(expectedError)
   }
 
-  def testFromEitherRightCase(implicit tryFxCtor: FxCtor[Try]): Property = for {
+  private def testFromEitherRightCase(implicit tryFxCtor: FxCtor[Try]): Property = for {
     n <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")
   } yield {
 
@@ -95,7 +147,7 @@ object TrySpecs {
     fa ==== Success(expected)
   }
 
-  def testFromEitherLeftCase(implicit tryFxCtor: FxCtor[Try]): Property = for {
+  private def testFromEitherLeftCase(implicit tryFxCtor: FxCtor[Try]): Property = for {
     errorMessage <- Gen.string(Gen.unicode, Range.linear(1, 10)).log("errorMessage")
   } yield {
 
@@ -106,7 +158,7 @@ object TrySpecs {
     fa ==== Failure(expected)
   }
 
-  def testFromOptionSomeCase(implicit tryFxCtor: FxCtor[Try]): Property = for {
+  private def testFromOptionSomeCase(implicit tryFxCtor: FxCtor[Try]): Property = for {
     n <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")
   } yield {
 
@@ -118,7 +170,7 @@ object TrySpecs {
     fa ==== Success(expected)
   }
 
-  def testFromOptionNoneCase(implicit tryFxCtor: FxCtor[Try]): Property = for {
+  private def testFromOptionNoneCase(implicit tryFxCtor: FxCtor[Try]): Property = for {
     errorMessage <- Gen.string(Gen.unicode, Range.linear(1, 10)).log("errorMessage")
   } yield {
 
@@ -129,7 +181,7 @@ object TrySpecs {
     fa ==== Failure(expected)
   }
 
-  def testFromTrySuccessCase(implicit tryFxCtor: FxCtor[Try]): Property = for {
+  private def testFromTrySuccessCase(implicit tryFxCtor: FxCtor[Try]): Property = for {
     n <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")
   } yield {
 
@@ -141,7 +193,7 @@ object TrySpecs {
     fa ==== expected
   }
 
-  def testFromTryFailureCase(implicit tryFxCtor: FxCtor[Try]): Property = for {
+  private def testFromTryFailureCase(implicit tryFxCtor: FxCtor[Try]): Property = for {
     errorMessage <- Gen.string(Gen.unicode, Range.linear(1, 10)).log("errorMessage")
   } yield {
 
@@ -153,7 +205,7 @@ object TrySpecs {
     fa ==== expected
   }
 
-  def testFlatMapFx(implicit tryFxCtor: FxCtor[Try]): Property =
+  private def testFlatMapFx(implicit tryFxCtor: FxCtor[Try]): Property =
     for {
       n      <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")
       prefix <- Gen.constant("n is ").log("prefix")

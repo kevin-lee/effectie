@@ -10,11 +10,13 @@ import scala.util.Try
   */
 object fxCtor {
 
-  trait FutureFxCtor extends FxCtor[Future] {
+  trait FutureFxCtor extends FxCtor[Future] with Compat {
 
     implicit def EC0: ExecutionContext
 
-    @inline override final def effectOf[A](a: => A): Future[A] = Future(a)
+    @inline override final def effectOf[A](a: => A): Future[A] = newFuture(a)
+
+    @inline override final def fromEffect[A](fa: => Future[A]): Future[A] = delegateFuture(fa)
 
     @inline override final def pureOf[A](a: A): Future[A] = Future.successful(a)
 

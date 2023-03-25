@@ -5,7 +5,7 @@ import cats.{Eq, Functor}
 import effectie.SomeControlThrowable
 import effectie.core._
 import effectie.specs.MonadSpec
-import effectie.specs.fxSpec.TrySpecs
+import effectie.specs
 import effectie.testing.types.SomeError
 import hedgehog._
 import hedgehog.runner._
@@ -23,23 +23,7 @@ object fxSpec extends Properties {
   import effectie.instances.tries.fx._
 
   /* Try */
-  private val trySpecs = List(
-    property("test Fx[Try].effectOf", TrySpecs.testEffectOf),
-    property("test Fx[Try].pureOf", TrySpecs.testPureOf),
-    property(
-      "test Fx[Try].pureOrError(success case)",
-      TrySpecs.testPureOrErrorSuccessCase,
-    ),
-    example("test Fx[Try].pureOrError(error case)", TrySpecs.testPureOrErrorErrorCase),
-    example("test Fx[Try].unitOf", TrySpecs.testUnitOf),
-    example("test Fx[Try].errorOf", TrySpecs.testErrorOf),
-    property("test Fx[Try].fromEither(Right)", TrySpecs.testFromEitherRightCase),
-    property("test Fx[Try].fromEither(Left)", TrySpecs.testFromEitherLeftCase),
-    property("test Fx[Try].fromOption(Some)", TrySpecs.testFromOptionSomeCase),
-    property("test Fx[Try].fromOption(None)", TrySpecs.testFromOptionNoneCase),
-    property("test Fx[Try].fromTry(Success)", TrySpecs.testFromTrySuccessCase),
-    property("test Fx[Try].fromTry(Failure)", TrySpecs.testFromTryFailureCase),
-  ) ++
+  private val trySpecs = specs.fxSpec.TrySpecs.trySpecs ++
     TrySpec.testMonadLaws ++
     List(
       example(

@@ -18,15 +18,60 @@ object FxCtorSpecs {
   } yield {
     @SuppressWarnings(Array("org.wartremover.warts.Var"))
     var actual        = before // scalafix:ok DisableSyntax.var
-    val testBefore    = (actual ==== before).log("before pureOrError")
+    val testBefore    = (actual ==== before).log("before effectOf")
     val io            = FxCtor[F].effectOf({ actual = after; () })
-    val testBeforeRun = (actual ==== before).log("after pureOrError but before run")
+    val testBeforeRun = (actual ==== before).log("after effectOf but before run")
     val runResult     = run(io)
-    val testAfterRun  = (actual ==== after).log("after pureOrError and run")
+    val testAfterRun  = (actual ==== after).log("after effectOf and run")
     Result.all(
       List(
         testBefore.log("testBefore"),
         testBeforeRun.log("testBeforeRun"),
+        runResult,
+        testAfterRun.log("testAfterRun"),
+      )
+    )
+  }
+
+  def testFromEffect[F[*]: FxCtor](run: F[Unit] => Result): Property = for {
+    before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+    after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+  } yield {
+    @SuppressWarnings(Array("org.wartremover.warts.Var"))
+    var actual              = before // scalafix:ok DisableSyntax.var
+    val testBefore          = (actual ==== before).log("before effectOf")
+    val io                  = FxCtor[F].effectOf({ actual = after; () })
+    val testBeforeRun       = (actual ==== before).log("after effectOf but before fromEffect")
+    val fromIo              = FxCtor[F].fromEffect(io)
+    val testAfterFromEffect = (actual ==== before).log("after fromEffect but before run")
+    val runResult           = run(fromIo)
+    val testAfterRun        = (actual ==== after).log("after fromEffect and run")
+    Result.all(
+      List(
+        testBefore.log("testBefore"),
+        testBeforeRun.log("testBeforeRun"),
+        testAfterFromEffect.log("testAfterFromEffect"),
+        runResult,
+        testAfterRun.log("testAfterRun"),
+      )
+    )
+  }
+
+  def testFromEffectWithPure[F[*]: FxCtor](run: F[Unit] => Result): Property = for {
+    before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+    after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+  } yield {
+    @SuppressWarnings(Array("org.wartremover.warts.Var"))
+    var actual              = before // scalafix:ok DisableSyntax.var
+    val testBefore          = (actual ==== before).log("before fromEffect")
+    val fromPure            = FxCtor[F].fromEffect(FxCtor[F].pureOf({ actual = after; () }))
+    val testAfterFromEffect = (actual ==== before).log("after fromEffect but before run")
+    val runResult           = run(fromPure)
+    val testAfterRun        = (actual ==== after).log("after fromEffect and run")
+    Result.all(
+      List(
+        testBefore.log("testBefore"),
+        testAfterFromEffect.log("testAfterFromEffect"),
         runResult,
         testAfterRun.log("testAfterRun"),
       )

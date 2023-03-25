@@ -34,6 +34,14 @@ object fxCtorSpec extends Properties {
         effectie.specs.fxCtorSpec.FxCtorSpecs.testEffectOf[Task](_.runSyncUnsafe() ==== unit),
       ),
       property(
+        "test FxCtor[Task].fromEffect(effectOf)",
+        effectie.specs.fxCtorSpec.FxCtorSpecs.testFromEffect[Task](_.runSyncUnsafe() ==== unit),
+      ),
+      property(
+        "test FxCtor[Task].fromEffect(pureOf)",
+        effectie.specs.fxCtorSpec.FxCtorSpecs.testFromEffectWithPure[Task](_.runSyncUnsafe() ==== unit),
+      ),
+      property(
         "test FxCtor[Task].pureOf",
         effectie.specs.fxCtorSpec.FxCtorSpecs.testPureOf[Task](_.runSyncUnsafe() ==== unit),
       ),

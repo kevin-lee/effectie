@@ -12,6 +12,8 @@ object fxCtor {
 
     @inline override final def effectOf[A](a: => A): IO[A] = IO(a)
 
+    @inline override final def fromEffect[A](fa: => IO[A]): IO[A] = IO.defer(fa)
+
     @inline override final def pureOf[A](a: A): IO[A] = IO.pure(a)
 
     @inline override final def pureOrError[A](a: => A): IO[A] = MonadThrow[IO].catchNonFatal(a)

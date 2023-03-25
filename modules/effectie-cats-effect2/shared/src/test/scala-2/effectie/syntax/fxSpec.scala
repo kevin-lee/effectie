@@ -21,6 +21,8 @@ object fxSpec extends Properties {
   override def tests: List[Test] = List(
     property("test fx.{effectOf, pureOf, unitOf} for IO", IoSpec.testAll),
     property("test fx.effectOf[IO]", IoSpec.testEffectOf),
+    property("test fx.fromEffect[IO](IO[A])", IoSpec.testFromEffect),
+    property("test fx.fromEffect[IO](IO.pure[A])", IoSpec.testFromEffectWithPure),
     property("test fx.pureOf[IO]", IoSpec.testPureOf),
     property("test fx.pureOrError[IO](success case)", IoSpec.testPureOrErrorSuccessCase),
     example("test fx.pureOrError[IO](error case)", IoSpec.testPureOrErrorErrorCase),
@@ -150,6 +152,53 @@ object fxSpec extends Properties {
         List(
           testBefore.log("testBefore"),
           testBeforeRun.log("testBeforeRun"),
+          testAfterRun.log("testAfterRun"),
+        )
+      )
+    }
+
+    def testFromEffect: Property = for {
+      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+    } yield {
+      @SuppressWarnings(Array("org.wartremover.warts.Var"))
+      var actual        = before // scalafix:ok DisableSyntax.var
+      val testBefore    = (actual ==== before).log("before effectOf")
+      val io            = effectOf({ actual = after; () })
+      val testBeforeRun = (actual ==== before).log("after effectOf but before fromEffect")
+      val fromIo        = fromEffect(io)
+
+      val testAfterFromEffect = (actual ==== before).log("after fromEffect but before run")
+
+      fromIo.unsafeRunSync()
+      val testAfterRun = (actual ==== after).log("after fromEffect and run")
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testBeforeRun.log("testBeforeRun"),
+          testAfterFromEffect.log("testAfterFromEffect"),
+          testAfterRun.log("testAfterRun"),
+        )
+      )
+    }
+
+    def testFromEffectWithPure: Property = for {
+      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+    } yield {
+      @SuppressWarnings(Array("org.wartremover.warts.Var"))
+      var actual     = before // scalafix:ok DisableSyntax.var
+      val testBefore = (actual ==== before).log("before fromEffect")
+      val fromPure   = fromEffect(pureOf({ actual = after; () }))
+
+      val testAfterFromEffect = (actual ==== before).log("after fromEffect but before run")
+      fromPure.unsafeRunSync()
+
+      val testAfterRun = (actual ==== after).log("after fromEffect and run")
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testAfterFromEffect.log("testAfterFromEffect"),
           testAfterRun.log("testAfterRun"),
         )
       )

@@ -13,6 +13,8 @@ object fxCtor {
 
     @inline override final def effectOf[A](a: => A): Try[A] = Try(a)
 
+    @inline override final def fromEffect[A](fa: => Try[A]): Try[A] = Try(fa).flatten
+
     @inline override final def pureOf[A](a: A): Try[A] = Success(a)
 
     @inline override def pureOrError[A](a: => A): Try[A] = Try(a)
