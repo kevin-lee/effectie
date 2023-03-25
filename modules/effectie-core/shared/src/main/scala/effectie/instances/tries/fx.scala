@@ -15,5 +15,5 @@ object fx {
       with canHandleError.TryCanHandleError
       with canRecover.TryCanRecover
 
-  implicit object futureFx extends FxOfTry
+  implicit object tryFx extends FxOfTry
 }
