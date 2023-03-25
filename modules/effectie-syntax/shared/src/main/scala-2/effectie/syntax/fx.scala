@@ -11,6 +11,8 @@ trait fx {
 
   def effectOf[F[*]]: CurriedEffectOf[F] = new CurriedEffectOf[F]
 
+  def fromEffect[F[*]]: CurriedFromEffect[F] = new CurriedFromEffect[F]
+
   def pureOf[F[*]]: CurriedEffectOfPure[F] = new CurriedEffectOfPure[F]
 
   def pureOrError[F[*]]: CurriedEffectOfPureOrError[F] = new CurriedEffectOfPureOrError[F]
@@ -39,6 +41,13 @@ object fx extends fx {
   ) extends AnyVal {
     def apply[A](a: => A)(implicit EF: FxCtor[F]): F[A] =
       EF.effectOf(a)
+  }
+
+  private[fx] final class CurriedFromEffect[F[*]](
+    private val dummy: Boolean = true
+  ) extends AnyVal {
+    def apply[A](fa: => F[A])(implicit EF: FxCtor[F]): F[A] =
+      EF.fromEffect(fa)
   }
 
   private[fx] final class CurriedEffectOfPure[F[*]](

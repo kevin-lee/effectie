@@ -25,6 +25,8 @@ object fxSpec extends Properties {
   /* Future */
   val futureSpecs = List(
     property("test Fx[Future].effectOf", FutureSpec.testEffectOf),
+    property("test Fx[Future].fromEffect(effectOf)", FutureSpec.testFromEffect),
+    property("test Fx[Future].fromEffect(pureOf)", FutureSpec.testFromEffectWithPure),
     property("test Fx[Future].pureOf", FutureSpec.testPureOf),
     property("test Fx[Future].pureOrError(success case)", FutureSpec.testPureOrErrorSuccessCase),
     example("test Fx[Future].pureOrError(error case)", FutureSpec.testPureOrErrorErrorCase),
@@ -238,6 +240,55 @@ object fxSpec extends Properties {
       Result.all(
         List(
           testBefore.log("testBefore"),
+          testAfterRun.log("testAfterRun"),
+        )
+      )
+    }
+
+    def testFromEffect: Property = for {
+      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+    } yield {
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      @SuppressWarnings(Array("org.wartremover.warts.Var"))
+      var actual        = before // scalafix:ok DisableSyntax.var
+      val testBefore    = actual ==== before
+      val fromFuture    = Fx[Future].fromEffect(Fx[Future].effectOf({ actual = after; () }))
+      val testAfterFrom = actual ==== before
+      ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(fromFuture)
+      val testAfterRun  = actual ==== after
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testAfterFrom.log("testAfterFrom"),
+          testAfterRun.log("testAfterRun"),
+        )
+      )
+    }
+
+    def testFromEffectWithPure: Property = for {
+      before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
+      after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
+    } yield {
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      @SuppressWarnings(Array("org.wartremover.warts.Var"))
+      var actual        = before // scalafix:ok DisableSyntax.var
+      val testBefore    = actual ==== before
+      val fromFuture    = Fx[Future].fromEffect(Fx[Future].pureOf({ actual = after; () }))
+      val testAfterFrom = actual ==== before
+//      val testAfterFrom = actual ==== after
+      ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(fromFuture)
+      val testAfterRun  = actual ==== after
+      Result.all(
+        List(
+          testBefore.log("testBefore"),
+          testAfterFrom.log("testAfterFrom"),
           testAfterRun.log("testAfterRun"),
         )
       )

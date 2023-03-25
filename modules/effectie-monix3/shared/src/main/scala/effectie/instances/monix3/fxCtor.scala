@@ -15,6 +15,8 @@ object fxCtor {
 
     @inline override final def effectOf[A](a: => A): Task[A] = Task(a)
 
+    @inline override final def fromEffect[A](fa: => Task[A]): Task[A] = Task.defer(fa)
+
     @inline override final def pureOf[A](a: A): Task[A] = Task.now(a)
 
     /** It cannot be done by

@@ -6,7 +6,7 @@ import cats.{Functor, Id, Monad}
 import effectie.SomeControlThrowable
 import effectie.core._
 import effectie.specs.MonadSpec
-import effectie.specs.fxSpec.IdSpecs
+import effectie.specs
 import effectie.syntax.all._
 import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
@@ -96,324 +96,312 @@ object fxSpec extends Properties {
     )
 
   /* Id */
-  private val idSpecs = List(
-    property("test Fx[Id].effectOf", IdSpecs.testEffectOf),
-    property("test Fx[Id].pureOf", IdSpecs.testPureOf),
-    property("test Fx[Id].pureOrError(success case)", IdSpecs.testPureOrErrorSuccessCase),
-    example("test Fx[Id].pureOrError(error case)", IdSpecs.testPureOrErrorErrorCase),
-    example("test Fx[Id].unitOf", IdSpecs.testUnitOf),
-    example("test Fx[Id].errorOf", IdSpecs.testErrorOf),
-    property("test Fx[Id].fromEither(Right)", IdSpecs.testFromEitherRightCase),
-    property("test Fx[Id].fromEither(Left)", IdSpecs.testFromEitherLeftCase),
-    property("test Fx[Id].fromOption(Some)", IdSpecs.testFromOptionSomeCase),
-    property("test Fx[Id].fromOption(None)", IdSpecs.testFromOptionNoneCase),
-    property("test Fx[Id].fromTry(Success)", IdSpecs.testFromTrySuccessCase),
-    property("test Fx[Id].fromTry(Failure)", IdSpecs.testFromTryFailureCase),
-  ) ++
-    IdSpec.testMonadLaws ++
-    List(
-      /* Id */
-      example(
-        "test Fx[Id]catchNonFatalThrowable should catch NonFatal",
-        IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal,
-      ),
-      example(
-        "test Fx[Id]catchNonFatalThrowable should not catch Fatal",
-        IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalThrowableShouldNotCatchFatal,
-      ),
-      example(
-        "test Fx[Id]catchNonFatalThrowable should return the successful result",
-        IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalThrowableShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id]catchNonFatal should catch NonFatal",
-        IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalShouldCatchNonFatal,
-      ),
-      example(
-        "test Fx[Id]catchNonFatal should not catch Fatal",
-        IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalShouldNotCatchFatal,
-      ),
-      example(
-        "test Fx[Id]catchNonFatal should return the successful result",
-        IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id]catchNonFatalEither should catch NonFatal",
-        IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalEitherShouldCatchNonFatal,
-      ),
-      example(
-        "test Fx[Id]catchNonFatalEither should not catch Fatal",
-        IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalEitherShouldNotCatchFatal,
-      ),
-      example(
-        "test Fx[Id]catchNonFatalEither should return the successful result",
-        IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalEitherShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id]catchNonFatalEither should return the failed result",
-        IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalEitherShouldReturnFailedResult,
-      ),
-      example(
-        "test Fx[Id]catchNonFatalEitherT should catch NonFatal",
-        IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalEitherTShouldCatchNonFatal,
-      ),
-      example(
-        "test Fx[Id]catchNonFatalEitherT should not catch Fatal",
-        IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalEitherTShouldNotCatchFatal,
-      ),
-      example(
-        "test Fx[Id]catchNonFatalEitherT should return the successful result",
-        IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalEitherTShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id]catchNonFatalEitherT should return the failed result",
-        IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalEitherTShouldReturnFailedResult,
-      ),
-    ) ++
-    List(
-      example(
-        "test Fx[Id].handleNonFatalWith should handle NonFatal",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith,
-      ),
-      example(
-        "test Fx[Id].handleNonFatalWith should not handle Fatal",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalWithShouldNotHandleFatalWith,
-      ),
-      example(
-        "test Fx[Id].handleNonFatalWith should return the successful result",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalWithShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id].handleNonFatalWithEither should handle NonFatal",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldHandleNonFatalWith,
-      ),
-      example(
-        "test Fx[Id].handleNonFatalWithEither should not handle Fatal",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldNotHandleFatalWith,
-      ),
-      example(
-        "test Fx[Id].handleNonFatalWithEither should return the successful result",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id].handleNonFatalWithEither should return the failed result",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldReturnFailedResult,
-      ),
-      example(
-        "test Fx[Id].handleEitherNonFatalWith should handle NonFatal",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldHandleNonFatalWith,
-      ),
-      example(
-        "test Fx[Id].handleEitherNonFatalWith should not handle Fatal",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldNotHandleFatalWith,
-      ),
-      example(
-        "test Fx[Id].handleEitherNonFatalWith should return the successful result",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id].handleEitherNonFatalWith should return the failed result",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldReturnFailedResult,
-      ),
-      example(
-        "test Fx[Id].handleEitherTNonFatalWith should handle NonFatal",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldHandleNonFatalWith,
-      ),
-      example(
-        "test Fx[Id].handleEitherTNonFatalWith should not handle Fatal",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldNotHandleFatalWith,
-      ),
-      example(
-        "test Fx[Id].handleEitherTNonFatalWith should return the successful result",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id].handleEitherTNonFatalWith should return the failed result",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldReturnFailedResult,
-      ),
-      example(
-        "test Fx[Id].handleNonFatal should handle NonFatal",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalShouldHandleNonFatal,
-      ),
-      example(
-        "test Fx[Id].handleNonFatal should not handle Fatal",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalShouldNotHandleFatal,
-      ),
-      example(
-        "test Fx[Id].handleNonFatal should return the successful result",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id].handleNonFatalEither should handle NonFatal",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalEitherShouldHandleNonFatal,
-      ),
-      example(
-        "test Fx[Id].handleNonFatalEither should not handle Fatal",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalEitherShouldNotHandleFatal,
-      ),
-      example(
-        "test Fx[Id].handleNonFatalEither should return the successful result",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalEitherShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id].handleNonFatalEither should return the failed result",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalEitherShouldReturnFailedResult,
-      ),
-      example(
-        "test Fx[Id].handleEitherNonFatal should handle NonFatal",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherNonFatalShouldHandleNonFatal,
-      ),
-      example(
-        "test Fx[Id].handleEitherNonFatal should not handle Fatal",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherNonFatalShouldNotHandleFatal,
-      ),
-      example(
-        "test Fx[Id].handleEitherNonFatal should return the successful result",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherNonFatalShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id].handleEitherNonFatal should return the failed result",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherNonFatalShouldReturnFailedResult,
-      ),
-      example(
-        "test Fx[Id].handleEitherTNonFatal should handle NonFatal",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherTNonFatalShouldHandleNonFatal,
-      ),
-      example(
-        "test Fx[Id].handleEitherTNonFatal should not handle Fatal",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherTNonFatalShouldNotHandleFatal,
-      ),
-      example(
-        "test Fx[Id].handleEitherTNonFatal should return the successful result",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherTNonFatalShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id].handleEitherTNonFatal should return the failed result",
-        IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherTNonFatalShouldReturnFailedResult,
-      ),
-    ) ++ List(
-      /* Id */
-      example(
-        "test Fx[Id].recoverFromNonFatalWith should catch NonFatal",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal,
-      ),
-      example(
-        "test Fx[Id].recoverFromNonFatalWith should not catch Fatal",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithShouldNotCatchFatal,
-      ),
-      example(
-        "test Fx[Id].recoverFromNonFatalWith should return the successful result",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id].recoverFromNonFatalWithEither should catch NonFatal",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal,
-      ),
-      example(
-        "test Fx[Id].recoverFromNonFatalWithEither should not catch Fatal",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldNotCatchFatal,
-      ),
-      example(
-        "test Fx[Id].recoverFromNonFatalWithEither should return the successful result",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id].recoverFromNonFatalWithEither should return the failed result",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldReturnFailedResult,
-      ),
-      example(
-        "test Fx[Id].recoverEitherFromNonFatalWith should catch NonFatal",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal,
-      ),
-      example(
-        "test Fx[Id].recoverEitherFromNonFatalWith should not catch Fatal",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldNotCatchFatal,
-      ),
-      example(
-        "test Fx[Id].recoverEitherFromNonFatalWith should return the successful result",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id].recoverEitherFromNonFatalWith should return the failed result",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldReturnFailedResult,
-      ),
-      example(
-        "test Fx[Id].recoverEitherTFromNonFatalWith should catch NonFatal",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal,
-      ),
-      example(
-        "test Fx[Id].recoverEitherTFromNonFatalWith should not catch Fatal",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldNotCatchFatal,
-      ),
-      example(
-        "test Fx[Id].recoverEitherTFromNonFatalWith should return the successful result",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id].recoverEitherTFromNonFatalWith should return the failed result",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldReturnFailedResult,
-      ),
-      example(
-        "test Fx[Id].recoverFromNonFatal should catch NonFatal",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalShouldRecoverFromNonFatal,
-      ),
-      example(
-        "test Fx[Id].recoverFromNonFatal should not catch Fatal",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalShouldNotCatchFatal,
-      ),
-      example(
-        "test Fx[Id].recoverFromNonFatal should return the successful result",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id].recoverFromNonFatalEither should catch NonFatal",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldRecoverFromNonFatal,
-      ),
-      example(
-        "test Fx[Id].recoverFromNonFatalEither should not catch Fatal",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldNotCatchFatal,
-      ),
-      example(
-        "test Fx[Id].recoverFromNonFatalEither should return the successful result",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id].recoverFromNonFatalEither should return the failed result",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldReturnFailedResult,
-      ),
-      example(
-        "test Fx[Id].recoverEitherFromNonFatal should catch NonFatal",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldRecoverFromNonFatal,
-      ),
-      example(
-        "test Fx[Id].recoverEitherFromNonFatal should not catch Fatal",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldNotCatchFatal,
-      ),
-      example(
-        "test Fx[Id].recoverEitherFromNonFatal should return the successful result",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id].recoverEitherFromNonFatal should return the failed result",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldReturnFailedResult,
-      ),
-      example(
-        "test Fx[Id].recoverEitherTFromNonFatal should catch NonFatal",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldRecoverFromNonFatal,
-      ),
-      example(
-        "test Fx[Id].recoverEitherTFromNonFatal should not catch Fatal",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldNotCatchFatal,
-      ),
-      example(
-        "test Fx[Id].recoverEitherTFromNonFatal should return the successful result",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldReturnSuccessfulResult,
-      ),
-      example(
-        "test Fx[Id].recoverEitherTFromNonFatal should return the failed result",
-        IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldReturnFailedResult,
-      ),
-    )
+  private val idSpecs =
+    specs.fxSpec.IdSpecs.idSpecs ++
+      IdSpec.testMonadLaws ++
+      List(
+        /* Id */
+        example(
+          "test Fx[Id]catchNonFatalThrowable should catch NonFatal",
+          IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal,
+        ),
+        example(
+          "test Fx[Id]catchNonFatalThrowable should not catch Fatal",
+          IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalThrowableShouldNotCatchFatal,
+        ),
+        example(
+          "test Fx[Id]catchNonFatalThrowable should return the successful result",
+          IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalThrowableShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id]catchNonFatal should catch NonFatal",
+          IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalShouldCatchNonFatal,
+        ),
+        example(
+          "test Fx[Id]catchNonFatal should not catch Fatal",
+          IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalShouldNotCatchFatal,
+        ),
+        example(
+          "test Fx[Id]catchNonFatal should return the successful result",
+          IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id]catchNonFatalEither should catch NonFatal",
+          IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalEitherShouldCatchNonFatal,
+        ),
+        example(
+          "test Fx[Id]catchNonFatalEither should not catch Fatal",
+          IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalEitherShouldNotCatchFatal,
+        ),
+        example(
+          "test Fx[Id]catchNonFatalEither should return the successful result",
+          IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalEitherShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id]catchNonFatalEither should return the failed result",
+          IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalEitherShouldReturnFailedResult,
+        ),
+        example(
+          "test Fx[Id]catchNonFatalEitherT should catch NonFatal",
+          IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalEitherTShouldCatchNonFatal,
+        ),
+        example(
+          "test Fx[Id]catchNonFatalEitherT should not catch Fatal",
+          IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalEitherTShouldNotCatchFatal,
+        ),
+        example(
+          "test Fx[Id]catchNonFatalEitherT should return the successful result",
+          IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalEitherTShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id]catchNonFatalEitherT should return the failed result",
+          IdSpec.CanCatchSpec.testCanCatch_Id_catchNonFatalEitherTShouldReturnFailedResult,
+        ),
+      ) ++
+      List(
+        example(
+          "test Fx[Id].handleNonFatalWith should handle NonFatal",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalWithShouldHandleNonFatalWith,
+        ),
+        example(
+          "test Fx[Id].handleNonFatalWith should not handle Fatal",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalWithShouldNotHandleFatalWith,
+        ),
+        example(
+          "test Fx[Id].handleNonFatalWith should return the successful result",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalWithShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id].handleNonFatalWithEither should handle NonFatal",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldHandleNonFatalWith,
+        ),
+        example(
+          "test Fx[Id].handleNonFatalWithEither should not handle Fatal",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldNotHandleFatalWith,
+        ),
+        example(
+          "test Fx[Id].handleNonFatalWithEither should return the successful result",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id].handleNonFatalWithEither should return the failed result",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalWithEitherShouldReturnFailedResult,
+        ),
+        example(
+          "test Fx[Id].handleEitherNonFatalWith should handle NonFatal",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldHandleNonFatalWith,
+        ),
+        example(
+          "test Fx[Id].handleEitherNonFatalWith should not handle Fatal",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldNotHandleFatalWith,
+        ),
+        example(
+          "test Fx[Id].handleEitherNonFatalWith should return the successful result",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id].handleEitherNonFatalWith should return the failed result",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherNonFatalWithShouldReturnFailedResult,
+        ),
+        example(
+          "test Fx[Id].handleEitherTNonFatalWith should handle NonFatal",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldHandleNonFatalWith,
+        ),
+        example(
+          "test Fx[Id].handleEitherTNonFatalWith should not handle Fatal",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldNotHandleFatalWith,
+        ),
+        example(
+          "test Fx[Id].handleEitherTNonFatalWith should return the successful result",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id].handleEitherTNonFatalWith should return the failed result",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherTNonFatalWithShouldReturnFailedResult,
+        ),
+        example(
+          "test Fx[Id].handleNonFatal should handle NonFatal",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalShouldHandleNonFatal,
+        ),
+        example(
+          "test Fx[Id].handleNonFatal should not handle Fatal",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalShouldNotHandleFatal,
+        ),
+        example(
+          "test Fx[Id].handleNonFatal should return the successful result",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id].handleNonFatalEither should handle NonFatal",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalEitherShouldHandleNonFatal,
+        ),
+        example(
+          "test Fx[Id].handleNonFatalEither should not handle Fatal",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalEitherShouldNotHandleFatal,
+        ),
+        example(
+          "test Fx[Id].handleNonFatalEither should return the successful result",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalEitherShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id].handleNonFatalEither should return the failed result",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleNonFatalEitherShouldReturnFailedResult,
+        ),
+        example(
+          "test Fx[Id].handleEitherNonFatal should handle NonFatal",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherNonFatalShouldHandleNonFatal,
+        ),
+        example(
+          "test Fx[Id].handleEitherNonFatal should not handle Fatal",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherNonFatalShouldNotHandleFatal,
+        ),
+        example(
+          "test Fx[Id].handleEitherNonFatal should return the successful result",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherNonFatalShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id].handleEitherNonFatal should return the failed result",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherNonFatalShouldReturnFailedResult,
+        ),
+        example(
+          "test Fx[Id].handleEitherTNonFatal should handle NonFatal",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherTNonFatalShouldHandleNonFatal,
+        ),
+        example(
+          "test Fx[Id].handleEitherTNonFatal should not handle Fatal",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherTNonFatalShouldNotHandleFatal,
+        ),
+        example(
+          "test Fx[Id].handleEitherTNonFatal should return the successful result",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherTNonFatalShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id].handleEitherTNonFatal should return the failed result",
+          IdSpec.CanHandleErrorSpec.testCanHandleError_Id_handleEitherTNonFatalShouldReturnFailedResult,
+        ),
+      ) ++ List(
+        /* Id */
+        example(
+          "test Fx[Id].recoverFromNonFatalWith should catch NonFatal",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal,
+        ),
+        example(
+          "test Fx[Id].recoverFromNonFatalWith should not catch Fatal",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithShouldNotCatchFatal,
+        ),
+        example(
+          "test Fx[Id].recoverFromNonFatalWith should return the successful result",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id].recoverFromNonFatalWithEither should catch NonFatal",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal,
+        ),
+        example(
+          "test Fx[Id].recoverFromNonFatalWithEither should not catch Fatal",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldNotCatchFatal,
+        ),
+        example(
+          "test Fx[Id].recoverFromNonFatalWithEither should return the successful result",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id].recoverFromNonFatalWithEither should return the failed result",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalWithEitherShouldReturnFailedResult,
+        ),
+        example(
+          "test Fx[Id].recoverEitherFromNonFatalWith should catch NonFatal",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal,
+        ),
+        example(
+          "test Fx[Id].recoverEitherFromNonFatalWith should not catch Fatal",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldNotCatchFatal,
+        ),
+        example(
+          "test Fx[Id].recoverEitherFromNonFatalWith should return the successful result",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id].recoverEitherFromNonFatalWith should return the failed result",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalWithShouldReturnFailedResult,
+        ),
+        example(
+          "test Fx[Id].recoverEitherTFromNonFatalWith should catch NonFatal",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal,
+        ),
+        example(
+          "test Fx[Id].recoverEitherTFromNonFatalWith should not catch Fatal",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldNotCatchFatal,
+        ),
+        example(
+          "test Fx[Id].recoverEitherTFromNonFatalWith should return the successful result",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id].recoverEitherTFromNonFatalWith should return the failed result",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalWithShouldReturnFailedResult,
+        ),
+        example(
+          "test Fx[Id].recoverFromNonFatal should catch NonFatal",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalShouldRecoverFromNonFatal,
+        ),
+        example(
+          "test Fx[Id].recoverFromNonFatal should not catch Fatal",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalShouldNotCatchFatal,
+        ),
+        example(
+          "test Fx[Id].recoverFromNonFatal should return the successful result",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id].recoverFromNonFatalEither should catch NonFatal",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldRecoverFromNonFatal,
+        ),
+        example(
+          "test Fx[Id].recoverFromNonFatalEither should not catch Fatal",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldNotCatchFatal,
+        ),
+        example(
+          "test Fx[Id].recoverFromNonFatalEither should return the successful result",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id].recoverFromNonFatalEither should return the failed result",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverFromNonFatalEitherShouldReturnFailedResult,
+        ),
+        example(
+          "test Fx[Id].recoverEitherFromNonFatal should catch NonFatal",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldRecoverFromNonFatal,
+        ),
+        example(
+          "test Fx[Id].recoverEitherFromNonFatal should not catch Fatal",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldNotCatchFatal,
+        ),
+        example(
+          "test Fx[Id].recoverEitherFromNonFatal should return the successful result",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id].recoverEitherFromNonFatal should return the failed result",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherFromNonFatalShouldReturnFailedResult,
+        ),
+        example(
+          "test Fx[Id].recoverEitherTFromNonFatal should catch NonFatal",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldRecoverFromNonFatal,
+        ),
+        example(
+          "test Fx[Id].recoverEitherTFromNonFatal should not catch Fatal",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldNotCatchFatal,
+        ),
+        example(
+          "test Fx[Id].recoverEitherTFromNonFatal should return the successful result",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldReturnSuccessfulResult,
+        ),
+        example(
+          "test Fx[Id].recoverEitherTFromNonFatal should return the failed result",
+          IdSpec.CanRecoverSpec.testCanRecover_Id_recoverEitherTFromNonFatalShouldReturnFailedResult,
+        ),
+      )
 
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable // scalafix:ok DisableSyntax.throw

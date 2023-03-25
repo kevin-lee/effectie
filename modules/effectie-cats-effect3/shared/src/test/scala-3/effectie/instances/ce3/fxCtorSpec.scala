@@ -3,15 +3,15 @@ package effectie.instances.ce3
 import cats.Id
 import cats.effect.*
 import cats.effect.unsafe.IORuntime
+import effectie.core.FxCtor
 import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
 import effectie.instances.ce3.fxCtor.given
-import effectie.core.FxCtor
 import effectie.specs.fxCtorSpec.{FxCtorSpecs, IdSpecs}
 import effectie.testing.tools
 import effectie.testing.types.SomeThrowableError
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
-import extras.hedgehog.ce3.syntax.runner._
+import extras.hedgehog.ce3.syntax.runner.*
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -28,12 +28,28 @@ object FxCtorSpec extends Properties {
     }
   }
 
-  override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs
+  override def tests: List[Test] = ioSpecs
 
   private val ioSpecs = List(
     property(
       "test FxCtor[IO].effectOf",
       FxCtorSpecs.testEffectOf[IO] { io =>
+        withIO { implicit ticker =>
+          io.completeAs(())
+        }
+      },
+    ),
+    property(
+      "test FxCtor[IO].fromEffect(effectOf)",
+      FxCtorSpecs.testFromEffect[IO] { io =>
+        withIO { implicit ticker =>
+          io.completeAs(())
+        }
+      },
+    ),
+    property(
+      "test FxCtor[IO].fromEffect(pureOf)",
+      FxCtorSpecs.testFromEffectWithPure[IO] { io =>
         withIO { implicit ticker =>
           io.completeAs(())
         }
@@ -112,26 +128,5 @@ object FxCtorSpec extends Properties {
       },
     ),
   )
-
-  private val futureSpecs = effectie.instances.future.fxCtorSpec.futureSpecs
-
-  private val idSpecs = {
-    import effectie.instances.id.fxCtor.*
-    List(
-      property("test FxCtor[Id].effectOf", IdSpecs.testEffectOf),
-      property("test FxCtor[Id].pureOf", IdSpecs.testPureOf),
-      property("test FxCtor[Id].pureOrError(success case)", IdSpecs.testPureOrErrorSuccessCase),
-      example("test FxCtor[Id].pureOrError(error case)", IdSpecs.testPureOrErrorErrorCase),
-      example("test FxCtor[Id].unitOf", IdSpecs.testUnitOf),
-      example("test FxCtor[Id].testErrorOf", IdSpecs.testErrorOf),
-      property("test FxCtor[Id].fromEither(Right)", IdSpecs.testFromEitherRightCase),
-      property("test FxCtor[Id].fromEither(Left)", IdSpecs.testFromEitherLeftCase),
-      property("test FxCtor[Id].fromOption(Some)", IdSpecs.testFromOptionSomeCase),
-      property("test FxCtor[Id].fromOption(None)", IdSpecs.testFromOptionNoneCase),
-      property("test FxCtor[Id].fromTry(Success)", IdSpecs.testFromTrySuccessCase),
-      property("test FxCtor[Id].fromTry(Failure)", IdSpecs.testFromTryFailureCase),
-      property("test FxCtor[Id].flatMapFa(Id[A])", IdSpecs.testFlatMapFa),
-    )
-  }
 
 }

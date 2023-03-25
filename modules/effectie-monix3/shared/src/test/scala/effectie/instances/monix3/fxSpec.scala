@@ -41,6 +41,8 @@ object fxSpec extends Properties {
     import monix.execution.Scheduler.Implicits.global
     List(
       property("test Fx[Task].effectOf", FxSpecs.testEffectOf[Task](_.runSyncUnsafe() ==== unit)),
+      property("test Fx[Task].fromEffect(effectOf)", FxSpecs.testFromEffect[Task](_.runSyncUnsafe() ==== unit)),
+      property("test Fx[Task].fromEffect(pureOf)", FxSpecs.testFromEffectWithPure[Task](_.runSyncUnsafe() ==== unit)),
       property("test Fx[Task].pureOf", FxSpecs.testPureOf[Task](_.runSyncUnsafe() ==== unit)),
       property(
         "test Fx[Task].pureOrError(success case)",

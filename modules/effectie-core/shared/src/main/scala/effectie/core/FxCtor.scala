@@ -12,6 +12,9 @@ import scala.annotation.implicitNotFound
 )
 trait FxCtor[F[*]] {
   def effectOf[A](a: => A): F[A]
+
+  def fromEffect[A](fa: => F[A]): F[A]
+
   def pureOf[A](a: A): F[A]
   def pureOrError[A](a: => A): F[A]
 
