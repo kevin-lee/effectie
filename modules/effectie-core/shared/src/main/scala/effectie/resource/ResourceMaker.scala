@@ -14,7 +14,8 @@ trait ResourceMaker[F[*]] {
 object ResourceMaker {
   def apply[F[*]: ResourceMaker]: ResourceMaker[F] = implicitly[ResourceMaker[F]]
 
-  def usingResourceMaker: ResourceMaker[Try] = new UsingResourceMaker
+  val usingResourceMaker: ResourceMaker[Try] = new UsingResourceMaker
+
   private final class UsingResourceMaker extends ResourceMaker[Try] {
     override def forAutoCloseable[A <: AutoCloseable](fa: Try[A]): ReleasableResource[Try, A] =
       ReleasableResource.usingResourceFromTry(fa)
