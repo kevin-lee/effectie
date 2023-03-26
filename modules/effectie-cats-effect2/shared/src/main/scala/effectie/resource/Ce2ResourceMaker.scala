@@ -8,9 +8,9 @@ import cats.effect.{BracketThrow, Sync}
 object Ce2ResourceMaker {
 
   @deprecated(message = "Please use withResource instead", since = "2.0.0-beta10")
-  def forAutoCloseable[F[*]: Sync: BracketThrow]: ResourceMaker[F] = withResource
+  def forAutoCloseable[F[*]: Sync: BracketThrow]: ResourceMaker[F] = maker
 
-  def withResource[F[*]: Sync: BracketThrow]: ResourceMaker[F] = new Ce2ResourceMaker[F]
+  def maker[F[*]: Sync: BracketThrow]: ResourceMaker[F] = new Ce2ResourceMaker[F]
 
   private final class Ce2ResourceMaker[F[*]: Sync: BracketThrow] extends ResourceMaker[F] {
 

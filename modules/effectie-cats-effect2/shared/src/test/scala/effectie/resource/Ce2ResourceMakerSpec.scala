@@ -42,7 +42,7 @@ object Ce2ResourceMakerSpec extends Properties {
                    .map(_.toVector)
                    .log("content")
     } yield {
-      implicit val resourceMaker: ResourceMaker[F] = Ce2ResourceMaker.withResource
+      implicit val resourceMaker: ResourceMaker[F] = Ce2ResourceMaker.maker
       ResourceMakerSpec
         .testForAutoCloseable[F](TestResource.apply)(content, _ => F.unit, none)
         .unsafeRunSync()
@@ -56,7 +56,7 @@ object Ce2ResourceMakerSpec extends Properties {
                    .map(_.toVector)
                    .log("content")
     } yield {
-      implicit val resourceMaker: ResourceMaker[F] = Ce2ResourceMaker.withResource
+      implicit val resourceMaker: ResourceMaker[F] = Ce2ResourceMaker.maker
 
       ResourceMakerSpec
         .testForAutoCloseable[F](TestResource.apply)(
@@ -81,7 +81,7 @@ object Ce2ResourceMakerSpec extends Properties {
                    .map(_.toVector)
                    .log("content")
     } yield {
-      implicit val resourceMaker: ResourceMaker[F] = Ce2ResourceMaker.withResource
+      implicit val resourceMaker: ResourceMaker[F] = Ce2ResourceMaker.maker
       ResourceMakerSpec
         .testForMake[F](TestResourceNoAutoClose.apply)(_.release(), content, _ => F.pure(Result.success), none)
         .unsafeRunSync()
@@ -95,7 +95,7 @@ object Ce2ResourceMakerSpec extends Properties {
                    .map(_.toVector)
                    .log("content")
     } yield {
-      implicit val resourceMaker: ResourceMaker[F] = Ce2ResourceMaker.withResource
+      implicit val resourceMaker: ResourceMaker[F] = Ce2ResourceMaker.maker
 
       ResourceMakerSpec
         .testForMake[F](TestResourceNoAutoClose.apply)(
