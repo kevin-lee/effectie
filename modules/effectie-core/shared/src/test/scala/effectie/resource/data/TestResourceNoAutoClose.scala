@@ -6,12 +6,11 @@ package effectie.resource.data
 
 import effectie.resource.data.TestableResource.CloseStatus
 
-final class TestResource(
+final class TestResourceNoAutoClose(
   private var _content: Vector[String],
   private var _closeStatus: CloseStatus,
 ) // scalafix:ok DisableSyntax.var
-    extends TestableResource
-    with AutoCloseable {
+    extends TestableResource {
 
   override def content: Vector[String] = _content
 
@@ -22,13 +21,13 @@ final class TestResource(
     ()
   }
 
-  override def close(): Unit = {
+  def release(): Unit = {
     _closeStatus = CloseStatus.closed
     ()
   }
 }
 
-object TestResource {
-  def apply(): TestResource = new TestResource(Vector.empty, CloseStatus.notClosed)
+object TestResourceNoAutoClose {
+  def apply(): TestResourceNoAutoClose = new TestResourceNoAutoClose(Vector.empty, CloseStatus.notClosed)
 
 }

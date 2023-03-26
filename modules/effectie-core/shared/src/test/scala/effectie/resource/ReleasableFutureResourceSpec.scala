@@ -2,6 +2,7 @@ package effectie.resource
 
 import cats.syntax.all._
 import effectie.resource.data.TestErrors.TestException
+import effectie.resource.data.{TestResource, TestResourceNoAutoClose}
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._
 import hedgehog.runner._
@@ -22,6 +23,14 @@ object ReleasableFutureResourceSpec extends Properties {
     property(
       "test ReleasableFutureResource[A] - error case",
       testReleasableFutureResourceErrorCase,
+    ),
+    property(
+      "test ReleasableFutureResource[A].make",
+      testReleasableFutureResourceMake,
+    ),
+    property(
+      "test ReleasableFutureResource[A].make - error case",
+      testReleasableFutureResourceMakeErrorCase,
     ),
   )
 
@@ -51,7 +60,7 @@ object ReleasableFutureResourceSpec extends Properties {
         waitFor,
       )(
         ReleasableResourceSpec
-          .testFromAutoCloseable[Future](
+          .testReleasableResourceUse[Future](TestResource.apply)(
             content,
             _ => Future.successful(()),
             none,
@@ -87,7 +96,7 @@ object ReleasableFutureResourceSpec extends Properties {
         waitFor,
       )(
         ReleasableResourceSpec
-          .testFromAutoCloseable[Future](
+          .testReleasableResourceUse[Future](TestResource.apply)(
             content,
             _ => Future.failed(TestException(123)),
             Option({
@@ -98,6 +107,84 @@ object ReleasableFutureResourceSpec extends Properties {
                   .log(s"TestException was expected but it is ${ex.getClass.getSimpleName}. Error: ${ex.toString}")
             }),
             ReleasableResource.futureResource,
+          )
+      )
+
+    }
+
+  def testReleasableFutureResourceMake: Property =
+    for {
+      content <- Gen
+                   .string(Gen.unicode, Range.linear(1, 100))
+                   .list(Range.linear(1, 10))
+                   .map(_.toVector)
+                   .log("content")
+    } yield {
+      import effectie.instances.future.fx._
+      import extras.concurrent.testing.ConcurrentSupport
+
+      import scala.concurrent.Future
+      import scala.concurrent.duration._
+
+      implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
+
+      val waitFor                                   = WaitFor(200.milliseconds)
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(3)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      ConcurrentSupport.futureToValueAndTerminate(
+        executorService,
+        waitFor,
+      )(
+        ReleasableResourceSpec
+          .testReleasableResourceUse[Future](TestResourceNoAutoClose.apply)(
+            content,
+            _ => Future.successful(()),
+            none,
+            ReleasableResource.makeFuture(_)(a => Future(a.release())),
+          )
+      )
+
+    }
+
+  def testReleasableFutureResourceMakeErrorCase: Property =
+    for {
+      content <- Gen
+                   .string(Gen.unicode, Range.linear(1, 100))
+                   .list(Range.linear(1, 10))
+                   .map(_.toVector)
+                   .log("content")
+    } yield {
+      import effectie.instances.future.fx._
+      import extras.concurrent.testing.ConcurrentSupport
+
+      import scala.concurrent.Future
+      import scala.concurrent.duration._
+
+      implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
+
+      val waitFor                                   = WaitFor(200.milliseconds)
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(3)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      ConcurrentSupport.futureToValueAndTerminate(
+        executorService,
+        waitFor,
+      )(
+        ReleasableResourceSpec
+          .testReleasableResourceUse[Future](TestResourceNoAutoClose.apply)(
+            content,
+            _ => Future.failed(TestException(123)),
+            Option({
+              case TestException(123) => Result.success
+              case ex: Throwable =>
+                Result
+                  .failure
+                  .log(s"TestException was expected but it is ${ex.getClass.getSimpleName}. Error: ${ex.toString}")
+            }),
+            ReleasableResource.makeFuture(_)(a => Future(a.release())),
           )
       )
 

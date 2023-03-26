@@ -2,6 +2,7 @@ package effectie.resource
 
 import cats.syntax.all._
 import effectie.resource.data.TestErrors.TestException
+import effectie.resource.data.{TestResource, TestResourceNoAutoClose}
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._
 import hedgehog.runner._
@@ -22,6 +23,18 @@ object FutureResourceMakerSpec extends Properties {
     property(
       "test ResourceMaker.futureResourceMaker: ResourceMaker[Future] - error case",
       testFutureResourceMakerErrorCase,
+    ),
+    property(
+      "test ResourceMaker.futureResourceMaker: ResourceMaker[Future] with make",
+      testFutureResourceMakerMake,
+    ),
+    property(
+      "test ResourceMaker.futureResourceMaker: ResourceMaker[Future] with make - error case",
+      testFutureResourceMakerMakeErrorCase,
+    ),
+    property(
+      "test ResourceMaker.futureResourceMaker: ResourceMaker[Future] with make - error case in closing",
+      testFutureResourceMakerMakeErrorCaseInClosing,
     ),
   )
 
@@ -53,7 +66,7 @@ object FutureResourceMakerSpec extends Properties {
         waitFor,
       )(
         ResourceMakerSpec
-          .testForAutoCloseable[Future](
+          .testForAutoCloseable[Future](TestResource.apply)(
             content,
             _ => Future.successful(()),
             none,
@@ -90,7 +103,7 @@ object FutureResourceMakerSpec extends Properties {
         waitFor,
       )(
         ResourceMakerSpec
-          .testForAutoCloseable[Future](
+          .testForAutoCloseable[Future](TestResource.apply)(
             content,
             _ => Future.failed(TestException(123)),
             Option({
@@ -100,6 +113,131 @@ object FutureResourceMakerSpec extends Properties {
                   .failure
                   .log(s"TestException was expected but it is ${ex.getClass.getSimpleName}. Error: ${ex.toString}")
             }),
+          )
+      )
+
+    }
+
+  def testFutureResourceMakerMake: Property =
+    for {
+      content <- Gen
+                   .string(Gen.unicode, Range.linear(1, 100))
+                   .list(Range.linear(1, 10))
+                   .map(_.toVector)
+                   .log("content")
+    } yield {
+      import effectie.instances.future.fx._
+      import extras.concurrent.testing.ConcurrentSupport
+
+      import scala.concurrent.Future
+      import scala.concurrent.duration._
+
+      implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
+
+      val waitFor                                   = WaitFor(200.milliseconds)
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(3)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      implicit val resourceMaker: ResourceMaker[Future] = ResourceMaker.futureResourceMaker
+
+      ConcurrentSupport.futureToValueAndTerminate(
+        executorService,
+        waitFor,
+      )(
+        ResourceMakerSpec
+          .testForMake[Future](TestResourceNoAutoClose.apply)(
+            _.release(),
+            content,
+            _ => Future.successful(Result.success),
+            none,
+          )
+      )
+
+    }
+
+  def testFutureResourceMakerMakeErrorCase: Property =
+    for {
+      content <- Gen
+                   .string(Gen.unicode, Range.linear(1, 100))
+                   .list(Range.linear(1, 10))
+                   .map(_.toVector)
+                   .log("content")
+    } yield {
+      import effectie.instances.future.fx._
+      import extras.concurrent.testing.ConcurrentSupport
+
+      import scala.concurrent.Future
+      import scala.concurrent.duration._
+
+      implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
+
+      val waitFor                                   = WaitFor(200.milliseconds)
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(3)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      implicit val resourceMaker: ResourceMaker[Future] = ResourceMaker.futureResourceMaker
+
+      ConcurrentSupport.futureToValueAndTerminate(
+        executorService,
+        waitFor,
+      )(
+        ResourceMakerSpec
+          .testForMake[Future](TestResourceNoAutoClose.apply)(
+            _.release(),
+            content,
+            _ => Future.failed(TestException(123)),
+            Option({
+              case TestException(123) => Result.success
+              case ex: Throwable =>
+                Result
+                  .failure
+                  .log(s"TestException was expected but it is ${ex.getClass.getSimpleName}. Error: ${ex.toString}")
+            }),
+          )
+      )
+
+    }
+
+  def testFutureResourceMakerMakeErrorCaseInClosing: Property =
+    for {
+      content <- Gen
+                   .string(Gen.unicode, Range.linear(1, 100))
+                   .list(Range.linear(1, 10))
+                   .map(_.toVector)
+                   .log("content")
+    } yield {
+      import effectie.instances.future.fx._
+      import extras.concurrent.testing.ConcurrentSupport
+
+      import scala.concurrent.Future
+      import scala.concurrent.duration._
+
+      implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
+
+      val waitFor                                   = WaitFor(200.milliseconds)
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(3)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      implicit val resourceMaker: ResourceMaker[Future] = ResourceMaker.futureResourceMaker
+
+      ConcurrentSupport.futureToValueAndTerminate(
+        executorService,
+        waitFor,
+      )(
+        ResourceMakerSpec
+          .testForMake[Future](TestResourceNoAutoClose.apply)(
+            { resource =>
+              resource.release()
+              throw new RuntimeException(
+                "Test error in closing resource. It's only for testing so please ignore."
+              ) // scalafix:ok DisableSyntax.throw
+            },
+            content,
+            _ => Future.successful(Result.success),
+            none,
           )
       )
 

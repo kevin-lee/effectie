@@ -22,4 +22,11 @@ object ReleasableResource {
     implicit ec: ExecutionContext
   ): ReleasableResource[Future, A] = ReleasableFutureResource(acquire)
 
+  def makeTry[A](resource: => Try[A])(release: A => Try[Unit]): ReleasableResource[Try, A] =
+    UsingResource.make(resource)(release(_))
+
+  def makeFuture[A](acquire: Future[A])(release: A => Future[Unit])(
+    implicit ec: ExecutionContext
+  ): ReleasableResource[Future, A] = ReleasableFutureResource.make(acquire)(release)
+
 }
