@@ -1,5 +1,6 @@
 package effectie.resource
 
+import cats.Monad
 import cats.effect.{BracketThrow, Sync}
 
 /** @author Kevin Lee
@@ -19,6 +20,10 @@ object Ce2ResourceMaker {
 
     override def make[A](fa: => F[A])(release: A => F[Unit]): ReleasableResource[F, A] =
       Ce2Resource.make[F, A](fa)(release)
+
+    override def pure[A](a: A): ReleasableResource[F, A] = make(Monad[F].pure(a))(_ => Monad[F].unit)
+
+    override def eval[A](fa: F[A]): ReleasableResource[F, A] = make(fa)(_ => Monad[F].unit)
   }
 
 }

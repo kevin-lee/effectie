@@ -11,15 +11,16 @@ trait Ce3Resource[F[*], A] extends ReleasableResource[F, A] {
 object Ce3Resource {
 
   def fromAutoCloseable[F[*]: Sync, A <: AutoCloseable](acquire: F[A]): Ce3Resource[F, A] =
-    new Ce3ResourceF[F, A](acquire)(a => Sync[F].delay(a.close()))
+    new Ce3ResourceF[F, A](Resource.fromAutoCloseable(acquire))
 
   def make[F[*]: Sync, A](acquire: F[A])(release: A => F[Unit]): Ce3Resource[F, A] =
-    new Ce3ResourceF[F, A](acquire)(release)
+    new Ce3ResourceF[F, A](Resource.make(acquire)(release))
 
-  private final class Ce3ResourceF[F[*]: Sync: MonadCancelThrow, A](acquire: F[A])(release: A => F[Unit])
+  def apply[F[*]: MonadCancelThrow, A](underlying: Resource[F, A]): ReleasableResource[F, A] =
+    new Ce3ResourceF[F, A](underlying)
+
+  private final class Ce3ResourceF[F[*]: MonadCancelThrow, A](override val underlying: Resource[F, A])
       extends Ce3Resource[F, A] {
-
-    override val underlying: Resource[F, A] = Resource.make[F, A](acquire)(release)
 
     override def use[B](f: A => F[B]): F[B] = underlying.use(f)
   }
