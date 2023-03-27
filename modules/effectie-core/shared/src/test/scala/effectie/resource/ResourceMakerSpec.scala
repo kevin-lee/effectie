@@ -214,4 +214,107 @@ object ResourceMakerSpec {
 
   }
 
+  def testFor[F[*]]: TestFor1[F] =
+    new TestFor1[F]
+
+  final class TestFor1[F[*]](private val dummy: Boolean = true) extends AnyVal {
+    def apply[A <: TestableResource](testResourceConstructor: () => A): TestFor2[F, A] =
+      new TestFor2(testResourceConstructor)
+  }
+
+  final class TestFor2[F[*], A <: TestableResource](private val testResourceConstructor: () => A) extends AnyVal {
+    def apply(
+      maker: A => ReleasableResource[F, A],
+      content: Vector[String],
+      useF: A => F[Result],
+      closeStatusTest: TestableResource.CloseStatus => Result,
+      errorTest: Option[Throwable => Result],
+    )(implicit FF: FxCtor[F], CC: CanCatch[F], M: Monad[F]) =
+      testFor0(
+        testResourceConstructor,
+        maker,
+        content,
+        useF,
+        closeStatusTest,
+        errorTest,
+      )
+  }
+
+  private def testFor0[F[*]: FxCtor: CanCatch: Monad, A <: TestableResource](
+    testResourceConstructor: () => A,
+    maker: A => ReleasableResource[F, A],
+    content: Vector[String],
+    useF: A => F[Result],
+    closeStatusTest: TestableResource.CloseStatus => Result,
+    errorTest: Option[Throwable => Result],
+  ): F[Result] = {
+
+    val testResource      = testResourceConstructor()
+    var closeStatusBefore = none[TestableResource.CloseStatus] // scalafix:ok DisableSyntax.var
+    var contentBefore     = none[Vector[String]] // scalafix:ok DisableSyntax.var
+
+    CanCatch[F]
+      .catchNonFatal(
+        maker(testResource)
+          .use { resource =>
+            for {
+              _      <- FxCtor[F].effectOf {
+                          closeStatusBefore = resource.closeStatus.some
+                          ()
+                        }
+              _      <- FxCtor[F].effectOf {
+                          contentBefore = resource.content.some
+                          ()
+                        }
+              _      <- FxCtor[F].effectOf(content.foreach(resource.write))
+              result <- useF(resource)
+            } yield result
+          }
+      ) {
+        case err =>
+          Result.all(
+            List(
+              (closeStatusBefore ==== TestableResource.CloseStatus.notClosed.some)
+                .log("Before: TestableResource.closeStatus should be NotClosed but it is not."),
+              (contentBefore ==== Vector.empty.some)
+                .log("Before: TestableResource.content should be empty but it is not."),
+              closeStatusTest(testResource.closeStatus),
+              (testResource.content ==== content)
+                .log("After: TestableResource.content should have the expected content but it is empty."),
+              errorTest.fold(
+                Result.failure.log(s"Error was expected but no expected error was given. Error: ${err.toString}")
+              )(_(err)),
+            )
+          )
+      }
+      .map {
+        //          println(
+        //            s"""     closeStatusBefore: $closeStatusBefore
+        //               |         contentBefore: $contentBefore
+        //               |closeStatusBeforeAfter: ${resource.closeStatus}
+        //               |          contentAfter: ${resource.content}
+        //               |---
+        //               |""".stripMargin
+        //          )
+
+        case Right(result) =>
+          Result.all(
+            List(
+              (closeStatusBefore ==== TestableResource.CloseStatus.notClosed.some)
+                .log("Failed: closeStatusBefore ==== TestableResource.CloseStatus.notClosed.some"),
+              (contentBefore ==== Vector.empty.some).log("Failed: contentBefore ==== Vector.empty.some"),
+              closeStatusTest(testResource.closeStatus),
+              (testResource.content ==== content).log("Failed: testResource.content ==== content"),
+              result.log("result"),
+              errorTest.fold(Result.success)(err =>
+                Result.failure.log(s"No error was expected but error found. Error: ${err.toString}")
+              ),
+            )
+          )
+        case Left(failedResult) =>
+          failedResult
+      }
+
+  }
+
 }

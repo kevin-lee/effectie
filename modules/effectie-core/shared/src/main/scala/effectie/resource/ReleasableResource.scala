@@ -9,6 +9,7 @@ import scala.util.Try
 trait ReleasableResource[F[*], A] {
 
   def use[B](f: A => F[B]): F[B]
+
 }
 
 object ReleasableResource {
