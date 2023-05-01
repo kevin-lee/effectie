@@ -1,2 +1,6 @@
 ignore:
   - "modules/effectie-test4cats"
+
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default
