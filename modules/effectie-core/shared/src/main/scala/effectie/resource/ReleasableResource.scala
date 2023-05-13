@@ -26,8 +26,15 @@ object ReleasableResource {
   def makeTry[A](resource: => Try[A])(release: A => Try[Unit]): ReleasableResource[Try, A] =
     UsingResource.make(resource)(release(_))
 
+  def pureTry[A](resource: A): ReleasableResource[Try, A] =
+    UsingResource.pure(resource)
+
   def makeFuture[A](acquire: Future[A])(release: A => Future[Unit])(
     implicit ec: ExecutionContext
   ): ReleasableResource[Future, A] = ReleasableFutureResource.make(acquire)(release)
+
+  def pureFuture[A](acquire: A)(
+    implicit ec: ExecutionContext
+  ): ReleasableResource[Future, A] = ReleasableFutureResource.pure(acquire)
 
 }
