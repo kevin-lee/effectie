@@ -34,6 +34,14 @@ object Ce3ResourceSpec extends Properties {
       "test Ce3Resource.make - error case",
       testMakeErrorCase,
     ),
+    property(
+      "test Ce3Resource.pure",
+      testPure,
+    ),
+    property(
+      "test Ce3Resource.pure - error case",
+      testPureErrorCase,
+    ),
   )
 
   def testFromAutoCloseable: Property =
@@ -104,6 +112,46 @@ object Ce3ResourceSpec extends Properties {
               .log(s"TestException was expected but it is ${ex.getClass.getSimpleName}. Error: ${ex.toString}")
         }),
         Ce3Resource.make(_)(a => F.delay(a.release())),
+      )
+      .unsafeRunSync()
+
+  def testPure: Property =
+    for {
+      content <- Gen
+                   .string(Gen.unicode, Range.linear(1, 100))
+                   .list(Range.linear(1, 10))
+                   .map(_.toVector)
+                   .log("content")
+    } yield ReleasableResourceSpec
+      .testReleasableResourceUse[F](TestResourceNoAutoClose.apply)
+      .withPure(
+        content,
+        _ => F.unit,
+        none,
+        Ce3Resource.pure(_),
+      )
+      .unsafeRunSync()
+
+  def testPureErrorCase: Property =
+    for {
+      content <- Gen
+                   .string(Gen.unicode, Range.linear(1, 100))
+                   .list(Range.linear(1, 10))
+                   .map(_.toVector)
+                   .log("content")
+    } yield ReleasableResourceSpec
+      .testReleasableResourceUse[F](TestResourceNoAutoClose.apply)
+      .withPure(
+        content,
+        _ => F.raiseError(TestException(123)),
+        Option({
+          case TestException(123) => Result.success
+          case ex: Throwable =>
+            Result
+              .failure
+              .log(s"TestException was expected but it is ${ex.getClass.getSimpleName}. Error: ${ex.toString}")
+        }),
+        Ce3Resource.pure(_),
       )
       .unsafeRunSync()
 

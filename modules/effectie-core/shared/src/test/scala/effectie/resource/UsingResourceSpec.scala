@@ -31,6 +31,14 @@ object UsingResourceSpec extends Properties {
       "test UsingResource.make[Try, A] error case",
       testUsingResourceMakeErrorCase,
     ),
+    property(
+      "test UsingResource.pure[Try, A]",
+      testUsingResourcePure,
+    ),
+    property(
+      "test UsingResource.pure[Try, A] error case",
+      testUsingResourcePureErrorCase,
+    ),
   )
 
   import effectie.instances.tries.fx._
@@ -121,6 +129,84 @@ object UsingResourceSpec extends Properties {
           UsingResource.make(_)(a => Try(a.release())),
         )
         .fold(err => Result.failure.log(s"Unexpected error: ${err.toString}"), identity)
+    }
+
+  def testUsingResourcePure: Property =
+    for {
+      content <- Gen
+                   .string(Gen.unicode, Range.linear(1, 100))
+                   .list(Range.linear(1, 10))
+                   .map(_.toVector)
+                   .log("content")
+    } yield {
+
+      Result.all(
+        List(
+          ReleasableResourceSpec
+            .testReleasableResourceUse[Try](TestResourceNoAutoClose.apply)
+            .withPure(
+              content,
+              _ => Try(()),
+              none,
+              UsingResource.pure,
+            )
+            .fold(err => Result.failure.log(s"Unexpected error: ${err.toString}"), identity),
+          ReleasableResourceSpec
+            .testReleasableResourceUse[Try](TestResourceNoAutoClose.apply)
+            .withPure(
+              content,
+              _ => Try(()),
+              none,
+              ReleasableResource.pureTry,
+            )
+            .fold(err => Result.failure.log(s"Unexpected error: ${err.toString}"), identity),
+        )
+      )
+    }
+
+  def testUsingResourcePureErrorCase: Property =
+    for {
+      content <- Gen
+                   .string(Gen.unicode, Range.linear(1, 100))
+                   .list(Range.linear(1, 10))
+                   .map(_.toVector)
+                   .log("content")
+    } yield {
+
+      Result.all(
+        List(
+          ReleasableResourceSpec
+            .testReleasableResourceUse[Try](TestResourceNoAutoClose.apply)
+            .withPure(
+              content,
+              _ => Failure(TestException(123)),
+              Option({
+                case TestException(123) => Result.success
+                case ex: Throwable =>
+                  Result
+                    .failure
+                    .log(s"TestException was expected but it is ${ex.getClass.getSimpleName}. Error: ${ex.toString}")
+              }),
+              UsingResource.pure,
+            )
+            .fold(err => Result.failure.log(s"Unexpected error: ${err.toString}"), identity),
+          ReleasableResourceSpec
+            .testReleasableResourceUse[Try](TestResourceNoAutoClose.apply)
+            .withPure(
+              content,
+              _ => Failure(TestException(123)),
+              Option({
+                case TestException(123) => Result.success
+                case ex: Throwable =>
+                  Result
+                    .failure
+                    .log(s"TestException was expected but it is ${ex.getClass.getSimpleName}. Error: ${ex.toString}")
+              }),
+              ReleasableResource.pureTry,
+            )
+            .fold(err => Result.failure.log(s"Unexpected error: ${err.toString}"), identity),
+        )
+      )
     }
 
 }

@@ -38,6 +38,20 @@ object ReleasableResourceSpec {
         errorTest,
         () => releasableResourceConstructor,
       )
+
+    def withPure(
+      content: Vector[String],
+      useF: A => F[Unit],
+      errorTest: Option[Throwable => Result],
+      releasableResourceConstructor: A => ReleasableResource[F, A],
+    )(implicit FC: FxCtor[F], CC: CanCatch[F], M: Monad[F]): F[Result] =
+      testReleasableResourceUseWithPure0[F, A](
+        testResourceConstructor,
+        content,
+        useF,
+        errorTest,
+        () => releasableResourceConstructor,
+      )
   }
 
   class TestReleasableResourceUseByName1[F[*]](private val dummy: Boolean = true) extends AnyVal {
@@ -70,6 +84,38 @@ object ReleasableResourceSpec {
     useF: A => F[Unit],
     errorTest: Option[Throwable => Result],
     releasableResourceConstructor: () => F[A] => ReleasableResource[F, A],
+  ): F[Result] = _testReleasableResourceUse(
+    testResourceConstructor,
+    content,
+    useF,
+    errorTest,
+    () => (a: A) => releasableResourceConstructor()(FxCtor[F].effectOf(a)),
+    ShouldTestClose.yes,
+  )
+
+  private def testReleasableResourceUseWithPure0[F[*]: FxCtor: CanCatch: Monad, A <: TestableResource](
+    testResourceConstructor: () => A,
+    content: Vector[String],
+    useF: A => F[Unit],
+    errorTest: Option[Throwable => Result],
+    releasableResourceConstructor: () => A => ReleasableResource[F, A],
+  ): F[Result] =
+    _testReleasableResourceUse(
+      testResourceConstructor,
+      content,
+      useF,
+      errorTest,
+      () => releasableResourceConstructor(),
+      ShouldTestClose.no,
+    )
+
+  private def _testReleasableResourceUse[F[*]: FxCtor: CanCatch: Monad, A <: TestableResource](
+    testResourceConstructor: () => A,
+    content: Vector[String],
+    useF: A => F[Unit],
+    errorTest: Option[Throwable => Result],
+    releasableResourceConstructor: () => A => ReleasableResource[F, A],
+    shouldTestClose: ShouldTestClose,
   ): F[Result] = {
 
     val testResource      = testResourceConstructor()
@@ -78,7 +124,7 @@ object ReleasableResourceSpec {
 
     CanCatch[F]
       .catchNonFatal(
-        releasableResourceConstructor()(FxCtor[F].effectOf(testResource))
+        releasableResourceConstructor()(testResource)
           .use { resource =>
             for {
               _ <- FxCtor[F].effectOf {
@@ -95,21 +141,36 @@ object ReleasableResourceSpec {
           }
       ) {
         case err =>
-          Result.all(
-            List(
-              (closeStatusBefore ==== TestableResource.CloseStatus.notClosed.some)
-                .log("Before: TestableResource.closeStatus should be NotClosed but it is not."),
-              (contentBefore ==== Vector.empty.some)
-                .log("Before: TestableResource.content should be empty but it is not."),
-              (testResource.closeStatus ==== TestableResource.CloseStatus.closed)
-                .log("After: TestableResource.closeStatus should Closed but it is not."),
-              (testResource.content ==== content)
-                .log("After: TestableResource.content should have the expected content but it is empty."),
-              errorTest.fold(
-                Result.failure.log(s"Error was expected but no expected error was given. Error: ${err.toString}")
-              )(_(err)),
-            )
-          )
+          shouldTestClose match {
+            case ShouldTestClose.Yes =>
+              Result.all(
+                List(
+                  (closeStatusBefore ==== TestableResource.CloseStatus.notClosed.some)
+                    .log("Before: TestableResource.closeStatus should be NotClosed but it is not."),
+                  (contentBefore ==== Vector.empty.some)
+                    .log("Before: TestableResource.content should be empty but it is not."),
+                  (testResource.closeStatus ==== TestableResource.CloseStatus.closed)
+                    .log("After: TestableResource.closeStatus should Closed but it is not."),
+                  (testResource.content ==== content)
+                    .log("After: TestableResource.content should have the expected content but it is empty."),
+                  errorTest.fold(
+                    Result.failure.log(s"Error was expected but no expected error was given. Error: ${err.toString}")
+                  )(_(err)),
+                )
+              )
+            case ShouldTestClose.No =>
+              Result.all(
+                List(
+                  (contentBefore ==== Vector.empty.some)
+                    .log("Before: TestableResource.content should be empty but it is not."),
+                  (testResource.content ==== content)
+                    .log("After: TestableResource.content should have the expected content but it is empty."),
+                  errorTest.fold(
+                    Result.failure.log(s"Error was expected but no expected error was given. Error: ${err.toString}")
+                  )(_(err)),
+                )
+              )
+          }
       }
       .map {
         //          println(
@@ -122,20 +183,43 @@ object ReleasableResourceSpec {
         //          )
 
         case Right(_) =>
-          Result.all(
-            List(
-              closeStatusBefore ==== TestableResource.CloseStatus.notClosed.some,
-              contentBefore ==== Vector.empty.some,
-              testResource.closeStatus ==== TestableResource.CloseStatus.closed,
-              testResource.content ==== content,
-              errorTest.fold(Result.success)(err =>
-                Result.failure.log(s"No error was expected but error found. Error: ${err.toString}")
-              ),
-            )
-          )
+          shouldTestClose match {
+            case ShouldTestClose.Yes =>
+              Result.all(
+                List(
+                  closeStatusBefore ==== TestableResource.CloseStatus.notClosed.some,
+                  contentBefore ==== Vector.empty.some,
+                  testResource.closeStatus ==== TestableResource.CloseStatus.closed,
+                  testResource.content ==== content,
+                  errorTest.fold(Result.success)(err =>
+                    Result.failure.log(s"No error was expected but error found. Error: ${err.toString}")
+                  ),
+                )
+              )
+            case ShouldTestClose.No =>
+              Result.all(
+                List(
+                  contentBefore ==== Vector.empty.some,
+                  testResource.content ==== content,
+                  errorTest.fold(Result.success)(err =>
+                    Result.failure.log(s"No error was expected but error found. Error: ${err.toString}")
+                  ),
+                )
+              )
+
+          }
         case Left(failedResult) =>
           failedResult
       }
+  }
+
+  sealed trait ShouldTestClose
+  object ShouldTestClose {
+    case object Yes extends ShouldTestClose
+    case object No extends ShouldTestClose
+
+    def yes: ShouldTestClose = Yes
+    def no: ShouldTestClose  = No
   }
 
 }
