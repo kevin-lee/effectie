@@ -10,6 +10,10 @@ trait ReleasableResource[F[*], A] {
 
   def use[B](f: A => F[B]): F[B]
 
+  def map[B](f: A => B): ReleasableResource[F, B]
+
+  def flatMap[B](f: A => ReleasableResource[F, B]): ReleasableResource[F, B]
+
 }
 
 object ReleasableResource {

@@ -45,6 +45,28 @@ private[resource] object ReleasableFutureResource {
       }
     }
 
+    override def map[B](f: A => B): ReleasableResource[Future, B] =
+      flatMap(a => ReleasableFutureResource.pure(f(a)))
+
+    override def flatMap[B](f: A => ReleasableResource[Future, B]): ReleasableResource[Future, B] =
+      BindReleasableFutureResource(this, f)
+  }
+
+  private final case class BindReleasableFutureResource[A, B](
+    source: ReleasableResource[Future, A],
+    nextF: A => ReleasableResource[Future, B],
+  )(implicit ec: ExecutionContext)
+      extends ReleasableFutureResource[B] {
+    override def use[C](f: B => Future[C]): Future[C] =
+      source.use { a =>
+        nextF(a).use(f)
+      }
+
+    override def map[C](f: B => C): ReleasableResource[Future, C] =
+      flatMap(b => pure(f(b)))
+
+    override def flatMap[C](f: B => ReleasableResource[Future, C]): ReleasableResource[Future, C] =
+      BindReleasableFutureResource[B, C](this, f)
   }
 
   def make[A](acquire: Future[A])(release: A => Future[Unit])(
