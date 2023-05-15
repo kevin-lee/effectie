@@ -15,6 +15,28 @@ private[resource] object UsingResource {
       acquire.flatMap(Using.resource(_)(f)(release))
 
     override def use[B](f: A => Try[B]): Try[B] = underlying(f)
+
+    override def map[B](f: A => B): ReleasableResource[Try, B] =
+      BindUsingResource(this, (a: A) => UsingResource.pure(f(a)))
+
+    override def flatMap[B](f: A => ReleasableResource[Try, B]): ReleasableResource[Try, B] =
+      BindUsingResource[A, B](this, f)
+  }
+
+  private[resource] final case class BindUsingResource[A, B](
+    source: ReleasableResource[Try, A],
+    nextF: A => ReleasableResource[Try, B],
+  ) extends UsingResource[B] {
+    override def use[C](f: B => Try[C]): Try[C] =
+      source.use { a =>
+        nextF(a).use(f)
+      }
+
+    override def map[C](f: B => C): ReleasableResource[Try, C] =
+      new BindUsingResource[B, C](this, b => UsingResource.pure(f(b)))
+
+    override def flatMap[C](f: B => ReleasableResource[Try, C]): ReleasableResource[Try, C] =
+      new BindUsingResource[B, C](this, f)
   }
 
   def apply[A <: AutoCloseable](resource: => A): ReleasableResource[Try, A] = fromTry(Try(resource))

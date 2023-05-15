@@ -6,7 +6,7 @@ package effectie.resource.data
 
 import effectie.resource.data.TestableResource.CloseStatus
 
-final class TestResource(
+final case class TestResource private (
   private var _content: Vector[String],
   private var _closeStatus: CloseStatus,
 ) // scalafix:ok DisableSyntax.var
@@ -30,5 +30,7 @@ final class TestResource(
 
 object TestResource {
   def apply(): TestResource = new TestResource(Vector.empty, CloseStatus.notClosed)
+
+  def withContent(content: Vector[String]): TestResource = new TestResource(content, CloseStatus.notClosed)
 
 }
