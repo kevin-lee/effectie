@@ -447,7 +447,15 @@ def module(projectName: ProjectName, crossProject: CrossProject.Builder): CrossP
     .settings(
       name := prefixedName,
       fork := true,
-      scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
+      scalacOptions := {
+        (
+          if (scalaVersion.value.startsWith("3."))
+            List("-Ykind-projector:underscores")
+          else
+            List.empty[String]
+        ) ++
+          scalacOptions.value.filterNot(props.isScala3IncompatibleScalacOption)
+      },
       scalafixConfig := (
         if (scalaVersion.value.startsWith("3"))
           ((ThisBuild / baseDirectory).value / ".scalafix-scala3.conf").some
