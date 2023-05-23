@@ -22,6 +22,8 @@ object ReleasableResourceFunctorSpec extends Properties {
     implicit val toF: Int => Try[Int] = Try(_)
     implicit def eqF: Eq[Try[Int]]    = Eq.fromUniversalEquals
 
+    implicit val resourceMaker: ResourceMaker[Try] = ResourceMaker.tryResourceMaker
+
     List(
       property(
         "test Functor Law - Identity for ReleasableResource[Try, *]",
@@ -38,9 +40,22 @@ object ReleasableResourceFunctorSpec extends Properties {
             genF,
           ),
       ),
+      property(
+        "test ReleasableResource[Try, *].map",
+        testMap[Try](
+          ReleasableResource.pureTry,
+          Try(_),
+          _.fold(
+            err => Result.failure.log(s"Error: ${err.getMessage}"),
+            identity,
+          ),
+        ),
+      ),
     )
   } ++ {
     implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
+
+    implicit val resourceMaker: ResourceMaker[Future] = ResourceMaker.futureResourceMaker
 
     implicit val toF: Int => Future[Int] = Future.successful
     implicit def eqF: Eq[Future[Int]]    =
@@ -64,32 +79,20 @@ object ReleasableResourceFunctorSpec extends Properties {
             genF,
           ),
       ),
-    )
-  } ++ List(
-    property(
-      "test ReleasableResource[Try, *].map",
-      testMap[Try](
-        ReleasableResource.pureTry,
-        Try(_),
-        _.fold(
-          err => Result.failure.log(s"Error: ${err.getMessage}"),
-          identity,
-        ),
+      property(
+        "test ReleasableResource[Future, *].map", {
+          implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
+          testMap[Future](
+            ReleasableResource.pureFuture,
+            Future.successful,
+            scala.concurrent.Await.result(_, 1.second),
+          )
+        },
       ),
-    ),
-    property(
-      "test ReleasableResource[Future, *].map", {
-        implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
-        testMap[Future](
-          ReleasableResource.pureFuture,
-          Future.successful,
-          scala.concurrent.Await.result(_, 1.second),
-        )
-      },
-    ),
-  )
+    )
+  }
 
-  def testMap[F[*]](
+  def testMap[F[*]: ResourceMaker](
     ctor: Int => ReleasableResource[F, Int],
     toF: Result => F[Result],
     get: F[Result] => Result,
