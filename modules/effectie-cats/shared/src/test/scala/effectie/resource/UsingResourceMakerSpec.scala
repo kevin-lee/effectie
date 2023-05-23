@@ -16,39 +16,39 @@ object UsingResourceMakerSpec extends Properties {
 
   override def tests: List[Test] = List(
     property(
-      "test ResourceMaker.usingResourceMaker: ResourceMaker[Try]",
+      "test ResourceMaker.tryResourceMaker: ResourceMaker[Try]",
       testUsingResourceMaker,
     ),
     property(
-      "test ResourceMaker.usingResourceMaker: ResourceMaker[Try] - error case",
+      "test ResourceMaker.tryResourceMaker: ResourceMaker[Try] - error case",
       testUsingResourceMakerErrorCase,
     ),
     property(
-      "test ResourceMaker.usingResourceMaker: ResourceMaker[Try].make",
+      "test ResourceMaker.tryResourceMaker: ResourceMaker[Try].make",
       testUsingResourceMakerMake,
     ),
     property(
-      "test ResourceMaker.usingResourceMaker: ResourceMaker[Try].make - error case",
+      "test ResourceMaker.tryResourceMaker: ResourceMaker[Try].make - error case",
       testUsingResourceMakerMakeErrorCase,
     ),
     property(
-      "test ResourceMaker.usingResourceMaker: ResourceMaker[Try].make - error case in closing",
+      "test ResourceMaker.tryResourceMaker: ResourceMaker[Try].make - error case in closing",
       testUsingResourceMakerMakeErrorCaseInClosing,
     ),
     property(
-      "test ResourceMaker.usingResourceMaker: ResourceMaker[Try].pure",
+      "test ResourceMaker.tryResourceMaker: ResourceMaker[Try].pure",
       testUsingResourceMakerPure,
     ),
     property(
-      "test ResourceMaker.usingResourceMaker: ResourceMaker[Try].pure - error case",
+      "test ResourceMaker.tryResourceMaker: ResourceMaker[Try].pure - error case",
       testUsingResourceMakerPureErrorCase,
     ),
     property(
-      "test ResourceMaker.usingResourceMaker: ResourceMaker[Try].eval",
+      "test ResourceMaker.tryResourceMaker: ResourceMaker[Try].eval",
       testUsingResourceMakerEval,
     ),
     property(
-      "test ResourceMaker.usingResourceMaker: ResourceMaker[Try].eval - error case",
+      "test ResourceMaker.tryResourceMaker: ResourceMaker[Try].eval - error case",
       testUsingResourceMakerEvalErrorCase,
     ),
   )
@@ -64,7 +64,7 @@ object UsingResourceMakerSpec extends Properties {
                    .log("content")
     } yield {
 
-      implicit val resourceMaker: ResourceMaker[Try] = ResourceMaker.usingResourceMaker
+      implicit val resourceMaker: ResourceMaker[Try] = ResourceMaker.tryResourceMaker
 
       ResourceMakerSpec
         .testForAutoCloseable[Try](TestResource.apply)(
@@ -83,7 +83,7 @@ object UsingResourceMakerSpec extends Properties {
                    .map(_.toVector)
                    .log("content")
     } yield {
-      implicit val resourceMaker: ResourceMaker[Try] = ResourceMaker.usingResourceMaker
+      implicit val resourceMaker: ResourceMaker[Try] = ResourceMaker.tryResourceMaker
 
       ResourceMakerSpec
         .testForAutoCloseable[Try](TestResource.apply)(
@@ -109,7 +109,7 @@ object UsingResourceMakerSpec extends Properties {
                    .log("content")
     } yield {
 
-      implicit val resourceMaker: ResourceMaker[Try] = ResourceMaker.usingResourceMaker
+      implicit val resourceMaker: ResourceMaker[Try] = ResourceMaker.tryResourceMaker
 
       ResourceMakerSpec
         .testForMake[Try](TestResourceNoAutoClose.apply)(
@@ -129,7 +129,7 @@ object UsingResourceMakerSpec extends Properties {
                    .map(_.toVector)
                    .log("content")
     } yield {
-      implicit val resourceMaker: ResourceMaker[Try] = ResourceMaker.usingResourceMaker
+      implicit val resourceMaker: ResourceMaker[Try] = ResourceMaker.tryResourceMaker
 
       ResourceMakerSpec
         .testForMake[Try](TestResourceNoAutoClose.apply)(
@@ -155,7 +155,7 @@ object UsingResourceMakerSpec extends Properties {
                    .map(_.toVector)
                    .log("content")
     } yield {
-      implicit val resourceMaker: ResourceMaker[Try] = ResourceMaker.usingResourceMaker
+      implicit val resourceMaker: ResourceMaker[Try] = ResourceMaker.tryResourceMaker
 
       ResourceMakerSpec
         .testForMake[Try](TestResourceNoAutoClose.apply)(
@@ -181,7 +181,7 @@ object UsingResourceMakerSpec extends Properties {
                    .log("content")
     } yield {
 
-      implicit val resourceMaker: ResourceMaker[Try] = ResourceMaker.usingResourceMaker
+      implicit val resourceMaker: ResourceMaker[Try] = ResourceMaker.tryResourceMaker
 
       ResourceMakerSpec
         .testFor[Try](TestResourceNoAutoClose.apply)(
@@ -202,7 +202,7 @@ object UsingResourceMakerSpec extends Properties {
                    .map(_.toVector)
                    .log("content")
     } yield {
-      implicit val resourceMaker: ResourceMaker[Try] = ResourceMaker.usingResourceMaker
+      implicit val resourceMaker: ResourceMaker[Try] = ResourceMaker.tryResourceMaker
 
       ResourceMakerSpec
         .testFor[Try](TestResourceNoAutoClose.apply)(
@@ -230,7 +230,7 @@ object UsingResourceMakerSpec extends Properties {
                    .log("content")
     } yield {
 
-      implicit val resourceMaker: ResourceMaker[Try] = ResourceMaker.usingResourceMaker
+      implicit val resourceMaker: ResourceMaker[Try] = ResourceMaker.tryResourceMaker
 
       ResourceMakerSpec
         .testFor[Try](TestResourceNoAutoClose.apply)(
@@ -251,7 +251,7 @@ object UsingResourceMakerSpec extends Properties {
                    .map(_.toVector)
                    .log("content")
     } yield {
-      implicit val resourceMaker: ResourceMaker[Try] = ResourceMaker.usingResourceMaker
+      implicit val resourceMaker: ResourceMaker[Try] = ResourceMaker.tryResourceMaker
 
       ResourceMakerSpec
         .testFor[Try](TestResourceNoAutoClose.apply)(

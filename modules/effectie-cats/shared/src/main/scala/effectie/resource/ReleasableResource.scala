@@ -14,6 +14,9 @@ trait ReleasableResource[F[*], A] {
 
   def map[B](f: A => B): ReleasableResource[F, B]
 
+  def ap[B](ff: ReleasableResource[F, A => B]): ReleasableResource[F, B] =
+    ff.flatMap(f => map(f))
+
   def flatMap[B](f: A => ReleasableResource[F, B]): ReleasableResource[F, B]
 
 }
@@ -43,9 +46,16 @@ object ReleasableResource {
     implicit ec: ExecutionContext
   ): ReleasableResource[Future, A] = ReleasableFutureResource.pure(acquire)
 
-  implicit def releasableResourceFunctor[F[*]]: Functor[ReleasableResource[F, *]] =
-    new Functor[ReleasableResource[F, *]] {
+  implicit def releasableResourceFunctor[F[*]](
+    implicit resourceMaker: ResourceMaker[F]
+  ): Applicative[ReleasableResource[F, *]] =
+    new Applicative[ReleasableResource[F, *]] with Functor[ReleasableResource[F, *]] {
       override def map[A, B](fa: ReleasableResource[F, A])(f: A => B): ReleasableResource[F, B] = fa.map(f)
+
+      override def pure[A](a: A): ReleasableResource[F, A] = resourceMaker.pure(a)
+
+      override def ap[A, B](ff: ReleasableResource[F, A => B])(fa: ReleasableResource[F, A]): ReleasableResource[F, B] =
+        fa.ap(ff)
     }
 
 }

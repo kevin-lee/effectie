@@ -18,7 +18,10 @@ trait ResourceMaker[F[*]] {
 object ResourceMaker {
   def apply[F[*]: ResourceMaker]: ResourceMaker[F] = implicitly[ResourceMaker[F]]
 
-  val usingResourceMaker: ResourceMaker[Try] = new UsingResourceMaker
+  val tryResourceMaker: ResourceMaker[Try] = new UsingResourceMaker
+
+  @deprecated("Please use ResourceMaker.tryResourceMaker instead.", since = "2.0.0-beta10")
+  @inline val usingResourceMaker: ResourceMaker[Try] = tryResourceMaker
 
   private final class UsingResourceMaker extends ResourceMaker[Try] {
     override def forAutoCloseable[A <: AutoCloseable](fa: Try[A]): ReleasableResource[Try, A] =
