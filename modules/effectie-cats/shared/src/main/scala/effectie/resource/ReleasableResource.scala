@@ -1,5 +1,7 @@
 package effectie.resource
 
+import cats._
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
@@ -40,5 +42,10 @@ object ReleasableResource {
   def pureFuture[A](acquire: A)(
     implicit ec: ExecutionContext
   ): ReleasableResource[Future, A] = ReleasableFutureResource.pure(acquire)
+
+  implicit def releasableResourceFunctor[F[*]]: Functor[ReleasableResource[F, *]] =
+    new Functor[ReleasableResource[F, *]] {
+      override def map[A, B](fa: ReleasableResource[F, A])(f: A => B): ReleasableResource[F, B] = fa.map(f)
+    }
 
 }
