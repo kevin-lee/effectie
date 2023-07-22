@@ -9,7 +9,7 @@ import cats.effect.kernel.MonadCancelThrow
   */
 object Ce3ResourceMaker {
 
-  @deprecated(message = "Please use withResource instead", since = "2.0.0-beta10")
+  @deprecated(message = "Please use Ce3ResourceMaker.maker instead", since = "2.0.0-beta10")
   def forAutoCloseable[F[*]: Sync: MonadCancelThrow]: ResourceMaker[F] = maker
 
   def maker[F[*]: Sync: MonadCancelThrow]: ResourceMaker[F] = new Ce3ResourceMaker[F]
