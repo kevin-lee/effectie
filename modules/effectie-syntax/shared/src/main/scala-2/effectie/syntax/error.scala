@@ -22,10 +22,10 @@ trait error {
   implicit def canHandleErrorOps[F[*]](canHandleError: effectie.core.CanHandleError[F]): CanHandleErrorOps[F[*]] =
     new CanHandleErrorOps(canHandleError)
 
-  implicit def CanRecoverOps[F[*]](canRecover: effectie.core.CanRecover[F]): CanRecoverOps[F[*]] =
+  implicit def canRecoverOps[F[*]](canRecover: effectie.core.CanRecover[F]): CanRecoverOps[F[*]] =
     new CanRecoverOps(canRecover)
 
-  implicit def FxOps[F[*]](fx: effectie.core.Fx[F]): FxOps[F[*]] = new FxOps(fx)
+  implicit def fxOps[F[*]](fx: effectie.core.Fx[F]): FxOps[F[*]] = new FxOps(fx)
 
 }
 
