@@ -1,8 +1,7 @@
 package effectie.instances.ce3.testing
 
 import cats.effect.unsafe.{IORuntime, IORuntimeConfig}
-import extras.concurrent.testing.ConcurrentSupport
-import extras.concurrent.testing.types.ErrorLogger
+import hedgehog.core.Result
 
 import java.util.concurrent.ExecutorService
 
@@ -10,6 +9,17 @@ import java.util.concurrent.ExecutorService
   * @since 2021-07-22
   */
 object IoAppUtils {
+
+  def runWithRuntime(runtime: IORuntime)(test: IORuntime => Result): Result = {
+    try test(runtime)
+    finally runtime.shutdown()
+  }
+
+  def computeWorkerThreadCount: Int = {
+    val num = Math.max(2, Runtime.getRuntime.availableProcessors())
+    println(s"Worker thread count: ${num.toString}")
+    num
+  }
 
   def runtime(es: ExecutorService): IORuntime = runtime()
 
