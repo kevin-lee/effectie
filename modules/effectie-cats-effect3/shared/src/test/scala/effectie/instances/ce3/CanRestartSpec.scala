@@ -18,9 +18,13 @@ import scala.util.control.NoStackTrace
 object CanRestartSpec extends Properties {
   override def tests: List[Test] = List(
     property("CanRestart[F].restartWhile", testRestartWhile),
+    example("CanRestart[F].restartWhile (heavy recursion: 1,000,000 times)", testRestartWhileHeavyRecursion),
     property("CanRestart[F].restartUntil", testRestartUntil),
+    example("CanRestart[F].restartUntil (heavy recursion: 1,000,000 times)", testRestartUntilHeavyRecursion),
     property("CanRestart[F].restartOnError", testRestartOnError),
+    example("CanRestart[F].restartOnError (heavy recursion: 1,000,000 times)", testRestartOnErrorHeavyRecursion),
     property("CanRestart[F].restartOnErrorIf", testRestartOnErrorIf),
+    example("CanRestart[F].restartOnErrorIf (heavy recursion: 1,000,000 times)", testRestartOnErrorIfHeavyRecursion),
   )
 
   type F[A] = IO[A]
@@ -63,10 +67,26 @@ object CanRestartSpec extends Properties {
         .map(_ ==== num(0))
     }
 
+  def testRestartWhileHeavyRecursion: Result =
+    runIO {
+      val n   = 1000000
+      val num = Array.fill(1)(0)
+      canRestartRestartWhile(F(n), num)
+        .map(_ ==== num(0))
+    }
+
   def testRestartUntil: Property =
     for {
       n <- Gen.int(Range.linear(0, 10)).log("n")
     } yield runIO {
+      val num = Array.fill(1)(0)
+      canRestartRestartUntil(F(n), num)
+        .map(_ ==== num(0))
+    }
+
+  def testRestartUntilHeavyRecursion: Result =
+    runIO {
+      val n   = 1000000
       val num = Array.fill(1)(0)
       canRestartRestartUntil(F(n), num)
         .map(_ ==== num(0))
@@ -105,11 +125,81 @@ object CanRestartSpec extends Properties {
 
     }
 
+  def testRestartOnErrorHeavyRecursion: Result =
+    withIO { implicit ticker =>
+      val n = 1000000L
+
+      val expected = (n + 1) * 3
+
+      val num = Array.fill(1)(0L)
+
+      canRestartRestartOnError(
+        F[Unit] {
+          num(0) += 1L
+          ()
+        }.map { _ =>
+          num(0) += 1L
+          ()
+        }.flatMap { _ =>
+          F {
+            num(0) += 1L
+            ()
+          }
+        }.flatMap { _ =>
+          F.raiseError[Unit](ExpectedException)
+        },
+        n,
+      )
+        .handleErrorWith {
+          case ExpectedException => F.unit
+          case ex => F.raiseError(ex)
+        }
+        .completeThen(_ => num(0) ==== expected)
+
+    }
+
   def testRestartOnErrorIf: Property =
     for {
       n <- Gen.int(Range.linear(0, 10)).log("n")
     } yield withIO { implicit ticker =>
       val expected = (n + 1) * 3
+
+      val num = Array.fill(1)(0)
+
+      canRestartRestartOnErrorIfTrue(
+        F[Unit] {
+          num(0) += 1
+          ()
+        }.map { _ =>
+          num(0) += 1
+          ()
+        }.flatMap { _ =>
+          F {
+            num(0) += 1
+            ()
+          }
+        }.map[Unit] { _ =>
+          if (num(0) < expected)
+            throw KeepGoing // scalafix:ok DisableSyntax.throw
+          else
+            throw End // scalafix:ok DisableSyntax.throw
+        },
+        {
+          case KeepGoing => true
+          case End => false
+        },
+      )
+        .handleErrorWith {
+          case End => F.unit
+          case ex => F.raiseError(ex)
+        }
+        .completeThen(_ => num(0) ==== expected)
+
+    }
+
+  def testRestartOnErrorIfHeavyRecursion: Result =
+    withIO { implicit ticker =>
+      val expected = 1000000 * 3
 
       val num = Array.fill(1)(0)
 
