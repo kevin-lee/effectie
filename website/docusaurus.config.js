@@ -119,7 +119,7 @@ const websiteConfig = {
               "path": "v1",
             },
             "current": {
-              "label": "2.0.0-beta11",
+              "label": "2.0.0-beta12",
             },
           }
         },
