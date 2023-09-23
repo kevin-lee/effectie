@@ -5,6 +5,7 @@ title: "For Cats Effect"
 
 ## Effectie for Cats Effect
 
+* [What to Import](import.md)
 * [Fx](fx/fx.md)
 * [ConsoleFx](console-fx.md)
 * [CanCatch](fx/error-handling/can-catch.md)
