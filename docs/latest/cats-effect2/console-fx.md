@@ -103,6 +103,7 @@ object Something {
 }
 
 import cats.effect._
+import effectie.instances.ce2.fx._
 
 val foo = Something[IO].foo()
 foo.unsafeRunSync()
