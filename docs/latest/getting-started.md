@@ -64,7 +64,7 @@ For more details, check out [Effectie for Cats Effect](cats-effect2/cats-effect2
 In `build.sbt`,
 
 ```scala
-libraryDependencies += "io.kevinlee" %% "effectie-monix" % "@VERSION@"
+libraryDependencies += "io.kevinlee" %% "effectie-monix3" % "@VERSION@"
 ```
 
 For more details, check out [Effectie for Monix](monix3/monix3.md).
