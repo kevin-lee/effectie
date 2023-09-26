@@ -36,8 +36,8 @@ import effectie.syntax.all._
 | `fb.catchNonFatal { ... }`                      | `fa.attempt.flatMap { ... }`                            | `fa.transform {...}.flatMap`             | `fa match { ... }.flatMap`            |
 | `fa.handleNonFatal(e => A)`                     | `fa.handleError(a => A)`                                | `fa.recoverWith(e => Future(A))`         | `fa.recoverWith(e => Try(A))`         |
 | `fa.handleNonFatalWith(e => F[A])`              | `fa.handleNonFatalWith(a => F[A])`                      | `fa.recoverWith(e => Future[A])`         | `fa.recoverWith(e => Try(A))`         |
-| `fa.recoverFromNonFatalWith { case e => F[A] }` | `fa.handleErrorWith { case e => F[A] or raise e }`      | `fa.recoverWith { case e => Future[A] }` | `fa.recoverWith { case e => Try(A) }` |
 | `fa.recoverFromNonFatal { case e => A }`        | `fa.handleErrorWith { case e => A.pure[F] or raise e }` | `fa.recover { case e => A }`             | `fa.recover { case e => A }`          |
+| `fa.recoverFromNonFatalWith { case e => F[A] }` | `fa.handleErrorWith { case e => F[A] or raise e }`      | `fa.recoverWith { case e => Future[A] }` | `fa.recoverWith { case e => Try(A) }` |
 
 :::note
 `a: A` <br />
