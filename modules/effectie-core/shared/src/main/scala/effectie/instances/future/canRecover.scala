@@ -27,9 +27,7 @@ object canRecover {
     )(
       handleError: PartialFunction[Throwable, AA]
     ): Future[AA] =
-      recoverFromNonFatalWith[A, AA](fa)(
-        handleError.andThen(Future(_))
-      )
+      fa.recover(handleError)
   }
 
   class CanRecoverFuture(override implicit val EC0: ExecutionContext) extends FutureCanRecover
