@@ -20,8 +20,12 @@ object canHandleError {
           handleError(throwable)
       }
 
-    @inline override def handleNonFatal[A, AA >: A](fa: => Future[A])(handleError: Throwable => AA): Future[AA] =
-      handleNonFatalWith[A, AA](fa)(err => Future(handleError(err)))
+    @inline override def handleNonFatal[A, AA >: A](fa: => Future[A])(handleError: Throwable => AA): Future[AA] = {
+      fa.recover {
+        case throwable: Throwable =>
+          handleError(throwable)
+      }
+    }
   }
 
   final class CanHandleErrorFuture(override implicit val EC0: ExecutionContext) extends FutureCanHandleError
