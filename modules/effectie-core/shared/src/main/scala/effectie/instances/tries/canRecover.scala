@@ -24,9 +24,7 @@ object canRecover {
     )(
       handleError: PartialFunction[Throwable, AA]
     ): Try[AA] =
-      recoverFromNonFatalWith[A, AA](fa)(
-        handleError.andThen(Try(_))
-      )
+      fa.recover(handleError)
   }
 
   implicit object canRecoverTry extends TryCanRecover

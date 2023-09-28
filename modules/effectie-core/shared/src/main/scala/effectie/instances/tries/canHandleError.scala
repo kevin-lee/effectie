@@ -20,7 +20,10 @@ object canHandleError {
       }
 
     @inline override def handleNonFatal[A, AA >: A](fa: => Try[A])(handleError: Throwable => AA): Try[AA] =
-      handleNonFatalWith[A, AA](fa)(err => Try(handleError(err)))
+      fa.recover {
+        case throwable: Throwable =>
+          handleError(throwable)
+      }
   }
 
   implicit object canHandleErrorTry extends TryCanHandleError
