@@ -1,11 +1,12 @@
 package effectie.syntax
 
 import cats._
+import cats.data.EitherT
 import cats.syntax.all._
 import effectie.core.Fx
 import effectie.syntax.error._
 import effectie.syntax.fx.effectOf
-import effectie.testing.types.SomeError
+import effectie.testing.types.{SomeError, SomeThrowableError}
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._
@@ -260,6 +261,22 @@ object CanHandleErrorSyntaxSpec {
     example(
       "test CanHandleError[Future].handleEitherNonFatal should return the failed result",
       FutureSpec.testCanHandleError_Future_handleEitherNonFatalShouldReturnFailedResult,
+    ),
+    example(
+      "test F[Either[A, B]](F(Right(b))).rethrowIfLeft should return the successful result",
+      FutureSpec.testFEitherAB_Future_rethrowIfLeftShouldReturnSuccessfulResult,
+    ),
+    example(
+      "test F[Either[A, B]](F(Left(a))).rethrowIfLeft should return the failed result",
+      FutureSpec.testFEitherAB_Future_rethrowIfLeftShouldReturnFailedResult,
+    ),
+    example(
+      "test EitherT[F, A, B](F(Right(b))).rethrowTIfLeft should return the successful result",
+      FutureSpec.testEitherTFAB_Future_rethrowTIfLeftShouldReturnSuccessfulResult,
+    ),
+    example(
+      "test EitherT[F, A, B](F(Left(a))).rethrowTIfLeft should return the failed result",
+      FutureSpec.testEitherTFAB_Future_rethrowTIfLeftShouldReturnFailedResult,
     ),
   )
 
@@ -580,6 +597,82 @@ object CanHandleErrorSyntaxSpec {
         )(fa.handleEitherNonFatal(_ => expected))
 
       actual ==== expected
+    }
+
+    def testFEitherAB_Future_rethrowIfLeftShouldReturnSuccessfulResult: Result = {
+
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      val fa       = run[Future, Either[SomeThrowableError, Int]](1.asRight[SomeThrowableError])
+      val expected = 1
+      val actual   = ConcurrentSupport.futureToValueAndTerminate(
+        executorService,
+        waitFor,
+      )(fa.rethrowIfLeft)
+
+      actual ==== expected
+    }
+
+    def testFEitherAB_Future_rethrowIfLeftShouldReturnFailedResult: Result = {
+
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      val expectedFailure = SomeThrowableError.message("Failed")
+      val fa              = run[Future, Either[SomeThrowableError, Int]](expectedFailure.asLeft[Int])
+      val expected        = expectedFailure
+      try {
+        val result = ConcurrentSupport.futureToValueAndTerminate(
+          executorService,
+          waitFor,
+        )(fa.rethrowIfLeft)
+        Result.failure.log(s"Expected SomeThrowableError to be thrown but got ${result.toString} instead")
+      } catch {
+        case actual: SomeThrowableError =>
+          actual ==== expected
+      }
+
+    }
+
+    def testEitherTFAB_Future_rethrowTIfLeftShouldReturnSuccessfulResult: Result = {
+
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      val fa       = EitherT(run[Future, Either[SomeThrowableError, Int]](1.asRight[SomeThrowableError]))
+      val expected = 1
+      val actual   = ConcurrentSupport.futureToValueAndTerminate(
+        executorService,
+        waitFor,
+      )(fa.rethrowTIfLeft)
+
+      actual ==== expected
+    }
+
+    def testEitherTFAB_Future_rethrowTIfLeftShouldReturnFailedResult: Result = {
+
+      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      implicit val ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      val expectedFailure = SomeThrowableError.message("Failed")
+      val fa              = EitherT(run[Future, Either[SomeThrowableError, Int]](expectedFailure.asLeft[Int]))
+      val expected        = expectedFailure
+      try {
+        val result = ConcurrentSupport.futureToValueAndTerminate(
+          executorService,
+          waitFor,
+        )(fa.rethrowTIfLeft)
+        Result.failure.log(s"Expected SomeThrowableError to be thrown but got ${result.toString} instead")
+      } catch {
+        case actual: SomeThrowableError =>
+          actual ==== expected
+      }
+
     }
 
   }

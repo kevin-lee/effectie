@@ -1,8 +1,9 @@
 package effectie.syntax
 
+import cats.FlatMap
 import cats.data.EitherT
 import effectie.syntax.*
-import effectie.core.{CanCatch, CanHandleError, CanRecover, Fx}
+import effectie.core.{CanCatch, CanHandleError, CanRecover, Fx, FxCtor}
 
 /** @author Kevin Lee
   * @since 2021-10-16
@@ -84,6 +85,13 @@ trait error {
       using canRecover: CanRecover[F]
     ): F[Either[AA, BB]] =
       canRecover.recoverEitherFromNonFatal[A, AA, B, BB](fab)(handleError)
+
+    def rethrowIfLeft[AA >: A](using ev: AA <:< Throwable, fxCtor: FxCtor[F], M: FlatMap[F]): F[B] =
+      M.flatMap(fab) {
+        case Left(a) => fxCtor.errorOf(ev(a))
+        case Right(b) => fxCtor.pureOf(b)
+      }
+
   }
 
   extension [F[*], A, B](efab: => EitherT[F, A, B]) {
@@ -123,6 +131,13 @@ trait error {
       using canRecover: CanRecover[F]
     ): EitherT[F, AA, BB] =
       effectie.syntax.error.recoverEitherTFromNonFatal(canRecover)[A, AA, B, BB](efab)(handleError)
+
+    def rethrowTIfLeft[AA >: A](using ev: AA <:< Throwable, fxCtor: FxCtor[F], M: FlatMap[F]): F[B] =
+      efab.foldF(
+        err => fxCtor.errorOf[B](ev(err)),
+        fxCtor.pureOf,
+      )
+
   }
 
   extension [F[*]](canCatch: effectie.core.CanCatch[F]) {
