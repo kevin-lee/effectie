@@ -1,7 +1,8 @@
 package effectie.syntax
 
 import _root_.cats.data.EitherT
-import effectie.core.{CanCatch, CanHandleError, CanRecover}
+import cats.FlatMap
+import effectie.core.{CanCatch, CanHandleError, CanRecover, FxCtor}
 
 /** @author Kevin Lee
   * @since 2021-10-16
@@ -106,6 +107,13 @@ object error extends error {
       implicit canRecover: CanRecover[F]
     ): F[Either[AA, BB]] =
       canRecover.recoverEitherFromNonFatal[A, AA, B, BB](fab())(handleError)
+
+    def rethrowIfLeft[AA >: A](implicit ev: AA <:< Throwable, fxCtor: FxCtor[F], M: FlatMap[F]): F[B] =
+      M.flatMap(fab()) {
+        case Left(a) => fxCtor.errorOf(a)
+        case Right(b) => fxCtor.pureOf(b)
+      }
+
   }
 
   final class EitherTFABErrorHandlingOps[F[*], A, B](private val efab: () => EitherT[F, A, B]) extends AnyVal {
@@ -144,6 +152,13 @@ object error extends error {
       implicit canRecover: CanRecover[F]
     ): EitherT[F, AA, BB] =
       canRecover.recoverEitherTFromNonFatal[A, AA, B, BB](efab())(handleError)
+
+    def rethrowTIfLeft[AA >: A](implicit ev: AA <:< Throwable, fxCtor: FxCtor[F], M: FlatMap[F]): F[B] =
+      efab().foldF(
+        fxCtor.errorOf[B](_),
+        fxCtor.pureOf,
+      )
+
   }
 
   final class CanCatchOps[F[*]](private val canCatch: effectie.core.CanCatch[F]) extends AnyVal {
