@@ -24,6 +24,10 @@ function Version() {
     (version) => version !== latestVersion && version.name !== 'current',
   ).concat([
     {
+      "name": "2.0.0-beta12",
+      "label": "2.0.0-beta12",
+    },
+    {
       "name": "2.0.0-beta11",
       "label": "2.0.0-beta11",
     },
