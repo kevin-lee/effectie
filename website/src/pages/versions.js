@@ -15,6 +15,8 @@ import {
   useLatestVersion,
 } from '@docusaurus/plugin-content-docs/client';
 
+import VersionsArchived from './versionsArchived.json';
+
 function Version() {
   const {siteConfig} = useDocusaurusContext();
   const versions = useVersions();
@@ -22,60 +24,9 @@ function Version() {
   const currentVersion = versions.find((version) => version.name === 'current');
   const pastVersions = versions.filter(
     (version) => version !== latestVersion && version.name !== 'current',
-  ).concat([
-    {
-      "name": "2.0.0-beta12",
-      "label": "2.0.0-beta12",
-    },
-    {
-      "name": "2.0.0-beta11",
-      "label": "2.0.0-beta11",
-    },
-    {
-      "name": "2.0.0-beta10",
-      "label": "2.0.0-beta10",
-    },
-    {
-      "name": "2.0.0-beta9",
-      "label": "2.0.0-beta9",
-    },
-    {
-      "name": "2.0.0-beta8",
-      "label": "2.0.0-beta8",
-    },
-    {
-      "name": "2.0.0-beta7",
-      "label": "2.0.0-beta7",
-    },
-    {
-      "name": "2.0.0-beta6",
-      "label": "2.0.0-beta6",
-    },
-    {
-      "name": "2.0.0-beta5",
-      "label": "2.0.0-beta5",
-    },
-    {
-      "name": "2.0.0-beta4",
-      "label": "2.0.0-beta4",
-    },
-    {
-      "name": "2.0.0-beta3",
-      "label": "2.0.0-beta3",
-    },
-    {
-      "name": "2.0.0-beta2",
-      "label": "2.0.0-beta2",
-    },
-    {
-      "name": "2.0.0-beta1",
-      "label": "2.0.0-beta1",
-    },
-    {
-      "name": "1.16.0",
-      "label": "1.16.0",
-    },
-  ]).sort((a, b) => {
+  )
+  .concat(VersionsArchived)
+  .sort((a, b) => {
     // console.log(`a: ${JSON.stringify(a)}, b: ${JSON.stringify(b)}`);
     if (!a.name.includes(".") || !b.name.includes(".")) {
       if (a.name.includes("v")) {
