@@ -1,6 +1,5 @@
 package effectie.instances.future
 
-import cats.Functor
 import effectie.core.{CanCatch, FxCtor}
 import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
@@ -51,7 +50,7 @@ object canCatchSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable // scalafix:ok DisableSyntax.throw
 
-  def run[F[*]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[*]: FxCtor, A](a: => A): F[A] =
     FxCtor[F].effectOf(a)
 
   object FutureSpec {

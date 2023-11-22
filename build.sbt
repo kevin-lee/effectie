@@ -247,7 +247,7 @@ lazy val docs = (project in file("docs-gen-tmp/docs"))
     mdocIn := file("docs/latest"),
     mdocOut := file("generated-docs/docs"),
     cleanFiles += ((ThisBuild / baseDirectory).value / "generated-docs" / "docs"),
-    scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
+    scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption).filter(opt => opt != "-Xfatal-warnings")),
     libraryDependencies ++= {
       val latestTag = getTheLatestTaggedVersion()
       List(
@@ -274,7 +274,7 @@ lazy val docsV1 = (project in file("docs-gen-tmp/docs-v1"))
     mdocIn := file("docs/v1"),
     mdocOut := file("website/versioned_docs/version-v1/docs"),
     cleanFiles += ((ThisBuild / baseDirectory).value / "website" / "versioned_docs" / "version-v1"),
-    scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption)),
+    scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption).filter(opt => opt != "-Xfatal-warnings")),
     libraryDependencies ++= List(
       "io.kevinlee" %% "effectie-cats-effect"   % "1.16.0",
       "io.kevinlee" %% "effectie-monix"         % "1.16.0",
@@ -447,15 +447,7 @@ def module(projectName: ProjectName, crossProject: CrossProject.Builder): CrossP
     .settings(
       name := prefixedName,
       fork := true,
-      scalacOptions := {
-        (
-          if (scalaVersion.value.startsWith("3."))
-            List("-Ykind-projector:underscores")
-          else
-            List.empty[String]
-        ) ++
-          scalacOptions.value.filterNot(props.isScala3IncompatibleScalacOption)
-      },
+      scalacOptions := scalacOptions.value.filterNot(props.isScala3IncompatibleScalacOption),
       scalafixConfig := (
         if (scalaVersion.value.startsWith("3"))
           ((ThisBuild / baseDirectory).value / ".scalafix-scala3.conf").some

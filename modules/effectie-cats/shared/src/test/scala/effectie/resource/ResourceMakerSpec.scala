@@ -150,7 +150,7 @@ object ResourceMakerSpec {
     CanCatch[F]
       .catchNonFatal(
         ResourceMaker[F]
-          .make(FxCtor[F].effectOf(testResource))(a => FxCtor[F].effectOf(release(testResource)))
+          .make(FxCtor[F].effectOf(testResource))(a => FxCtor[F].effectOf(release(a)))
           .use { resource =>
             for {
               _      <- FxCtor[F].effectOf {

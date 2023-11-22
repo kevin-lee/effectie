@@ -258,7 +258,7 @@ object CanCatchSyntaxSpec {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable // scalafix:ok DisableSyntax.throw
 
-  def run[F[*]: Fx: Functor, A](a: => A): F[A] =
+  def run[F[*]: Fx, A](a: => A): F[A] =
     effectOf[F](a)
 
   object TaskSpec {
@@ -1311,7 +1311,7 @@ object CanHandleErrorSyntaxSpec {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable // scalafix:ok DisableSyntax.throw
 
-  def run[F[*]: Fx: Functor, A](a: => A): F[A] =
+  def run[F[*]: Fx, A](a: => A): F[A] =
     effectOf[F](a)
 
   object TaskSpec {
@@ -1327,6 +1327,8 @@ object CanHandleErrorSyntaxSpec {
         .handleNonFatalWith {
           case NonFatal(`expectedExpcetion`) =>
             Task.pure(expected)
+          case err =>
+            throw err // scalafix:ok DisableSyntax.throw
         }
         .runSyncUnsafe()
 
@@ -1539,6 +1541,8 @@ object CanHandleErrorSyntaxSpec {
         .handleNonFatal {
           case NonFatal(`expectedExpcetion`) =>
             expected
+          case err =>
+            throw err // scalafix:ok DisableSyntax.throw
         }
         .runSyncUnsafe()
 
@@ -1864,7 +1868,7 @@ object CanHandleErrorSyntaxSpec {
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
           waitFor,
-        )(fa2.handleEitherNonFatalWith(err => Future(expected)))
+        )(fa2.handleEitherNonFatalWith(_ => Future(expected)))
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -1923,7 +1927,7 @@ object CanHandleErrorSyntaxSpec {
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
           waitFor,
-        )(fa2.handleEitherTNonFatalWith(err => Future(expected)).value)
+        )(fa2.handleEitherTNonFatalWith(_ => Future(expected)).value)
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -2074,7 +2078,7 @@ object CanHandleErrorSyntaxSpec {
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
           waitFor,
-        )(fa2.handleEitherNonFatal(err => expected))
+        )(fa2.handleEitherNonFatal(_ => expected))
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -2133,7 +2137,7 @@ object CanHandleErrorSyntaxSpec {
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
           waitFor,
-        )(fa2.handleEitherTNonFatal(err => expected).value)
+        )(fa2.handleEitherTNonFatal(_ => expected).value)
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -2916,7 +2920,7 @@ object CanRecoverSyntaxSpec {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable // scalafix:ok DisableSyntax.throw
 
-  def run[F[*]: Fx: Functor, A](a: => A): F[A] =
+  def run[F[*]: Fx, A](a: => A): F[A] =
     effectOf[F](a)
 
   object TaskSpec {
@@ -3559,7 +3563,7 @@ object CanRecoverSyntaxSpec {
           executorService,
           waitFor,
         )(fa2.recoverEitherFromNonFatalWith {
-          case err => Future(expected)
+          case err @ _ => Future(expected)
         })
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
@@ -3626,7 +3630,7 @@ object CanRecoverSyntaxSpec {
           executorService,
           waitFor,
         )(fa2.recoverEitherTFromNonFatalWith {
-          case err => Future(expected)
+          case err @ _ => Future(expected)
         }.value)
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
@@ -3790,7 +3794,7 @@ object CanRecoverSyntaxSpec {
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
           waitFor,
-        )(fa2.recoverEitherFromNonFatal { case err => expected })
+        )(fa2.recoverEitherFromNonFatal { case err @ _ => expected })
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -3853,7 +3857,7 @@ object CanRecoverSyntaxSpec {
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
           waitFor,
-        )(fa2.recoverEitherTFromNonFatal { case err => expected }.value)
+        )(fa2.recoverEitherTFromNonFatal { case err @ _ => expected }.value)
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }

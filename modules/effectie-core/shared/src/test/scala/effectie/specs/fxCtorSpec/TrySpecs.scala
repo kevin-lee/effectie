@@ -28,6 +28,7 @@ object TrySpecs {
     property("test FxCtor[Try].fromOption(None)", TrySpecs.testFromOptionNoneCase),
     property("test FxCtor[Try].fromTry(Success)", TrySpecs.testFromTrySuccessCase),
     property("test FxCtor[Try].fromTry(Failure)", TrySpecs.testFromTryFailureCase),
+    property("test FxCtor[Try].flatMapFa(Try[A])(A => Try[B])", TrySpecs.testFlatMapFx),
   )
 
   private def testEffectOf(implicit tryFxCtor: FxCtor[Try]): Property = for {
@@ -37,7 +38,7 @@ object TrySpecs {
 
     var actual       = before // scalafix:ok DisableSyntax.var
     val testBefore   = (actual ==== before).log("before effectOf")
-    val fa           = tryFxCtor.effectOf({ actual = after; () })
+    val _            = tryFxCtor.effectOf({ actual = after; () })
     val testAfterRun = (actual ==== after).log("after effectOf and run")
     Result.all(
       List(
@@ -54,7 +55,7 @@ object TrySpecs {
 
     var actual       = before // scalafix:ok DisableSyntax.var
     val testBefore   = (actual ==== before).log("before effectOf")
-    val afterFrom    = tryFxCtor.fromEffect(tryFxCtor.effectOf({ actual = after; () }))
+    val _            = tryFxCtor.fromEffect(tryFxCtor.effectOf({ actual = after; () }))
     val testAfterRun = (actual ==== after).log("after fromEffect")
     Result.all(
       List(
@@ -71,7 +72,7 @@ object TrySpecs {
 
     var actual       = before // scalafix:ok DisableSyntax.var
     val testBefore   = (actual ==== before).log("before effectOf")
-    val afterFrom    = tryFxCtor.fromEffect(tryFxCtor.pureOf({ actual = after; () }))
+    val _            = tryFxCtor.fromEffect(tryFxCtor.pureOf({ actual = after; () }))
     val testAfterRun = (actual ==== after).log("after fromEffect")
     Result.all(
       List(
@@ -88,7 +89,7 @@ object TrySpecs {
 
     var actual       = before // scalafix:ok DisableSyntax.var
     val testBefore   = (actual ==== before).log("before pureOrError")
-    val fa           = tryFxCtor.pureOf({ actual = after; () })
+    val _            = tryFxCtor.pureOf({ actual = after; () })
     val testAfterRun = actual ==== after
     Result.all(
       List(
@@ -105,7 +106,7 @@ object TrySpecs {
 
     var actual       = before // scalafix:ok DisableSyntax.var
     val testBefore   = (actual ==== before).log("before pureOrError")
-    val fa           = tryFxCtor.pureOrError({ actual = after; () })
+    val _            = tryFxCtor.pureOrError({ actual = after; () })
     val testAfterRun = (actual ==== after).log("after pureOrError and run")
     Result.all(
       List(

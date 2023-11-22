@@ -79,11 +79,7 @@ object toFutureSpec extends Properties {
       val expected = a
       val fa       = IO(expected)
 
-      implicit val es: ExecutorService  = ConcurrentSupport.newExecutorService(2)
-      @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
-      implicit val ec                   =
-        ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
-      implicit val scheduler: Scheduler = Scheduler(ec)
+      implicit val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
 
       ConcurrentSupport.runAndShutdown(es, WaitFor(300.milliseconds)) {
         val future   = ToFuture[IO].unsafeToFuture(fa)

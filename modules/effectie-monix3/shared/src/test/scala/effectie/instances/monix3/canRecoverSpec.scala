@@ -4,7 +4,6 @@ import canRecover._
 import cats._
 import cats.data.EitherT
 import cats.effect.IO
-import cats.instances.all._
 import cats.syntax.all._
 import effectie.SomeControlThrowable
 import effectie.core._
@@ -432,7 +431,7 @@ object canRecoverSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable // scalafix:ok DisableSyntax.throw
 
-  def run[F[*]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[*]: FxCtor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object TaskSpec {
@@ -1605,7 +1604,7 @@ object canRecoverSpec extends Properties {
         )(
           CanRecover[Future]
             .recoverEitherFromNonFatalWith(fa2) {
-              case err => Future(expected)
+              case err @ _ => Future(expected)
             }
         )
 
@@ -1683,7 +1682,7 @@ object canRecoverSpec extends Properties {
         )(
           CanRecover[Future]
             .recoverEitherTFromNonFatalWith(fa2) {
-              case err => Future(expected)
+              case err @ _ => Future(expected)
             }
             .value
         )
@@ -1858,7 +1857,7 @@ object canRecoverSpec extends Properties {
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
           waitFor,
-        )(CanRecover[Future].recoverEitherFromNonFatal(fa2) { case err => expected })
+        )(CanRecover[Future].recoverEitherFromNonFatal(fa2) { case err @ _ => expected })
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -1926,7 +1925,7 @@ object canRecoverSpec extends Properties {
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
           waitFor,
-        )(CanRecover[Future].recoverEitherTFromNonFatal(fa2) { case err => expected }.value)
+        )(CanRecover[Future].recoverEitherTFromNonFatal(fa2) { case err @ _ => expected }.value)
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }

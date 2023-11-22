@@ -1,7 +1,6 @@
 package effectie.instances.ce2.f
 
 import effectie.instances.ce2.f.canHandleError.syncCanHandleError
-import cats._
 import cats.data.EitherT
 import cats.effect.IO
 import cats.syntax.all._
@@ -153,7 +152,7 @@ object canHandleErrorSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable // scalafix:ok DisableSyntax.throw
 
-  def run[F[*]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[*]: FxCtor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object IoSpec {
@@ -167,6 +166,8 @@ object canHandleErrorSpec extends Properties {
         .handleNonFatalWith(fa) {
           case NonFatal(`expectedExpcetion`) =>
             IO.pure(expected)
+          case err =>
+            throw err // scalafix:ok DisableSyntax.throw
         }
         .unsafeRunSync()
 
@@ -381,6 +382,8 @@ object canHandleErrorSpec extends Properties {
         .handleNonFatal(fa) {
           case NonFatal(`expectedExpcetion`) =>
             expected
+          case err =>
+            throw err // scalafix:ok DisableSyntax.throw
         }
         .unsafeRunSync()
 

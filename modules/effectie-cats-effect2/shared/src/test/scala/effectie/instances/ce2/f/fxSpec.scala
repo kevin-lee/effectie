@@ -3,7 +3,7 @@ package effectie.instances.ce2.f
 import cats.data.EitherT
 import cats.effect._
 import cats.syntax.all._
-import cats.{Eq, Functor}
+import cats.Eq
 import effectie.SomeControlThrowable
 import effectie.core._
 import effectie.instances.ce2.f.fx.syncFx
@@ -12,7 +12,6 @@ import effectie.specs.fxSpec.FxSpecs
 import effectie.syntax.error._
 import effectie.testing.tools
 import effectie.testing.types.SomeError
-import extras.concurrent.testing.types.ErrorLogger
 import hedgehog._
 import hedgehog.runner._
 
@@ -24,8 +23,6 @@ import scala.util.control.{ControlThrowable, NonFatal}
 object fxSpec extends Properties {
 
   override def tests: List[Test] = ioSpecs
-
-  private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
   private val assertWithAttempt: (IO[Int], Either[Throwable, Int]) => Result = { (io, expected) =>
     val actual = io.attempt.unsafeRunSync()
@@ -371,7 +368,7 @@ object fxSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable // scalafix:ok DisableSyntax.throw
 
-  def run[F[*]: Fx: Functor, A](a: => A): F[A] =
+  def run[F[*]: Fx, A](a: => A): F[A] =
     Fx[F].effectOf(a)
 
   object IoSpec {
@@ -574,6 +571,8 @@ object fxSpec extends Properties {
           .handleNonFatalWith(fa) {
             case NonFatal(`expectedExpcetion`) =>
               IO.pure(expected)
+            case err =>
+              throw err // scalafix:ok DisableSyntax.throw
           }
           .unsafeRunSync()
 
@@ -788,6 +787,9 @@ object fxSpec extends Properties {
           .handleNonFatal(fa) {
             case NonFatal(`expectedExpcetion`) =>
               expected
+
+            case err =>
+              throw err // scalafix:ok DisableSyntax.throw
           }
           .unsafeRunSync()
 

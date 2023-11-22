@@ -11,7 +11,6 @@ import effectie.specs.fxSpec.FxSpecs
 import effectie.syntax.error._
 import effectie.testing.tools
 import effectie.testing.types.SomeError
-import extras.concurrent.testing.types.ErrorLogger
 import hedgehog._
 import hedgehog.runner._
 import monix.eval.Task
@@ -23,9 +22,7 @@ import scala.util.control.{ControlThrowable, NonFatal}
   */
 object fxSpec extends Properties {
 
-  private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
-
-  def assertWithAttempt[F[*]: Fx](
+  def assertWithAttempt[F[*]](
     run: F[Int] => Either[Throwable, Int]
   ): (F[Int], Either[Throwable, Int]) => Result = { (io, expected) =>
     val actual = run(io)
@@ -591,6 +588,8 @@ object fxSpec extends Properties {
           .handleNonFatalWith(fa) {
             case NonFatal(`expectedExpcetion`) =>
               Task.pure(expected)
+            case err =>
+              throw err // scalafix:ok DisableSyntax.throw
           }
           .runSyncUnsafe()
 
@@ -805,6 +804,8 @@ object fxSpec extends Properties {
           .handleNonFatal(fa) {
             case NonFatal(`expectedExpcetion`) =>
               expected
+            case err =>
+              throw err // scalafix:ok DisableSyntax.throw
           }
           .runSyncUnsafe()
 

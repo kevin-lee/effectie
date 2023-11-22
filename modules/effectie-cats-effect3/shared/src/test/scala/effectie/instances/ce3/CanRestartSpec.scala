@@ -187,6 +187,7 @@ object CanRestartSpec extends Properties {
         {
           case KeepGoing => true
           case End => false
+          case err => throw err // scalafix:ok DisableSyntax.throw
         },
       )
         .handleErrorWith {
@@ -224,6 +225,7 @@ object CanRestartSpec extends Properties {
         {
           case KeepGoing => true
           case End => false
+          case err => throw err // scalafix:ok DisableSyntax.throw
         },
       )
         .handleErrorWith {

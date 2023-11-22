@@ -1,7 +1,6 @@
 package effectie.instances.ce3.f
 
 import canRecover._
-import cats._
 import cats.data.EitherT
 import cats.effect.IO
 import cats.effect.unsafe.IORuntime
@@ -159,7 +158,7 @@ object canRecoverSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable // scalafix:ok DisableSyntax.throw
 
-  def run[F[*]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[*]: FxCtor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object IOSpec {
