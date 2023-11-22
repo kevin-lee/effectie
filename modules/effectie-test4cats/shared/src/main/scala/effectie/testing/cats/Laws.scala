@@ -22,7 +22,7 @@ object Laws {
     /* Functors preserve composition of morphisms
      * fmap (f . g)  ==  fmap f . fmap g
      */
-    def composition[F[*]: Functor, A, B, C](fa: F[A], f: B => C, g: A => B)(
+    def composition[F[*], A, B, C](fa: F[A], f: B => C, g: A => B)(
       implicit F: Functor[F],
       FC: Eq[F[C]],
     ): Boolean =
@@ -37,25 +37,25 @@ object Laws {
     /* Identity
      * pure id <*> v = v
      */
-    def identityAp[F[*]: Applicative, A](fa: => F[A])(
-      implicit F: Functor[F],
+    def identityAp[F[*], A](fa: => F[A])(
+      implicit F: Applicative[F],
       FA: Eq[F[A]],
     ): Boolean =
       FA.eqv(
-        Applicative[F].ap[A, A](Applicative[F].pure(scala.Predef.identity))(fa),
+        F.ap[A, A](F.pure(scala.Predef.identity))(fa),
         fa,
       )
 
     /* Homomorphism
      * pure f <*> pure x = pure (f x)
      */
-    def homomorphism[F[*]: Applicative, A, B](f: A => B, a: => A)(
-      implicit F: Functor[F],
+    def homomorphism[F[*], A, B](f: A => B, a: => A)(
+      implicit F: Applicative[F],
       FB: Eq[F[B]],
     ): Boolean =
       FB.eqv(
-        Applicative[F].ap(Applicative[F].pure(f))(Applicative[F].pure(a)),
-        Applicative[F].pure(f(a)),
+        F.ap(F.pure(f))(F.pure(a)),
+        F.pure(f(a)),
       )
 
     /* Interchange

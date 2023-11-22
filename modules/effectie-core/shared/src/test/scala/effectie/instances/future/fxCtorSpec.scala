@@ -82,9 +82,11 @@ object fxCtorSpec extends Properties {
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual        = before // scalafix:ok DisableSyntax.var
-      val testBefore    = actual ==== before
-      val fromFuture    = FxCtor[Future].fromEffect(FxCtor[Future].effectOf({ actual = after; () }))
+      var actual     = before // scalafix:ok DisableSyntax.var
+      val testBefore = actual ==== before
+
+      lazy val fromFuture = FxCtor[Future].fromEffect(FxCtor[Future].effectOf({ actual = after; () }))
+
       val testAfterFrom = actual ==== before
       ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(fromFuture)
       val testAfterRun  = actual ==== after

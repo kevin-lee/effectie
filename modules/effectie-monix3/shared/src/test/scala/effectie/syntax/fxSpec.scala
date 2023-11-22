@@ -122,8 +122,8 @@ object fxSpec extends Properties {
           _  <- pureOf[Task]({ actual2 = after; () })
           n  <- eftClient.eftOf(1)
           n2 <- eftClient.of(n)
-          i  <- effectConstructorClient.eftOf(1)
-          i2 <- effectConstructorClient.of(1)
+          i  <- effectConstructorClient.eftOf(n2)
+          _  <- effectConstructorClient.of(i)
           _  <- eftClient.unit
           _  <- effectConstructorClient.unit
         } yield ()
@@ -319,8 +319,8 @@ object fxSpec extends Properties {
           _  <- pureOf[IO]({ actual2 = after; () })
           n  <- eftClient.eftOf(1)
           n2 <- eftClient.of(n)
-          i  <- effectConstructorClient.eftOf(1)
-          i2 <- effectConstructorClient.of(1)
+          i  <- effectConstructorClient.eftOf(n2)
+          _  <- effectConstructorClient.of(i)
           _  <- eftClient.unit
           _  <- effectConstructorClient.unit
         } yield ()
@@ -525,8 +525,8 @@ object fxSpec extends Properties {
           _  <- pureOf[Future]({ actual2 = after; () })
           n  <- eftClient.eftOf(1)
           n2 <- eftClient.of(n)
-          i  <- effectConstructorClient.eftOf(1)
-          i2 <- effectConstructorClient.of(1)
+          i  <- effectConstructorClient.eftOf(n2)
+          _  <- effectConstructorClient.of(i)
           _  <- eftClient.unit
           _  <- effectConstructorClient.unit
         } yield ()

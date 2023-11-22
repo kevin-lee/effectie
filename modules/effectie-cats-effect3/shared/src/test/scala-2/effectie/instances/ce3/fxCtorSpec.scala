@@ -2,7 +2,6 @@ package effectie.instances.ce3
 
 import cats.effect._
 import effectie.specs.fxCtorSpec.FxCtorSpecs
-import extras.concurrent.testing.types.ErrorLogger
 import extras.hedgehog.ce3.syntax.runner._
 import fxCtor._
 import hedgehog._
@@ -12,7 +11,6 @@ import hedgehog.runner._
   * @since 2020-12-06
   */
 object fxCtorSpec extends Properties {
-  private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
   override def tests: List[Test] = ioSpecs
 

@@ -1,6 +1,5 @@
 package effectie.syntax
 
-import cats._
 import cats.data.EitherT
 import cats.syntax.all._
 import effectie.core.Fx
@@ -60,7 +59,7 @@ object CanCatchSyntaxSpec {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable // scalafix:ok DisableSyntax.throw
 
-  def run[F[*]: Fx: Functor, A](a: => A): F[A] =
+  def run[F[*]: Fx, A](a: => A): F[A] =
     effectOf[F](a)
 
   object FutureSpec {
@@ -284,7 +283,7 @@ object CanHandleErrorSyntaxSpec {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable // scalafix:ok DisableSyntax.throw
 
-  def run[F[*]: Fx: Functor, A](a: => A): F[A] =
+  def run[F[*]: Fx, A](a: => A): F[A] =
     effectOf[F](a)
 
   object FutureSpec {
@@ -409,7 +408,7 @@ object CanHandleErrorSyntaxSpec {
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
           waitFor,
-        )(fa2.handleEitherNonFatalWith(err => Future(expected)))
+        )(fa2.handleEitherNonFatalWith(_ => Future(expected)))
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -560,7 +559,7 @@ object CanHandleErrorSyntaxSpec {
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
           waitFor,
-        )(fa2.handleEitherNonFatal(err => expected))
+        )(fa2.handleEitherNonFatal(_ => expected))
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -753,7 +752,7 @@ object CanRecoverSyntaxSpec {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable // scalafix:ok DisableSyntax.throw
 
-  def run[F[*]: Fx: Functor, A](a: => A): F[A] =
+  def run[F[*]: Fx, A](a: => A): F[A] =
     effectOf[F](a)
 
   object FutureSpec {
@@ -896,7 +895,7 @@ object CanRecoverSyntaxSpec {
           executorService,
           waitFor,
         )(fa2.recoverEitherFromNonFatalWith {
-          case err => Future(expected)
+          case err @ _ => Future(expected)
         })
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
@@ -1063,7 +1062,7 @@ object CanRecoverSyntaxSpec {
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
           waitFor,
-        )(fa2.recoverEitherFromNonFatal { case err => expected })
+        )(fa2.recoverEitherFromNonFatal { case err @ _ => expected })
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }

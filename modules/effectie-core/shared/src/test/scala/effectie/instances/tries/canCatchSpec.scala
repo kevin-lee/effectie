@@ -1,12 +1,9 @@
 package effectie.instances.tries
 
-import cats._
-import cats.instances.all._
 import cats.syntax.all._
 import effectie.SomeControlThrowable
 import effectie.core._
 import effectie.testing.types._
-import extras.concurrent.testing.types.ErrorLogger
 import hedgehog._
 import hedgehog.runner._
 
@@ -16,8 +13,6 @@ import scala.util.{Success, Try}
   * @since 2023-03-17
   */
 object canCatchSpec extends Properties {
-
-  private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
   override def tests: List[Test] = ioSpecs
 
@@ -69,7 +64,7 @@ object canCatchSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable // scalafix:ok DisableSyntax.throw
 
-  def run[F[*]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[*]: FxCtor, A](a: => A): F[A] =
     FxCtor[F].effectOf(a)
 
   object TrySpec {

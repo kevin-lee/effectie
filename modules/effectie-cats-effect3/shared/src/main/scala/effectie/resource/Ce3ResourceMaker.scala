@@ -12,9 +12,9 @@ object Ce3ResourceMaker {
   @deprecated(message = "Please use Ce3ResourceMaker.maker instead", since = "2.0.0-beta10")
   def forAutoCloseable[F[*]: Sync: MonadCancelThrow]: ResourceMaker[F] = maker
 
-  def maker[F[*]: Sync: MonadCancelThrow]: ResourceMaker[F] = new Ce3ResourceMaker[F]
+  def maker[F[*]: Sync]: ResourceMaker[F] = new Ce3ResourceMaker[F]
 
-  private final class Ce3ResourceMaker[F[*]: Sync: MonadCancelThrow] extends ResourceMaker[F] {
+  private final class Ce3ResourceMaker[F[*]: Sync] extends ResourceMaker[F] {
 
     override def forAutoCloseable[A <: AutoCloseable](fa: F[A]): ReleasableResource[F, A] =
       Ce3Resource.fromAutoCloseable[F, A](fa)

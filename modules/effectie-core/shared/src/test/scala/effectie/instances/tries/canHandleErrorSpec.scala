@@ -1,7 +1,5 @@
 package effectie.instances.tries
 
-import cats._
-import cats.instances.all._
 import cats.syntax.all._
 import effectie.SomeControlThrowable
 import effectie.core._
@@ -117,7 +115,7 @@ object canHandleErrorSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable // scalafix:ok DisableSyntax.throw
 
-  def run[F[*]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[*]: FxCtor, A](a: => A): F[A] =
     FxCtor[F].effectOf(a)
 
   object TrySpec {
@@ -133,6 +131,9 @@ object canHandleErrorSpec extends Properties {
         .handleNonFatalWith(fa) {
           case NonFatal(`expectedExpcetion`) =>
             FxCtor[Try].pureOf(expected)
+
+          case err =>
+            throw err // scalafix:ok DisableSyntax.throw
         }
 
       actual ==== Success(expected)
@@ -286,6 +287,9 @@ object canHandleErrorSpec extends Properties {
         .handleNonFatal(fa) {
           case NonFatal(`expectedExpcetion`) =>
             expected
+
+          case err =>
+            throw err // scalafix:ok DisableSyntax.throw
         }
 
       actual ==== Success(expected)

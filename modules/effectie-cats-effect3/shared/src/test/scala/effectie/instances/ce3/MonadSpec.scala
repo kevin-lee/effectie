@@ -8,14 +8,14 @@ object MonadSpec {
 
   type Fx[F[*]] = effectie.core.Fx[F]
 
-  def test1_Identity[F[*]: Fx: Monad](implicit eqF: Eq[F[Int]]): Property =
+  def test1_Identity[F[*]: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws
       .identity[F](
         Gens.genFA[F, Int](Gens.genInt(Int.MinValue, Int.MaxValue))
       )
 
-  def test2_Composition[F[*]: Fx: Monad](implicit eqF: Eq[F[Int]]): Property =
+  def test2_Composition[F[*]: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws
       .composition[F](
@@ -23,14 +23,14 @@ object MonadSpec {
         Gens.genIntToInt,
       )
 
-  def test3_IdentityAp[F[*]: Fx: Monad](implicit eqF: Eq[F[Int]]): Property =
+  def test3_IdentityAp[F[*]: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws
       .identityAp[F](
         Gens.genFA[F, Int](Gens.genInt(Int.MinValue, Int.MaxValue))
       )
 
-  def test4_Homomorphism[F[*]: Fx: Monad](implicit eqF: Eq[F[Int]]): Property =
+  def test4_Homomorphism[F[*]: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws
       .homomorphism[F](
@@ -38,7 +38,7 @@ object MonadSpec {
         Gens.genIntToInt,
       )
 
-  def test5_Interchange[F[*]: Fx: Monad](implicit eqF: Eq[F[Int]]): Property =
+  def test5_Interchange[F[*]: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws
       .interchange[F](
@@ -46,7 +46,7 @@ object MonadSpec {
         Gens.genIntToInt,
       )
 
-  def test6_CompositionAp[F[*]: Fx: Monad](implicit eqF: Eq[F[Int]]): Property =
+  def test6_CompositionAp[F[*]: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws
       .compositionAp[F](
@@ -54,7 +54,7 @@ object MonadSpec {
         Gens.genIntToInt,
       )
 
-  def test7_LeftIdentity[F[*]: Fx: Monad](implicit eqF: Eq[F[Int]]): Property =
+  def test7_LeftIdentity[F[*]: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws
       .leftIdentity[F](
@@ -62,14 +62,14 @@ object MonadSpec {
         Gens.genAToMonadA(Gens.genIntToInt),
       )
 
-  def test8_RightIdentity[F[*]: Fx: Monad](implicit eqF: Eq[F[Int]]): Property =
+  def test8_RightIdentity[F[*]: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws
       .rightIdentity[F](
         Gens.genFA[F, Int](Gens.genInt(Int.MinValue, Int.MaxValue))
       )
 
-  def test9_Associativity[F[*]: Fx: Monad](implicit eqF: Eq[F[Int]]): Property =
+  def test9_Associativity[F[*]: Monad](implicit eqF: Eq[F[Int]]): Property =
     Specs
       .MonadLaws
       .associativity[F](

@@ -254,9 +254,11 @@ object fxSpec extends Properties {
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual        = before // scalafix:ok DisableSyntax.var
-      val testBefore    = actual ==== before
-      val fromFuture    = Fx[Future].fromEffect(Fx[Future].effectOf({ actual = after; () }))
+      var actual     = before // scalafix:ok DisableSyntax.var
+      val testBefore = actual ==== before
+
+      lazy val fromFuture = Fx[Future].fromEffect(Fx[Future].effectOf({ actual = after; () }))
+
       val testAfterFrom = actual ==== before
       ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(fromFuture)
       val testAfterRun  = actual ==== after
@@ -588,11 +590,11 @@ object fxSpec extends Properties {
           Await.result(x.flatMap(a => y.map(b => EQ.eqv(a, b))), 1.second)
       }
 
-      implicit val eqFuture: Eq[Future[Int]] =
-        (x, y) => {
-          val future = x.flatMap(xx => y.map(_ === xx))
-          Await.result(future, waitFor.waitFor)
-        }
+//      implicit val eqFuture: Eq[Future[Int]] =
+//        (x, y) => {
+//          val future = x.flatMap(xx => y.map(_ === xx))
+//          Await.result(future, waitFor.waitFor)
+//        }
 
       MonadSpec.testAllLaws[Future]("Fx[Future]")
     }
@@ -844,7 +846,7 @@ object fxSpec extends Properties {
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
             waitFor,
-          )(Fx[Future].handleEitherNonFatalWith(fa2)(err => Future(expected)))
+          )(Fx[Future].handleEitherNonFatalWith(fa2)(_ => Future(expected)))
 
         actualFailedResult ==== expectedFailedResult and actual ==== expected
       }
@@ -995,7 +997,7 @@ object fxSpec extends Properties {
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
             waitFor,
-          )(Fx[Future].handleEitherNonFatal(fa2)(err => expected))
+          )(Fx[Future].handleEitherNonFatal(fa2)(_ => expected))
 
         actualFailedResult ==== expectedFailedResult and actual ==== expected
       }
@@ -1176,7 +1178,7 @@ object fxSpec extends Properties {
           )(
             Fx[Future]
               .recoverEitherFromNonFatalWith(fa2) {
-                case err => Future(expected)
+                case err @ _ => Future(expected)
               }
           )
 
@@ -1348,7 +1350,7 @@ object fxSpec extends Properties {
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
             waitFor,
-          )(Fx[Future].recoverEitherFromNonFatal(fa2) { case err => expected })
+          )(Fx[Future].recoverEitherFromNonFatal(fa2) { case err @ _ => expected })
 
         actualFailedResult ==== expectedFailedResult and actual ==== expected
       }

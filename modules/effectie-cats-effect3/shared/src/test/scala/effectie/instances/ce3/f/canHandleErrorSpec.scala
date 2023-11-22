@@ -313,7 +313,7 @@ object canHandleErrorSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable // scalafix:ok DisableSyntax.throw
 
-  def run[F[*]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[*]: FxCtor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object IoSpec {
@@ -327,6 +327,8 @@ object canHandleErrorSpec extends Properties {
         .handleNonFatalWith(fa) {
           case NonFatal(`expectedExpcetion`) =>
             IO.pure(expected)
+          case err =>
+            throw err // scalafix:ok DisableSyntax.throw
         }
 
       actual.completeAs(expected)
@@ -553,6 +555,8 @@ object canHandleErrorSpec extends Properties {
         .handleNonFatal(fa) {
           case NonFatal(`expectedExpcetion`) =>
             expected
+          case err =>
+            throw err // scalafix:ok DisableSyntax.throw
         }
 
       actual.completeAs(expected)
@@ -890,7 +894,7 @@ object canHandleErrorSpec extends Properties {
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
           waitFor,
-        )(CanHandleError[Future].handleEitherNonFatalWith(fa2)(err => Future(expected)))
+        )(CanHandleError[Future].handleEitherNonFatalWith(fa2)(_ => Future(expected)))
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -954,7 +958,7 @@ object canHandleErrorSpec extends Properties {
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
           waitFor,
-        )(CanHandleError[Future].handleEitherTNonFatalWith(fa2)(err => Future(expected)).value)
+        )(CanHandleError[Future].handleEitherTNonFatalWith(fa2)(_ => Future(expected)).value)
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -1109,7 +1113,7 @@ object canHandleErrorSpec extends Properties {
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
           waitFor,
-        )(CanHandleError[Future].handleEitherNonFatal(fa2)(err => expected))
+        )(CanHandleError[Future].handleEitherNonFatal(fa2)(_ => expected))
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
@@ -1168,7 +1172,7 @@ object canHandleErrorSpec extends Properties {
         ConcurrentSupport.futureToValueAndTerminate(
           executorService,
           waitFor,
-        )(CanHandleError[Future].handleEitherTNonFatal(fa2)(err => expected).value)
+        )(CanHandleError[Future].handleEitherTNonFatal(fa2)(_ => expected).value)
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }

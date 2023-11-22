@@ -4,7 +4,6 @@ import cats.effect._
 import effectie.specs.fxCtorSpec.FxCtorSpecs
 import effectie.testing.tools
 import effectie.instances.ce2.f.fxCtor.syncFxCtor
-import extras.concurrent.testing.types.ErrorLogger
 import hedgehog._
 import hedgehog.runner._
 
@@ -20,8 +19,6 @@ object fxCtorSpec extends Properties {
     val actual = io.attempt.unsafeRunSync()
     (actual ==== expected).log(s"$actual does not equal to $expected")
   }
-
-  implicit private val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
   private val unit: Unit = ()
 

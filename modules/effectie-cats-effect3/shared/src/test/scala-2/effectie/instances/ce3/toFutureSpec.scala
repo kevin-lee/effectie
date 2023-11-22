@@ -41,9 +41,6 @@ object toFutureSpec extends Properties {
       val fa       = IO(expected)
 
       implicit val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-      @SuppressWarnings(Array("org.wartremover.warts.ExplicitImplicitTypes"))
-      implicit val ec                  =
-        ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
       ConcurrentSupport.runAndShutdown(es, WaitFor(800.milliseconds)) {
         implicit val ticket: Ticker = Ticker.withNewTestContext()
 

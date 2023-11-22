@@ -1,6 +1,5 @@
 package effectie.instances.ce2.f
 
-import cats._
 import cats.data.EitherT
 import cats.effect._
 import cats.syntax.all._
@@ -10,7 +9,6 @@ import effectie.instances.ce2.f.canCatch.syncCanCatch
 import effectie.syntax.error._
 import effectie.syntax.fx._
 import effectie.testing.types._
-import extras.concurrent.testing.types.ErrorLogger
 import fxCtor._
 import hedgehog._
 import hedgehog.runner._
@@ -19,8 +17,6 @@ import hedgehog.runner._
   * @since 2020-07-31
   */
 object canCatchSpec extends Properties {
-
-  private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
   override def tests: List[Test] = ioSpecs
 
@@ -88,7 +84,7 @@ object canCatchSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable // scalafix:ok DisableSyntax.throw
 
-  def run[F[*]: FxCtor: Functor, A](a: => A): F[A] =
+  def run[F[*]: FxCtor, A](a: => A): F[A] =
     effectOf[F](a)
 
   object IoSpec {

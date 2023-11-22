@@ -1,10 +1,8 @@
 package effectie.instances.monix3
 
-import effectie.core._
 import fxCtor._
 import effectie.specs.fxCtorSpec.FxCtorSpecs
 import effectie.testing.tools
-import extras.concurrent.testing.types.ErrorLogger
 import hedgehog._
 import hedgehog.runner._
 import monix.eval.Task
@@ -13,11 +11,10 @@ import monix.eval.Task
   * @since 2020-12-06
   */
 object fxCtorSpec extends Properties {
-  private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
   override def tests: List[Test] = taskSpecs
 
-  def assertWithAttempt[F[*]: FxCtor](
+  def assertWithAttempt[F[*]](
     run: F[Int] => Either[Throwable, Int]
   ): (F[Int], Either[Throwable, Int]) => Result = { (io, expected) =>
     val actual = run(io)

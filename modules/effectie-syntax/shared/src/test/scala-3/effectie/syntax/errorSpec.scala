@@ -648,16 +648,15 @@ object CanHandleErrorSyntaxSpec {
       actual ==== expected and actual2 ==== expected
     }
 
-
     def testFEitherAB_Future_rethrowIfLeftShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext =
+      implicit val ec: ExecutionContext             =
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
-      val fa = run[Future, Either[SomeThrowableError, Int]](1.asRight[SomeThrowableError])
+      val fa       = run[Future, Either[SomeThrowableError, Int]](1.asRight[SomeThrowableError])
       val expected = 1
-      val actual = ConcurrentSupport.futureToValueAndTerminate(
+      val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
         waitFor,
       )(fa.rethrowIfLeft)
@@ -668,12 +667,12 @@ object CanHandleErrorSyntaxSpec {
     def testFEitherAB_Future_rethrowIfLeftShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext =
+      implicit val ec: ExecutionContext             =
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeThrowableError.message("Failed")
-      val fa = run[Future, Either[SomeThrowableError, Int]](expectedFailure.asLeft[Int])
-      val expected = expectedFailure
+      val fa              = run[Future, Either[SomeThrowableError, Int]](expectedFailure.asLeft[Int])
+      val expected        = expectedFailure
       try {
         val result = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
@@ -690,12 +689,12 @@ object CanHandleErrorSyntaxSpec {
     def testEitherTFAB_Future_rethrowTIfLeftShouldReturnSuccessfulResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext =
+      implicit val ec: ExecutionContext             =
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
-      val fa = EitherT(run[Future, Either[SomeThrowableError, Int]](1.asRight[SomeThrowableError]))
+      val fa       = EitherT(run[Future, Either[SomeThrowableError, Int]](1.asRight[SomeThrowableError]))
       val expected = 1
-      val actual = ConcurrentSupport.futureToValueAndTerminate(
+      val actual   = ConcurrentSupport.futureToValueAndTerminate(
         executorService,
         waitFor,
       )(fa.rethrowTIfLeft)
@@ -706,12 +705,12 @@ object CanHandleErrorSyntaxSpec {
     def testEitherTFAB_Future_rethrowTIfLeftShouldReturnFailedResult: Result = {
 
       implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext =
+      implicit val ec: ExecutionContext             =
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expectedFailure = SomeThrowableError.message("Failed")
-      val fa = EitherT(run[Future, Either[SomeThrowableError, Int]](expectedFailure.asLeft[Int]))
-      val expected = expectedFailure
+      val fa              = EitherT(run[Future, Either[SomeThrowableError, Int]](expectedFailure.asLeft[Int]))
+      val expected        = expectedFailure
       try {
         val result = ConcurrentSupport.futureToValueAndTerminate(
           executorService,

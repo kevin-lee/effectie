@@ -2,16 +2,15 @@ package effectie.instances.id
 
 import cats.data.EitherT
 import cats.syntax.all._
-import cats.{Functor, Id, Monad}
-import effectie.SomeControlThrowable
+import cats.Id
 import effectie.core._
+import effectie.instances.id.fx._
+import effectie.{SomeControlThrowable, specs}
 import effectie.specs.MonadSpec
-import effectie.specs
 import effectie.syntax.all._
 import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
-import fx._
 import hedgehog._
 import hedgehog.runner._
 
@@ -25,8 +24,6 @@ object fxSpec extends Properties {
   override def tests: List[Test] = futureSpecs ++ idSpecs
 
   private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
-
-  private val unit: Unit = ()
 
   /* Future */
   private val futureSpecs = effectie.instances.future.fxSpec.futureSpecs ++
@@ -406,7 +403,7 @@ object fxSpec extends Properties {
   def throwThrowable[A](throwable: => Throwable): A =
     throw throwable // scalafix:ok DisableSyntax.throw
 
-  def run[F[*]: Fx: Functor, A](a: => A): F[A] =
+  def run[F[*]: Fx, A](a: => A): F[A] =
     Fx[F].effectOf(a)
 
   object FutureSpec {
@@ -499,7 +496,7 @@ object fxSpec extends Properties {
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
             waitFor,
-          )(Fx[Future].handleEitherTNonFatalWith(fa2)(err => Future(expected)).value)
+          )(Fx[Future].handleEitherTNonFatalWith(fa2)(_ => Future(expected)).value)
 
         actualFailedResult ==== expectedFailedResult and actual ==== expected
       }
@@ -564,7 +561,7 @@ object fxSpec extends Properties {
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
             waitFor,
-          )(Fx[Future].handleEitherTNonFatal(fa2)(err => expected).value)
+          )(Fx[Future].handleEitherTNonFatal(fa2)(_ => expected).value)
 
         actualFailedResult ==== expectedFailedResult and actual ==== expected
       }
@@ -640,7 +637,7 @@ object fxSpec extends Properties {
           )(
             Fx[Future]
               .recoverEitherTFromNonFatalWith(fa2) {
-                case err => Future(expected)
+                case err @ _ => Future(expected)
               }
               .value
           )
@@ -722,7 +719,7 @@ object fxSpec extends Properties {
           ConcurrentSupport.futureToValueAndTerminate(
             executorService,
             waitFor,
-          )(Fx[Future].recoverEitherTFromNonFatal(fa2) { case err => expected }.value)
+          )(Fx[Future].recoverEitherTFromNonFatal(fa2) { case err @ _ => expected }.value)
 
         actualFailedResult ==== expectedFailedResult and actual ==== expected
       }
@@ -773,7 +770,6 @@ object fxSpec extends Properties {
   object IdSpec {
 
     def testMonadLaws: List[Test] = {
-      val idInstance: Monad[Id] = cats.catsInstancesForId
       MonadSpec.testMonadLaws[Id]("Id")
     }
 

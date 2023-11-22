@@ -4,6 +4,7 @@ import cats.effect.unsafe.{IORuntime, IORuntimeConfig}
 import hedgehog.core.Result
 
 import java.util.concurrent.ExecutorService
+import scala.annotation.nowarn
 
 /** @author Kevin Lee
   * @since 2021-07-22
@@ -21,6 +22,7 @@ object IoAppUtils {
     num
   }
 
+  @nowarn
   def runtime(es: ExecutorService): IORuntime = runtime()
 
   def runtime(): IORuntime = {

@@ -11,9 +11,9 @@ object Ce2ResourceMaker {
   @deprecated(message = "Please use Ce2ResourceMaker.maker instead", since = "2.0.0-beta10")
   def forAutoCloseable[F[*]: Sync: BracketThrow]: ResourceMaker[F] = maker
 
-  def maker[F[*]: Sync: BracketThrow]: ResourceMaker[F] = new Ce2ResourceMaker[F]
+  def maker[F[*]: Sync]: ResourceMaker[F] = new Ce2ResourceMaker[F]
 
-  private final class Ce2ResourceMaker[F[*]: Sync: BracketThrow] extends ResourceMaker[F] {
+  private final class Ce2ResourceMaker[F[*]: Sync] extends ResourceMaker[F] {
 
     override def forAutoCloseable[A <: AutoCloseable](fa: F[A]): ReleasableResource[F, A] =
       Ce2Resource.fromAutoCloseable[F, A](fa)
