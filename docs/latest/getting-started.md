@@ -28,18 +28,29 @@ A set of type-classes and utils for functional effect libraries (i.e.  Cats Effe
 Why Effectie? Please read ["Why?"](#why) section.
 
 ## Getting Started
-### For Cats Effect
+### For Cats Effect 3
+
+<Tabs
+groupId="cats-effect3"
+defaultValue="cats-effect3-sbt"
+values={[
+{label: 'sbt', value: 'cats-effect3-sbt'},
+{label: 'sbt (with libraryDependencies)', value: 'cats-effect3-sbt-lib'},
+{label: 'scala-cli', value: 'cats-effect3-scala-cli'},
+]}>
+  <TabItem value="cats-effect3-sbt">
 
 In `build.sbt`,
 
-<Tabs
-groupId="cats-effect"
-defaultValue="cats-effect"
-values={[
-{label: 'Cats Effect 3', value: 'cats-effect3'},
-{label: 'Cats Effect 2', value: 'cats-effect'},
-]}>
-<TabItem value="cats-effect3">
+```scala
+"io.kevinlee" %% "effectie-cats-effect3" % "@VERSION@"
+```
+
+  </TabItem>
+
+  <TabItem value="cats-effect3-sbt-lib">
+
+In `build.sbt`,
 
 ```scala
 libraryDependencies += "io.kevinlee" %% "effectie-cats-effect3" % "@VERSION@"
@@ -47,10 +58,50 @@ libraryDependencies += "io.kevinlee" %% "effectie-cats-effect3" % "@VERSION@"
 
   </TabItem>
 
-  <TabItem value="cats-effect">
+  <TabItem value="cats-effect3-scala-cli">
+
+```scala
+//> using dep "io.kevinlee::effectie-cats-effect3:@VERSION@"
+```
+
+  </TabItem>
+</Tabs>
+
+
+### For Cats Effect 2
+
+<Tabs
+groupId="cats-effect2"
+defaultValue="cats-effect2-sbt"
+values={[
+{label: 'sbt', value: 'cats-effect2-sbt'},
+{label: 'sbt (with libraryDependencies)', value: 'cats-effect2-sbt-lib'},
+{label: 'scala-cli', value: 'cats-effect2-scala-cli'},
+]}>
+  <TabItem value="cats-effect2-sbt">
+
+In `build.sbt`,
+
+```scala
+"io.kevinlee" %% "effectie-cats-effect2" % "@VERSION@"
+```
+
+  </TabItem>
+
+  <TabItem value="cats-effect2-sbt-lib">
+
+In `build.sbt`,
 
 ```scala
 libraryDependencies += "io.kevinlee" %% "effectie-cats-effect2" % "@VERSION@"
+```
+
+  </TabItem>
+
+  <TabItem value="cats-effect2-scala-cli">
+
+```scala
+//> using dep "io.kevinlee::effectie-cats-effect2:@VERSION@"
 ```
 
   </TabItem>
@@ -61,11 +112,43 @@ For more details, check out [Effectie for Cats Effect](cats-effect2/cats-effect2
 
 ### For Monix
 
+<Tabs
+groupId="monix3"
+defaultValue="monix3-sbt"
+values={[
+{label: 'sbt', value: 'monix3-sbt'},
+{label: 'sbt (with libraryDependencies)', value: 'monix3-sbt-lib'},
+{label: 'scala-cli', value: 'monix3-scala-cli'},
+]}>
+<TabItem value="monix3-sbt">
+
+In `build.sbt`,
+
+```scala
+"io.kevinlee" %% "effectie-monix3" % "@VERSION@"
+```
+
+  </TabItem>
+
+  <TabItem value="monix3-sbt-lib">
+
 In `build.sbt`,
 
 ```scala
 libraryDependencies += "io.kevinlee" %% "effectie-monix3" % "@VERSION@"
 ```
+
+  </TabItem>
+
+  <TabItem value="monix3-scala-cli">
+
+```scala
+//> using dep "io.kevinlee::effectie-monix3:@VERSION@"
+```
+
+  </TabItem>
+</Tabs>
+
 
 For more details, check out [Effectie for Monix](monix3/monix3.md).
 
