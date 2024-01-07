@@ -59,6 +59,8 @@ lazy val effectie = (project in file("."))
     coreJs,
     syntaxJvm,
     syntaxJs,
+    timeJvm,
+    timeJs,
     catsJvm,
     catsJs,
     catsEffect2Jvm,
@@ -147,6 +149,35 @@ lazy val testing4Cats    = module(ProjectName("test4cats"), crossProject(JVMPlat
 lazy val testing4CatsJvm = testing4Cats.jvm
 lazy val testing4CatsJs  = testing4Cats
   .js
+  .settings(jsSettings)
+
+lazy val time = module(ProjectName("time"), crossProject(JVMPlatform, JSPlatform))
+  .settings(
+    description := "Effect - Time",
+    libraryDependencies ++= List(
+      libs.libCatsCore(props.catsVersion),
+      libs.tests.extrasConcurrent,
+      libs.tests.extrasConcurrentTesting,
+    ) ++ (
+      if (scalaVersion.value.startsWith("2.12"))
+        List(libs.libCatsEffect(props.catsEffect2Version)       % Test)
+      else
+        List(libs.libCatsEffect(props.catsEffect2LatestVersion) % Test)
+    ),
+    libraryDependencies :=
+      libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
+  )
+  .dependsOn(
+    core         % props.IncludeTest,
+    syntax,
+    catsEffect2  % Test,
+    testing4Cats % Test,
+  )
+
+lazy val timeJvm = time.jvm
+lazy val timeJs  = time
+  .js
+  .settings(jsSettingsForFuture)
   .settings(jsSettings)
 
 lazy val catsEffect2    = module(ProjectName("cats-effect2"), crossProject(JVMPlatform, JSPlatform))
