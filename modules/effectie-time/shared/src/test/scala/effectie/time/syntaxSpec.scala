@@ -1,6 +1,8 @@
 package effectie.time
 
+import cats.effect.{IO, Timer}
 import cats.syntax.all._
+import effectie.syntax.all._
 import effectie.time.syntax._
 import hedgehog._
 import hedgehog.runner._
@@ -12,11 +14,21 @@ import scala.concurrent.duration._
   */
 object syntaxSpec extends Properties {
 
+  import effectie.instances.ce2.fx.ioFx
+
+  type F[A] = IO[A]
+  val F = IO
+
+  implicit val timer: Timer[F] = F.timer(scala.concurrent.ExecutionContext.global)
+
   override def tests: List[Test] = List(
     property("test FiniteDuration +- FiniteDuration to create ApproxFiniteDuration", testPlusMinus),
     property("test FiniteDuration.isWithIn(ApproxFiniteDuration) with valid FiniteDuration", testIsWithInValid),
     property("test FiniteDuration.isWithIn(ApproxFiniteDuration) with invalid FiniteDuration", testIsWithInInvalid),
+    property("test F[A].withTimeSpent", testWithTimeSpent).withTests(count = 5),
   )
+
+  private def runIO(test: F[Result]): Result = test.unsafeRunSync()
 
   def testPlusMinus: Property =
     for {
@@ -95,5 +107,55 @@ object syntaxSpec extends Properties {
         )
       )
     }
+
+  def testWithTimeSpent: Property = {
+    for {
+      waitFor <- Gen.int(Range.linear(200, 700)).map(_.milliseconds).log("waitFor")
+      diff    <- Gen.constant(180.milliseconds).log("diff")
+      approx  <- Gen.constant(waitFor +- diff).log("approx")
+    } yield runIO {
+      implicit val timeSource: TimeSource[F] = TimeSource.default[F]("Test")
+
+      for {
+        _                  <- F.sleep(500.milliseconds) // warm up
+        resultAndTimeSpent <- {
+                                F.sleep(waitFor) *>
+                                  pureOf("Done")
+                              }.withTimeSpent
+        (result, timeSpent) = resultAndTimeSpent
+        _ <- effectOf(
+               println(
+                 show""">>>        waitFor: $waitFor
+                       |>>>      timeSpent: ${timeSpent.timeSpent.toMillis} milliseconds
+                       |>>>           diff: ${(timeSpent.timeSpent - waitFor).toMillis} milliseconds
+                       |>>> expected range: $approx
+                       |""".stripMargin
+               )
+             )
+      } yield {
+        Result.all(
+          List(
+            result ==== "Done",
+            Result
+              .diffNamed(
+                s"timeSpent (${timeSpent.timeSpent.toMillis.show} milliseconds) should be " +
+                  show"within $approx.",
+                timeSpent,
+                approx,
+              )(_.timeSpent.isWithIn(_))
+              .log(
+                show"""--- diff test log ---
+                      |>         actual: ${timeSpent.timeSpent.toMillis.show} milliseconds
+                      |> expected range: $approx
+                      |>        waitFor: ${waitFor.show}
+                      |>  expected diff: +- ${diff.show})
+                      |>    actual diff: ${(timeSpent.timeSpent - waitFor).toMillis.show} milliseconds
+                      |""".stripMargin
+              ),
+          )
+        )
+      }
+    }
+  }
 
 }
