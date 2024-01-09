@@ -65,6 +65,8 @@ lazy val effectie = (project in file("."))
     catsJs,
     catsEffect2Jvm,
     catsEffect2Js,
+    catsEffect2TimeJvm,
+    catsEffect2TimeJs,
     catsEffect3Jvm,
     catsEffect3Js,
     monix3Jvm,
@@ -153,7 +155,7 @@ lazy val testing4CatsJs  = testing4Cats
 
 lazy val time = module(ProjectName("time"), crossProject(JVMPlatform, JSPlatform))
   .settings(
-    description := "Effect - Time",
+    description := "Effect Utils - Time",
     libraryDependencies ++= List(
       libs.libCatsCore(props.catsVersion),
       libs.tests.extrasConcurrent,
@@ -217,6 +219,44 @@ lazy val catsEffect2Js  = catsEffect2
   .js
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
+
+lazy val catsEffect2Time = module(ProjectName("cats-effect2-time"), crossProject(JVMPlatform, JSPlatform))
+  .settings(
+    description := "Effect Utils - Time with Cats Effect 2",
+    libraryDependencies :=
+      (SemVer.parseUnsafe(scalaVersion.value) match {
+        case SemVer(Major(2), Minor(11), _, _, _) =>
+          libraryDependencies.value ++ Seq(libs.libCatsCore_2_0_0, libs.libCatsEffect_2_0_0)
+        case SemVer(
+        Major(3),
+        Minor(0),
+        Patch(0),
+        Some(PreRelease(List(Dsv(List(Anh.Alphabet("RC"), Anh.Num("1")))))),
+        _,
+        ) =>
+          libraryDependencies.value ++ Seq(
+            libs.libCatsCore(props.catsVersion),
+            libs.libCatsEffect(props.catsEffect2Version),
+          )
+        case x =>
+          libraryDependencies.value ++ Seq(
+            libs.libCatsCore(props.catsVersion),
+            libs.libCatsEffect(props.catsEffect2LatestVersion),
+          )
+      }),
+    libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
+  )
+  .dependsOn(
+    core   % props.IncludeTest,
+    syntax % props.IncludeTest,
+    time,
+  )
+lazy val catsEffect2TimeJvm = catsEffect2Time.jvm
+lazy val catsEffect2TimeJs  = catsEffect2Time
+  .js
+  .settings(jsSettingsForFuture)
+  .settings(jsSettings)
+
 
 lazy val catsEffect3    = module(ProjectName("cats-effect3"), crossProject(JVMPlatform, JSPlatform))
   .settings(
