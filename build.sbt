@@ -69,6 +69,8 @@ lazy val effectie = (project in file("."))
     catsEffect2TimeJs,
     catsEffect3Jvm,
     catsEffect3Js,
+    catsEffect3TimeJvm,
+    catsEffect3TimeJs,
     monix3Jvm,
     monix3Js,
   )
@@ -282,6 +284,29 @@ lazy val catsEffect3Js  = catsEffect3
   .js
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
+
+lazy val catsEffect3Time = module(ProjectName("cats-effect3-time"), crossProject(JVMPlatform, JSPlatform))
+  .settings(
+    description := "Effect Utils - Time with Cats Effect 3",
+    libraryDependencies ++= List(
+      libs.libCatsCore(props.catsVersion),
+      libs.libCatsEffect(props.catsEffect3Version),
+      libs.libCatsEffectTestKit % Test excludeAll ("org.scalacheck"),
+      libs.tests.extrasHedgehogCatsEffect3,
+    ),
+    libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
+  )
+  .dependsOn(
+    core   % props.IncludeTest,
+    syntax % props.IncludeTest,
+    time,
+  )
+lazy val catsEffect3TimeJvm = catsEffect3Time.jvm
+lazy val catsEffect3TimeJs  = catsEffect3Time
+  .js
+  .settings(jsSettingsForFuture)
+  .settings(jsSettings)
+
 
 lazy val monix3    = module(ProjectName("monix3"), crossProject(JVMPlatform, JSPlatform))
   .settings(
