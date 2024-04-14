@@ -1,13 +1,18 @@
-name: Build-All
+name: "Test Coverage"
 
 on:
   push:
-    branches-ignore:
-      - main
+    branches:
+      - 'main'
 
   pull_request:
     branches:
       - main
+      - 'effectie-1'
+
+env:
+  GH_SBT_OPTS: "-Xss64m -Xms1024m -XX:MaxMetaspaceSize=1G -Xmx4G -XX:MaxInlineLevel=18 -XX:+UnlockExperimentalVMOptions"
+  GH_JVM_OPTS: "-Xss64m -Xms1024m -XX:MaxMetaspaceSize=1G -Xmx4G -XX:MaxInlineLevel=18 -XX:+UnlockExperimentalVMOptions -XX:+UseJVMCICompiler"
 
 jobs:
 
@@ -17,19 +22,17 @@ jobs:
     strategy:
       matrix:
         scala:
-          - { name: "Scala 2", version: "2.12.13", binary-version: "2.12", java-version: "11", java-distribution: "temurin", report: "" }
           - { name: "Scala 2", version: "2.13.6",  binary-version: "2.13", java-version: "11", java-distribution: "temurin", report: "report" }
-          - { name: "Scala 3", version: "3.0.2",   binary-version: "3",    java-version: "11", java-distribution: "temurin", report: "" }
 
     steps:
-      - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.scala.java-version }}
           distribution: ${{ matrix.scala.java-distribution }}
 
       - name: Cache SBT
-        uses: actions/cache@v4.0.0
+        uses: actions/cache@v4
         with:
           path: |
             ~/.ivy2/cache
@@ -39,12 +42,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-sbt-${{ matrix.scala.binary-version }}-
 
-      - name: "[Push] Build All for ${{ matrix.scala.name }} ${{ matrix.scala.version }} - ${{ github.run_number }}"
-        if: github.event_name == 'push'
+      - name: "[Codecov] Report ${{ matrix.scala.name }} ${{ matrix.scala.version }} - ${{ github.run_number }}"
+        if: ${{ matrix.scala.report == 'report' && github.event_name == 'push' }}
         env:
           CURRENT_BRANCH_NAME: ${{ github.ref }}
           RUN_ID: ${{ github.run_id }}
           RUN_NUMBER: ${{ github.run_number }}
+          JVM_OPTS: ${{ env.GH_JVM_OPTS }}
+          SBT_OPTS: ${{ env.GH_SBT_OPTS }}
         run: |
           echo "[BEFORE]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
           export CURRENT_BRANCH_NAME="${CURRENT_BRANCH_NAME#refs/heads/}"
@@ -53,15 +58,18 @@ jobs:
           echo "RUN_NUMBER=${RUN_NUMBER}"
           echo "Push #${PUSH_NUMBER}"
           java -version
-          .github/workflows/sbt-build-all.sh ${{ matrix.scala.version }}
+          .github/workflows/sbt-build-all.sh ${{ matrix.scala.version }} ${{ matrix.scala.report }}
 
-      - name: "[PR] Build All for ${{ matrix.scala.name }} ${{ matrix.scala.version }} - PR-#${{ github.event.pull_request.number }} - ${{ github.run_number }}"
-        if: github.event_name == 'pull_request'
+
+      - name: "[Codecov] Report ${{ matrix.scala.name }} ${{ matrix.scala.version }} - ${{ github.run_number }} - PR-#${{ github.event.pull_request.number }} - ${{ github.run_number }}"
+        if: ${{ matrix.scala.report == 'report' && github.event_name == 'pull_request' }}
         env:
           CURRENT_BRANCH_NAME: ${{ github.base_ref }}
           RUN_ID: ${{ github.run_id }}
           RUN_NUMBER: ${{ github.run_number }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          JVM_OPTS: ${{ env.GH_JVM_OPTS }}
+          SBT_OPTS: ${{ env.GH_SBT_OPTS }}
         run: |
           echo "Rull request to the '${CURRENT_BRANCH_NAME}' branch"
           echo "RUN_ID=${RUN_ID}"
@@ -69,3 +77,8 @@ jobs:
           echo "PR #${PR_NUMBER}"
           java -version
           .github/workflows/sbt-build-all.sh ${{ matrix.scala.version }} ${{ matrix.scala.report }}
+
+      - if: ${{ matrix.scala.report == 'report' }}
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
