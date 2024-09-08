@@ -24,6 +24,7 @@ const websiteConfig = {
   organizationName: 'Kevin-Lee', // Usually your GitHub org/user name.
   projectName: 'effectie', // Usually your repo name.
   themeConfig: {
+    image: 'img/refined4s-social-card.jpg',
     prism: {
       theme: lightCodeTheme,
       darkTheme: darkCodeTheme,
