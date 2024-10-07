@@ -33,7 +33,7 @@ jobs:
           distribution: ${{ matrix.scala.java-distribution }}
 
       - name: Cache SBT
-        uses: actions/cache@v4.0.2
+        uses: actions/cache@v4.1.0
         with:
           path: |
             ~/.ivy2/cache
@@ -84,7 +84,7 @@ jobs:
           distribution: ${{ matrix.scala.java-distribution }}
 
       - name: Cache SBT
-        uses: actions/cache@v4.0.2
+        uses: actions/cache@v4.1.0
         with:
           path: |
             ~/.ivy2/cache
@@ -127,7 +127,7 @@ jobs:
         distribution: ${{ env.GH_JAVA_DISTRIBUTION }}
 
     - name: Cache SBT
-      uses: actions/cache@v4.0.2
+      uses: actions/cache@v4.1.0
       with:
         path: |
           ~/.ivy2/cache
@@ -165,7 +165,7 @@ jobs:
       - uses: olafurpg/setup-gpg@v3
 
       - name: Cache SBT
-        uses: actions/cache@v4.0.2
+        uses: actions/cache@v4.1.0
         with:
           path: |
             ~/.ivy2/cache
@@ -215,7 +215,7 @@ jobs:
       - uses: olafurpg/setup-gpg@v3
 
       - name: Cache SBT
-        uses: actions/cache@v4.0.2
+        uses: actions/cache@v4.1.0
         with:
           path: |
             ~/.ivy2/cache
