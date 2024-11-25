@@ -5,6 +5,9 @@ on:
     branches:
       - "**"
 
+env:
+  GH_JVM_OPTS: "-Xss64m -Xms1024m -XX:MaxMetaspaceSize=2G -Xmx16G -XX:MaxInlineLevel=18 -XX:+UnlockExperimentalVMOptions"
+
 jobs:
   build-docusaurus:
 
@@ -13,7 +16,7 @@ jobs:
     strategy:
       matrix:
         scala:
-          - { version: "2.13.10", binary-version: "2.13", java-version: "11", java-distribution: "temurin" }
+          - { version: "2.13.16", binary-version: "2.13", java-version: "11", java-distribution: "temurin" }
         node:
           - { version: "18.13.0" }
 
@@ -46,6 +49,7 @@ jobs:
           ALGOLIA_INDEX_NAME: ${{ secrets.ALGOLIA_INDEX_NAME }}
           GA_TRACKING_ID: ${{ secrets.GA_TRACKING_ID }}
           GA_ANONYMIZE_IP: ${{ secrets.GA_ANONYMIZE_IP }}
+          SBT_OPTS: ${{ env.GH_JVM_OPTS }}
         run: |
           sbt \
             ++${{ matrix.scala.version }}! \
