@@ -2,7 +2,6 @@ package effectie.syntax
 
 import cats.FlatMap
 import cats.data.EitherT
-import effectie.syntax.*
 import effectie.core.{CanCatch, CanHandleError, CanRecover, Fx, FxCtor}
 
 /** @author Kevin Lee
