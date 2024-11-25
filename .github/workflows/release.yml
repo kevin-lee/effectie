@@ -10,7 +10,7 @@ on:
 env:
   GH_JAVA_VERSION: "11"
   GH_JAVA_DISTRIBUTION: "temurin"
-  GH_JVM_OPTS: "-Xss64m -Xms1024m -XX:MaxMetaspaceSize=2G -Xmx4G -XX:MaxInlineLevel=18 -XX:+UnlockExperimentalVMOptions -XX:+UseJVMCICompiler"
+  GH_JVM_OPTS: "-Xss64m -Xms1024m -XX:MaxMetaspaceSize=2G -Xmx16G -XX:MaxInlineLevel=18 -XX:+UnlockExperimentalVMOptions"
 
 
 jobs:
@@ -21,9 +21,9 @@ jobs:
     strategy:
       matrix:
         scala:
-          - { name: "Scala 2", version: "2.12.13", binary-version: "2.12", java-version: "11", java-distribution: "temurin", report: "" }
-          - { name: "Scala 2", version: "2.13.10",  binary-version: "2.13", java-version: "11", java-distribution: "temurin", report: "" }
-          - { name: "Scala 3", version: "3.1.3",   binary-version: "3",    java-version: "11", java-distribution: "temurin", report: "" }
+          - { name: "Scala 2", version: "2.12.18", binary-version: "2.12", java-version: "11", java-distribution: "temurin", report: "" }
+          - { name: "Scala 2", version: "2.13.16", binary-version: "2.13", java-version: "11", java-distribution: "temurin", report: "" }
+          - { name: "Scala 3", version: "3.3.3",   binary-version: "3",    java-version: "11", java-distribution: "temurin", report: "" }
 
     steps:
       - uses: actions/checkout@v5
@@ -41,6 +41,7 @@ jobs:
           RUN_ID: ${{ github.run_id }}
           RUN_NUMBER: ${{ github.run_number }}
           JVM_OPTS: ${{ env.GH_JVM_OPTS }}
+          SBT_OPTS: ${{ env.GH_JVM_OPTS }}
         run: |
           echo "[BEFORE]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
           export CURRENT_BRANCH_NAME="${CURRENT_BRANCH_NAME#refs/heads/}"
@@ -65,7 +66,7 @@ jobs:
     strategy:
       matrix:
         scala:
-          - { name: "Scala 2", version: "2.13.10", binary-version: "2.13", java-version: "11", java-distribution: "temurin", report: "report" }
+          - { name: "Scala 2", version: "2.13.16", binary-version: "2.13", java-version: "11", java-distribution: "temurin", report: "report" }
 
     steps:
       - uses: actions/checkout@v5
@@ -83,6 +84,7 @@ jobs:
           RUN_ID: ${{ github.run_id }}
           RUN_NUMBER: ${{ github.run_number }}
           JVM_OPTS: ${{ env.GH_JVM_OPTS }}
+          SBT_OPTS: ${{ env.GH_JVM_OPTS }}
         run: |
           echo "[BEFORE]CURRENT_BRANCH_NAME=${CURRENT_BRANCH_NAME}"
           export CURRENT_BRANCH_NAME="${CURRENT_BRANCH_NAME#refs/heads/}"
@@ -115,6 +117,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_AUTH_TOKEN_GITHUB }}
         JVM_OPTS: ${{ env.GH_JVM_OPTS }}
+        SBT_OPTS: ${{ env.GH_JVM_OPTS }}
       run: |
         echo "Run] sbt GitHub release"
         echo "JVM_OPTS=${JVM_OPTS}"
@@ -150,6 +153,7 @@ jobs:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           GITHUB_TOKEN: ${{ secrets.RELEASE_AUTH_TOKEN_GITHUB }}
           JVM_OPTS: ${{ env.GH_JVM_OPTS }}
+          SBT_OPTS: ${{ env.GH_JVM_OPTS }}
         run: |
           echo "Run] sbt ci-release"
           export SOURCE_DATE_EPOCH=$(date +%s)
@@ -191,6 +195,7 @@ jobs:
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           JVM_OPTS: ${{ env.GH_JVM_OPTS }}
+          SBT_OPTS: ${{ env.GH_JVM_OPTS }}
         run: |
           echo "Run] sbt ci-release"
           export SOURCE_DATE_EPOCH=$(date +%s)

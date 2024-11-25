@@ -29,7 +29,7 @@ else
     sbt \
       -J-Xmx2048m \
       "project ${project_name}" \
-      ++${scala_version}! \
+      ++${scala_version} \
       -v \
       clean \
       test \
@@ -40,7 +40,7 @@ else
     sbt \
       -J-Xmx2048m \
       "project ${project_name}" \
-      ++${scala_version}! \
+      ++${scala_version} \
       -v \
       clean \
       test \

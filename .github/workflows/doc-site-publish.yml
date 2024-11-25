@@ -3,6 +3,9 @@ name: "[Doc][M] Publish"
 on:
   workflow_dispatch:
 
+env:
+  GH_JVM_OPTS: "-Xss64m -Xms1024m -XX:MaxMetaspaceSize=2G -Xmx16G -XX:MaxInlineLevel=18 -XX:+UnlockExperimentalVMOptions"
+
 jobs:
   build_and_publish_doc_site:
     if: github.ref != 'refs/heads/gh-pages' && github.ref != 'gh-pages'
@@ -12,7 +15,7 @@ jobs:
     strategy:
       matrix:
         scala:
-          - { version: "2.13.10", binary-version: "2.13", java-version: "11", java-distribution: "temurin" }
+          - { version: "2.13.16", binary-version: "2.13", java-version: "11", java-distribution: "temurin" }
         node:
           - { version: "18.13.0" }
 
@@ -46,6 +49,7 @@ jobs:
           GA_TRACKING_ID: ${{ secrets.GA_TRACKING_ID }}
           GA_ANONYMIZE_IP: ${{ secrets.GA_ANONYMIZE_IP }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SBT_OPTS: ${{ env.GH_JVM_OPTS }}
         run: |
           sbt \
             ++${{ matrix.scala.version }}! \

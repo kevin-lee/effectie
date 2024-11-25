@@ -42,16 +42,14 @@ else
   if [[ "$CURRENT_BRANCH_NAME" == "main" || "$CURRENT_BRANCH_NAME" == "release" ]]
   then
     sbt \
-      -J-Xmx2048m \
-      ++${scala_version}! \
+      ++${scala_version} \
       -v \
       clean \
       ${test_task} \
       packagedArtifacts
   else
     sbt \
-      -J-Xmx2048m \
-      ++${scala_version}! \
+      ++${scala_version} \
       -v \
       clean \
       ${test_task} \
