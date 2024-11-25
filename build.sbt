@@ -51,34 +51,33 @@ lazy val effectie = (project in file("."))
   .settings(noPublish)
   .aggregate(
     testing4CatsJvm,
-//    testing4CatsJs,
+    testing4CatsJs,
     coreJvm,
-//    coreJs,
+    coreJs,
     syntaxJvm,
-//    syntaxJs,
+    syntaxJs,
     catsJvm,
-//    catsJs,
+    catsJs,
     timeJvm,
-//    timeJs,
+    timeJs,
     timeCatsEffect2Jvm,
-//    timeCatsEffect2Js,
+    timeCatsEffect2Js,
     timeCatsEffect3Jvm,
-//    timeCatsEffect3Js,
+    timeCatsEffect3Js,
     catsEffect2Jvm,
-//    catsEffect2Js,
+    catsEffect2Js,
     catsEffect3Jvm,
-//    catsEffect3Js,
+    catsEffect3Js,
     monix3Jvm,
-//    monix3Js,
+    monix3Js,
   )
 
 lazy val core = module(ProjectName("core"), crossProject(JVMPlatform, JSPlatform))
   .settings(
     description := "Effect Utils - Core",
     libraryDependencies ++= List(
-      libs.tests.extrasConcurrent,
-      libs.tests.extrasConcurrentTesting,
-      libs.libCatsCore(props.catsVersion) % Test,
+      libs.extrasCore.value,
+      libs.libCatsCore(props.catsVersion).value % Test,
     ) ++ (
       if (scalaVersion.value.startsWith("2.12"))
         List("org.scala-lang.modules" %% "scala-collection-compat" % "2.8.1")
@@ -90,19 +89,32 @@ lazy val core = module(ProjectName("core"), crossProject(JVMPlatform, JSPlatform
   )
   .dependsOn(testing4Cats % Test)
 
-lazy val coreJvm = core.jvm
+lazy val coreJvm = core
+  .jvm
+  .settings(
+    libraryDependencies ++= List(
+      libs.tests.extrasConcurrent.value,
+      libs.tests.extrasConcurrentTesting.value,
+    )
+  )
 lazy val coreJs  = core
   .js
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
+  .settings(
+    libraryDependencies ++= List(
+      libs.tests.scalaJsMacrotaskExecutor.value,
+      libs.tests.munit.value,
+    )
+  )
 
 lazy val syntax    = module(ProjectName("syntax"), crossProject(JVMPlatform, JSPlatform))
   .settings(
     description := "Effect Utils - Syntax",
     libraryDependencies ++= List(
-      libs.libCatsCore(props.catsVersion),
-      libs.tests.extrasConcurrent,
-      libs.tests.extrasConcurrentTesting,
+      libs.libCatsCore(props.catsVersion).value,
+      libs.tests.extrasConcurrent.value,
+      libs.tests.extrasConcurrentTesting.value,
     ),
     libraryDependencies :=
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
@@ -117,9 +129,9 @@ lazy val cats = module(ProjectName("cats"), crossProject(JVMPlatform, JSPlatform
   .settings(
     description := "Effect Utils - Cats",
     libraryDependencies ++= List(
-      libs.libCatsCore(props.catsVersion),
-      libs.tests.extrasConcurrent,
-      libs.tests.extrasConcurrentTesting,
+      libs.libCatsCore(props.catsVersion).value,
+      libs.tests.extrasConcurrent.value,
+      libs.tests.extrasConcurrentTesting.value,
     ),
     libraryDependencies :=
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
@@ -141,8 +153,8 @@ lazy val testing4Cats    = module(ProjectName("test4cats"), crossProject(JVMPlat
     description := "Effect's test utils for Cats",
     libraryDependencies :=
       libraryDependencies.value ++ List(
-        libs.libCatsCore(props.catsVersion)
-      ) ++ List(libs.hedgehogCore, libs.hedgehogRunner),
+        libs.libCatsCore(props.catsVersion).value
+      ) ++ List(libs.hedgehogCore.value, libs.hedgehogRunner.value),
     libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
       """import effectie.testing.cats._""",
@@ -156,14 +168,14 @@ lazy val time = module(ProjectName("time"), crossProject(JVMPlatform, JSPlatform
   .settings(
     description := "Effect Utils - Time",
     libraryDependencies ++= List(
-      libs.libCatsCore(props.catsVersion),
-      libs.tests.extrasConcurrent,
-      libs.tests.extrasConcurrentTesting,
+      libs.libCatsCore(props.catsVersion).value,
+      libs.tests.extrasConcurrent.value,
+      libs.tests.extrasConcurrentTesting.value,
     ) ++ (
       if (scalaVersion.value.startsWith("2.12"))
-        List(libs.libCatsEffect(props.catsEffect2Version)       % Test)
+        List(libs.libCatsEffect(props.catsEffect2Version).value       % Test)
       else
-        List(libs.libCatsEffect(props.catsEffect2LatestVersion) % Test)
+        List(libs.libCatsEffect(props.catsEffect2LatestVersion).value % Test)
     ),
     libraryDependencies :=
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
@@ -187,22 +199,22 @@ lazy val timeCatsEffect2    = module(ProjectName("time-cats-effect2"), crossProj
     libraryDependencies :=
       (SemVer.parseUnsafe(scalaVersion.value) match {
         case SemVer(Major(2), Minor(11), _, _, _) =>
-          libraryDependencies.value ++ Seq(libs.libCatsCore_2_0_0, libs.libCatsEffect_2_0_0)
+          libraryDependencies.value ++ Seq(libs.libCatsCore_2_0_0.value, libs.libCatsEffect_2_0_0.value)
         case SemVer(
-        Major(3),
-        Minor(0),
-        Patch(0),
-        Some(PreRelease(List(Dsv(List(Anh.Alphabet("RC"), Anh.Num("1")))))),
-        _,
-        ) =>
+              Major(3),
+              Minor(0),
+              Patch(0),
+              Some(PreRelease(List(Dsv(List(Anh.Alphabet("RC"), Anh.Num("1")))))),
+              _,
+            ) =>
           libraryDependencies.value ++ Seq(
-            libs.libCatsCore(props.catsVersion),
-            libs.libCatsEffect(props.catsEffect2Version),
+            libs.libCatsCore(props.catsVersion).value,
+            libs.libCatsEffect(props.catsEffect2Version).value,
           )
         case x =>
           libraryDependencies.value ++ Seq(
-            libs.libCatsCore(props.catsVersion),
-            libs.libCatsEffect(props.catsEffect2LatestVersion),
+            libs.libCatsCore(props.catsVersion).value,
+            libs.libCatsEffect(props.catsEffect2LatestVersion).value,
           )
       }),
     libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
@@ -222,10 +234,10 @@ lazy val timeCatsEffect3    = module(ProjectName("time-cats-effect3"), crossProj
   .settings(
     description := "Effect Utils - Time with Cats Effect 3",
     libraryDependencies ++= List(
-      libs.libCatsCore(props.catsVersion),
-      libs.libCatsEffect(props.catsEffect3Version),
-      libs.libCatsEffectTestKit % Test excludeAll ("org.scalacheck"),
-      libs.tests.extrasHedgehogCatsEffect3,
+      libs.libCatsCore(props.catsVersion).value,
+      libs.libCatsEffect(props.catsEffect3Version).value,
+      libs.libCatsEffectTestKit.value % Test excludeAll ("org.scalacheck"),
+      libs.tests.extrasHedgehogCatsEffect3.value,
     ),
     libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
   )
@@ -246,7 +258,7 @@ lazy val catsEffect2    = module(ProjectName("cats-effect2"), crossProject(JVMPl
     libraryDependencies :=
       (SemVer.parseUnsafe(scalaVersion.value) match {
         case SemVer(Major(2), Minor(11), _, _, _) =>
-          libraryDependencies.value ++ Seq(libs.libCatsCore_2_0_0, libs.libCatsEffect_2_0_0)
+          libraryDependencies.value ++ Seq(libs.libCatsCore_2_0_0.value, libs.libCatsEffect_2_0_0.value)
         case SemVer(
               Major(3),
               Minor(0),
@@ -255,13 +267,13 @@ lazy val catsEffect2    = module(ProjectName("cats-effect2"), crossProject(JVMPl
               _,
             ) =>
           libraryDependencies.value ++ Seq(
-            libs.libCatsCore(props.catsVersion),
-            libs.libCatsEffect(props.catsEffect2Version),
+            libs.libCatsCore(props.catsVersion).value,
+            libs.libCatsEffect(props.catsEffect2Version).value,
           )
         case x =>
           libraryDependencies.value ++ Seq(
-            libs.libCatsCore(props.catsVersion),
-            libs.libCatsEffect(props.catsEffect2LatestVersion),
+            libs.libCatsCore(props.catsVersion).value,
+            libs.libCatsEffect(props.catsEffect2LatestVersion).value,
           )
       }),
     libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
@@ -282,10 +294,10 @@ lazy val catsEffect3    = module(ProjectName("cats-effect3"), crossProject(JVMPl
   .settings(
     description := "Effect Utils - Cats Effect 3",
     libraryDependencies ++= List(
-      libs.libCatsCore(props.catsVersion),
-      libs.libCatsEffect(props.catsEffect3Version),
-      libs.libCatsEffectTestKit % Test excludeAll ("org.scalacheck"),
-      libs.tests.extrasHedgehogCatsEffect3,
+      libs.libCatsCore(props.catsVersion).value,
+      libs.libCatsEffect(props.catsEffect3Version).value,
+      libs.libCatsEffectTestKit.value % Test excludeAll ("org.scalacheck"),
+      libs.tests.extrasHedgehogCatsEffect3.value,
     ),
     libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
     console / initialCommands :=
@@ -312,9 +324,9 @@ lazy val monix3    = module(ProjectName("monix3"), crossProject(JVMPlatform, JSP
         SemVer.parseUnsafe(scalaVersion.value),
       ) {
         case (Major(2), Minor(11), _) =>
-          libraryDependencies.value ++ List(libs.libMonix3_3_0)
+          libraryDependencies.value ++ List(libs.libMonix3_3_0.value)
         case x =>
-          libraryDependencies.value ++ List(libs.libMonix)
+          libraryDependencies.value ++ List(libs.libMonix.value)
       },
     libraryDependencies := libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
   )
@@ -344,8 +356,8 @@ lazy val docs = (project in file("docs-gen-tmp/docs"))
       List(
         "io.kevinlee" %% "effectie-cats-effect2" % latestTag,
         "io.kevinlee" %% "effectie-monix3"       % latestTag,
-        libs.extrasCats,
-        libs.extrasConcurrent,
+        libs.extrasCats.value,
+        libs.extrasConcurrent.value,
       )
     },
     libraryDependencies := libraryDependenciesPostProcess(
@@ -419,12 +431,13 @@ lazy val props =
     final val RepoName       = "effectie"
 
     final val Scala2Versions = List(
-      "2.13.10",
-      "2.12.13",
+      "2.13.16",
+      "2.12.18",
     )
     final val Scala2Version  = Scala2Versions.head
+//    final val Scala2Version  = Scala2Versions.last
 
-    final val Scala3Version = "3.1.3"
+    final val Scala3Version = "3.3.3"
 
 //    final val ProjectScalaVersion = "2.12.13"
     final val ProjectScalaVersion = Scala2Version
@@ -448,7 +461,9 @@ lazy val props =
 
     final val IncludeTest = "compile->compile;test->test"
 
-    final val hedgehogLatestVersion = "0.8.0"
+    final val hedgehogLatestVersion = "0.13.0"
+
+    val MunitVersion = "0.7.29"
 
     final val catsVersion = "2.7.0"
 
@@ -463,44 +478,57 @@ lazy val props =
     final val monixVersion      = "3.4.0"
 
     final val ExtrasVersion = "0.25.0"
+
+    val ScalaJsMacrotaskExecutorVersion = "1.1.1"
   }
 
 lazy val libs =
   new {
     val hedgehogVersion     = props.hedgehogLatestVersion
-    lazy val hedgehogCore   = "qa.hedgehog" %% "hedgehog-core"   % hedgehogVersion
-    lazy val hedgehogRunner = "qa.hedgehog" %% "hedgehog-runner" % hedgehogVersion
-    lazy val hedgehogSbt    = "qa.hedgehog" %% "hedgehog-sbt"    % hedgehogVersion
+    lazy val hedgehogCore   = Def.setting("qa.hedgehog" %%% "hedgehog-core" % hedgehogVersion)
+    lazy val hedgehogRunner = Def.setting("qa.hedgehog" %%% "hedgehog-runner" % hedgehogVersion)
+    lazy val hedgehogSbt    = Def.setting("qa.hedgehog" %%% "hedgehog-sbt" % hedgehogVersion)
 
-    lazy val hedgehogLibs: List[ModuleID] =
-      List(
-        hedgehogCore,
-        hedgehogRunner,
-        hedgehogSbt,
+    lazy val hedgehogLibs =
+      Def.setting(
+        List(
+          hedgehogCore.value,
+          hedgehogRunner.value,
+          hedgehogSbt.value,
+        )
       )
 
-    def libCatsCore(catsVersion: String): ModuleID   = "org.typelevel" %% "cats-core"   % catsVersion
-    def libCatsKernel(catsVersion: String): ModuleID = "org.typelevel" %% "cats-kernel" % catsVersion
+    def libCatsCore(catsVersion: String)   = Def.setting("org.typelevel" %%% "cats-core" % catsVersion)
+    def libCatsKernel(catsVersion: String) = Def.setting("org.typelevel" %%% "cats-kernel" % catsVersion)
 
-    def libCatsEffect(catsEffectVersion: String): ModuleID = "org.typelevel" %% "cats-effect" % catsEffectVersion
+    def libCatsEffect(catsEffectVersion: String) = Def.setting("org.typelevel" %%% "cats-effect" % catsEffectVersion)
 
-    lazy val libCatsEffectTestKit = "org.typelevel" %% "cats-effect-kernel-testkit" % props.catsEffect3Version
+    lazy val libCatsEffectTestKit =
+      Def.setting("org.typelevel" %%% "cats-effect-kernel-testkit" % props.catsEffect3Version)
 
-    lazy val libCatsCore_2_0_0: ModuleID   = "org.typelevel" %% "cats-core"   % props.cats2_0_0Version
-    lazy val libCatsEffect_2_0_0: ModuleID = "org.typelevel" %% "cats-effect" % props.catsEffect2_0_0Version
+    lazy val libCatsCore_2_0_0   = Def.setting("org.typelevel" %%% "cats-core" % props.cats2_0_0Version)
+    lazy val libCatsEffect_2_0_0 = Def.setting("org.typelevel" %%% "cats-effect" % props.catsEffect2_0_0Version)
 
-    lazy val libMonix3_3_0: ModuleID = "io.monix" %% "monix" % props.monixVersion3_3_0
-    lazy val libMonix: ModuleID      = "io.monix" %% "monix" % props.monixVersion
+    lazy val libMonix3_3_0 = Def.setting("io.monix" %%% "monix" % props.monixVersion3_3_0)
+    lazy val libMonix      = Def.setting("io.monix" %%% "monix" % props.monixVersion)
 
-    lazy val extrasCats = "io.kevinlee" %% "extras-cats" % props.ExtrasVersion
+    lazy val extrasCore = Def.setting("io.kevinlee" %%% "extras-core" % props.ExtrasVersion)
+    lazy val extrasCats = Def.setting("io.kevinlee" %%% "extras-cats" % props.ExtrasVersion)
 
-    lazy val extrasConcurrent        = "io.kevinlee" %% "extras-concurrent"         % props.ExtrasVersion
-    lazy val extrasConcurrentTesting = "io.kevinlee" %% "extras-concurrent-testing" % props.ExtrasVersion
+    lazy val extrasConcurrent        = Def.setting("io.kevinlee" %%% "extras-concurrent" % props.ExtrasVersion)
+    lazy val extrasConcurrentTesting = Def.setting("io.kevinlee" %%% "extras-concurrent-testing" % props.ExtrasVersion)
 
     lazy val tests = new {
-      lazy val extrasHedgehogCatsEffect3 = "io.kevinlee" %% "extras-hedgehog-ce3"       % props.ExtrasVersion % Test
-      lazy val extrasConcurrent          = "io.kevinlee" %% "extras-concurrent"         % props.ExtrasVersion % Test
-      lazy val extrasConcurrentTesting   = "io.kevinlee" %% "extras-concurrent-testing" % props.ExtrasVersion % Test
+      lazy val extrasHedgehogCatsEffect3 =
+        Def.setting("io.kevinlee" %%% "extras-hedgehog-ce3" % props.ExtrasVersion % Test)
+      lazy val extrasConcurrent        = Def.setting("io.kevinlee" %%% "extras-concurrent" % props.ExtrasVersion % Test)
+      lazy val extrasConcurrentTesting =
+        Def.setting("io.kevinlee" %%% "extras-concurrent-testing" % props.ExtrasVersion % Test)
+
+      lazy val scalaJsMacrotaskExecutor =
+        Def.setting("org.scala-js" %%% "scala-js-macrotask-executor" % props.ScalaJsMacrotaskExecutorVersion % Test)
+
+      lazy val munit = Def.setting("org.scalameta" %%% "munit" % props.MunitVersion % Test)
     }
   }
 
@@ -533,7 +561,7 @@ def module(projectName: ProjectName, crossProject: CrossProject.Builder): CrossP
         else
           ((ThisBuild / baseDirectory).value / ".scalafix-scala2.conf").some
       ),
-      libraryDependencies ++= libs.hedgehogLibs.map(_ % Test) ++ List(libs.extrasCats % Test),
+      libraryDependencies ++= libs.hedgehogLibs.value.map(_ % Test) ++ List(libs.extrasCats.value % Test),
       /* WartRemover and scalacOptions { */
       //      Compile / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
       //      Test / compile / wartremoverErrors ++= commonWarts((update / scalaBinaryVersion).value),
@@ -614,13 +642,15 @@ def module(projectName: ProjectName, crossProject: CrossProject.Builder): CrossP
     )
 }
 
-lazy val jsSettingsForFuture: SettingsDefinition = List(
-  Test / scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty
-                            else List("-P:scalajs:nowarnGlobalExecutionContext")),
-  Test / compile / scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty
-                                      else List("-P:scalajs:nowarnGlobalExecutionContext")),
-)
+lazy val jsSettingsForFuture: SettingsDefinition = List.empty
+//lazy val jsSettingsForFuture: SettingsDefinition = List(
+//  Test / scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty
+//                            else List("-P:scalajs:nowarnGlobalExecutionContext")),
+//  Test / compile / scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty
+//                                      else List("-P:scalajs:nowarnGlobalExecutionContext")),
+//)
 
 lazy val jsSettings: SettingsDefinition = List(
+  crossScalaVersions := props.CrossScalaVersions.filterNot(_.startsWith("2.12")),
   Test / fork := false
 )

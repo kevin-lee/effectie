@@ -8,11 +8,7 @@ import hedgehog.runner._
   */
 object fxCtorSpec extends Properties {
 
-  override def tests: List[Test] =
-    futureSpecs ++
-      idSpecs
-
-  private val futureSpecs = effectie.instances.future.fxCtorSpec.futureSpecs
+  override def tests: List[Test] = idSpecs
 
   import effectie.instances.id.fxCtor._
 

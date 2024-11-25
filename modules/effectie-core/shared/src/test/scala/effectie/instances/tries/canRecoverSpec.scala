@@ -4,7 +4,6 @@ import cats.syntax.all._
 import effectie.SomeControlThrowable
 import effectie.core._
 import effectie.testing.types.SomeError
-import extras.concurrent.testing.types.ErrorLogger
 import hedgehog._
 import hedgehog.runner._
 
@@ -15,7 +14,6 @@ import scala.util.{Success, Try}
   * @since 2023-03-17
   */
 object canRecoverSpec extends Properties {
-  implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
   override def tests: List[Test] =
     trySpecs
