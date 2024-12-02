@@ -120,7 +120,7 @@ const websiteConfig = {
               "path": "v1",
             },
             "current": {
-              "label": "2.0.0-beta14",
+              "label": "2.0.0",
             },
           }
         },
