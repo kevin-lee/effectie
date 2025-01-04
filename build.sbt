@@ -79,8 +79,7 @@ lazy val core = module(ProjectName("core"), crossProject(JVMPlatform, JSPlatform
   .settings(
     description := "Effect Utils - Core",
     libraryDependencies ++= List(
-      libs.tests.extrasConcurrent.value,
-      libs.tests.extrasConcurrentTesting.value,
+      libs.extrasCore.value,
       libs.libCatsCore(props.catsVersion).value % Test,
     ) ++ (
       if (scalaVersion.value.startsWith("2.12"))
@@ -93,11 +92,19 @@ lazy val core = module(ProjectName("core"), crossProject(JVMPlatform, JSPlatform
   )
   .dependsOn(testing4Cats % Test)
 
-lazy val coreJvm = core.jvm
+lazy val coreJvm = core
+  .jvm
+  .settings(
+    libraryDependencies ++= List(
+      libs.tests.extrasConcurrent.value,
+      libs.tests.extrasConcurrentTesting.value,
+    )
+  )
 lazy val coreJs  = core
   .js
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
+  .settings(libraryDependencies += libs.tests.scalaJsMacrotaskExecutor.value)
 
 lazy val syntax    = module(ProjectName("syntax"), crossProject(JVMPlatform, JSPlatform))
   .settings(
@@ -471,6 +478,8 @@ lazy val props =
     final val monixVersion      = "3.4.0"
 
     final val ExtrasVersion = "0.25.0"
+
+    val ScalaJsMacrotaskExecutorVersion = "1.1.1"
   }
 
 lazy val libs =
@@ -489,28 +498,35 @@ lazy val libs =
         )
       )
 
-    def libCatsCore(catsVersion: String)   = Def.setting("org.typelevel" %%% "cats-core"   % catsVersion)
+    def libCatsCore(catsVersion: String)   = Def.setting("org.typelevel" %%% "cats-core" % catsVersion)
     def libCatsKernel(catsVersion: String) = Def.setting("org.typelevel" %%% "cats-kernel" % catsVersion)
 
     def libCatsEffect(catsEffectVersion: String) = Def.setting("org.typelevel" %%% "cats-effect" % catsEffectVersion)
 
-    lazy val libCatsEffectTestKit = Def.setting("org.typelevel" %%% "cats-effect-kernel-testkit" % props.catsEffect3Version)
+    lazy val libCatsEffectTestKit =
+      Def.setting("org.typelevel" %%% "cats-effect-kernel-testkit" % props.catsEffect3Version)
 
-    lazy val libCatsCore_2_0_0  = Def.setting("org.typelevel" %%% "cats-core"   % props.cats2_0_0Version)
-    lazy val libCatsEffect_2_0_0= Def.setting("org.typelevel" %%% "cats-effect" % props.catsEffect2_0_0Version)
+    lazy val libCatsCore_2_0_0   = Def.setting("org.typelevel" %%% "cats-core" % props.cats2_0_0Version)
+    lazy val libCatsEffect_2_0_0 = Def.setting("org.typelevel" %%% "cats-effect" % props.catsEffect2_0_0Version)
 
-    lazy val libMonix3_3_0= Def.setting("io.monix" %%% "monix" % props.monixVersion3_3_0)
-    lazy val libMonix     = Def.setting("io.monix" %%% "monix" % props.monixVersion)
+    lazy val libMonix3_3_0 = Def.setting("io.monix" %%% "monix" % props.monixVersion3_3_0)
+    lazy val libMonix      = Def.setting("io.monix" %%% "monix" % props.monixVersion)
 
+    lazy val extrasCore = Def.setting("io.kevinlee" %%% "extras-core" % props.ExtrasVersion)
     lazy val extrasCats = Def.setting("io.kevinlee" %%% "extras-cats" % props.ExtrasVersion)
 
-    lazy val extrasConcurrent        = Def.setting("io.kevinlee" %%% "extras-concurrent"         % props.ExtrasVersion)
+    lazy val extrasConcurrent        = Def.setting("io.kevinlee" %%% "extras-concurrent" % props.ExtrasVersion)
     lazy val extrasConcurrentTesting = Def.setting("io.kevinlee" %%% "extras-concurrent-testing" % props.ExtrasVersion)
 
     lazy val tests = new {
-      lazy val extrasHedgehogCatsEffect3 = Def.setting("io.kevinlee" %%% "extras-hedgehog-ce3"       % props.ExtrasVersion % Test)
-      lazy val extrasConcurrent          = Def.setting("io.kevinlee" %%% "extras-concurrent"         % props.ExtrasVersion % Test)
-      lazy val extrasConcurrentTesting   = Def.setting("io.kevinlee" %%% "extras-concurrent-testing" % props.ExtrasVersion % Test)
+      lazy val extrasHedgehogCatsEffect3 =
+        Def.setting("io.kevinlee" %%% "extras-hedgehog-ce3" % props.ExtrasVersion % Test)
+      lazy val extrasConcurrent        = Def.setting("io.kevinlee" %%% "extras-concurrent" % props.ExtrasVersion % Test)
+      lazy val extrasConcurrentTesting =
+        Def.setting("io.kevinlee" %%% "extras-concurrent-testing" % props.ExtrasVersion % Test)
+
+      lazy val scalaJsMacrotaskExecutor =
+        Def.setting("org.scala-js" %%% "scala-js-macrotask-executor" % props.ScalaJsMacrotaskExecutorVersion % Test)
     }
   }
 
@@ -641,5 +657,5 @@ lazy val jsSettingsForFuture: SettingsDefinition = List.empty
 //)
 
 lazy val jsSettings: SettingsDefinition = List(
-  Test / fork := false
+  Test / fork := false,
 )

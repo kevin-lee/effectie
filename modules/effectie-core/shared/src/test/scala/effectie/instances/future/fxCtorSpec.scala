@@ -2,10 +2,9 @@ package effectie.instances.future
 
 import cats.syntax.all._
 import effectie.core.FxCtor
-import effectie.testing.tools
+import effectie.testing.{FutureTools, tools}
 import effectie.testing.types.SomeThrowableError
-import extras.concurrent.testing.ConcurrentSupport
-import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
+
 import hedgehog._
 import hedgehog.runner._
 
@@ -15,8 +14,6 @@ import scala.util.Try
   * @since 2022-01-06
   */
 object fxCtorSpec extends Properties {
-
-  implicit private val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
   override def tests: List[Test] = futureSpecs
 
@@ -42,12 +39,13 @@ object fxCtorSpec extends Properties {
     property("test FxCtor[Future].fromTry(Failure)", FutureSpec.testFromTryFailureCase),
   )
 
-  object FutureSpec {
+  object FutureSpec extends FutureTools {
     import effectie.instances.future.fxCtor._
 
-    import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
+
+    implicit val ec: ExecutionContext = globalExecutionContext
 
     val waitFor = WaitFor(1.second)
 
@@ -55,15 +53,12 @@ object fxCtorSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual               = before // scalafix:ok DisableSyntax.var
       val testBefore           = actual ==== before
       val future: Future[Unit] = FxCtor[Future].effectOf({ actual = after; () })
-      ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
+      futureToValue(future, waitFor)
       val testAfterRun         = actual ==== after
       Result.all(
         List(
@@ -77,9 +72,6 @@ object fxCtorSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual     = before // scalafix:ok DisableSyntax.var
@@ -88,7 +80,7 @@ object fxCtorSpec extends Properties {
       lazy val fromFuture = FxCtor[Future].fromEffect(FxCtor[Future].effectOf({ actual = after; () }))
 
       val testAfterFrom = actual ==== before
-      ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(fromFuture)
+      futureToValue(fromFuture, waitFor)
       val testAfterRun  = actual ==== after
       Result.all(
         List(
@@ -103,15 +95,12 @@ object fxCtorSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual       = before // scalafix:ok DisableSyntax.var
       val testBefore   = actual ==== before
       val fromFuture   = FxCtor[Future].fromEffect(FxCtor[Future].pureOf({ actual = after; () }))
-      ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(fromFuture)
+      futureToValue(fromFuture, waitFor)
       val testAfterRun = actual ==== after
       Result.all(
         List(
@@ -125,15 +114,12 @@ object fxCtorSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual       = before // scalafix:ok DisableSyntax.var
       val testBefore   = actual ==== before
       val future       = FxCtor[Future].pureOf({ actual = after; () })
-      ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
+      futureToValue(future, waitFor)
       val testAfterRun = actual ==== after
       Result.all(
         List(
@@ -147,15 +133,12 @@ object fxCtorSpec extends Properties {
       before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")
       after  <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).map(_ + before).log("after")
     } yield {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       var actual       = before // scalafix:ok DisableSyntax.var
       val testBefore   = actual ==== before
       val future       = FxCtor[Future].pureOrError({ actual = after; () })
-      ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
+      futureToValue(future, waitFor)
       val testAfterRun = actual ==== after
       Result.all(
         List(
@@ -169,24 +152,18 @@ object fxCtorSpec extends Properties {
       val expectedMessage = "This is a throwable test error."
       val expectedError   = SomeThrowableError.message(expectedMessage)
 
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
       val future = FxCtor[Future].pureOrError[Unit](throw expectedError) // scalafix:ok DisableSyntax.throw
       tools.expectThrowable(
-        ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future),
+        futureToValue(future, waitFor),
         expectedError,
       )
     }
 
     def testUnitOf: Result = {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-      val future                                    = FxCtor[Future].unitOf
-      val expected: Unit                            = ()
-      val actual: Unit = ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
+
+      val future         = FxCtor[Future].unitOf
+      val expected: Unit = ()
+      val actual: Unit   = futureToValue(future, waitFor)
       actual ==== expected
     }
 
@@ -194,13 +171,9 @@ object fxCtorSpec extends Properties {
       val expectedMessage = "This is a throwable test error."
       val expectedError   = SomeThrowableError.message(expectedMessage)
 
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
       val future = FxCtor[Future].errorOf[Unit](expectedError)
       tools.expectThrowable(
-        ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future),
+        futureToValue(future, waitFor),
         expectedError,
       )
     }
@@ -212,14 +185,11 @@ object fxCtorSpec extends Properties {
                .option
                .log("s")
       } yield {
-        implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-        implicit val ec: ExecutionContext             =
-          ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
         val expected = s
         val input    = s.orNull
         val future   = FxCtor[Future].pureOfOption(input)
-        val actual   = ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
+        val actual   = futureToValue(future, waitFor)
 
         Result.all(
           List(
@@ -233,13 +203,10 @@ object fxCtorSpec extends Properties {
              .string(Gen.unicode, Range.linear(1, 10))
              .log("s")
     } yield {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       val expected = s.some
       val future   = FxCtor[Future].pureOfSome(s)
-      val actual   = ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
+      val actual   = futureToValue(future, waitFor)
 
       Result.all(
         List(
@@ -251,12 +218,8 @@ object fxCtorSpec extends Properties {
     def testPureOfNone: Result = {
       val expected = none[String]
 
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
       val future = FxCtor[Future].pureOfNone[String]
-      val actual = ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
+      val actual = futureToValue(future, waitFor)
 
       actual ==== expected
     }
@@ -267,12 +230,8 @@ object fxCtorSpec extends Properties {
       } yield {
         val expected = n.asRight[String]
 
-        implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-        implicit val ec: ExecutionContext             =
-          ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
         val future = FxCtor[Future].pureOfRight[String](n)
-        val actual = ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
+        val actual = futureToValue(future, waitFor)
 
         Result.all(
           List(
@@ -289,12 +248,8 @@ object fxCtorSpec extends Properties {
       } yield {
         val expected = s.asLeft[Int]
 
-        implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-        implicit val ec: ExecutionContext             =
-          ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
         val future = FxCtor[Future].pureOfLeft[Int](s)
-        val actual = ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)
+        val actual = futureToValue(future, waitFor)
 
         Result.all(
           List(
@@ -306,39 +261,30 @@ object fxCtorSpec extends Properties {
     def testFromEitherRightCase: Property = for {
       n <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")
     } yield {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       val expected            = n.asRight[SomeThrowableError]
       val future: Future[Int] = FxCtor[Future].fromEither(expected)
 
-      val actual = Try(ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)).toEither
+      val actual = Try(futureToValue(future, waitFor)).toEither
       (actual ==== expected).log(s"$actual does not equal to $expected")
     }
 
     def testFromEitherLeftCase: Property = for {
       errorMessage <- Gen.string(Gen.unicode, Range.linear(1, 10)).log("errorMessage")
     } yield {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       val expected            = SomeThrowableError.message(errorMessage).asLeft[Int]
       val future: Future[Int] = FxCtor[Future].fromEither(expected)
 
-      val actual = Try(ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)).toEither
+      val actual = Try(futureToValue(future, waitFor)).toEither
       (actual ==== expected).log(s"$actual does not equal to $expected")
     }
 
     def testFromOptionSomeCase: Property = for {
       n <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")
     } yield {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       val expected            = n.asRight[SomeThrowableError]
@@ -346,54 +292,45 @@ object fxCtorSpec extends Properties {
       val future: Future[Int] =
         FxCtor[Future].fromOption(input)(SomeThrowableError.Message("This should never happen!"))
 
-      val actual = Try(ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)).toEither
+      val actual = Try(futureToValue(future, waitFor)).toEither
       (actual ==== expected).log(s"$actual does not equal to $expected")
     }
 
     def testFromOptionNoneCase: Property = for {
       errorMessage <- Gen.string(Gen.unicode, Range.linear(1, 10)).log("errorMessage")
     } yield {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       val expected            = SomeThrowableError.message(errorMessage).asLeft[Int]
       val future: Future[Int] = FxCtor[Future].fromOption(none[Int])(SomeThrowableError.Message(errorMessage))
 
-      val actual = Try(ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)).toEither
+      val actual = Try(futureToValue(future, waitFor)).toEither
       (actual ==== expected).log(s"$actual does not equal to $expected")
     }
 
     def testFromTrySuccessCase: Property = for {
       n <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("n")
     } yield {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       val expected            = n.asRight[SomeThrowableError]
       val input: Try[Int]     = scala.util.Success(n)
       val future: Future[Int] = FxCtor[Future].fromTry(input)
 
-      val actual = Try(ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)).toEither
+      val actual = Try(futureToValue(future, waitFor)).toEither
       (actual ==== expected).log(s"$actual does not equal to $expected")
     }
 
     def testFromTryFailureCase: Property = for {
       errorMessage <- Gen.string(Gen.unicode, Range.linear(1, 10)).log("errorMessage")
     } yield {
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
       val expected            = SomeThrowableError.message(errorMessage).asLeft[Int]
       val input: Try[Int]     = scala.util.Failure(SomeThrowableError.message(errorMessage))
       val future: Future[Int] = FxCtor[Future].fromTry(input)
 
-      val actual = Try(ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(future)).toEither
+      val actual = Try(futureToValue(future, waitFor)).toEither
       (actual ==== expected).log(s"$actual does not equal to $expected")
     }
 

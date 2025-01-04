@@ -1,9 +1,8 @@
 package effectie.instances.future
 
 import effectie.core.{CanHandleError, FxCtor}
+import effectie.testing.FutureTools
 import effectie.testing.types.SomeError
-import extras.concurrent.testing.ConcurrentSupport
-import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._
 import hedgehog.runner._
 
@@ -11,8 +10,6 @@ import hedgehog.runner._
   * @since 2022-01-06
   */
 object canHandleErrorSpec extends Properties {
-
-  implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
   override def tests: List[Test] = futureSpecs
 
@@ -91,61 +88,50 @@ object canHandleErrorSpec extends Properties {
   private def run[F[*]: FxCtor, A](a: => A): F[A] =
     FxCtor[F].effectOf(a)
 
-  object FutureSpec {
+  object FutureSpec extends FutureTools {
     import effectie.instances.future.canHandleError._
     import effectie.instances.future.fxCtor._
 
-    import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration._
     import scala.concurrent.{ExecutionContext, Future}
+
+    implicit val ec: ExecutionContext = globalExecutionContext
 
     val waitFor = WaitFor(1.second)
 
     def testCanHandleError_Future_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = 1
-      val actual            = ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
+      val actual            = futureToValue(
+        CanHandleError[Future].handleNonFatalWith(fa)(_ => Future(expected)),
         waitFor,
-      )(CanHandleError[Future].handleNonFatalWith(fa)(_ => Future(expected)))
+      )
 
       actual ==== expected
     }
 
     def testCanHandleError_Future_handleNonFatalWithShouldReturnSuccessfulResult: Result = {
 
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
       val fa       = run[Future, Int](1)
       val expected = 1
-      val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
+      val actual   = futureToValue(
+        CanHandleError[Future].handleNonFatalWith(fa)(_ => Future(123)),
         waitFor,
-      )(CanHandleError[Future].handleNonFatalWith(fa)(_ => Future(123)))
+      )
 
       actual ==== expected
     }
 
     def testCanHandleError_Future_handleNonFatalWithEitherShouldHandleNonFatalWith: Result = {
 
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
       val expectedExpcetion                            = new RuntimeException("Something's wrong")
       val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
 
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val actualFailedResult =
-        ConcurrentSupport.futureToValue(
+        futureToValue(
           CanHandleError[Future].handleNonFatalWith(fa)(err => Future(Left(SomeError.someThrowable(err)))),
           waitFor,
         )
@@ -153,61 +139,43 @@ object canHandleErrorSpec extends Properties {
       val expected: Either[SomeError, Int] = Right(1)
 
       val fa2    = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-      val actual = ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
-        waitFor,
-      )(CanHandleError[Future].handleNonFatalWith(fa2)(_ => Future(expected)))
+      val actual = futureToValue(CanHandleError[Future].handleNonFatalWith(fa2)(_ => Future(expected)), waitFor)
 
       expectedFailedResult ==== actualFailedResult and actual ==== expected
     }
 
     def testCanHandleError_Future_handleNonFatalWithEitherShouldReturnSuccessfulResult: Result = {
 
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
       val expected: Either[SomeError, Int] = Right(1)
 
       val fa     = run[Future, Either[SomeError, Int]](Right(1))
       val actual =
-        ConcurrentSupport.futureToValueAndTerminate(
-          executorService,
+        futureToValue(
+          CanHandleError[Future].handleNonFatalWith(fa)(err => Future(Left(SomeError.someThrowable(err)))),
           waitFor,
-        )(CanHandleError[Future].handleNonFatalWith(fa)(err => Future(Left(SomeError.someThrowable(err)))))
+        )
 
       actual ==== expected
     }
 
     def testCanHandleError_Future_handleNonFatalWithEitherShouldReturnFailedResult: Result = {
 
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
       val expectedFailure                  = SomeError.message("Failed")
       val expected: Either[SomeError, Int] = Left(expectedFailure)
 
       val fa     = run[Future, Either[SomeError, Int]](Left(expectedFailure))
-      val actual = ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
-        waitFor,
-      )(CanHandleError[Future].handleNonFatalWith(fa)(_ => Future(Right(1))))
+      val actual = futureToValue(CanHandleError[Future].handleNonFatalWith(fa)(_ => Future(Right(1))), waitFor)
 
       actual ==== expected
     }
 
     def testCanHandleError_Future_handleEitherNonFatalWithShouldHandleNonFatalWith: Result = {
 
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
       val expectedExpcetion                            = new RuntimeException("Something's wrong")
       val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
 
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-      val actualFailedResult = ConcurrentSupport.futureToValue(
+      val actualFailedResult = futureToValue(
         CanHandleError[Future]
           .handleEitherNonFatalWith(fa)(err => Future(Left(SomeError.someThrowable(err)))),
         waitFor,
@@ -217,29 +185,20 @@ object canHandleErrorSpec extends Properties {
 
       val fa2    = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val actual =
-        ConcurrentSupport.futureToValueAndTerminate(
-          executorService,
-          waitFor,
-        )(CanHandleError[Future].handleEitherNonFatalWith(fa2)(_ => Future(expected)))
+        futureToValue(CanHandleError[Future].handleEitherNonFatalWith(fa2)(_ => Future(expected)), waitFor)
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
 
     def testCanHandleError_Future_handleEitherNonFatalWithShouldReturnSuccessfulResult: Result = {
 
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
       val expected: Either[SomeError, Int] = Right(1)
 
       val fa     = run[Future, Either[SomeError, Int]](Right(1))
-      val actual = ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
-        waitFor,
-      )(
+      val actual = futureToValue(
         CanHandleError[Future]
-          .handleEitherNonFatalWith(fa)(err => Future(Left(SomeError.someThrowable(err))))
+          .handleEitherNonFatalWith(fa)(err => Future(Left(SomeError.someThrowable(err)))),
+        waitFor,
       )
 
       actual ==== expected
@@ -247,68 +206,43 @@ object canHandleErrorSpec extends Properties {
 
     def testCanHandleError_Future_handleEitherNonFatalWithShouldReturnFailedResult: Result = {
 
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
       val expectedFailure                  = SomeError.message("Failed")
       val expected: Either[SomeError, Int] = Left(expectedFailure)
 
       val fa     = run[Future, Either[SomeError, Int]](Left(expectedFailure))
       val actual =
-        ConcurrentSupport.futureToValueAndTerminate(
-          executorService,
-          waitFor,
-        )(CanHandleError[Future].handleEitherNonFatalWith(fa)(_ => Future(expected)))
+        futureToValue(CanHandleError[Future].handleEitherNonFatalWith(fa)(_ => Future(expected)), waitFor)
 
       actual ==== expected
     }
 
     def testCanHandleError_Future_handleNonFatalShouldHandleNonFatal: Result = {
 
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
       val expectedExpcetion = new RuntimeException("Something's wrong")
       val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
       val expected          = 1
-      val actual            = ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
-        waitFor,
-      )(CanHandleError[Future].handleNonFatal(fa)(_ => expected))
+      val actual            = futureToValue(CanHandleError[Future].handleNonFatal(fa)(_ => expected), waitFor)
 
       actual ==== expected
     }
 
     def testCanHandleError_Future_handleNonFatalShouldReturnSuccessfulResult: Result = {
 
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
       val fa       = run[Future, Int](1)
       val expected = 1
-      val actual   = ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
-        waitFor,
-      )(CanHandleError[Future].handleNonFatal(fa)(_ => 123))
+      val actual   = futureToValue(CanHandleError[Future].handleNonFatal(fa)(_ => 123), waitFor)
 
       actual ==== expected
     }
 
     def testCanHandleError_Future_handleNonFatalEitherShouldHandleNonFatal: Result = {
 
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
       val expectedExpcetion                            = new RuntimeException("Something's wrong")
       val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
 
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val actualFailedResult =
-        ConcurrentSupport.futureToValue(
+        futureToValue(
           CanHandleError[Future].handleNonFatal(fa)(err => Left(SomeError.someThrowable(err))),
           waitFor,
         )
@@ -316,61 +250,40 @@ object canHandleErrorSpec extends Properties {
       val expected: Either[SomeError, Int] = Right(1)
 
       val fa2    = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-      val actual = ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
-        waitFor,
-      )(CanHandleError[Future].handleNonFatal(fa2)(_ => expected))
+      val actual = futureToValue(CanHandleError[Future].handleNonFatal(fa2)(_ => expected), waitFor)
 
       expectedFailedResult ==== actualFailedResult and actual ==== expected
     }
 
     def testCanHandleError_Future_handleNonFatalEitherShouldReturnSuccessfulResult: Result = {
 
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
       val expected: Either[SomeError, Int] = Right(1)
 
       val fa     = run[Future, Either[SomeError, Int]](Right(1))
       val actual =
-        ConcurrentSupport.futureToValueAndTerminate(
-          executorService,
-          waitFor,
-        )(CanHandleError[Future].handleNonFatal(fa)(err => Left(SomeError.someThrowable(err))))
+        futureToValue(CanHandleError[Future].handleNonFatal(fa)(err => Left(SomeError.someThrowable(err))), waitFor)
 
       actual ==== expected
     }
 
     def testCanHandleError_Future_handleNonFatalEitherShouldReturnFailedResult: Result = {
 
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
       val expectedFailure                  = SomeError.message("Failed")
       val expected: Either[SomeError, Int] = Left(expectedFailure)
 
       val fa     = run[Future, Either[SomeError, Int]](Left(expectedFailure))
-      val actual = ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
-        waitFor,
-      )(CanHandleError[Future].handleNonFatal(fa)(_ => Right(1)))
+      val actual = futureToValue(CanHandleError[Future].handleNonFatal(fa)(_ => Right(1)), waitFor)
 
       actual ==== expected
     }
 
     def testCanHandleError_Future_handleEitherNonFatalShouldHandleNonFatal: Result = {
 
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
       val expectedExpcetion                            = new RuntimeException("Something's wrong")
       val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
 
       val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-      val actualFailedResult = ConcurrentSupport.futureToValue(
+      val actualFailedResult = futureToValue(
         CanHandleError[Future].handleEitherNonFatal(fa)(err => Left(SomeError.someThrowable(err))),
         waitFor,
       )
@@ -379,46 +292,32 @@ object canHandleErrorSpec extends Properties {
 
       val fa2    = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
       val actual =
-        ConcurrentSupport.futureToValueAndTerminate(
-          executorService,
-          waitFor,
-        )(CanHandleError[Future].handleEitherNonFatal(fa2)(_ => expected))
+        futureToValue(CanHandleError[Future].handleEitherNonFatal(fa2)(_ => expected), waitFor)
 
       actualFailedResult ==== expectedFailedResult and actual ==== expected
     }
 
     def testCanHandleError_Future_handleEitherNonFatalShouldReturnSuccessfulResult: Result = {
 
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
       val expected: Either[SomeError, Int] = Right(1)
 
       val fa     = run[Future, Either[SomeError, Int]](Right(1))
-      val actual = ConcurrentSupport.futureToValueAndTerminate(
-        executorService,
+      val actual = futureToValue(
+        CanHandleError[Future].handleEitherNonFatal(fa)(err => Left(SomeError.someThrowable(err))),
         waitFor,
-      )(CanHandleError[Future].handleEitherNonFatal(fa)(err => Left(SomeError.someThrowable(err))))
+      )
 
       actual ==== expected
     }
 
     def testCanHandleError_Future_handleEitherNonFatalShouldReturnFailedResult: Result = {
 
-      implicit val executorService: ExecutorService = Executors.newFixedThreadPool(1)
-      implicit val ec: ExecutionContext             =
-        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
-
       val expectedFailure                  = SomeError.message("Failed")
       val expected: Either[SomeError, Int] = Left(expectedFailure)
 
       val fa     = run[Future, Either[SomeError, Int]](Left(expectedFailure))
       val actual =
-        ConcurrentSupport.futureToValueAndTerminate(
-          executorService,
-          waitFor,
-        )(CanHandleError[Future].handleEitherNonFatal(fa)(_ => expected))
+        futureToValue(CanHandleError[Future].handleEitherNonFatal(fa)(_ => expected), waitFor)
 
       actual ==== expected
     }
