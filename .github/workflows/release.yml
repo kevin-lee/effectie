@@ -31,17 +31,8 @@ jobs:
         with:
           java-version: ${{ matrix.scala.java-version }}
           distribution: ${{ matrix.scala.java-distribution }}
-
-      - name: Cache SBT
-        uses: actions/cache@v4.1.2
-        with:
-          path: |
-            ~/.ivy2/cache
-            ~/.cache/coursier
-            ~/.sbt
-          key: ${{ runner.os }}-sbt-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-sbt-${{ matrix.scala.binary-version }}-
+          cache: sbt
+      - uses: sbt/setup-sbt@v1
 
       - name: "[Push] Build All for ${{ matrix.scala.name }} ${{ matrix.scala.version }} - ${{ github.run_number }}"
         if: github.event_name == 'push'
@@ -82,17 +73,8 @@ jobs:
         with:
           java-version: ${{ matrix.scala.java-version }}
           distribution: ${{ matrix.scala.java-distribution }}
-
-      - name: Cache SBT
-        uses: actions/cache@v4.1.2
-        with:
-          path: |
-            ~/.ivy2/cache
-            ~/.cache/coursier
-            ~/.sbt
-          key: ${{ runner.os }}-sbt-${{ matrix.scala.binary-version }}-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-sbt-${{ matrix.scala.binary-version }}-
+          cache: sbt
+      - uses: sbt/setup-sbt@v1
 
       - name: "[Codecov] Report ${{ matrix.scala.name }} ${{ matrix.scala.version }} - ${{ github.run_number }}"
         if: ${{ matrix.scala.report == 'report' }}
@@ -125,17 +107,8 @@ jobs:
       with:
         java-version: ${{ env.GH_JAVA_VERSION }}
         distribution: ${{ env.GH_JAVA_DISTRIBUTION }}
-
-    - name: Cache SBT
-      uses: actions/cache@v4.1.2
-      with:
-        path: |
-          ~/.ivy2/cache
-          ~/.cache/coursier
-          ~/.sbt
-        key: ${{ runner.os }}-sbt-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-sbt
+        cache: sbt
+    - uses: sbt/setup-sbt@v1
 
     - name: sbt GitHub Release
       env:
@@ -162,18 +135,10 @@ jobs:
         with:
           java-version: ${{ env.GH_JAVA_VERSION }}
           distribution: ${{ env.GH_JAVA_DISTRIBUTION }}
-      - uses: olafurpg/setup-gpg@v3
+          cache: sbt
+      - uses: sbt/setup-sbt@v1
 
-      - name: Cache SBT
-        uses: actions/cache@v4.1.2
-        with:
-          path: |
-            ~/.ivy2/cache
-            ~/.cache/coursier
-            ~/.sbt
-          key: ${{ runner.os }}-sbt-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-sbt
+      - uses: olafurpg/setup-gpg@v3
 
       - name: "sbt ci-release - ${{ github.run_number }}"
         if: startsWith(github.ref, 'refs/tags/v')
@@ -212,18 +177,10 @@ jobs:
         with:
           java-version: ${{ env.GH_JAVA_VERSION }}
           distribution: ${{ env.GH_JAVA_DISTRIBUTION }}
-      - uses: olafurpg/setup-gpg@v3
+          cache: sbt
+      - uses: sbt/setup-sbt@v1
 
-      - name: Cache SBT
-        uses: actions/cache@v4.1.2
-        with:
-          path: |
-            ~/.ivy2/cache
-            ~/.cache/coursier
-            ~/.sbt
-          key: ${{ runner.os }}-sbt-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/build.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-sbt
+      - uses: olafurpg/setup-gpg@v3
 
       - name: "sbt ci-release (no tag) - ${{ github.run_number }}"
         if: startsWith(github.ref, 'refs/heads/')
