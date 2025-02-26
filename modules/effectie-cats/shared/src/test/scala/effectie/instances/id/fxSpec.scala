@@ -26,7 +26,7 @@ object fxSpec extends Properties {
   private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
   /* Future */
-  private val futureSpecs = effectie.instances.future.fxSpec.futureSpecs ++
+  private val futureSpecs = effectie.instances.future.fxSpec.futureSpecs(getClass.getName.stripSuffix("$")) ++
     List(
       example(
         "test Fx[Future]catchNonFatalEitherT should catch NonFatal",
