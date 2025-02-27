@@ -20,30 +20,30 @@ import scala.util.Try
 object fxSpec extends Properties {
   implicit private val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
-  override def tests: List[Test] = futureSpecs
+  override def tests: List[Test] = futureSpecs(getClass.getName.stripSuffix("$"))
 
   /* Future */
-  val futureSpecs = List(
-    property("test Fx[Future].effectOf", FutureSpec.testEffectOf),
-    property("test Fx[Future].fromEffect(effectOf)", FutureSpec.testFromEffect),
-    property("test Fx[Future].fromEffect(pureOf)", FutureSpec.testFromEffectWithPure),
-    property("test Fx[Future].pureOf", FutureSpec.testPureOf),
-    property("test Fx[Future].pureOrError(success case)", FutureSpec.testPureOrErrorSuccessCase),
-    example("test Fx[Future].pureOrError(error case)", FutureSpec.testPureOrErrorErrorCase),
-    example("test Fx[Future].unitOf", FutureSpec.testUnitOf),
-    example("test Fx[Future].errorOf", FutureSpec.testErrorOf),
-    property("test fx.pureOfOption[Future]", FutureSpec.testPureOfOption),
-    property("test fx.pureOfSome[Future]", FutureSpec.testPureOfSome),
-    example("test fx.pureOfNone[Future]", FutureSpec.testPureOfNone),
-    property("test fx.pureOfRight[Future]", FutureSpec.testPureOfRight),
-    property("test fx.pureOfLeft[Future]", FutureSpec.testPureOfLeft),
-    property("test Fx[Future].fromEither(Right)", FutureSpec.testFromEitherRightCase),
-    property("test Fx[Future].fromEither(Left)", FutureSpec.testFromEitherLeftCase),
-    property("test Fx[Future].fromOption(Some)", FutureSpec.testFromOptionSomeCase),
-    property("test Fx[Future].fromOption(None)", FutureSpec.testFromOptionNoneCase),
-    property("test Fx[Future].fromTry(Success)", FutureSpec.testFromTrySuccessCase),
-    property("test Fx[Future].fromTry(Failure)", FutureSpec.testFromTryFailureCase),
-    property("test Fx[Future].flatMapFa(Future[A])(A => IO[B])", FutureSpec.testFlatMapFx),
+  def futureSpecs(name: String): List[Test] = List(
+    property(s"from $name: test Fx[Future].effectOf", FutureSpec.testEffectOf),
+    property(s"from $name: test Fx[Future].fromEffect(effectOf)", FutureSpec.testFromEffect),
+    property(s"from $name: test Fx[Future].fromEffect(pureOf)", FutureSpec.testFromEffectWithPure),
+    property(s"from $name: test Fx[Future].pureOf", FutureSpec.testPureOf),
+    property(s"from $name: test Fx[Future].pureOrError(success case)", FutureSpec.testPureOrErrorSuccessCase),
+    example(s"from $name: test Fx[Future].pureOrError(error case)", FutureSpec.testPureOrErrorErrorCase),
+    example(s"from $name: test Fx[Future].unitOf", FutureSpec.testUnitOf),
+    example(s"from $name: test Fx[Future].errorOf", FutureSpec.testErrorOf),
+    property(s"from $name: test fx.pureOfOption[Future]", FutureSpec.testPureOfOption),
+    property(s"from $name: test fx.pureOfSome[Future]", FutureSpec.testPureOfSome),
+    example(s"from $name: test fx.pureOfNone[Future]", FutureSpec.testPureOfNone),
+    property(s"from $name: test fx.pureOfRight[Future]", FutureSpec.testPureOfRight),
+    property(s"from $name: test fx.pureOfLeft[Future]", FutureSpec.testPureOfLeft),
+    property(s"from $name: test Fx[Future].fromEither(Right)", FutureSpec.testFromEitherRightCase),
+    property(s"from $name: test Fx[Future].fromEither(Left)", FutureSpec.testFromEitherLeftCase),
+    property(s"from $name: test Fx[Future].fromOption(Some)", FutureSpec.testFromOptionSomeCase),
+    property(s"from $name: test Fx[Future].fromOption(None)", FutureSpec.testFromOptionNoneCase),
+    property(s"from $name: test Fx[Future].fromTry(Success)", FutureSpec.testFromTrySuccessCase),
+    property(s"from $name: test Fx[Future].fromTry(Failure)", FutureSpec.testFromTryFailureCase),
+    property(s"from $name: test Fx[Future].flatMapFa(Future[A])(A => IO[B])", FutureSpec.testFlatMapFx),
   ) ++
     FutureSpec.testMonadLaws ++
     List(
@@ -280,17 +280,14 @@ object fxSpec extends Properties {
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
       @SuppressWarnings(Array("org.wartremover.warts.Var"))
-      var actual        = before // scalafix:ok DisableSyntax.var
-      val testBefore    = actual ==== before
-      val fromFuture    = Fx[Future].fromEffect(Fx[Future].pureOf({ actual = after; () }))
-      val testAfterFrom = actual ==== before
-//      val testAfterFrom = actual ==== after
+      var actual       = before // scalafix:ok DisableSyntax.var
+      val testBefore   = actual ==== before
+      val fromFuture   = Fx[Future].fromEffect(Fx[Future].pureOf({ actual = after; () }))
       ConcurrentSupport.futureToValueAndTerminate(executorService, waitFor)(fromFuture)
-      val testAfterRun  = actual ==== after
+      val testAfterRun = actual ==== after
       Result.all(
         List(
           testBefore.log("testBefore"),
-          testAfterFrom.log("testAfterFrom"),
           testAfterRun.log("testAfterRun"),
         )
       )
