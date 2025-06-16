@@ -427,7 +427,7 @@ lazy val props =
     )
     final val Scala2Version  = Scala2Versions.head
 
-    final val Scala3Version = "3.0.2"
+    final val Scala3Version = "3.1.3"
 
 //    final val ProjectScalaVersion = "2.12.13"
     final val ProjectScalaVersion = Scala2Version
