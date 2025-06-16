@@ -32,8 +32,6 @@ ThisBuild / scmInfo :=
   )
 ThisBuild / licenses := props.licenses
 
-ThisBuild / resolvers += props.SonatypeSnapshots
-
 ThisBuild / scalafixConfig := (
   if (scalaVersion.value.startsWith("3"))
     ((ThisBuild / baseDirectory).value / ".scalafix-scala3.conf").some
@@ -51,7 +49,6 @@ lazy val effectie = (project in file("."))
     devOopsPackagedArtifacts += s"*/*/*/target/scala-*/${devOopsArtifactNamePrefix.value}*.jar",
   )
   .settings(noPublish)
-  .settings(mavenCentralPublishSettings)
   .aggregate(
     testing4CatsJvm,
 //    testing4CatsJs,
@@ -422,7 +419,7 @@ lazy val props =
     final val RepoName       = "effectie"
 
     final val Scala2Versions = List(
-      "2.13.6",
+      "2.13.7",
       "2.12.13",
     )
     final val Scala2Version  = Scala2Versions.head
@@ -434,11 +431,6 @@ lazy val props =
 //    final val ProjectScalaVersion = Scala3Version
 
     lazy val licenses = List("MIT" -> url("http://opensource.org/licenses/MIT"))
-
-    val SonatypeCredentialHost = "s01.oss.sonatype.org"
-    val SonatypeRepository     = s"https://$SonatypeCredentialHost/service/local"
-
-    val SonatypeSnapshots = "sonatype-snapshots" at s"https://$SonatypeCredentialHost/content/repositories/snapshots"
 
     val removeDottyIncompatible: ModuleID => Boolean =
       m =>
@@ -511,13 +503,6 @@ lazy val libs =
       lazy val extrasConcurrentTesting   = "io.kevinlee" %% "extras-concurrent-testing" % props.ExtrasVersion % Test
     }
   }
-
-lazy val mavenCentralPublishSettings: SettingsDefinition = List(
-  /* Publish to Maven Central { */
-  sonatypeCredentialHost := props.SonatypeCredentialHost,
-  sonatypeRepository := props.SonatypeRepository,
-  /* } Publish to Maven Central */
-)
 
 // scalafmt: off
 def prefixedProjectName(name: String) = s"${props.RepoName}${if (name.isEmpty) "" else s"-$name"}"
@@ -627,7 +612,6 @@ def module(projectName: ProjectName, crossProject: CrossProject.Builder): CrossP
       }),
       /* } Coveralls */
     )
-    .settings(mavenCentralPublishSettings)
 }
 
 lazy val jsSettingsForFuture: SettingsDefinition = List(
