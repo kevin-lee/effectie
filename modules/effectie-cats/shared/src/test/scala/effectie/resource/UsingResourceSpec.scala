@@ -265,12 +265,14 @@ object UsingResourceSpec extends Properties {
           .log("[B] closeStatus does not match"),
       )
 
-      resource
-        .map(_.content ++ content2 ++ content3)
-        .use { content =>
-          actualContent = content
-          Try(())
-        }
+      {
+        val _ = resource
+          .map(_.content ++ content2 ++ content3)
+          .use { content =>
+            actualContent = content
+            Try(())
+          }
+      }
       val after = List(
         (actualContent ==== expectedContent).log("[A] content does not match"),
         (testResource.closeStatus ==== TestableResource.CloseStatus.closed)
