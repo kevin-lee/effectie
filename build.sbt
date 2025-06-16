@@ -419,7 +419,7 @@ lazy val props =
     final val RepoName       = "effectie"
 
     final val Scala2Versions = List(
-      "2.13.7",
+      "2.13.10",
       "2.12.13",
     )
     final val Scala2Version  = Scala2Versions.head
