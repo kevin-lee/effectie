@@ -5,7 +5,6 @@ import cats.data.EitherT
 import cats.effect.IO
 import cats.instances.all.*
 import cats.syntax.all.*
-import effectie.instances.ce2.canHandleError.given
 import effectie.syntax.error.*
 import effectie.syntax.fx.*
 import effectie.instances.ce2.fx.given

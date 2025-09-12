@@ -82,8 +82,8 @@ object syntaxSpec extends Properties {
 
   def testIsWithInInvalid: Property =
     for {
-      tolerance <- Gen.int(Range.linear(0, Int.MaxValue >> 1 - 3)).log("tolerance")
-      base      <- Gen.int(Range.linear(tolerance + 1, Int.MaxValue >> 1 - 2)).log("base")
+      tolerance <- Gen.int(Range.linear(0, (Int.MaxValue >> 1) - 3)).log("tolerance")
+      base      <- Gen.int(Range.linear(tolerance + 1, (Int.MaxValue >> 1) - 2)).log("base")
 
       approx <- Gen
                   .constant(
@@ -125,10 +125,14 @@ object syntaxSpec extends Properties {
         (result, timeSpent) = resultAndTimeSpent
         _ <- effectOf(
                println(
-                 show""">>>        waitFor: $waitFor
-                       |>>>      timeSpent: ${timeSpent.timeSpent.toMillis} milliseconds
-                       |>>>           diff: ${(timeSpent.timeSpent - waitFor).toMillis} milliseconds
-                       |>>> expected range: $approx
+                 show"""         >>> ===================================
+                       |         >>> TimeSource.default[F].withTimeSpent
+                       |         >>> -----------------------------------
+                       |         >>>        waitFor: $waitFor
+                       |         >>>      timeSpent: ${timeSpent.timeSpent.toMillis} milliseconds
+                       |         >>>           diff: ${(timeSpent.timeSpent - waitFor).toMillis} milliseconds
+                       |         >>> expected range: $approx
+                       |         >>>
                        |""".stripMargin
                )
              )

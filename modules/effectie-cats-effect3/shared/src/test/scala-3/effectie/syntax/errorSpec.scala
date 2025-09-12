@@ -8,8 +8,7 @@ import cats.{Functor, Id}
 import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
 import effectie.syntax.fx.*
 import effectie.syntax.error.*
-import effectie.core.FxCtor
-import effectie.instances.ce3.{canCatch, testing}
+import effectie.instances.ce3.testing
 import effectie.testing.types.*
 import effectie.core.Fx
 import effectie.SomeControlThrowable
@@ -1152,7 +1151,6 @@ object CanHandleErrorSyntaxSpec {
     effectOf[F](a)
 
   object IoSpec {
-    import effectie.instances.ce3.canHandleError.ioCanHandleError
     import effectie.instances.ce3.fx.given
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = withIO { implicit ticker =>
@@ -2883,7 +2881,6 @@ object CanRecoverSyntaxSpec {
     effectOf[F](a)
 
   object IOSpec {
-    import effectie.instances.ce3.canRecover.given
     import effectie.instances.ce3.fx.given
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
@@ -3410,8 +3407,7 @@ object CanRecoverSyntaxSpec {
     import scala.concurrent.duration.*
     import scala.concurrent.{ExecutionContext, Future}
     import scala.util.control.NonFatal
-    import effectie.instances.future.fx._
-    import effectie.instances.future.canRecover._
+    import effectie.instances.future.fx.*
 
     private given errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 

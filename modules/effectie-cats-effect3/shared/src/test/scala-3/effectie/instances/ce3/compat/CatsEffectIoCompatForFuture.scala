@@ -1,7 +1,5 @@
 package effectie.instances.ce3.compat
 
-import cats.effect.*
-import cats.effect.unsafe.IORuntime
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.ErrorLogger
 

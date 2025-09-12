@@ -6,17 +6,15 @@ import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import cats.instances.all.*
 import cats.syntax.all.*
+import effectie.SomeControlThrowable
 import effectie.core.*
-import effectie.instances.ce3.fxCtor.*
-import effectie.instances.ce3.canRecover.*
+import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
 import effectie.syntax.error.*
 import effectie.syntax.fx.*
-import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
 import effectie.testing.types.SomeError
-import effectie.SomeControlThrowable
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
-import extras.hedgehog.ce3.syntax.runner._
+import extras.hedgehog.ce3.syntax.runner.*
 import hedgehog.*
 import hedgehog.runner.*
 
@@ -313,7 +311,6 @@ object canRecoverSpec extends Properties {
 
   object IoSpec {
     import effectie.instances.ce3.fx.given
-    import effectie.instances.ce3.canRecover.given
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
@@ -821,12 +818,13 @@ object canRecoverSpec extends Properties {
   }
 
   object FutureSpec {
+    import effectie.instances.future.canRecover.*
+    import effectie.instances.future.fxCtor.*
+
     import java.util.concurrent.{ExecutorService, Executors}
     import scala.concurrent.duration.*
     import scala.concurrent.{ExecutionContext, Future}
     import scala.util.control.NonFatal
-    import effectie.instances.future.fxCtor.*
-    import effectie.instances.future.canRecover._
 
     private given errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
@@ -987,8 +985,8 @@ object canRecoverSpec extends Properties {
   }
 
   object IdSpec {
-    import effectie.instances.id.fxCtor.*
     import effectie.instances.id.canRecover.*
+    import effectie.instances.id.fxCtor.*
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 

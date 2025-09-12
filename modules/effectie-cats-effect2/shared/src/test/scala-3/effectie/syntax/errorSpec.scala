@@ -7,7 +7,7 @@ import cats.syntax.all.*
 import effectie.SomeControlThrowable
 import effectie.syntax.fx.*
 import effectie.syntax.error.*
-import effectie.core.{Fx, FxCtor}
+import effectie.core.Fx
 import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
@@ -1116,7 +1116,6 @@ object CanHandleErrorSyntaxSpec {
 
   object IoSpec {
 
-    import effectie.instances.ce2.canHandleError.ioCanHandleError
     import effectie.instances.ce2.fx.given
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = {
@@ -2800,7 +2799,6 @@ object CanRecoverSyntaxSpec {
     effectOf[F](a)
 
   object IOSpec {
-    import effectie.instances.ce2.canRecover.given
     import effectie.instances.ce2.fx.given
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
@@ -3912,7 +3910,6 @@ object CanRecoverSyntaxSpec {
   }
 
   object IdSpec {
-    import effectie.instances.ce2.canRecover.given
     import effectie.instances.id.fx.*
 
     def testCanRecover_Id_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {

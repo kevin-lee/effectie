@@ -4,9 +4,7 @@ import cats.effect.IO
 import cats.MonadThrow
 import effectie.core.FxCtor
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
-import scala.util.control.NonFatal
 
 object fxCtor {
 

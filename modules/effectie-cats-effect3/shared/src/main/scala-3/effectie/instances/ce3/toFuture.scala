@@ -3,7 +3,7 @@ package effectie.instances.ce3
 import cats.effect.*
 import effectie.core.ToFuture
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 /** @author Kevin Lee
   * @since 2020-09-23

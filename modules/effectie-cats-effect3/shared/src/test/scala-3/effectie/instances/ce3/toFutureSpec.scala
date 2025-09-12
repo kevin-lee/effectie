@@ -2,8 +2,6 @@ package effectie.instances.ce3
 
 import cats.Id
 import cats.effect.*
-import cats.effect.unsafe.IORuntime
-import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
 import effectie.instances.ce3.toFuture.given
 import effectie.core.ToFuture
 import extras.concurrent.testing.ConcurrentSupport
@@ -41,8 +39,8 @@ object toFutureSpec extends Properties {
       val fa       = IO(expected)
 
       given es: ExecutorService  = ConcurrentSupport.newExecutorService(2)
-      given ec: ExecutionContext =
-        ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
+//      given ec: ExecutionContext =
+//        ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
 
       ConcurrentSupport.runAndShutdown(es, WaitFor(800.milliseconds)) {
         given ticket: Ticker = Ticker.withNewTestContext()
