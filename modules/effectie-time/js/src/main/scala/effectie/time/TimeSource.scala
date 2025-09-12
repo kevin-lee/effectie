@@ -4,9 +4,8 @@ import cats._
 import cats.syntax.all._
 import effectie.core._
 import effectie.syntax.all._
-import effectie.time.TimeSource.TimeSpent
 
-import scala.scalajs.js.Date
+import java.time.Instant
 import scala.concurrent.duration.{FiniteDuration, MILLISECONDS, NANOSECONDS, SECONDS, TimeUnit}
 
 /** @author Kevin Lee
@@ -17,7 +16,7 @@ trait TimeSource[F[*]] {
 
   def name: String
 
-  def currentTime(): F[Date]
+  def currentTime(): F[Instant]
 
   def realTimeTo(unit: TimeUnit): F[FiniteDuration]
 
@@ -27,12 +26,12 @@ trait TimeSource[F[*]] {
 
   def monotonic: F[FiniteDuration]
 
-  def timeSpent[A](fa: => F[A]): F[(A, TimeSpent)] =
+  def timeSpent[A](fa: => F[A]): F[(A, TimeSource.TimeSpent)] =
     for {
       start <- monotonic
       a     <- fa
       end   <- monotonic
-    } yield (a, TimeSpent(end - start))
+    } yield (a, TimeSource.TimeSpent(end - start))
 
   override def toString: String = s"TimeSource(name=$name)"
 }

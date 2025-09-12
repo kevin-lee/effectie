@@ -3,16 +3,15 @@ package effectie.instances.ce3
 import cats.Id
 import cats.effect.*
 import cats.effect.unsafe.IORuntime
-import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
-import effectie.instances.ce3.fromFuture.given
 import effectie.core.FromFuture
 import effectie.core.FromFuture.FromFutureToIdTimeout
+import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
+import effectie.instances.ce3.fromFuture.given
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog.*
 import hedgehog.runner.*
 
-import java.util.concurrent.ExecutorService
 import scala.concurrent.duration.*
 import scala.concurrent.{ExecutionContext, Future}
 

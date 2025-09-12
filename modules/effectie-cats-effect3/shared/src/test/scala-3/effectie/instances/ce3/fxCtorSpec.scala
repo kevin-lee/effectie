@@ -1,16 +1,8 @@
 package effectie.instances.ce3
 
-import cats.Id
 import cats.effect.*
-import cats.effect.unsafe.IORuntime
-import effectie.core.FxCtor
-import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
 import effectie.instances.ce3.fxCtor.given
-import effectie.specs.fxCtorSpec.{FxCtorSpecs, IdSpecs}
-import effectie.testing.tools
-import effectie.testing.types.SomeThrowableError
-import extras.concurrent.testing.ConcurrentSupport
-import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
+import effectie.specs.fxCtorSpec.FxCtorSpecs
 import extras.hedgehog.ce3.syntax.runner.*
 import hedgehog.*
 import hedgehog.runner.*

@@ -37,8 +37,8 @@ object toFutureSpec extends Properties {
       val fa = IO(a)
 
       given es: ExecutorService  = ConcurrentSupport.newExecutorService(2)
-      given ec: ExecutionContext =
-        ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
+//      given ec: ExecutionContext =
+//        ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
       ConcurrentSupport.runAndShutdown(es, WaitFor(800.milliseconds)) {
         val future   = ToFuture[IO].unsafeToFuture(fa)
         val expected = a

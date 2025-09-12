@@ -5,24 +5,20 @@ import cats.effect.*
 import cats.effect.unsafe.IORuntime
 import cats.instances.either.*
 import cats.syntax.all.*
-import cats.{Eq, Functor, Id, Monad, Show}
+import cats.{Eq, Functor, Show}
+import effectie.SomeControlThrowable
+import effectie.core.Fx
 import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
 import effectie.instances.ce3.fx.given
+import effectie.specs.fxSpec.FxSpecs
 import effectie.syntax.error.*
-import effectie.syntax.fx.*
-import effectie.testing.tools.*
 import effectie.testing.types.{SomeError, SomeThrowableError}
-import effectie.core.Fx
-import effectie.SomeControlThrowable
-import effectie.specs.fxSpec.{FxSpecs, IdSpecs}
 import extras.concurrent.testing.ConcurrentSupport
-import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
-import extras.hedgehog.ce3.syntax.runner._
+import extras.hedgehog.ce3.syntax.runner.*
 import hedgehog.*
 import hedgehog.runner.*
 
 import java.util.concurrent.ExecutorService
-import scala.concurrent.Await
 import scala.util.control.{ControlThrowable, NonFatal}
 
 /** @author Kevin Lee
@@ -594,9 +590,6 @@ object FxSpec extends Properties {
 
       def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = withIO { implicit ticker =>
 
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
-
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
         val expected          = expectedExpcetion.asLeft[Int]
@@ -628,18 +621,12 @@ object FxSpec extends Properties {
 
       def testCanCatch_IO_catchNonFatalThrowableShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
-
         val fa: IO[Int] = run[IO, Int](1)
         val expected    = 1.asRight[Throwable]
         Fx[IO].catchNonFatalThrowable(fa).completeAs(expected)
       }
 
       def testCanCatch_IO_catchNonFatalShouldCatchNonFatal: Result = withIO { implicit ticker =>
-
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
@@ -672,9 +659,6 @@ object FxSpec extends Properties {
 
       def testCanCatch_IO_catchNonFatalShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
-
         val fa: IO[Int] = run[IO, Int](1)
         val expected    = 1.asRight[SomeError]
         val actual      = Fx[IO].catchNonFatal(fa)(SomeError.someThrowable)
@@ -683,9 +667,6 @@ object FxSpec extends Properties {
       }
 
       def testCanCatch_IO_catchNonFatalEitherShouldCatchNonFatal: Result = withIO { implicit ticker =>
-
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa       = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -719,9 +700,6 @@ object FxSpec extends Properties {
 
       def testCanCatch_IO_catchNonFatalEitherShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
-
         val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
         val expected = 1.asRight[SomeError]
         val actual   = Fx[IO].catchNonFatalEither(fa)(SomeError.someThrowable)
@@ -730,9 +708,6 @@ object FxSpec extends Properties {
       }
 
       def testCanCatch_IO_catchNonFatalEitherShouldReturnFailedResult: Result = withIO { implicit ticker =>
-
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
 
         val expectedFailure = SomeError.message("Failed")
         val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
@@ -743,9 +718,6 @@ object FxSpec extends Properties {
       }
 
       def testCanCatch_IO_catchNonFatalEitherTShouldCatchNonFatal: Result = withIO { implicit ticker =>
-
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
 
         val expectedExpcetion = new RuntimeException("Something's wrong")
         val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
@@ -779,9 +751,6 @@ object FxSpec extends Properties {
 
       def testCanCatch_IO_catchNonFatalEitherTShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
-
         val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
         val expected = 1.asRight[SomeError]
         val actual   = Fx[IO].catchNonFatalEitherT(fa)(SomeError.someThrowable).value
@@ -790,9 +759,6 @@ object FxSpec extends Properties {
       }
 
       def testCanCatch_IO_catchNonFatalEitherTShouldReturnFailedResult: Result = withIO { implicit ticker =>
-
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
 
         val expectedFailure = SomeError.message("Failed")
         val fa              = EitherT(run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int]))

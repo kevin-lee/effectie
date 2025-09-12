@@ -21,6 +21,19 @@ object RandomGens {
 
   def genRandomInt(): Int = genRandomIntWithMinMax(0, Int.MaxValue)
 
+  def genRandomLongWithMinMax(min: Long, max: Long): Long = {
+    if (min > max) {
+      throw new IllegalArgumentException(s"min ($min) must be less than or equal to max ($max)")
+    } else {
+      val bound = max - min + 1L
+      if (bound <= Long.MaxValue) {
+        Random.nextLong(bound) + min
+      } else {
+        (Random.nextLong() & Long.MaxValue) + min
+      }
+    }
+  }
+
   def genAlphaString(length: Int): String =
     (1 to length).map(_ => AlphaChars(Random.nextInt(AlphaChars.length))).mkString
 

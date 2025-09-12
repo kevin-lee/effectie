@@ -1,10 +1,9 @@
 package effectie.instances.ce2
 
-import cats.Id
 import cats.effect.*
 import effectie.core.ToFuture
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 /** @author Kevin Lee
   * @since 2020-09-23

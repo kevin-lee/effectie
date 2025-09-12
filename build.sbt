@@ -192,6 +192,12 @@ lazy val timeJs  = time
   .js
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
+  .settings(
+    libraryDependencies ++= List(
+      libs.scalaJavaTime.value,
+      libs.tests.scalaJsMacrotaskExecutor.value,
+    )
+  )
 
 lazy val timeCatsEffect2    = module(ProjectName("time-cats-effect2"), crossProject(JVMPlatform, JSPlatform))
   .settings(
@@ -229,6 +235,12 @@ lazy val timeCatsEffect2Js  = timeCatsEffect2
   .js
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
+  .settings(
+    libraryDependencies ++= List(
+      libs.scalaJavaTime.value,
+      libs.tests.scalaJsMacrotaskExecutor.value,
+    )
+  )
 
 lazy val timeCatsEffect3    = module(ProjectName("time-cats-effect3"), crossProject(JVMPlatform, JSPlatform))
   .settings(
@@ -251,6 +263,12 @@ lazy val timeCatsEffect3Js  = timeCatsEffect3
   .js
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
+  .settings(
+    libraryDependencies ++= List(
+      libs.scalaJavaTime.value,
+      libs.tests.scalaJsMacrotaskExecutor.value,
+    )
+  )
 
 lazy val catsEffect2    = module(ProjectName("cats-effect2"), crossProject(JVMPlatform, JSPlatform))
   .settings(
@@ -480,6 +498,9 @@ lazy val props =
     final val ExtrasVersion = "0.25.0"
 
     val ScalaJsMacrotaskExecutorVersion = "1.1.1"
+
+    val ScalaJavaTimeVersion = "2.6.0"
+
   }
 
 lazy val libs =
@@ -517,6 +538,8 @@ lazy val libs =
 
     lazy val extrasConcurrent        = Def.setting("io.kevinlee" %%% "extras-concurrent" % props.ExtrasVersion)
     lazy val extrasConcurrentTesting = Def.setting("io.kevinlee" %%% "extras-concurrent-testing" % props.ExtrasVersion)
+
+    lazy val scalaJavaTime = Def.setting("io.github.cquiroz" %%% "scala-java-time" % props.ScalaJavaTimeVersion)
 
     lazy val tests = new {
       lazy val extrasHedgehogCatsEffect3 =
@@ -652,5 +675,6 @@ lazy val jsSettingsForFuture: SettingsDefinition = List.empty
 
 lazy val jsSettings: SettingsDefinition = List(
   crossScalaVersions := props.CrossScalaVersions.filterNot(_.startsWith("2.12")),
-  Test / fork := false
+  Test / fork := false,
+  coverageEnabled := false,
 )
