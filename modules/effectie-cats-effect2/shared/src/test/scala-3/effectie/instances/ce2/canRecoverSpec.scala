@@ -5,8 +5,7 @@ import cats.data.EitherT
 import cats.effect.IO
 import cats.instances.all.*
 import cats.syntax.all.*
-import effectie.core.{Fx, CanRecover}
-import effectie.instances.ce2.canRecover.given
+import effectie.core.CanRecover
 import effectie.instances.ce2.fx.given
 import effectie.syntax.error.*
 import effectie.syntax.fx.*

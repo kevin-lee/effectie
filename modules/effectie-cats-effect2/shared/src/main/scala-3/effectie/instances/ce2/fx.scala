@@ -1,10 +1,8 @@
 package effectie.instances.ce2
 
-import cats.effect.{IO, Sync}
-import cats.{Applicative, Id, Monad}
+import cats.effect.IO
 import effectie.core.{Fx, FxCtor}
 
-import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 object fx {

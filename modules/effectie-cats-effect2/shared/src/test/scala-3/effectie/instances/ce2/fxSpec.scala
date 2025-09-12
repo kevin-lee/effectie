@@ -3,7 +3,7 @@ package effectie.instances.ce2
 import cats.data.EitherT
 import cats.effect.*
 import cats.syntax.all.*
-import cats.{Eq, Functor, Id, Monad}
+import cats.{Eq, Functor}
 import effectie.core.Fx
 import effectie.instances.ce2.fx.given
 import effectie.{SomeControlThrowable, specs}
@@ -11,13 +11,10 @@ import effectie.specs.MonadSpec
 import effectie.specs.fxSpec.FxSpecs
 import effectie.syntax.error.*
 import effectie.testing.tools
-import effectie.testing.types.{SomeError, SomeThrowableError}
-import extras.concurrent.testing.ConcurrentSupport
-import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
+import effectie.testing.types.SomeError
 import hedgehog.*
 import hedgehog.runner.*
 
-import scala.concurrent.Await
 import scala.util.control.{ControlThrowable, NonFatal}
 
 /** @author Kevin Lee
@@ -380,7 +377,7 @@ object FxSpec extends Properties {
       given eqIo: Eq[IO[Int]] =
         (x, y) => x.flatMap(xx => y.map(_ === xx)).unsafeRunSync()
 
-      given ioFx: Fx[IO] = fx.ioFx
+//      given ioFx: Fx[IO] = fx.ioFx
 
       MonadSpec.testMonadLaws[IO]("IO")
     }

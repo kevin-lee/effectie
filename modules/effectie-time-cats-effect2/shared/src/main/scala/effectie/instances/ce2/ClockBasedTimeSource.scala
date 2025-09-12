@@ -11,7 +11,7 @@ import scala.concurrent.duration.{FiniteDuration, MILLISECONDS, NANOSECONDS, Tim
 /** @author Kevin Lee
   * @since 2024-01-09
   */
-trait ClockBasedTimeSource[F[*]] extends TimeSource[F] {
+trait ClockBasedTimeSource[F[*]] extends TimeSource[F] with ClockBased {
 
   def clock: Clock[F]
 

@@ -1,11 +1,10 @@
 package effectie.instances.ce2
 
-import cats.{Id, MonadThrow}
+import cats.MonadThrow
 import cats.effect.IO
 import effectie.core.FxCtor
 
 import scala.util.Try
-import scala.util.control.NonFatal
 
 object fxCtor {
 

@@ -10,8 +10,6 @@ import effectie.SomeControlThrowable
 import effectie.core.*
 import effectie.syntax.error.*
 import effectie.syntax.fx.*
-import effectie.instances.ce3.fxCtor.*
-import effectie.instances.ce3.canCatch.*
 import effectie.testing.types.SomeError
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
