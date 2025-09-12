@@ -1,12 +1,7 @@
 package effectie.instances.ce2
 
-import cats.Id
-import cats.data.EitherT
 import cats.effect.IO
 import effectie.core.CanHandleError
-
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.control.NonFatal
 
 /** @author Kevin Lee
   * @since 2020-08-17

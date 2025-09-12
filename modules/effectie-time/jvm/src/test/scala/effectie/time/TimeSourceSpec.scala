@@ -20,8 +20,8 @@ object TimeSourceSpec extends Properties {
 
   override def tests: List[Test] = List(
     example("test Show[TimeSource]", testShowTimeSource),
-    example("example test realTime and monotonic", testRealTimeAndMonotonicExample),
-    property("property test realTime and monotonic", testRealTimeAndMonotonicProperty),
+    example("example test TimeSource[F].realTime and TimeSource[F].monotonic", testRealTimeAndMonotonicExample),
+    property("property test TimeSource[F].realTime and TimeSource[F].monotonic", testRealTimeAndMonotonicProperty),
     example("test default TimeSource - realTime", testDefaultTimeSourceRealTime),
     example("test default TimeSource - monotonic", testDefaultTimeSourceMonotonic),
     property("test default TimeSource - timeSpent", testDefaultTimeSourceTimeSpent).withTests(count = 5),
@@ -206,10 +206,14 @@ object TimeSourceSpec extends Properties {
         (result, timeSpent) = resultAndTimeSpent
         _ <- effectOf(
                println(
-                 s""">>>   waitFor: ${waitFor.show}
-                    |>>> timeSpent: ${timeSpent.timeSpent.toMillis.show} milliseconds
-                    |>>>      diff: ${(timeSpent.timeSpent - waitFor).toMillis.show} milliseconds
-                    |""".stripMargin
+                 show"""         >>> ===============================
+                       |         >>> TimeSource.default[F].timeSpent
+                       |         >>> -------------------------------
+                       |         >>>   waitFor: $waitFor
+                       |         >>> timeSpent: ${timeSpent.timeSpent.toMillis} milliseconds
+                       |         >>>      diff: ${(timeSpent.timeSpent - waitFor).toMillis} milliseconds
+                       |         >>>
+                       |""".stripMargin
                )
              )
       } yield {

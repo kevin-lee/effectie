@@ -13,7 +13,7 @@ object ApproxFiniteDuration {
 
   implicit val approxFiniteDurationShow: Show[ApproxFiniteDuration] = {
     case ApproxFiniteDuration(base, tolerance) =>
-      s"(${(base.minus(tolerance)).toString} to ${(base.plus(tolerance)).toString})"
+      s"(${(base.minus(tolerance)).toString} ~ ${(base.plus(tolerance)).toString})"
 
   }
 

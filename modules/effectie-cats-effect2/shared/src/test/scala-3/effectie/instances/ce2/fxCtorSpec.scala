@@ -1,11 +1,8 @@
 package effectie.instances.ce2
 
-import cats.Id
 import cats.effect.*
 import effectie.instances.ce2.fxCtor.given
-import effectie.core.FxCtor
 import effectie.testing.tools
-import effectie.testing.types.SomeThrowableError
 
 import effectie.specs.fxCtorSpec.FxCtorSpecs
 import effectie.specs

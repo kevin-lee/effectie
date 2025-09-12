@@ -6,11 +6,8 @@ import cats.effect.IO
 import cats.effect.unsafe.IORuntime
 import cats.instances.all.*
 import cats.syntax.all.*
-import effectie.syntax.fx.*
 import effectie.testing.types.SomeError
 import effectie.core.*
-import effectie.instances.ce3.fxCtor.*
-import effectie.instances.ce3.canHandleError.*
 import effectie.syntax.error.*
 import effectie.syntax.fx.*
 import effectie.SomeControlThrowable
@@ -314,7 +311,6 @@ object canHandleErrorSpec extends Properties {
 
   object IoSpec {
     import effectie.instances.ce3.fx.given
-    import effectie.instances.ce3.canHandleError.ioCanHandleError
 
     def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = withIO { implicit ticker =>
 

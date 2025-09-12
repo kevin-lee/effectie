@@ -3,10 +3,9 @@ package effectie.syntax
 import cats.*
 import cats.data.EitherT
 import cats.syntax.all.*
-import effectie.SomeControlThrowable
 import effectie.core._
 import effectie.syntax.error.*
-import effectie.syntax.fx.{*, given}
+import effectie.syntax.fx.*
 import effectie.testing.types.{SomeError, SomeThrowableError}
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}

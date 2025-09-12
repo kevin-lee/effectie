@@ -2,10 +2,8 @@ package effectie.instances.ce3
 
 import cats.effect.IO
 import effectie.core.FromFuture
-import effectie.core.FromFuture.FromFutureToIdTimeout
 
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 
 /** @author Kevin Lee
   * @since 2020-09-22

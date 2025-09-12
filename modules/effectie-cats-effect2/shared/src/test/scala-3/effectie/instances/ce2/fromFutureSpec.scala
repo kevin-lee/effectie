@@ -5,14 +5,11 @@ import cats.effect.*
 import effectie.core.FromFuture
 import effectie.core.FromFuture.FromFutureToIdTimeout
 import effectie.instances.ce2.compat.CatsEffectIoCompatForFuture
-import effectie.instances.ce2.fromFuture.given
-import effectie.instances.future.fromFuture
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog.*
 import hedgehog.runner.*
 
-import java.util.concurrent.ExecutorService
 import scala.concurrent.duration.*
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -29,7 +26,7 @@ object fromFutureSpec extends Properties {
   )
 
   object IoSpec {
-    import effectie.instances.ce2.fromFuture.*
+    import effectie.instances.ce2.fromFuture.given
 
     def testToEffect: Property = for {
       a <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("a")
