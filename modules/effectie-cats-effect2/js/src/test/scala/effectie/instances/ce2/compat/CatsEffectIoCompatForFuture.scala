@@ -2,10 +2,7 @@ package effectie.instances.ce2.compat
 
 import cats.effect._
 import effectie.testing.FutureTools
-import extras.concurrent.testing.ConcurrentSupport
-import extras.concurrent.testing.types.ErrorLogger
 
-import java.util.concurrent.ExecutorService
 import scala.concurrent.ExecutionContext
 
 /** @author Kevin Lee

@@ -15,7 +15,6 @@ import munit.Assertions
 
 import scala.concurrent._
 import scala.concurrent.duration._
-import scala.util.{Failure, Success}
 
 /** @author Kevin Lee
   * @since 2020-07-31
@@ -32,7 +31,7 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
 
   def run[F[*]: FxCtor, A](a: => A): F[A] = effectOf[F](a)
 
-  test("test CanCatch[IO]catchNonFatalThrowable should catch NonFatal") {
+  test("test CanCatch[IO].catchNonFatalThrowable should catch NonFatal") {
 
     val expectedExpcetion = new RuntimeException("Something's wrong")
 
@@ -48,28 +47,27 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
 
   }
 
-  test("test CanCatch[IO]catchNonFatalThrowable should not catch Fatal") {
-
+  test("test CanCatch[IO].catchNonFatalThrowable should not catch Fatal") {
     val fatalExpcetion = SomeControlThrowable("Something's wrong")
     val fa             = run[IO, Int](throwThrowable[Int](fatalExpcetion))
 
-    CanCatch[IO]
-      .catchNonFatalThrowable(fa)
-      .unsafeToFuture()
-      .transform {
-        case Success(actual) =>
-          Success(Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}"))
+    try {
+      CanCatch[IO]
+        .catchNonFatalThrowable(fa)
+        .map { actual =>
+          Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+        }
+        .unsafeToFuture()
+    } catch {
+      case ex: SomeControlThrowable =>
+        Assertions.assertEquals(ex.getMessage, fatalExpcetion.getMessage)
 
-        case Failure(ex: SomeControlThrowable) =>
-          Success(Assertions.assertEquals(ex.getMessage, fatalExpcetion.getMessage))
-
-        case Failure(ex: Throwable) =>
-          Success(Assertions.fail(s"Unexpected Throwable: ${ex.toString}"))
-      }
-
+      case ex: Throwable =>
+        Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
+    }
   }
 
-  test("test CanCatch[IO]catchNonFatalThrowable should return the successful result") {
+  test("test CanCatch[IO].catchNonFatalThrowable should return the successful result") {
 
     val fa       = run[IO, Int](1)
     val expected = 1.asRight[Throwable]
@@ -102,18 +100,20 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
     val fatalExpcetion = SomeControlThrowable("Something's wrong")
     val fa             = run[IO, Int](throwThrowable[Int](fatalExpcetion))
 
-    CanCatch[IO]
-      .catchNonFatal(fa)(SomeError.someThrowable)
-      .unsafeToFuture()
-      .transform {
-        case Success(actual) =>
-          Success(Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}"))
-        case Failure(ex: SomeControlThrowable) =>
-          Success(Assertions.assertEquals(ex.getMessage, fatalExpcetion.getMessage))
+    try {
+      CanCatch[IO]
+        .catchNonFatal(fa)(SomeError.someThrowable)
+        .map { actual =>
+          Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+        }
+        .unsafeToFuture()
+    } catch {
+      case ex: SomeControlThrowable =>
+        Assertions.assertEquals(ex.getMessage, fatalExpcetion.getMessage)
 
-        case Failure(ex: Throwable) =>
-          Success(Assertions.fail(s"Unexpected Throwable: ${ex.toString}"))
-      }
+      case ex: Throwable =>
+        Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
+    }
 
   }
 
@@ -151,18 +151,20 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
     val fatalExpcetion = SomeControlThrowable("Something's wrong")
     val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
 
-    CanCatch[IO]
-      .catchNonFatalEither(fa)(SomeError.someThrowable)
-      .unsafeToFuture()
-      .transform {
-        case Success(actual) =>
-          Success(Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}"))
-        case Failure(ex: SomeControlThrowable) =>
-          Success(Assertions.assertEquals(ex.getMessage, fatalExpcetion.getMessage))
+    try {
+      CanCatch[IO]
+        .catchNonFatalEither(fa)(SomeError.someThrowable)
+        .map { actual =>
+          Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+        }
+        .unsafeToFuture()
+    } catch {
+      case ex: SomeControlThrowable =>
+        Assertions.assertEquals(ex.getMessage, fatalExpcetion.getMessage)
 
-        case Failure(ex: Throwable) =>
-          Success(Assertions.fail(s"Unexpected Throwable: ${ex.toString}"))
-      }
+      case ex: Throwable =>
+        Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
+    }
 
   }
 
@@ -203,6 +205,7 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
 
     CanCatch[IO]
       .catchNonFatalEitherT(fa)(SomeError.someThrowable)
+      .value
       .map { actual =>
         Assertions.assertEquals(actual, expected)
       }
@@ -215,19 +218,21 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
     val fatalExpcetion = SomeControlThrowable("Something's wrong")
     val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
 
-    CanCatch[IO]
-      .catchNonFatalEitherT(fa)(SomeError.someThrowable)
-      .value
-      .unsafeToFuture()
-      .transform {
-        case Success(actual) =>
-          Success(Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}"))
-        case Failure(ex: SomeControlThrowable) =>
-          Success(Assertions.assertEquals(ex.getMessage, fatalExpcetion.getMessage))
+    try {
+      CanCatch[IO]
+        .catchNonFatalEitherT(fa)(SomeError.someThrowable)
+        .value
+        .map { actual =>
+          Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+        }
+        .unsafeToFuture()
+    } catch {
+      case ex: SomeControlThrowable =>
+        Assertions.assertEquals(ex.getMessage, fatalExpcetion.getMessage)
 
-        case Failure(ex: Throwable) =>
-          Success(Assertions.fail(s"Unexpected Throwable: ${ex.toString}"))
-      }
+      case ex: Throwable =>
+        Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
+    }
 
   }
 
