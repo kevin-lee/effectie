@@ -18,7 +18,7 @@ trait ReleasableResourceApplicativeForMunit {
     toF: Unit => F[Unit],
   ): F[Unit] = {
     val n        = RandomGens.genRandomIntWithMinMax(Int.MinValue, Int.MaxValue)
-    val f        = genF()
+    val f        = genA()
     val resource = ctor(n)
     val expected = f(n)
     mapF[ReleasableResource[F, *]](resource)(f)
@@ -31,7 +31,7 @@ trait ReleasableResourceApplicativeForMunit {
     toF: Unit => F[Unit],
   ): F[Unit] = {
     val n        = RandomGens.genRandomIntWithMinMax(Int.MinValue, Int.MaxValue)
-    val f        = genF()
+    val f        = genA()
     val resource = ctor(n)
     val expected = f(n)
     apF[ReleasableResource[F, *]](ResourceMaker[F].pure(f))(resource)
@@ -44,7 +44,7 @@ trait ReleasableResourceApplicativeForMunit {
 
   val int2IntList: List[Int => Int] = List(_ * 2, _ + 100, _ / 2)
 
-  def genF(): Int => Int = int2IntList(scala.util.Random.nextInt(int2IntList.length))
+  def genA(): Int => Int = int2IntList(scala.util.Random.nextInt(int2IntList.length))
 
   def mapF[G[*]: Applicative](r: G[Int])(f: Int => Int) = r.map(f)
 

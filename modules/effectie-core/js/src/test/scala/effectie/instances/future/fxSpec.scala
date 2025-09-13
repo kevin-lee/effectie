@@ -1,8 +1,11 @@
 package effectie.instances.future
 
+import cats.Monad
 import cats.syntax.all._
 import effectie.core.Fx
+import effectie.specs.MonadSpec4Js
 import effectie.testing.FutureTools
+import effectie.testing.cats.LawsF.EqF
 //import effectie.testing.cats.MonadSpec
 import effectie.instances.future.fx.futureFx
 import effectie.testing.types.{SomeError, SomeThrowableError}
@@ -306,24 +309,29 @@ class fxSpec extends munit.FunSuite with FutureTools {
 
   }
 
-//  def testMonadLaws: List[Test] = {
-//
-////      implicit val ec: scala.concurrent.ExecutionContext             = scala.concurrent.ExecutionContext.global
+//      implicit val ec: scala.concurrent.ExecutionContext             = scala.concurrent.ExecutionContext.global
 //    implicit val ec: ExecutionContext = globalExecutionContext
-//
+
 //    implicit def futureEqual[A](implicit EQ: Eq[A]): Eq[Future[A]] = new Eq[Future[A]] {
 //      override def eqv(x: Future[A], y: Future[A]): Boolean =
 //        futureToValue(x.flatMap(a => y.map(b => EQ.eqv(a, b))), WaitFor(1.second))
 //    }
-//
-////      implicit val eqFuture: Eq[Future[Int]] =
-////        (x, y) => {
-////          val future = x.flatMap(xx => y.map(_ === xx))
-////          Await.result(future, waitFor.waitFor)
-////        }
-//
-//    MonadSpec.testAllLaws[Future]("Fx[Future]")
-//  }
+
+  implicit def eqF[F[*]: Monad]: EqF[F, Int] =
+    (a, b) => a.flatMap(aVal => b.map(aVal === _))
+
+//      implicit val eqFuture: Eq[Future[Int]] =
+//        (x, y) => {
+//          val future = x.flatMap(xx => y.map(_ === xx))
+//          Await.result(future, waitFor.waitFor)
+//        }
+
+  MonadSpec4Js.testAllLaws[Future]("Fx[Future]").foreach {
+    case (name, testF) =>
+      test(name) {
+        testF()
+      }
+  }
 
 //      import java.util.concurrent.{ Executors}
   import scala.concurrent.Future

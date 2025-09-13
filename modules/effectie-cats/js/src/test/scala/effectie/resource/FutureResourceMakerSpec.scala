@@ -18,7 +18,7 @@ class FutureResourceMakerSpec extends munit.FunSuite with FutureTools {
 
   override val munitTimeout: FiniteDuration = 200.milliseconds
 
-  test("test ResourceMaker.futureResourceMaker: ResourceMaker[Future]") {
+  test("test ResourceMaker.futureResourceMaker: ResourceMaker[Future].forAutoCloseable") {
     val content = Vector("blah", "blah blah", "blah blah blah")
 
     import effectie.instances.future.fx._
@@ -36,7 +36,7 @@ class FutureResourceMakerSpec extends munit.FunSuite with FutureTools {
 
   }
 
-  test("test ResourceMaker.futureResourceMaker: ResourceMaker[Future] - error case") {
+  test("test ResourceMaker.futureResourceMaker: ResourceMaker[Future].forAutoCloseable - error case") {
     import effectie.instances.future.fx._
 
     import scala.concurrent.Future

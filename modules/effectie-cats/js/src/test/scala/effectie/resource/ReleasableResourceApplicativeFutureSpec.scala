@@ -43,8 +43,8 @@ class ReleasableResourceApplicativeFutureSpec
       .ApplicativeLaws
       .composition[ReleasableResource[Future, *], Int, Int, Int](
         genReleasableResourceFunctor[Future](ReleasableResource.pureFuture[Int]),
-        genF(),
-        genF(),
+        genA(),
+        genA(),
       )
       .use(result => Future.successful(Assertions.assert(result)))
   }
@@ -61,7 +61,7 @@ class ReleasableResourceApplicativeFutureSpec
     LawsF
       .ApplicativeLaws
       .homomorphism[ReleasableResource[Future, *], Int, Int](
-        genF(),
+        genA(),
         n,
       )
       .use(result => Future.successful(Assertions.assert(result)))
@@ -72,7 +72,7 @@ class ReleasableResourceApplicativeFutureSpec
       .ApplicativeLaws
       .interchange[ReleasableResource[Future, *], Int, Int](
         n,
-        ReleasableResource.pureFuture(genF()),
+        ReleasableResource.pureFuture(genA()),
       )
       .use(result => Future.successful(Assertions.assert(result)))
   }
@@ -81,8 +81,8 @@ class ReleasableResourceApplicativeFutureSpec
       .ApplicativeLaws
       .compositionAp[ReleasableResource[Future, *], Int, Int, Int](
         genReleasableResourceFunctor[Future](ReleasableResource.pureFuture[Int]),
-        ReleasableResource.pureFuture(genF()),
-        ReleasableResource.pureFuture(genF()),
+        ReleasableResource.pureFuture(genA()),
+        ReleasableResource.pureFuture(genA()),
       )
       .use(result => Future.successful(Assertions.assert(result)))
   }
