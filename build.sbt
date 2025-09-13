@@ -103,7 +103,6 @@ lazy val coreJs  = core
   .settings(jsSettings)
   .settings(
     libraryDependencies ++= List(
-      libs.tests.scalaJsMacrotaskExecutor.value,
       libs.tests.munit.value,
     )
   )
@@ -195,7 +194,6 @@ lazy val timeJs  = time
   .settings(
     libraryDependencies ++= List(
       libs.scalaJavaTime.value,
-      libs.tests.scalaJsMacrotaskExecutor.value,
     )
   )
 
@@ -238,7 +236,6 @@ lazy val timeCatsEffect2Js  = timeCatsEffect2
   .settings(
     libraryDependencies ++= List(
       libs.scalaJavaTime.value,
-      libs.tests.scalaJsMacrotaskExecutor.value,
     )
   )
 
@@ -266,7 +263,6 @@ lazy val timeCatsEffect3Js  = timeCatsEffect3
   .settings(
     libraryDependencies ++= List(
       libs.scalaJavaTime.value,
-      libs.tests.scalaJsMacrotaskExecutor.value,
     )
   )
 
@@ -677,4 +673,7 @@ lazy val jsSettings: SettingsDefinition = List(
   crossScalaVersions := props.CrossScalaVersions.filterNot(_.startsWith("2.12")),
   Test / fork := false,
   coverageEnabled := false,
+  libraryDependencies ++= List(
+    libs.tests.scalaJsMacrotaskExecutor.value
+  ),
 )
