@@ -630,8 +630,8 @@ object fxSpec extends Properties {
       dropResult {
         effectConstructorClient.of(1)
       }
-      val _ = eftClient.unit
-      val _ = effectConstructorClient.unit
+      val _          = eftClient.unit
+      val _          = effectConstructorClient.unit
       val testAfter  = actual ==== after
       val testAfter2 = actual2 ==== after
       testBefore.log("testBefore") ==== testAfter.log("testAfter") and

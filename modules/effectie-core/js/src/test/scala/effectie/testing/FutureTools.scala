@@ -188,6 +188,9 @@ trait FutureTools {
 
   implicit def futureOps[A](future: Future[A]): FutureTools.FutureOps[A] = new FutureTools.FutureOps(future)
 
+  implicit def listOfFutureOps[A](futures: List[Future[A]]): FutureTools.ListOfFutureOps[A] =
+    new FutureTools.ListOfFutureOps(futures)
+
 }
 object FutureTools {
   final case class WaitFor(waitFor: FiniteDuration) extends AnyVal
@@ -195,14 +198,14 @@ object FutureTools {
   def sleep(millis: Long): Unit = {
     val startTime = System.currentTimeMillis()
     val buffer    = new StringBuilder
-    while ((System.currentTimeMillis() - startTime) < millis) {
+    while ((System.currentTimeMillis() - startTime) < millis) { // scalafix:ok DisableSyntax.while
       buffer.clear()
       for (i <- 1 to 100)
         buffer.append(i.toString)
     }
   }
 
-  class FutureOps[A](val future: Future[A]) extends AnyVal {
+  class FutureOps[A](private val future: Future[A]) extends AnyVal {
     def toJSPromise(implicit ec: ExecutionContext): scalajs.js.Promise[A] = {
       new scalajs.js.Promise[A]((resolve, reject) => {
         future.onComplete {
@@ -211,5 +214,9 @@ object FutureTools {
         }
       })
     }
+  }
+
+  class ListOfFutureOps[A](private val futures: List[Future[A]]) extends AnyVal {
+    def toSequence(implicit executor: ExecutionContext): Future[List[A]] = Future.sequence(futures)
   }
 }
