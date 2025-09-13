@@ -38,7 +38,7 @@ object toFutureSpec extends Properties {
       val expected = a
       val fa       = IO(expected)
 
-      given es: ExecutorService  = ConcurrentSupport.newExecutorService(2)
+      given es: ExecutorService = ConcurrentSupport.newExecutorService(2)
 //      given ec: ExecutionContext =
 //        ConcurrentSupport.newExecutionContextWithLogger(es, ErrorLogger.printlnExecutionContextErrorLogger)
 

@@ -43,9 +43,10 @@ class ReleasableResourceFunctorForMUnit extends munit.FunSuite with FutureTools 
       .FunctorLaws
       .composition[ReleasableResource[Future, *], Int, Int, Int](
         genReleasableResourceFunctor[Future](ReleasableResource.pureFuture[Int]),
-        genF(),
-        genF(),
+        genA(),
+        genA(),
       )
+      .use[Unit](result => Future.successful(Assertions.assert(result)))
   }
   test("test ReleasableResource[Future, *].map") {
     testMap[Future](
@@ -59,7 +60,7 @@ class ReleasableResourceFunctorForMUnit extends munit.FunSuite with FutureTools 
     toF: Unit => F[Unit],
   ): F[Unit] = {
     val n        = RandomGens.genRandomIntWithMinMax(Int.MinValue, Int.MaxValue)
-    val f        = genF()
+    val f        = genA()
     val resource = ctor(n)
     val expected = f(n)
     mapF[ReleasableResource[F, *]](resource)(f)
@@ -72,7 +73,7 @@ class ReleasableResourceFunctorForMUnit extends munit.FunSuite with FutureTools 
 
   val int2IntList: List[Int => Int] = List(_ * 2, _ + 100, _ / 2)
 
-  def genF(): Int => Int = int2IntList(scala.util.Random.nextInt(int2IntList.length))
+  def genA(): Int => Int = int2IntList(scala.util.Random.nextInt(int2IntList.length))
 
   def mapF[G[*]: Functor](r: G[Int])(f: Int => Int) = r.map(f)
 
