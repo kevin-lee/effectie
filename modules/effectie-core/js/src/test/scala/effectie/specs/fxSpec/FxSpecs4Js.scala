@@ -1,7 +1,7 @@
-package effectie.specs.fxCtorSpec
+package effectie.specs.fxSpec
 
 import cats.syntax.all._
-import effectie.core.FxCtor
+import effectie.core.Fx
 import effectie.testing.RandomGens
 import effectie.testing.types.SomeThrowableError
 import munit.Assertions
@@ -11,9 +11,9 @@ import scala.util.Try
 /** @author Kevin Lee
   * @since 2022-04-20
   */
-object FxCtorSpecs4Js {
+object FxSpecs4Js {
 
-  def testEffectOf[F[*]: FxCtor](run: (F[Unit], Array[Int], Int, String) => F[Unit]): F[Unit] = {
+  def testEffectOf[F[*]: Fx](run: (F[Unit], Array[Int], Int, String) => F[Unit]): F[Unit] = {
     val before = RandomGens.genRandomIntWithMinMax(Int.MinValue, Int.MaxValue)
     val after  = RandomGens.genRandomIntWithMinMax(Int.MinValue, Int.MaxValue) + before
 
@@ -21,13 +21,13 @@ object FxCtorSpecs4Js {
     val actual = Array(before)
     Assertions.assertEquals(actual(0), before, "before effectOf")
 
-    val io = FxCtor[F].effectOf({ actual(0) = after; () })
+    val io = Fx[F].effectOf({ actual(0) = after; () })
     Assertions.assertEquals(actual(0), before, "after effectOf but before run")
 
     run(io, actual, after, "after effectOf and run")
   }
 
-  def testFromEffect[F[*]: FxCtor](run: (F[Unit], Array[Int], Int, String) => F[Unit]): F[Unit] = {
+  def testFromEffect[F[*]: Fx](run: (F[Unit], Array[Int], Int, String) => F[Unit]): F[Unit] = {
     val before = RandomGens.genRandomIntWithMinMax(Int.MinValue, Int.MaxValue)
     val after  = RandomGens.genRandomIntWithMinMax(Int.MinValue, Int.MaxValue) + before
 
@@ -35,16 +35,16 @@ object FxCtorSpecs4Js {
     val actual = Array(before)
     Assertions.assertEquals(actual(0), before, "before effectOf")
 
-    val io = FxCtor[F].effectOf({ actual(0) = after; () })
+    val io = Fx[F].effectOf({ actual(0) = after; () })
     Assertions.assertEquals(actual(0), before, "after effectOf but before fromEffect")
 
-    val fromIo = FxCtor[F].fromEffect(io)
+    val fromIo = Fx[F].fromEffect(io)
     Assertions.assertEquals(actual(0), before, "after fromEffect but before run")
 
     run(fromIo, actual, after, "after fromEffect and run")
   }
 
-  def testFromEffectWithPure[F[*]: FxCtor](run: (F[Unit], Array[Int], Int, String) => F[Unit]): F[Unit] = {
+  def testFromEffectWithPure[F[*]: Fx](run: (F[Unit], Array[Int], Int, String) => F[Unit]): F[Unit] = {
     val before = RandomGens.genRandomIntWithMinMax(Int.MinValue, Int.MaxValue)
     val after  = RandomGens.genRandomIntWithMinMax(Int.MinValue, Int.MaxValue) + before
 
@@ -52,140 +52,132 @@ object FxCtorSpecs4Js {
     val actual = Array(before)
     Assertions.assertEquals(actual(0), before, "before fromEffect")
 
-    val fromPure = FxCtor[F].fromEffect(FxCtor[F].pureOf({ actual(0) = after; () }))
+    val fromPure = Fx[F].fromEffect(Fx[F].pureOf({ actual(0) = after; () }))
     Assertions.assertEquals(actual(0), before, "after fromEffect but before run")
 
     run(fromPure, actual, after, "after fromEffect and run")
   }
 
-  def testPureOf[F[*]: FxCtor](run: (F[Unit], Int, Int, String) => F[Unit]): F[Unit] = {
+  def testPureOf[F[*]: Fx](run: (F[Unit], Array[Int], Int, String) => F[Unit]): F[Unit] = {
     val before = RandomGens.genRandomIntWithMinMax(Int.MinValue, Int.MaxValue)
     val after  = RandomGens.genRandomIntWithMinMax(Int.MinValue, Int.MaxValue) + before
 
     @SuppressWarnings(Array("org.wartremover.warts.Var"))
-    var actual = before // scalafix:ok DisableSyntax.var
-    Assertions.assertEquals(actual, before, "before pureOrError")
+    val actual = Array(before)
+    Assertions.assertEquals(actual(0), before, "before pureOf")
 
-    val io = FxCtor[F].pureOf({ actual = after; () })
-    Assertions.assertEquals(actual, after, "after pureOrError but before run")
+    val io = Fx[F].pureOf({ actual(0) = after; () })
+    Assertions.assertEquals(actual(0), after, "after pureOf but before run")
 
-    run(io, actual, after, "after pureOrError and run")
+    run(io, actual, after, "after pureOf and run")
   }
 
-  def testPureOrErrorSuccessCase[F[*]: FxCtor](run: (F[Unit], Int, Int, String) => F[Unit]): F[Unit] = {
+  def testPureOrErrorSuccessCase[F[*]: Fx](run: (F[Unit], Array[Int], Int, String) => F[Unit]): F[Unit] = {
     val before = RandomGens.genRandomIntWithMinMax(Int.MinValue, Int.MaxValue)
     val after  = RandomGens.genRandomIntWithMinMax(Int.MinValue, Int.MaxValue) + before
 
     @SuppressWarnings(Array("org.wartremover.warts.Var"))
-    var actual = before // scalafix:ok DisableSyntax.var
-    Assertions.assertEquals(actual, before, "before pureOrError")
+    val actual = Array(before)
+    Assertions.assertEquals(actual(0), before, "before pureOrError")
 
-    val io = FxCtor[F].pureOrError({ actual = after; () })
-    Assertions.assertEquals(actual, after, "after pureOrError but before run")
+    val io = Fx[F].pureOrError({ actual(0) = after; () })
+    Assertions.assertEquals(actual(0), after, "after pureOrError but before run")
 
     run(io, actual, after, "after pureOrError and run")
   }
 
-  def testPureOrErrorErrorCase[F[*]: FxCtor](run: (F[Unit], Throwable) => F[Unit]): F[Unit] = {
+  def testPureOrErrorErrorCase[F[*]: Fx](run: (F[Unit], Throwable) => F[Unit]): F[Unit] = {
     val expectedMessage = "This is a throwable test error."
     val expectedError   = SomeThrowableError.message(expectedMessage)
 
-    val fa = FxCtor[F].pureOrError((throw expectedError): Unit) // scalafix:ok DisableSyntax.throw
-
-    run(fa, expectedError)
+    val io = Fx[F].pureOrError[Unit](throw expectedError) // scalafix:ok DisableSyntax.throw
+    run(io, expectedError)
   }
 
-  def testUnitOf[F[*]: FxCtor](run: F[Unit] => F[Unit]): F[Unit] = {
-    val io = FxCtor[F].unitOf
+  def testUnitOf[F[*]: Fx](run: F[Unit] => F[Unit]): F[Unit] = {
+    val io = Fx[F].unitOf
     run(io)
   }
 
-  def testErrorOf[F[*]: FxCtor](run: (F[Unit], Throwable) => F[Unit]): F[Unit] = {
+  def testErrorOf[F[*]: Fx](run: (F[Unit], Throwable) => F[Unit]): F[Unit] = {
     val expectedMessage = "This is a throwable test error."
     val expectedError   = SomeThrowableError.message(expectedMessage)
 
-    val fa = FxCtor[F].errorOf[Unit](expectedError)
-
-    run(fa, expectedError)
+    val io = Fx[F].errorOf[Unit](expectedError)
+    run(io, expectedError)
   }
 
-  def testFromEitherRightCase[F[*]: FxCtor](run: (F[Int], Either[Throwable, Int]) => F[Unit]): F[Unit] = {
+  def testFromEitherRightCase[F[*]: Fx](run: (F[Int], Either[Throwable, Int]) => F[Unit]): F[Unit] = {
     val n = RandomGens.genRandomIntWithMinMax(Int.MinValue, Int.MaxValue)
 
     @SuppressWarnings(Array("org.wartremover.warts.Var"))
     val expected = n.asRight[SomeThrowableError]
-    val input    = expected
-    val fa       = FxCtor[F].fromEither(input)
-    run(fa, expected)
+    val ioA      = Fx[F].fromEither(expected)
+
+    run(ioA, expected)
   }
 
-  def testFromEitherLeftCase[F[*]: FxCtor](run: (F[Int], Either[Throwable, Int]) => F[Unit]): F[Unit] = {
+  def testFromEitherLeftCase[F[*]: Fx](run: (F[Int], Either[Throwable, Int]) => F[Unit]): F[Unit] = {
     val errorMessage = RandomGens.genAlphaString(10)
 
     @SuppressWarnings(Array("org.wartremover.warts.Var"))
     val expected = SomeThrowableError.message(errorMessage).asLeft[Int]
-    val fa       = FxCtor[F].fromEither(expected)
+    val ioA      = Fx[F].fromEither(expected)
 
-    run(fa, expected)
+    run(ioA, expected)
   }
 
-  def testFromOptionSomeCase[F[*]: FxCtor](run: (F[Int], Either[Throwable, Int]) => F[Unit]): F[Unit] = {
-    // TODO: Start again from here
+  def testFromOptionSomeCase[F[*]: Fx](run: (F[Int], Either[Throwable, Int]) => F[Unit]): F[Unit] = {
     val n = RandomGens.genRandomIntWithMinMax(Int.MinValue, Int.MaxValue)
 
     @SuppressWarnings(Array("org.wartremover.warts.Var"))
     val expected = n.asRight[SomeThrowableError]
     val input    = n.some
-    val fa       =
-      FxCtor[F].fromOption(input)(SomeThrowableError.Message("This should never happen!"))
+    val ioA      =
+      Fx[F].fromOption(input)(SomeThrowableError.Message("This should never happen!"))
 
-    run(fa, expected)
+    run(ioA, expected)
   }
 
-  def testFromOptionNoneCase[F[*]: FxCtor](run: (F[Int], Either[Throwable, Int]) => F[Unit]): F[Unit] = {
+  def testFromOptionNoneCase[F[*]: Fx](run: (F[Int], Either[Throwable, Int]) => F[Unit]): F[Unit] = {
     val errorMessage = RandomGens.genAlphaString(10)
 
     @SuppressWarnings(Array("org.wartremover.warts.Var"))
     val expected = SomeThrowableError.message(errorMessage).asLeft[Int]
-    val fa       = FxCtor[F].fromOption(none[Int])(SomeThrowableError.Message(errorMessage))
+    val ioA      = Fx[F].fromOption(none[Int])(SomeThrowableError.Message(errorMessage))
 
-    run(fa, expected)
+    run(ioA, expected)
   }
 
-  def testFromTrySuccessCase[F[*]: FxCtor](run: (F[Int], Either[Throwable, Int]) => F[Unit]): F[Unit] = {
+  def testFromTrySuccessCase[F[*]: Fx](run: (F[Int], Either[Throwable, Int]) => F[Unit]): F[Unit] = {
     val n = RandomGens.genRandomIntWithMinMax(Int.MinValue, Int.MaxValue)
 
     @SuppressWarnings(Array("org.wartremover.warts.Var"))
-    val expected        = n.asRight[Throwable]
+    val expected        = n.asRight[SomeThrowableError]
     val input: Try[Int] = scala.util.Success(n)
-    val fa              = FxCtor[F].fromTry(input)
+    val ioA             = Fx[F].fromTry(input)
 
-    run(fa, expected)
+    run(ioA, expected)
   }
 
-  def testFromTryFailureCase[F[*]: FxCtor](run: (F[Int], Either[Throwable, Int]) => F[Unit]): F[Unit] = {
+  def testFromTryFailureCase[F[*]: Fx](run: (F[Int], Either[Throwable, Int]) => F[Unit]): F[Unit] = {
     val errorMessage = RandomGens.genAlphaString(10)
 
     @SuppressWarnings(Array("org.wartremover.warts.Var"))
     val expected        = SomeThrowableError.message(errorMessage).asLeft[Int]
     val input: Try[Int] = scala.util.Failure(SomeThrowableError.message(errorMessage))
-    val fa              = FxCtor[F].fromTry(input)
+    val ioA             = Fx[F].fromTry(input)
 
-    run(
-      FxCtor[F].flatMapFa(fa)(actual =>
-        Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
-      ),
-      expected,
-    )
+    run(ioA, expected)
   }
 
-  def testFlatMapFx[F[*]: FxCtor](run: (F[String], String) => F[Unit]): F[Unit] = {
+  def testFlatMapFx[F[*]: Fx](run: (F[String], String) => F[Unit]): F[Unit] = {
     val n      = RandomGens.genRandomIntWithMinMax(Int.MinValue, Int.MaxValue)
     val prefix = "n is "
 
     val expected = prefix + n.toString
-    val fa       = FxCtor[F].pureOf(n)
-    val fb       = FxCtor[F].flatMapFa(fa)(n => FxCtor[F].pureOf(prefix + n.toString))
+    val fa       = Fx[F].pureOf(n)
+    val fb       = Fx[F].flatMapFa(fa)(n => Fx[F].pureOf(prefix + n.toString))
     run(fb, expected)
   }
 

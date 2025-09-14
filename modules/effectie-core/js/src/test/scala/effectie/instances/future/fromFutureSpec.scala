@@ -18,7 +18,7 @@ class fromFutureSpec extends munit.FunSuite with FutureTools {
   import effectie.instances.future.fromFuture._
 
   test("test FromFuture[Future].toEffect") {
-    val a  = scala.util.Random.nextInt()
+    val a = scala.util.Random.nextInt()
 
     lazy val fa = Future(a)
 

@@ -15,7 +15,7 @@
 ///** @author Kevin Lee
 //  * @since 2021-05-16
 //  */
-//object fxSpec extends Properties {
+//class fxSpec extends Properties {
 //  implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 //
 //  override def tests: List[Test] = List(

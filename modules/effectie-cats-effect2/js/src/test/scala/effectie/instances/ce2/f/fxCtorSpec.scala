@@ -48,9 +48,11 @@ class fxCtorSpec extends munit.FunSuite with FutureTools {
       .unsafeToFuture()
   }
   test("test FxCtor[IO].pureOrError(success case)") {
-    FxCtorSpecs4Js.testPureOrErrorSuccessCase[IO]((fa, actual, expected, log) =>
-      fa.map(_ => Assertions.assertEquals(actual, expected, log))
-    )
+    FxCtorSpecs4Js
+      .testPureOrErrorSuccessCase[IO]((fa, actual, expected, log) =>
+        fa.map(_ => Assertions.assertEquals(actual, expected, log))
+      )
+      .unsafeToFuture()
   }
   test("test FxCtor[IO].pureOrError(error case)") {
     FxCtorSpecs4Js
@@ -61,7 +63,7 @@ class fxCtorSpec extends munit.FunSuite with FutureTools {
     FxCtorSpecs4Js.testUnitOf[IO](io => io.map(actual => Assertions.assertEquals(actual, ()))).unsafeToFuture()
   }
   test("test FxCtor[IO].errorOf") {
-    FxCtorSpecs4Js.testErrorOf[IO]((io, expected) => assertWithAttempt(io, expected.asLeft))
+    FxCtorSpecs4Js.testErrorOf[IO]((io, expected) => assertWithAttempt(io, expected.asLeft)).unsafeToFuture()
   }
   test("test FxCtor[IO].fromEither(Right)") {
     FxCtorSpecs4Js.testFromEitherRightCase[IO](assertWithAttempt).unsafeToFuture()

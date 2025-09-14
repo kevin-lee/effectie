@@ -2,13 +2,15 @@ package effectie.testing
 
 import scala.util.Random
 
-object RandomGens {
+object RandomGens extends RandomCompat {
   val AlphaChars: Seq[Char]    = ('a' to 'z') ++ ('A' to 'Z')
   val AlphaNumChars: Seq[Char] = AlphaChars ++ ('0' to '9')
 
   def genRandomIntWithMinMax(min: Int, max: Int): Int = {
     if (min > max) {
-      throw new IllegalArgumentException(s"min ($min) must be less than or equal to max ($max)")
+      throw new IllegalArgumentException(
+        s"min ($min) must be less than or equal to max ($max)"
+      ) // scalafix:ok DisableSyntax.throw
     } else {
       val bound = max.toLong - min.toLong + 1L
       if (bound <= Int.MaxValue) {
@@ -19,11 +21,29 @@ object RandomGens {
     }
   }
 
+  val int2IntFunctions = List[Int => Int](
+    identity[Int],
+    x => x + x,
+    x => x - x,
+    x => x * x,
+    x => x + 100,
+    x => x - 100,
+    x => x * 100,
+  )
+
+  def genRandomIntToInt(): Int => Int = {
+    val length = int2IntFunctions.length
+    val index  = RandomGens.genRandomIntWithMinMax(0, length - 1)
+    int2IntFunctions(index)
+  }
+
   def genRandomInt(): Int = genRandomIntWithMinMax(0, Int.MaxValue)
 
   def genRandomLongWithMinMax(min: Long, max: Long): Long = {
     if (min > max) {
-      throw new IllegalArgumentException(s"min ($min) must be less than or equal to max ($max)")
+      throw new IllegalArgumentException(
+        s"min ($min) must be less than or equal to max ($max)"
+      ) // scalafix:ok DisableSyntax.throw
     } else {
       val bound = max - min + 1L
       if (bound <= Long.MaxValue) {

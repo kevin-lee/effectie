@@ -20,7 +20,7 @@
 ///** @author Kevin Lee
 //  * @since 2021-10-30
 //  */
-//object errorSpec extends Properties {
+//class errorSpec extends Properties {
 //
 //  override def tests: List[Test] =
 //    CanCatchSyntaxSpec.tests ++ CanHandleErrorSyntaxSpec.tests ++ CanRecoverSyntaxSpec.tests

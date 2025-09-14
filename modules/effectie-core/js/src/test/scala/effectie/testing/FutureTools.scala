@@ -195,7 +195,7 @@ object FutureTools {
   def sleep(millis: Long): Unit = {
     val startTime = System.currentTimeMillis()
     val buffer    = new StringBuilder
-    while ((System.currentTimeMillis() - startTime) < millis) {
+    while ((System.currentTimeMillis() - startTime) < millis) { // scalafix:ok DisableSyntax.while
       buffer.clear()
       for (i <- 1 to 100)
         buffer.append(i.toString)
