@@ -20,7 +20,7 @@
 ///** @author Kevin Lee
 //  * @since 2020-08-17
 //  */
-//object canRecoverSpec extends Properties {
+//class canRecoverSpec extends Properties {
 //  implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 //
 //  override def tests: List[Test] =

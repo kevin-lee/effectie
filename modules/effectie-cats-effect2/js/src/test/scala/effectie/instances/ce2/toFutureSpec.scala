@@ -16,7 +16,7 @@
 ///** @author Kevin Lee
 //  * @since 2020-09-23
 //  */
-//object toFutureSpec extends Properties {
+//class toFutureSpec extends Properties {
 //  private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 //
 //  override def tests: List[Test] = List(

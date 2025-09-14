@@ -17,7 +17,7 @@
 ///** @author Kevin Lee
 //  * @since 2020-09-22
 //  */
-//object fromFutureSpec extends Properties {
+//class fromFutureSpec extends Properties {
 //  implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 //
 //  private val waitFor300Millis = WaitFor(300.milliseconds)

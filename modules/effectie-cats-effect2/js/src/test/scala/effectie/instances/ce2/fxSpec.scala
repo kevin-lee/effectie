@@ -20,7 +20,7 @@
 ///** @author Kevin Lee
 //  * @since 2020-12-06
 //  */
-//object fxSpec extends Properties {
+//class fxSpec extends Properties {
 //
 //  override def tests: List[Test] = ioSpecs
 //

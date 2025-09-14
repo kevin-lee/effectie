@@ -21,7 +21,7 @@
 ///** @author Kevin Lee
 //  * @since 2020-08-17
 //  */
-//object canHandleErrorSpec extends Properties {
+//class canHandleErrorSpec extends Properties {
 //  implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 //
 //  override def tests: List[Test] = ioSpecs ++ futureSpecs ++ idSpecs

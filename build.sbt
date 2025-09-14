@@ -103,7 +103,7 @@ lazy val coreJs  = core
   .settings(jsSettings)
   .settings(
     libraryDependencies ++= List(
-      libs.tests.munit.value,
+      libs.tests.munit.value
     )
   )
 
@@ -162,6 +162,11 @@ lazy val testing4CatsJvm = testing4Cats.jvm
 lazy val testing4CatsJs  = testing4Cats
   .js
   .settings(jsSettings)
+  .settings(
+    libraryDependencies ++= List(
+      libs.munit.value
+    )
+  )
 
 lazy val time = module(ProjectName("time"), crossProject(JVMPlatform, JSPlatform))
   .settings(
@@ -193,7 +198,7 @@ lazy val timeJs  = time
   .settings(jsSettings)
   .settings(
     libraryDependencies ++= List(
-      libs.scalaJavaTime.value,
+      libs.scalaJavaTime.value
     )
   )
 
@@ -235,7 +240,7 @@ lazy val timeCatsEffect2Js  = timeCatsEffect2
   .settings(jsSettings)
   .settings(
     libraryDependencies ++= List(
-      libs.scalaJavaTime.value,
+      libs.scalaJavaTime.value
     )
   )
 
@@ -262,7 +267,7 @@ lazy val timeCatsEffect3Js  = timeCatsEffect3
   .settings(jsSettings)
   .settings(
     libraryDependencies ++= List(
-      libs.scalaJavaTime.value,
+      libs.scalaJavaTime.value
     )
   )
 
@@ -536,6 +541,8 @@ lazy val libs =
     lazy val extrasConcurrentTesting = Def.setting("io.kevinlee" %%% "extras-concurrent-testing" % props.ExtrasVersion)
 
     lazy val scalaJavaTime = Def.setting("io.github.cquiroz" %%% "scala-java-time" % props.ScalaJavaTimeVersion)
+
+    lazy val munit = Def.setting("org.scalameta" %%% "munit" % props.MunitVersion)
 
     lazy val tests = new {
       lazy val extrasHedgehogCatsEffect3 =

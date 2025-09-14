@@ -13,7 +13,7 @@
 ///** @author Kevin Lee
 //  * @since 2023-09-07
 //  */
-//object CanRestartSpec extends Properties {
+//class CanRestartSpec extends Properties {
 //  override def tests: List[Test] = List(
 //    property("CanRestart[F].restartWhile", testRestartWhile),
 //    example("CanRestart[F].restartWhile (heavy recursion: 1,000,000 times)", testRestartWhileHeavyRecursion),

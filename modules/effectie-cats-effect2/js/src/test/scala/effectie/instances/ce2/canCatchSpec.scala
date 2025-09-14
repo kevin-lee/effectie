@@ -21,7 +21,7 @@
 ///** @author Kevin Lee
 //  * @since 2020-07-31
 //  */
-//object canCatchSpec extends Properties {
+//class canCatchSpec extends Properties {
 //
 //  private implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 //
