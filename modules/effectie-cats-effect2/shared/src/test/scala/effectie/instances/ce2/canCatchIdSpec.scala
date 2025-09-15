@@ -8,7 +8,6 @@ import effectie.core._
 import effectie.syntax.error._
 import effectie.syntax.fx._
 import effectie.testing.types._
-import extras.concurrent.testing.types.ErrorLogger
 import hedgehog._
 import hedgehog.runner._
 

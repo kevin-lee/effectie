@@ -4,7 +4,7 @@ import cats.effect._
 import effectie.core.FromFuture
 import effectie.instances.ce2.compat.CatsEffectIoCompatForFuture
 import effectie.testing.{FutureTools, RandomGens}
-import fromFuture._
+import fromFuture.fromFutureToIo
 import munit.Assertions
 
 import scala.concurrent._

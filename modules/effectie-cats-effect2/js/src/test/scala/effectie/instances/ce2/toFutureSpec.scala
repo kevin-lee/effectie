@@ -5,7 +5,7 @@ import cats.effect._
 import effectie.core.ToFuture
 import effectie.testing.{FutureTools, RandomGens}
 import munit.Assertions
-import toFuture._
+import toFuture.ioToFuture
 
 import scala.concurrent._
 import scala.concurrent.duration._

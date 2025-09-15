@@ -4,7 +4,7 @@ import cats.effect._
 import cats.syntax.all._
 import effectie.specs.fxCtorSpec.FxCtorSpecs4Js
 import effectie.testing.FutureTools
-import fxCtor._
+import fxCtor.ioFxCtor
 import munit.Assertions
 
 import scala.concurrent._
