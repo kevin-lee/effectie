@@ -16,8 +16,6 @@ import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog.*
 import hedgehog.runner.*
 
-import scala.util.control.ControlThrowable
-
 /** @author Kevin Lee
   * @since 2020-07-31
   */

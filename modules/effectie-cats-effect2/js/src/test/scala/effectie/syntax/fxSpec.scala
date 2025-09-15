@@ -15,8 +15,11 @@
 ///** @author Kevin Lee
 //  * @since 2021-05-16
 //  */
-//class fxSpec extends Properties {
-//  implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
+//class fxSpec extends munit.FunSuite with FutureTools {
+//
+//  implicit val ec: ExecutionContext = globalExecutionContext
+//
+//  override val munitTimeout: FiniteDuration = 200.milliseconds
 //
 //  override def tests: List[Test] = List(
 //    property("test fx.{effectOf, pureOf, unitOf} for IO", IoSpec.testAll),

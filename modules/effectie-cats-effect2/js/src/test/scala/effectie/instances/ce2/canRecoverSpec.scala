@@ -20,8 +20,11 @@
 ///** @author Kevin Lee
 //  * @since 2020-08-17
 //  */
-//class canRecoverSpec extends Properties {
-//  implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
+//class canRecoverSpec extends munit.FunSuite with FutureTools {
+//
+//  implicit val ec: ExecutionContext = globalExecutionContext
+//
+//  override val munitTimeout: FiniteDuration = 200.milliseconds
 //
 //  override def tests: List[Test] =
 //    ioSpecs ++

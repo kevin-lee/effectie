@@ -12,7 +12,12 @@
 ///** @author Kevin Lee
 //  * @since 2022-11-06
 //  */
-//object Ce2ResourceMakerSpec extends Properties {
+//class Ce2ResourceMakerSpec extends munit.FunSuite with FutureTools {
+//
+//  implicit val ec: ExecutionContext = globalExecutionContext
+//
+//  override val munitTimeout: FiniteDuration = 200.milliseconds
+//
 //  type F[A] = IO[A]
 //  val F: IO.type = IO
 //

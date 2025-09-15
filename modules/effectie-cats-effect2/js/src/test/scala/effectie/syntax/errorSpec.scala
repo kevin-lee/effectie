@@ -20,7 +20,11 @@
 ///** @author Kevin Lee
 //  * @since 2021-10-30
 //  */
-//class errorSpec extends Properties {
+//class errorSpec extends extends munit.FunSuite with FutureTools {
+//
+//  implicit val ec: ExecutionContext = globalExecutionContext
+//
+//  override val munitTimeout: FiniteDuration = 200.milliseconds
 //
 //  override def tests: List[Test] =
 //    CanCatchSyntaxSpec.tests ++ CanHandleErrorSyntaxSpec.tests ++ CanRecoverSyntaxSpec.tests

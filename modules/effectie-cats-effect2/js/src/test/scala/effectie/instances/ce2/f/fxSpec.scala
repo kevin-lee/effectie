@@ -94,7 +94,7 @@ class fxSpec extends munit.FunSuite with FutureTools {
   implicit def eqF[F[*]: Monad]: EqF[F, Int] =
     (a, b) => a.flatMap(aVal => b.map(aVal === _))
 
-  test("test Fx[IO]catchNonFatalThrowable should catch NonFatal") {
+  test("test Fx[IO].catchNonFatalThrowable should catch NonFatal") {
 
     val expectedExpcetion = new RuntimeException("Something's wrong")
     val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
@@ -108,7 +108,7 @@ class fxSpec extends munit.FunSuite with FutureTools {
       .unsafeToFuture()
   }
 
-  test("test Fx[IO]catchNonFatalThrowable should not catch Fatal") {
+  test("test Fx[IO].catchNonFatalThrowable should not catch Fatal") {
 
     val fatalExpcetion = SomeControlThrowable("Something's wrong")
     val fa             = run[IO, Int](throwThrowable[Int](fatalExpcetion))
@@ -130,7 +130,7 @@ class fxSpec extends munit.FunSuite with FutureTools {
 
   }
 
-  test("test Fx[IO]catchNonFatalThrowable should return the successful result") {
+  test("test Fx[IO].catchNonFatalThrowable should return the successful result") {
 
     val fa       = run[IO, Int](1)
     val expected = 1.asRight[Throwable]
@@ -143,7 +143,7 @@ class fxSpec extends munit.FunSuite with FutureTools {
       .unsafeToFuture()
   }
 
-  test("test Fx[IO]catchNonFatal should catch NonFatal") {
+  test("test Fx[IO].catchNonFatal should catch NonFatal") {
 
     val expectedExpcetion = new RuntimeException("Something's wrong")
     val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
@@ -157,7 +157,7 @@ class fxSpec extends munit.FunSuite with FutureTools {
       .unsafeToFuture()
   }
 
-  test("test Fx[IO]catchNonFatal should not catch Fatal") {
+  test("test Fx[IO].catchNonFatal should not catch Fatal") {
 
     val fatalExpcetion = SomeControlThrowable("Something's wrong")
     val fa             = run[IO, Int](throwThrowable[Int](fatalExpcetion))
@@ -179,7 +179,7 @@ class fxSpec extends munit.FunSuite with FutureTools {
 
   }
 
-  test("test Fx[IO]catchNonFatal should return the successful result") {
+  test("test Fx[IO].catchNonFatal should return the successful result") {
 
     val fa       = run[IO, Int](1)
     val expected = 1.asRight[SomeError]
@@ -192,7 +192,7 @@ class fxSpec extends munit.FunSuite with FutureTools {
       .unsafeToFuture()
   }
 
-  test("test Fx[IO]catchNonFatalEither should catch NonFatal") {
+  test("test Fx[IO].catchNonFatalEither should catch NonFatal") {
 
     val expectedExpcetion = new RuntimeException("Something's wrong")
     val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
@@ -206,7 +206,7 @@ class fxSpec extends munit.FunSuite with FutureTools {
       .unsafeToFuture()
   }
 
-  test("test Fx[IO]catchNonFatalEither should not catch Fatal") {
+  test("test Fx[IO].catchNonFatalEither should not catch Fatal") {
 
     val fatalExpcetion = SomeControlThrowable("Something's wrong")
     val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
@@ -227,7 +227,7 @@ class fxSpec extends munit.FunSuite with FutureTools {
     }
   }
 
-  test("test Fx[IO]catchNonFatalEither should return the successful result") {
+  test("test Fx[IO].catchNonFatalEither should return the successful result") {
 
     val fa       = run[IO, Either[SomeError, Int]](1.asRight[SomeError])
     val expected = 1.asRight[SomeError]
@@ -240,7 +240,7 @@ class fxSpec extends munit.FunSuite with FutureTools {
       .unsafeToFuture()
   }
 
-  test("test Fx[IO]catchNonFatalEither should return the failed result") {
+  test("test Fx[IO].catchNonFatalEither should return the failed result") {
 
     val expectedFailure = SomeError.message("Failed")
     val fa              = run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int])
@@ -254,7 +254,7 @@ class fxSpec extends munit.FunSuite with FutureTools {
       .unsafeToFuture()
   }
 
-  test("test Fx[IO]catchNonFatalEitherT should catch NonFatal") {
+  test("test Fx[IO].catchNonFatalEitherT should catch NonFatal") {
 
     val expectedExpcetion               = new RuntimeException("Something's wrong")
     val fa: EitherT[IO, SomeError, Int] = EitherT(
@@ -271,7 +271,7 @@ class fxSpec extends munit.FunSuite with FutureTools {
       .unsafeToFuture()
   }
 
-  test("test Fx[IO]catchNonFatalEitherT should not catch Fatal") {
+  test("test Fx[IO].catchNonFatalEitherT should not catch Fatal") {
 
     val fatalExpcetion = SomeControlThrowable("Something's wrong")
     val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
@@ -294,7 +294,7 @@ class fxSpec extends munit.FunSuite with FutureTools {
 
   }
 
-  test("test Fx[IO]catchNonFatalEitherT should return the successful result") {
+  test("test Fx[IO].catchNonFatalEitherT should return the successful result") {
 
     val fa       = EitherT(run[IO, Either[SomeError, Int]](1.asRight[SomeError]))
     val expected = 1.asRight[SomeError]
@@ -308,7 +308,7 @@ class fxSpec extends munit.FunSuite with FutureTools {
       .unsafeToFuture()
   }
 
-  test("test Fx[IO]catchNonFatalEitherT should return the failed result") {
+  test("test Fx[IO].catchNonFatalEitherT should return the failed result") {
 
     val expectedFailure = SomeError.message("Failed")
     val fa              = EitherT(run[IO, Either[SomeError, Int]](expectedFailure.asLeft[Int]))

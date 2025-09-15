@@ -20,7 +20,11 @@
 ///** @author Kevin Lee
 //  * @since 2020-12-06
 //  */
-//class fxSpec extends Properties {
+//class fxSpec extends munit.FunSuite with FutureTools {
+//
+//  implicit val ec: ExecutionContext = globalExecutionContext
+//
+//  override val munitTimeout: FiniteDuration = 200.milliseconds
 //
 //  override def tests: List[Test] = ioSpecs
 //

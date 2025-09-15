@@ -10,7 +10,12 @@
 ///** @author Kevin Lee
 //  * @since 2023-05-22
 //  */
-//object Ce2ResourceFunctorSpec extends Properties {
+//class Ce2ResourceFunctorSpec extends munit.FunSuite with FutureTools {
+//
+//  implicit val ec: ExecutionContext = globalExecutionContext
+//
+//  override val munitTimeout: FiniteDuration = 200.milliseconds
+//
 //  implicit def releasableResourceEq[F[*]](implicit eq: Eq[F[Int]], toF: Int => F[Int]): Eq[ReleasableResource[F, Int]] =
 //    (resource1, resource2) => eq.eqv(resource1.use(toF), resource2.use(toF))
 //
