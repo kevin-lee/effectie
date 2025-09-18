@@ -17,7 +17,7 @@ import scala.util.control.ControlThrowable
 /** @author Kevin Lee
   * @since 2020-08-17
   */
-class canHandleErrorIdSpec extends Properties {
+object canHandleErrorIdSpec extends Properties {
 
   implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
 
