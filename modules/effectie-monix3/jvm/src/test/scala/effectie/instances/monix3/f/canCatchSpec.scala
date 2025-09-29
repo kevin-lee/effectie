@@ -1,0 +1,269 @@
+package effectie.instances.monix3.f
+
+import cats.data.EitherT
+
+import cats.syntax.all._
+import effectie.SomeControlThrowable
+import effectie.core._
+import effectie.instances.ce2.f.canCatch.syncCanCatch
+import effectie.syntax.error._
+import effectie.syntax.fx._
+import effectie.testing.types._
+import effectie.instances.monix3.fxCtor._
+import hedgehog._
+import hedgehog.runner._
+
+import monix.eval.Task
+
+/** @author Kevin Lee
+  * @since 2020-07-31
+  */
+object canCatchSpec extends Properties {
+
+  override def tests: List[Test] = ioSpecs
+
+  val ioSpecs = List(
+    /* Task */
+    example(
+      "test CanCatch[Task]catchNonFatalThrowable should catch NonFatal",
+      TaskSpec.testCanCatch_Task_catchNonFatalThrowableShouldCatchNonFatal,
+    ),
+    example(
+      "test CanCatch[Task]catchNonFatalThrowable should not catch Fatal",
+      TaskSpec.testCanCatch_Task_catchNonFatalThrowableShouldNotCatchFatal,
+    ),
+    example(
+      "test CanCatch[Task]catchNonFatalThrowable should return the successful result",
+      TaskSpec.testCanCatch_Task_catchNonFatalThrowableShouldReturnSuccessfulResult,
+    ),
+    example(
+      "test CanCatch[Task]catchNonFatal should catch NonFatal",
+      TaskSpec.testCanCatch_Task_catchNonFatalShouldCatchNonFatal,
+    ),
+    example(
+      "test CanCatch[Task]catchNonFatal should not catch Fatal",
+      TaskSpec.testCanCatch_Task_catchNonFatalShouldNotCatchFatal,
+    ),
+    example(
+      "test CanCatch[Task]catchNonFatal should return the successful result",
+      TaskSpec.testCanCatch_Task_catchNonFatalShouldReturnSuccessfulResult,
+    ),
+    example(
+      "test CanCatch[Task]catchNonFatalEither should catch NonFatal",
+      TaskSpec.testCanCatch_Task_catchNonFatalEitherShouldCatchNonFatal,
+    ),
+    example(
+      "test CanCatch[Task]catchNonFatalEither should not catch Fatal",
+      TaskSpec.testCanCatch_Task_catchNonFatalEitherShouldNotCatchFatal,
+    ),
+    example(
+      "test CanCatch[Task]catchNonFatalEither should return the successful result",
+      TaskSpec.testCanCatch_Task_catchNonFatalEitherShouldReturnSuccessfulResult,
+    ),
+    example(
+      "test CanCatch[Task]catchNonFatalEither should return the failed result",
+      TaskSpec.testCanCatch_Task_catchNonFatalEitherShouldReturnFailedResult,
+    ),
+    example(
+      "test CanCatch[Task]catchNonFatalEitherT should catch NonFatal",
+      TaskSpec.testCanCatch_Task_catchNonFatalEitherTShouldCatchNonFatal,
+    ),
+    example(
+      "test CanCatch[Task]catchNonFatalEitherT should not catch Fatal",
+      TaskSpec.testCanCatch_Task_catchNonFatalEitherTShouldNotCatchFatal,
+    ),
+    example(
+      "test CanCatch[Task]catchNonFatalEitherT should return the successful result",
+      TaskSpec.testCanCatch_Task_catchNonFatalEitherTShouldReturnSuccessfulResult,
+    ),
+    example(
+      "test CanCatch[Task]catchNonFatalEitherT should return the failed result",
+      TaskSpec.testCanCatch_Task_catchNonFatalEitherTShouldReturnFailedResult,
+    ),
+  )
+
+  @SuppressWarnings(Array("org.wartremover.warts.Throw"))
+  def throwThrowable[A](throwable: => Throwable): A =
+    throw throwable // scalafix:ok DisableSyntax.throw
+
+  def run[F[*]: FxCtor, A](a: => A): F[A] =
+    effectOf[F](a)
+
+  object TaskSpec {
+    import monix.execution.Scheduler.Implicits.global
+
+    def testCanCatch_Task_catchNonFatalThrowableShouldCatchNonFatal: Result = {
+
+      val expectedExpcetion = new RuntimeException("Something's wrong")
+      val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
+      val expected          = expectedExpcetion.asLeft[Int]
+      val actual            = CanCatch[Task].catchNonFatalThrowable(fa).runSyncUnsafe()
+
+      actual ==== expected
+    }
+
+    @SuppressWarnings(Array("org.wartremover.warts.ToString"))
+    def testCanCatch_Task_catchNonFatalThrowableShouldNotCatchFatal: Result = {
+
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
+      val fa             = run[Task, Int](throwThrowable[Int](fatalExpcetion))
+
+      try {
+        val actual = CanCatch[Task].catchNonFatalThrowable(fa).runSyncUnsafe()
+        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+      } catch {
+        case ex: SomeControlThrowable =>
+          ex.getMessage ==== fatalExpcetion.getMessage
+
+        case ex: Throwable =>
+          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+      }
+
+    }
+
+    def testCanCatch_Task_catchNonFatalThrowableShouldReturnSuccessfulResult: Result = {
+
+      val fa       = run[Task, Int](1)
+      val expected = 1.asRight[Throwable]
+      val actual   = CanCatch[Task].catchNonFatalThrowable(fa).runSyncUnsafe()
+
+      actual ==== expected
+    }
+
+    def testCanCatch_Task_catchNonFatalShouldCatchNonFatal: Result = {
+
+      val expectedExpcetion = new RuntimeException("Something's wrong")
+      val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
+      val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val actual            = CanCatch[Task].catchNonFatal(fa)(SomeError.someThrowable).runSyncUnsafe()
+
+      actual ==== expected
+    }
+
+    @SuppressWarnings(Array("org.wartremover.warts.ToString"))
+    def testCanCatch_Task_catchNonFatalShouldNotCatchFatal: Result = {
+
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
+      val fa             = run[Task, Int](throwThrowable[Int](fatalExpcetion))
+
+      try {
+        val actual = CanCatch[Task].catchNonFatal(fa)(SomeError.someThrowable).runSyncUnsafe()
+        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+      } catch {
+        case ex: SomeControlThrowable =>
+          ex.getMessage ==== fatalExpcetion.getMessage
+
+        case ex: Throwable =>
+          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+      }
+
+    }
+
+    def testCanCatch_Task_catchNonFatalShouldReturnSuccessfulResult: Result = {
+
+      val fa       = run[Task, Int](1)
+      val expected = 1.asRight[SomeError]
+      val actual   = CanCatch[Task].catchNonFatal(fa)(SomeError.someThrowable).runSyncUnsafe()
+
+      actual ==== expected
+    }
+
+    def testCanCatch_Task_catchNonFatalEitherShouldCatchNonFatal: Result = {
+
+      val expectedExpcetion = new RuntimeException("Something's wrong")
+      val fa       = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val actual   = CanCatch[Task].catchNonFatalEither(fa)(SomeError.someThrowable).runSyncUnsafe()
+
+      actual ==== expected
+    }
+
+    @SuppressWarnings(Array("org.wartremover.warts.ToString"))
+    def testCanCatch_Task_catchNonFatalEitherShouldNotCatchFatal: Result = {
+
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
+      val fa             = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
+
+      try {
+        val actual = CanCatch[Task].catchNonFatalEither(fa)(SomeError.someThrowable).runSyncUnsafe()
+        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+      } catch {
+        case ex: SomeControlThrowable =>
+          ex.getMessage ==== fatalExpcetion.getMessage
+
+        case ex: Throwable =>
+          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+      }
+
+    }
+
+    def testCanCatch_Task_catchNonFatalEitherShouldReturnSuccessfulResult: Result = {
+
+      val fa       = run[Task, Either[SomeError, Int]](1.asRight[SomeError])
+      val expected = 1.asRight[SomeError]
+      val actual   = CanCatch[Task].catchNonFatalEither(fa)(SomeError.someThrowable).runSyncUnsafe()
+
+      actual ==== expected
+    }
+
+    def testCanCatch_Task_catchNonFatalEitherShouldReturnFailedResult: Result = {
+
+      val expectedFailure = SomeError.message("Failed")
+      val fa              = run[Task, Either[SomeError, Int]](expectedFailure.asLeft[Int])
+      val expected        = expectedFailure.asLeft[Int]
+      val actual          = CanCatch[Task].catchNonFatalEither(fa)(SomeError.someThrowable).runSyncUnsafe()
+
+      actual ==== expected
+    }
+
+    def testCanCatch_Task_catchNonFatalEitherTShouldCatchNonFatal: Result = {
+
+      val expectedExpcetion = new RuntimeException("Something's wrong")
+      val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+      val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val actual   = CanCatch[Task].catchNonFatalEitherT(fa)(SomeError.someThrowable).value.runSyncUnsafe()
+
+      actual ==== expected
+    }
+
+    @SuppressWarnings(Array("org.wartremover.warts.ToString"))
+    def testCanCatch_Task_catchNonFatalEitherTShouldNotCatchFatal: Result = {
+
+      val fatalExpcetion = SomeControlThrowable("Something's wrong")
+      val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
+
+      try {
+        val actual = CanCatch[Task].catchNonFatalEitherT(fa)(SomeError.someThrowable).value.runSyncUnsafe()
+        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+      } catch {
+        case ex: SomeControlThrowable =>
+          ex.getMessage ==== fatalExpcetion.getMessage
+
+        case ex: Throwable =>
+          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+      }
+
+    }
+
+    def testCanCatch_Task_catchNonFatalEitherTShouldReturnSuccessfulResult: Result = {
+
+      val fa       = EitherT(run[Task, Either[SomeError, Int]](1.asRight[SomeError]))
+      val expected = 1.asRight[SomeError]
+      val actual   = CanCatch[Task].catchNonFatalEitherT(fa)(SomeError.someThrowable).value.runSyncUnsafe()
+
+      actual ==== expected
+    }
+
+    def testCanCatch_Task_catchNonFatalEitherTShouldReturnFailedResult: Result = {
+
+      val expectedFailure = SomeError.message("Failed")
+      val fa              = EitherT(run[Task, Either[SomeError, Int]](expectedFailure.asLeft[Int]))
+      val expected        = expectedFailure.asLeft[Int]
+      val actual          = CanCatch[Task].catchNonFatalEitherT(fa)(SomeError.someThrowable).value.runSyncUnsafe()
+
+      actual ==== expected
+    }
+
+  }
+
+}
