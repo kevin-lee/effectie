@@ -4,6 +4,7 @@ import cats.effect.Sync
 import effectie.core.FxCtor
 
 import scala.util.Try
+import scala.util.control.NonFatal
 
 object fxCtor {
 
@@ -15,7 +16,11 @@ object fxCtor {
 
     @inline override final def pureOf[A](a: A): F[A] = Sync[F].pure(a)
 
-    @inline override final def pureOrError[A](a: => A): F[A] = Sync[F].catchNonFatal(a)
+    override final def pureOrError[A](a: => A): F[A] =
+      try pureOf(a)
+      catch {
+        case NonFatal(e) => errorOf(e)
+      }
 
     @inline override val unitOf: F[Unit] = Sync[F].unit
 
