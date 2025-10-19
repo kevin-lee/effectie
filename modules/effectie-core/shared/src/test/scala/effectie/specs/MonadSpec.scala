@@ -3,7 +3,7 @@ package effectie.specs
 import cats.{Eq, Monad}
 import hedgehog.runner.Test
 
-object MonadSpec {
+object MonadSpec extends effectie.testing.cats.MonadSpec {
   type Fx[F[*]] = effectie.core.Fx[F]
 
   def testMonadLaws[F[*]: Monad](name: String)(implicit eqF: Eq[F[Int]]): List[Test] =

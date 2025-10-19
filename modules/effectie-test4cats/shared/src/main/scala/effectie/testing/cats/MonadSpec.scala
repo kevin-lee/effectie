@@ -7,7 +7,7 @@ import hedgehog.runner._
 /** @author Kevin Lee
   * @since 2021-08-04
   */
-object MonadSpec {
+trait MonadSpec {
   def testAllLaws[F[*]: Monad](fName: String)(implicit eqF: Eq[F[Int]]): List[Test] =
     List(
       property(s"test Monad laws for $fName - Identity", test1_Identity),
@@ -91,3 +91,4 @@ object MonadSpec {
       )
 
 }
+object MonadSpec extends MonadSpec
