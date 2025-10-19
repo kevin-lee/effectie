@@ -1,4 +1,4 @@
-import ProjectInfo._
+import ProjectInfo.*
 import just.semver.{Anh, Dsv, SemVer}
 import SemVer.{Major, Minor, Patch}
 import just.semver.AdditionalInfo.PreRelease
@@ -333,6 +333,9 @@ lazy val catsEffect3Js  = catsEffect3
   .js
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
+  .settings(
+    libraryDependencies ++= List(libs.tests.munitCatsEffect3.value)
+  )
 
 lazy val monix3    = module(ProjectName("monix3"), crossProject(JVMPlatform, JSPlatform))
   .settings(
@@ -420,7 +423,7 @@ addCommandAlias(
 )
 
 def getTheLatestTaggedVersion(): String = {
-  import sys.process._
+  import sys.process.*
   "git fetch --tags".!
   val tag = "git rev-list --tags --max-count=1".!!.trim
   s"git describe --tags $tag".!!.trim.stripPrefix("v")
@@ -483,6 +486,8 @@ lazy val props =
     final val hedgehogLatestVersion = "0.13.0"
 
     val MunitVersion = "0.7.29"
+
+    val MunitCatsEffectVersion = "1.0.7"
 
     final val catsVersion = "2.7.0"
 
@@ -555,6 +560,9 @@ lazy val libs =
         Def.setting("org.scala-js" %%% "scala-js-macrotask-executor" % props.ScalaJsMacrotaskExecutorVersion % Test)
 
       lazy val munit = Def.setting("org.scalameta" %%% "munit" % props.MunitVersion % Test)
+
+      lazy val munitCatsEffect3 =
+        Def.setting("org.typelevel" %%% "munit-cats-effect-3" % props.MunitCatsEffectVersion % Test)
     }
   }
 
@@ -668,7 +676,11 @@ def module(projectName: ProjectName, crossProject: CrossProject.Builder): CrossP
     )
 }
 
-lazy val jsSettingsForFuture: SettingsDefinition = List.empty
+lazy val jsSettingsForFuture: SettingsDefinition = List(
+  libraryDependencies ++= List(
+    libs.tests.scalaJsMacrotaskExecutor.value
+  )
+)
 //lazy val jsSettingsForFuture: SettingsDefinition = List(
 //  Test / scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty
 //                            else List("-P:scalajs:nowarnGlobalExecutionContext")),
@@ -680,7 +692,4 @@ lazy val jsSettings: SettingsDefinition = List(
   crossScalaVersions := props.CrossScalaVersions.filterNot(_.startsWith("2.12")),
   Test / fork := false,
   coverageEnabled := false,
-  libraryDependencies ++= List(
-    libs.tests.scalaJsMacrotaskExecutor.value
-  ),
 )
