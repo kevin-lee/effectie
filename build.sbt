@@ -386,7 +386,16 @@ lazy val docs = (project in file("docs-gen-tmp/docs"))
       isScala3(scalaVersion.value),
       libraryDependencies.value,
     ),
-    mdocVariables := createMdocVariables(none),
+    mdocVariables := {
+      val latestVersion = getTheLatestTaggedVersion()
+
+      val websiteDir        = docusaurDir.value
+      val latestVersionFile = websiteDir / "latestVersion.json"
+      val latestVersionJson = s"""{"version":"$latestVersion"}"""
+      IO.write(latestVersionFile, latestVersionJson)
+
+      createMdocVariables(latestVersion.some)
+    },
     docusaurDir := (ThisBuild / baseDirectory).value / "website",
     docusaurBuildDir := docusaurDir.value / "build",
   )
@@ -429,22 +438,36 @@ def getTheLatestTaggedVersion(): String = {
   s"git describe --tags $tag".!!.trim.stripPrefix("v")
 }
 
-def createMdocVariables(version: Option[String]): Map[String, String] = Map(
-  "VERSION"                  -> (version match {
+def createMdocVariables(version: Option[String]): Map[String, String] = {
+  val versionForDoc = version match {
     case Some(version) => version
     case None => getTheLatestTaggedVersion()
-  }),
-  "SUPPORTED_SCALA_VERSIONS" -> {
-    val versions = props
-      .CrossScalaVersions
-      .map(CrossVersion.binaryScalaVersion)
-      .map(binVer => s"`$binVer`")
-    if (versions.length > 1)
-      s"${versions.init.mkString(", ")} and ${versions.last}"
-    else
-      versions.mkString
-  },
-)
+  }
+
+  Map(
+    "VERSION"                               -> versionForDoc,
+    "SUPPORTED_SCALA_VERSIONS"              -> {
+      val versions = props
+        .CrossScalaVersions
+        .map(CrossVersion.binaryScalaVersion)
+        .map(binVer => s"`$binVer`")
+      if (versions.length > 1)
+        s"${versions.init.mkString(", ")} and ${versions.last}"
+      else
+        versions.mkString
+    },
+    "SUPPORTED_SCALA_VERSIONS_FOR_SCALA_JS" -> {
+      val versions = props
+        .CrossScalaVersionsForScalaJs
+        .map(CrossVersion.binaryScalaVersion)
+        .map(binVer => s"`$binVer`")
+      if (versions.length > 1)
+        s"${versions.init.mkString(", ")} and ${versions.last}"
+      else
+        versions.mkString
+    },
+  )
+}
 
 lazy val props =
   new {
@@ -478,8 +501,9 @@ lazy val props =
     val isScala3IncompatibleScalacOption: String => Boolean =
       _.startsWith("-P:wartremover")
 
-    final val CrossScalaVersions =
-      (Scala3Version :: Scala2Versions).distinct
+    val CrossScalaVersions = (Scala3Version :: Scala2Versions).distinct
+
+    val CrossScalaVersionsForScalaJs = CrossScalaVersions.filterNot(_.startsWith("2.12"))
 
     final val IncludeTest = "compile->compile;test->test"
 
@@ -689,7 +713,7 @@ lazy val jsSettingsForFuture: SettingsDefinition = List(
 //)
 
 lazy val jsSettings: SettingsDefinition = List(
-  crossScalaVersions := props.CrossScalaVersions.filterNot(_.startsWith("2.12")),
+  crossScalaVersions := props.CrossScalaVersionsForScalaJs,
   Test / fork := false,
   coverageEnabled := false,
 )
