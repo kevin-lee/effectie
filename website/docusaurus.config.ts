@@ -1,17 +1,26 @@
+import {themes as prismThemes} from 'prism-react-renderer';
+import type {Config} from '@docusaurus/types';
+import type * as Preset from '@docusaurus/preset-classic';
+
+import LatestVersion from '@types/commonTypes';
+
 const algoliaConfig = require('./algolia.config.json');
 const googleAnalyticsConfig = require('./google-analytics.config.json');
 
-const lightCodeTheme = require('prism-react-renderer/themes/nightOwlLight');
-const darkCodeTheme = require('prism-react-renderer/themes/nightOwl');
+// const lightCodeTheme = require('prism-react-renderer/themes/github');
+// const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const lightCodeTheme = prismThemes.nightOwlLight;
+const darkCodeTheme = prismThemes.nightOwl;
 
-const isEmptyObject = obj => {
-  for (field in obj) return false;
-  return true;
-};
+
+const isEmptyObject = (obj: object) => Object.keys(obj).length === 0;
 
 const isSearchable = !isEmptyObject(algoliaConfig);
 const hasGoogleAnalytics = !isEmptyObject(googleAnalyticsConfig);
 const gtag = hasGoogleAnalytics ? { 'gtag': googleAnalyticsConfig } : null;
+
+import LatestVersionImported from './latestVersion.json';
+const latestVersionFound = LatestVersionImported as LatestVersion;
 
 const websiteConfig = {
   title: 'Effectie',
@@ -76,11 +85,11 @@ const websiteConfig = {
               to: 'docs/',
             },
             {
-              label: 'For Cats Effect',
+              label: 'For Cats Effect 2',
               to: 'docs/cats-effect2',
             },
             {
-              label: 'For Scalaz Effect',
+              label: 'For Monix',
               to: 'docs/monix3',
             },
           ],
@@ -120,7 +129,7 @@ const websiteConfig = {
               "path": "v1",
             },
             "current": {
-              "label": "2.0.0",
+              "label": `v${latestVersionFound.version}`,
             },
           }
         },
@@ -138,4 +147,4 @@ if (isSearchable) {
   websiteConfig['themeConfig']['algolia'] = algoliaConfig;
 }
 
-module.exports = websiteConfig;
+export default websiteConfig;
