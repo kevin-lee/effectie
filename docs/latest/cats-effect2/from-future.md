@@ -56,7 +56,7 @@ implicit val ec: ExecutionContext = ExecutionContext.fromExecutorService(executo
 implicit val cs: ContextShift[IO] = IO.contextShift(ec)
 
 try {
-  import effectie.instances.ce2.fx._
+  import effectie.instances.ce2.fx.ioFx
   import effectie.instances.ce2.fromFuture._
   println(MyApp.baz[IO](1).unsafeRunSync())
 } finally {

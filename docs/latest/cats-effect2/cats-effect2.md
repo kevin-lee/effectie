@@ -79,7 +79,7 @@ object Something {
   }
 }
 
-import effectie.instances.ce2.fx._
+import effectie.instances.ce2.fx.ioFx
 
 println(Something[IO].foo(1).unsafeRunSync())
 

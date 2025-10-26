@@ -65,15 +65,16 @@ def bar[F[_]: Fx: CanHandleError](n: Int): F[Int] =
       pureOf(0)
   }
   
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
+
   
-println(bar[IO](1).unsafeRunSync())
-println(bar[IO](-1).unsafeRunSync())
+bar[IO](1)
+bar[IO](-1)
  
 import effectie.instances.id.fx.idFx
 
-println(bar[Id](1))
-println(bar[Id](-1))
+bar[Id](1)
+bar[Id](-1)
 ```
 ```scala mdoc:reset-object
 import effectie.core._

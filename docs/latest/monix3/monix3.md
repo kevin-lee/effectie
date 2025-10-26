@@ -76,7 +76,7 @@ object Something {
 }
 import monix.execution.Scheduler.Implicits.global
 
-import effectie.instances.monix3.fx._
+import effectie.instances.monix3.fx.taskFx
 
 println(Something[Task].foo(1).runSyncUnsafe())
 

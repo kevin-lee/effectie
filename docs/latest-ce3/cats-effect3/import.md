@@ -32,7 +32,7 @@ It's usually only one place where you put the `main` method.
 
 For the instance of `Fx[F]`,
 ```scala
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
 ```
 
 ## Example
@@ -65,12 +65,12 @@ object Foo {
   }
 }
 ```
-```scala mdoc:compile-only
+```scala mdoc
 import cats.effect._
 
 object MyApp extends IOApp.Simple {
 
-  import effectie.instances.ce2.fx.ioFx
+  import effectie.instances.ce3.fx.ioFx
   
   def run: IO[Unit] = {
     for {
@@ -80,4 +80,6 @@ object MyApp extends IOApp.Simple {
   }
 
 }
+
+MyApp.main(Array.empty)
 ```

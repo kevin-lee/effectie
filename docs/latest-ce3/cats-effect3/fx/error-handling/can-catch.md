@@ -78,18 +78,18 @@ CanCatch[F].catchNonFatal(fa) {
 import cats.effect._
 
 import effectie.core._
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
+
 
 final case class MyException(cause: Throwable) extends RuntimeException
 
-val fa = CanCatch[IO].catchNonFatal(
+CanCatch[IO].catchNonFatal(
     IO(throw new RuntimeException("Something's wrong!"))
   ) {
     case ex =>
       MyException(ex)
   }
 
-fa.unsafeRunSync()
 ```
 
   </TabItem>
@@ -191,11 +191,11 @@ def doSomething[F[_]: Fx: CanCatch: Monad](
     case ex => MyError.nonFatalThrowable(ex)
   }
 
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
+
 
 val fa = doSomething[IO](1)
-val result = fa.unsafeRunSync()
-result match {
+fa.map {
   case Right(b) =>
     println(s"Result is $b")
   case Left(MyError.NonFatalThrowable(a)) =>
@@ -370,11 +370,11 @@ def doSomething[F[_]: Fx: CanCatch: Monad](
     case ex => MyError.nonFatalThrowable(ex)
   }
   
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
+
 
 val fa = doSomething[IO](-101)
-val result = fa.unsafeRunSync()
-result match {
+fa.map {
   case Right(b) =>
     println(s"Result is $b")
   case Left(MyError.NonFatalThrowable(a)) =>
@@ -526,17 +526,16 @@ fa match {
 import cats.effect._
 
 import effectie.core._
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
+
 
 final case class MyException(cause: Throwable) extends RuntimeException
 
-val fa = CanCatch[IO].catchNonFatalEither(
+CanCatch[IO].catchNonFatalEither(
     IO((throw new RuntimeException("Something's wrong!")): Either[Throwable, Int])
   ) {
     case ex => MyException(ex)
   }
-
-fa.unsafeRunSync()
 ```
 
   </TabItem>
@@ -647,11 +646,11 @@ def doSomething[F[_]: Fx: CanCatch: Monad](
     case ex => MyError.nonFatalThrowable(ex)
   }
   
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
+
 
 val fa = doSomething[IO](1)
-val result = fa.unsafeRunSync()
-result match {
+fa.map {
   case Right(b) =>
     println(s"Result is $b")
   case Left(a) =>
@@ -855,11 +854,11 @@ def doSomething[F[_]: Fx: CanCatch: Monad](
     case ex => MyError.nonFatalThrowable(ex)
   }
 
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
+
 
 val fa = doSomething[IO](-1)
-val result = fa.unsafeRunSync()
-result match {
+fa.map {
   case Right(b) =>
     println(s"Result is $b")
   case Left(a) =>
@@ -1033,17 +1032,17 @@ import cats.effect._
 
 import effectie.core._
 import effectie.syntax.all._
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
+
 
 final case class MyException(cause: Throwable) extends RuntimeException
 
-val fa = CanCatch[IO].catchNonFatalEitherT(
+CanCatch[IO].catchNonFatalEitherT(
     EitherT(IO((throw new RuntimeException("Something's wrong!")): Either[Throwable, Int]))
   ) {
     case ex => MyException(ex)
   }
 
-fa.value.unsafeRunSync()
 ```
 
   </TabItem>
@@ -1162,11 +1161,11 @@ def doSomething[F[_]: Fx: CanCatch: Monad](
     case ex => MyError.nonFatalThrowable(ex)
   }.value
   
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
+
 
 val fa = doSomething[IO](1)
-val result = fa.unsafeRunSync()
-result match {
+fa.map {
   case Right(b) =>
     println(s"Result is $b")
   case Left(a) =>
@@ -1373,11 +1372,11 @@ def doSomething[F[_]: Fx: CanCatch: Monad](
     case ex => MyError.nonFatalThrowable(ex)
   }.value
 
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
+
 
 val fa = doSomething[IO](-1)
-val result = fa.unsafeRunSync()
-result match {
+fa.map {
   case Right(b) =>
     println(s"Result is $b")
   case Left(a) =>
@@ -1561,15 +1560,14 @@ import effectie.syntax.all._
 
 final case class MyException(cause: Throwable) extends RuntimeException
 
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
 
-val fa = 
-  IO(throw new RuntimeException("Something's wrong!"))
-    .catchNonFatal {
-      case ex => MyException(ex)
-    }
 
-fa.unsafeRunSync()
+IO(throw new RuntimeException("Something's wrong!"))
+  .catchNonFatal {
+    case ex => MyException(ex)
+  }
+
 ```
 
   </TabItem>
@@ -1669,11 +1667,11 @@ def doSomething[F[_]: Fx: CanCatch: Monad](
       case ex => MyError.nonFatalThrowable(ex)
     }
     
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
+
 
 val fa = doSomething[IO](1)
-val result = fa.unsafeRunSync()
-result match {
+fa.map {
   case Right(b) =>
     println(s"Result is $b")
   case Left(MyError.NonFatalThrowable(a)) =>
@@ -1845,11 +1843,11 @@ def doSomething[F[_]: Fx: CanCatch: Monad](
       case ex => MyError.nonFatalThrowable(ex)
     }
 
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
+
 
 val fa = doSomething[IO](-101)
-val result = fa.unsafeRunSync()
-result match {
+fa.map {
   case Right(b) =>
     println(s"Result is $b")
   case Left(MyError.NonFatalThrowable(a)) =>
@@ -2002,15 +2000,13 @@ import effectie.syntax.all._
 
 final case class MyException(cause: Throwable) extends RuntimeException
 
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
 
-val fa = 
-    IO((throw new RuntimeException("Something's wrong!")): Either[Throwable, Int])
-      .catchNonFatalEither {
-        case ex => MyException(ex)
-      }
+IO((throw new RuntimeException("Something's wrong!")): Either[Throwable, Int])
+  .catchNonFatalEither {
+    case ex => MyException(ex)
+  }
 
-fa.unsafeRunSync()
 ```
 
   </TabItem>
@@ -2115,11 +2111,11 @@ def doSomething[F[_]: Fx: CanCatch: Monad](
       case ex => MyError.nonFatalThrowable(ex)
     }
     
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
+
 
 val fa = doSomething[IO](1)
-val result = fa.unsafeRunSync()
-result match {
+fa.map {
   case Right(b) =>
     println(s"Result is $b")
   case Left(a) =>
@@ -2320,11 +2316,11 @@ def doSomething[F[_]: Fx: CanCatch: Monad](
       case ex => MyError.nonFatalThrowable(ex)
     }
 
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
+
 
 val fa = doSomething[IO](-1)
-val result = fa.unsafeRunSync()
-result match {
+fa.map {
   case Right(b) =>
     println(s"Result is $b")
   case Left(a) =>
@@ -2498,15 +2494,14 @@ import effectie.syntax.all._
 
 final case class MyException(cause: Throwable) extends RuntimeException
 
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
 
-val fa = 
-  EitherT(IO((throw new RuntimeException("Something's wrong!")): Either[Throwable, Int]))
-    .catchNonFatalEitherT {
-      case ex => MyException(ex)
-    }
 
-fa.value.unsafeRunSync()
+EitherT(IO((throw new RuntimeException("Something's wrong!")): Either[Throwable, Int]))
+  .catchNonFatalEitherT {
+    case ex => MyException(ex)
+  }
+
 ```
 
   </TabItem>
@@ -2624,11 +2619,11 @@ def doSomething[F[_]: Fx: CanCatch: Monad](
       case ex => MyError.nonFatalThrowable(ex)
     }.value
     
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
+
 
 val fa = doSomething[IO](1)
-val result = fa.unsafeRunSync()
-result match {
+fa.map {
   case Right(b) =>
     println(s"Result is $b")
   case Left(a) =>
@@ -2835,11 +2830,11 @@ def doSomething[F[_]: Fx: CanCatch: Monad](
       case ex => MyError.nonFatalThrowable(ex)
     }.value
     
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
+
 
 val fa = doSomething[IO](-1)
-val result = fa.unsafeRunSync()
-result match {
+fa.map {
   case Right(b) =>
     println(s"Result is $b")
   case Left(a) =>
