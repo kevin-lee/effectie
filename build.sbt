@@ -401,6 +401,34 @@ lazy val docs = (project in file("docs-gen-tmp/docs"))
   )
   .settings(noPublish)
 
+lazy val docsCe3 = (project in file("docs-gen-tmp/docs-ce3"))
+  .enablePlugins(MdocPlugin)
+  .settings(
+    name := "docsCe3",
+    mdocIn := file("docs/latest-ce3"),
+    mdocOut := file("generated-docs/docs"),
+    cleanFiles += ((ThisBuild / baseDirectory).value / "generated-docs" / "docs" / "cats-effect3"),
+    scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption).filter(opt => opt != "-Xfatal-warnings")),
+    libraryDependencies ++= {
+      val latestTag = getTheLatestTaggedVersion()
+      List(
+        "org.typelevel" %% "cats-effect" % "3.6.3",
+        "io.kevinlee" %% "effectie-cats-effect3" % latestTag,
+        libs.extrasCats.value,
+        libs.extrasConcurrent.value,
+      )
+    },
+    libraryDependencies := libraryDependenciesPostProcess(
+      isScala3(scalaVersion.value),
+      libraryDependencies.value,
+    ),
+    mdocVariables := {
+      val latestVersion = getTheLatestTaggedVersion()
+      createMdocVariables(latestVersion.some)
+    },
+  )
+  .settings(noPublish)
+
 lazy val docsV1 = (project in file("docs-gen-tmp/docs-v1"))
   .enablePlugins(MdocPlugin)
   .settings(
@@ -428,7 +456,7 @@ addCommandAlias(
 )
 addCommandAlias(
   "docsMdocAll",
-  "; docs/mdoc; docsV1/mdoc",
+  "; docs/mdoc; docsV1/mdoc; docsCe3/mdoc",
 )
 
 def getTheLatestTaggedVersion(): String = {

@@ -33,7 +33,7 @@ object Something {
 import monix.eval._
 import monix.execution.Scheduler.Implicits.global
 
-import effectie.instances.monix3.fx._
+import effectie.instances.monix3.fx.taskFx
 
 val get1 = Something[Task].get(1)
 
@@ -74,7 +74,7 @@ object Something {
 import monix.eval._
 import monix.execution.Scheduler.Implicits.global
 
-import effectie.instances.monix3.fx._
+import effectie.instances.monix3.fx.taskFx
 
 val get1 = Something[Task].get(1)
 

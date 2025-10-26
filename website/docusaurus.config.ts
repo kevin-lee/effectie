@@ -30,7 +30,7 @@ const websiteConfig = {
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'throw',
   favicon: 'img/favicon.png',
-  organizationName: 'Kevin-Lee', // Usually your GitHub org/user name.
+  organizationName: 'kevin-lee', // Usually your GitHub org/user name.
   projectName: 'effectie', // Usually your repo name.
   themeConfig: {
     image: 'img/refined4s-social-card.jpg',
@@ -67,7 +67,7 @@ const websiteConfig = {
           ],
         },
         {
-          href: 'https://github.com/Kevin-Lee/effectie',
+          href: 'https://github.com/kevin-lee/effectie',
           className: 'header-github-link',
           'aria-label': 'GitHub',
           position: 'right',
@@ -99,7 +99,7 @@ const websiteConfig = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/Kevin-Lee/effectie',
+              href: 'https://github.com/kevin-lee/effectie',
             },
             {
               label: 'Blog',
@@ -112,7 +112,7 @@ const websiteConfig = {
           ],
         },
       ],
-      copyright: `Copyright © 2019 Effectie is designed and developed by <a href="https://github.com/Kevin-Lee" target="_blank">Kevin Lee</a>.<br>The website built with Docusaurus.`,
+      copyright: `Copyright © 2019 Effectie is designed and developed by <a href="https://github.com/kevin-lee" target="_blank">Kevin Lee</a>.<br>The website built with Docusaurus.`,
     },
   },
   presets: [

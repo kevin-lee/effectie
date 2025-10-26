@@ -55,7 +55,7 @@ def foo[F[_]: Fx]: F[Int] = Fx[F].pureOf(1)
 import cats.effect._
 import effectie.syntax.all._
 
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
 
 pureOf[IO](1)
 ```
@@ -68,7 +68,7 @@ pureOf[IO](1)
 import cats.effect._
 import effectie.core._
 
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
 
 Fx[IO].pureOf(1)
 ```
@@ -99,13 +99,13 @@ def foo[F[_]: Fx](): F[Unit] = effectOf(println("Hello"))
 ```scala mdoc:nest
 import cats.effect._
 
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
 
 (for {
   _ <- foo[IO]()
   _ <- foo[IO]()
   _ <- foo[IO]()
-} yield ()).unsafeRunSync()
+} yield ())
 ```
 
   </TabItem>
@@ -121,13 +121,13 @@ def foo[F[_]: Fx](): F[Unit] = Fx[F].effectOf(println("Hello"))
 ```scala mdoc:nest
 import cats.effect._
 
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
 
 (for {
   _ <- foo[IO]()
   _ <- foo[IO]()
   _ <- foo[IO]()
-} yield ()).unsafeRunSync()
+} yield ())
 ```
 
   </TabItem>
@@ -146,7 +146,7 @@ import effectie.instances.ce2.fx.ioFx
 import cats.effect._
 import effectie.syntax.all._
 
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
 
 effectOf[IO](println("Hello"))
 
@@ -162,7 +162,7 @@ effectOf[IO][Int](throw new RuntimeException("ERROR"))
 import cats.effect._
 import effectie.core._
 
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
 
 Fx[IO].effectOf(println("Hello"))
 
@@ -236,7 +236,7 @@ values={[
 import cats.effect._
 import effectie.syntax.all._
 
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
 
 pureOrError[IO](1)
 
@@ -251,7 +251,7 @@ pureOrError[IO]("abc".substring(5))
 import cats.effect._
 import effectie.core._
 
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
 
 Fx[IO].pureOrError(1)
 
@@ -326,7 +326,7 @@ values={[
 import cats.effect._
 import effectie.syntax.all._
 
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
 
 unitOf[IO]
 ```
@@ -339,7 +339,7 @@ unitOf[IO]
 import cats.effect._
 import effectie.core._
 
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
 
 Fx[IO].unitOf
 ```
@@ -386,11 +386,11 @@ object Something {
 }
 
 import cats.effect._
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
 
 val get1 = Something[IO].get(1)
 
-get1.unsafeRunSync()
+get1
 ```
 
 
@@ -421,11 +421,11 @@ object Something {
 }
 
 import cats.effect._
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
 
 val get1 = Something[IO].get(1)
 
-get1.unsafeRunSync()
+get1
 ```
 
   </TabItem>

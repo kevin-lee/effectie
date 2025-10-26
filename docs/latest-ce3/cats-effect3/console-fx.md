@@ -43,10 +43,9 @@ object Something {
 }
 
 import cats.effect._
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
 
-val foo = Something[IO].foo()
-foo.unsafeRunSync()
+Something[IO].foo()
 ```
 
 ```
@@ -103,10 +102,11 @@ object Something {
 }
 
 import cats.effect._
-import effectie.instances.ce2.fx.ioFx
+import effectie.instances.ce3.fx.ioFx
 
-val foo = Something[IO].foo()
-foo.unsafeRunSync()
+
+
+Something[IO].foo()
 ```
 
 ```
