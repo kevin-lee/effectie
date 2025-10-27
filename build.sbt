@@ -76,7 +76,7 @@ lazy val core = module(ProjectName("core"), crossProject(JVMPlatform, JSPlatform
   .settings(
     description := "Effect Utils - Core",
     libraryDependencies ++= List(
-      libs.extrasCore.value,
+      libs.extrasCore.value % Test,
       libs.libCatsCore(props.catsVersion).value % Test,
     ) ++ (
       if (scalaVersion.value.startsWith("2.12"))
