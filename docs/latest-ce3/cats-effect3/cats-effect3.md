@@ -1,9 +1,9 @@
 ---
-id: cats-effect2
-title: "For Cats Effect"
+id: cats-effect3
+title: "For Cats Effect 3"
 ---
 
-## Effectie for Cats Effect
+## Effectie for Cats Effect 3
 
 * [What to Import](import.md)
 * [Fx](fx/fx.md)
