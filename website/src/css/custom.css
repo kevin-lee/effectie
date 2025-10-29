@@ -27,7 +27,7 @@ main > .container {
     We want ONLY for this, hence we base our selector on the parent, which is a DOM element: <main>.
     We want to reuse this class in DocItem/Layout.
    */
-  max-width: 80% !important;
+  max-width: 97% !important;
 }
 
 .docusaurus-highlight-code-line {

@@ -4,6 +4,7 @@ import SemVer.{Major, Minor, Patch}
 import just.semver.AdditionalInfo.PreRelease
 import kevinlee.sbt.SbtCommon.crossVersionProps
 import sbtcrossproject.CrossProject
+import extras.scala.io.syntax.color.*
 
 ThisBuild / scalaVersion := props.ProjectScalaVersion
 ThisBuild / organization := "io.kevinlee"
@@ -76,7 +77,7 @@ lazy val core = module(ProjectName("core"), crossProject(JVMPlatform, JSPlatform
   .settings(
     description := "Effect Utils - Core",
     libraryDependencies ++= List(
-      libs.extrasCore.value % Test,
+      libs.extrasCore.value                     % Test,
       libs.libCatsCore(props.catsVersion).value % Test,
     ) ++ (
       if (scalaVersion.value.startsWith("2.12"))
@@ -391,7 +392,17 @@ lazy val docs = (project in file("docs-gen-tmp/docs"))
 
       val websiteDir        = docusaurDir.value
       val latestVersionFile = websiteDir / "latestVersion.json"
-      val latestVersionJson = s"""{"version":"$latestVersion"}"""
+      val latestVersionJson = raw"""{"version":"$latestVersion"}"""
+
+      val websiteDirRelativePath =
+        s"${latestVersionFile.getParentFile.getParentFile.getName.cyan}/${latestVersionFile.getParentFile.getName.yellow}"
+      sLog
+        .value
+        .info(
+          s""">> Writing ${"the latest version".blue} to $websiteDirRelativePath/${latestVersionFile.getName.green}.
+             |>> Content: ${latestVersionJson.blue}
+             |""".stripMargin
+        )
       IO.write(latestVersionFile, latestVersionJson)
 
       createMdocVariables(latestVersion.some)
@@ -412,8 +423,8 @@ lazy val docsCe3 = (project in file("docs-gen-tmp/docs-ce3"))
     libraryDependencies ++= {
       val latestTag = getTheLatestTaggedVersion()
       List(
-        "org.typelevel" %% "cats-effect" % "3.6.3",
-        "io.kevinlee" %% "effectie-cats-effect3" % latestTag,
+        "org.typelevel" %% "cats-effect"           % "3.6.3",
+        "io.kevinlee"   %% "effectie-cats-effect3" % latestTag,
         libs.extrasCats.value,
         libs.extrasConcurrent.value,
       )
