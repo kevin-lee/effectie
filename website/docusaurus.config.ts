@@ -34,13 +34,10 @@ const websiteConfig = {
   projectName: 'effectie', // Usually your repo name.
   themeConfig: {
     image: 'img/refined4s-social-card.jpg',
-    prism: {
-      theme: lightCodeTheme,
-      darkTheme: darkCodeTheme,
-      additionalLanguages: [
-        'java',
-        'scala',
-      ],
+    docs: {
+      sidebar: {
+        hideable: true,
+      },
     },
     navbar: {
       title: 'Effectie',
@@ -113,6 +110,17 @@ const websiteConfig = {
         },
       ],
       copyright: `Copyright © 2019 Effectie is designed and developed by <a href="https://github.com/kevin-lee" target="_blank">Kevin Lee</a>.<br>The website built with Docusaurus.`,
+    },
+    prism: {
+      theme: lightCodeTheme,
+      darkTheme: darkCodeTheme,
+      additionalLanguages: [
+        'bash',
+        'diff',
+        'json',
+        'java',
+        'scala',
+      ],
     },
   },
   presets: [
