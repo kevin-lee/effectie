@@ -502,20 +502,32 @@ lazy val docs = (project in file("docs-gen-tmp/docs"))
       implicit val logger: Logger = sLog.value
 
       val latestVersion = getTheLatestTaggedVersion(version.value)
+      createMdocVariables(latestVersion)
+    },
+    docusaurDir := (ThisBuild / baseDirectory).value / "website",
+    docusaurBuildDir := docusaurDir.value / "build",
+    mdoc := {
+      implicit val logger: Logger = sLog.value
+
+      val latestVersion = getTheLatestTaggedVersion(version.value)
 
       val envVarCi = sys.env.get("CI")
       val ciResult = s"""sys.env.get("CI")=${envVarCi}"""
       envVarCi match {
         case Some("true") =>
-          logger.info(s">> ${ciResult.yellow} so ${"run".green} `${"writeLatestVersion".blue}`.")
-          writeLatestVersion(docusaurDir.value, latestVersion)
+          logger.info(
+            s">> ${ciResult.yellow} so ${"run".green} `${"writeLatestVersion".blue}` and `${"writeVersionsArchived".blue}`."
+          )
+          val websiteDir = docusaurDir.value
+          writeLatestVersion(websiteDir, latestVersion)
+          writeVersionsArchived(websiteDir, latestVersion)
         case Some(_) | None =>
-          logger.info(s">> ${ciResult.yellow} so it will ${"not run".red} `${"writeLatestVersion".cyan}`.")
+          logger.info(
+            s">> ${ciResult.yellow} so it will ${"not run".red} `${"writeLatestVersion".cyan}` and `${"writeVersionsArchived".cyan}`."
+          )
       }
-      createMdocVariables(latestVersion)
+      mdoc.evaluated
     },
-    docusaurDir := (ThisBuild / baseDirectory).value / "website",
-    docusaurBuildDir := docusaurDir.value / "build",
   )
   .settings(noPublish)
 
@@ -543,7 +555,8 @@ lazy val docsCe3 = (project in file("docs-gen-tmp/docs-ce3"))
     ),
     mdocVariables := {
       implicit val logger: Logger = sLog.value
-      val latestVersion           = getTheLatestTaggedVersion(version.value)
+
+      val latestVersion = getTheLatestTaggedVersion(version.value)
       createMdocVariables(latestVersion)
     },
   )
@@ -580,7 +593,7 @@ addCommandAlias(
 )
 
 def getTheLatestTaggedVersion(version: String)(implicit logger: Logger): String = {
-  import sys.process.*
+  import sys.process._
   val envVarCi = sys.env.get("CI")
   val ciResult = s"""sys.env.get("CI")=${envVarCi}"""
   envVarCi match {
@@ -611,6 +624,34 @@ def writeLatestVersion(websiteDir: File, latestVersion: String)(implicit logger:
          |""".stripMargin
   )
   IO.write(latestVersionFile, latestVersionJson)
+}
+
+def writeVersionsArchived(websiteDir: File, latestVersion: String): Unit = {
+  import sys.process._
+  "git fetch --tags".!
+  val tags = "git tag".!!.trim
+
+  val versions = tags
+    .split("\n")
+    .map(_.stripPrefix("v"))
+    .map(SemVer.parse)
+    .collect { case Right(v) => v }
+    .sorted(Ordering[SemVer].reverse)
+    .map(_.render)
+    .filter(_ != latestVersion)
+
+  val versionsArchivedFile = websiteDir / "src" / "pages" / "versionsArchived.json"
+
+  val versionsInJson = versions
+    .map { v =>
+      raw"""  {
+           |    "name": "$v",
+           |    "label": "$v"
+           |  }""".stripMargin
+    }
+    .mkString("[\n", ",\n", "\n]")
+
+  IO.write(versionsArchivedFile, versionsInJson)
 }
 
 def createMdocVariables(version: String): Map[String, String] = {
