@@ -505,11 +505,11 @@ lazy val docs = (project in file("docs-gen-tmp/docs"))
 
       val envVarCi = sys.env.get("CI")
       val ciResult = s"""sys.env.get("CI")=${envVarCi}"""
-      envVarCi.foreach {
-        case "true" =>
+      envVarCi match {
+        case Some("true") =>
           logger.info(s">> ${ciResult.yellow} so ${"run".green} `${"writeLatestVersion".blue}`.")
           writeLatestVersion(docusaurDir.value, latestVersion)
-        case _ =>
+        case Some(_) | None =>
           logger.info(s">> ${ciResult.yellow} so it will ${"not run".red} `${"writeLatestVersion".cyan}`.")
       }
       createMdocVariables(latestVersion)
@@ -583,12 +583,12 @@ def getTheLatestTaggedVersion(version: String)(implicit logger: Logger): String 
   import sys.process.*
   val envVarCi = sys.env.get("CI")
   val ciResult = s"""sys.env.get("CI")=${envVarCi}"""
-  envVarCi.foreach {
-    case "true" =>
+  envVarCi match {
+    case Some("true") =>
       val gitFetchTagsCmd = "git fetch --tags"
       logger.info(s">> ${ciResult.yellow} so ${"run".green} `${gitFetchTagsCmd.blue}`")
       gitFetchTagsCmd.!
-    case _ =>
+    case Some(_) | None =>
       logger.info(s">> ${ciResult.yellow} so ${"skip fetching tags".red}")
   }
 
