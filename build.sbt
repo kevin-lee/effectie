@@ -114,7 +114,9 @@ lazy val coreJs     = core
       libs.tests.munit.value
     )
   )
-lazy val coreNative = core.native.settings(nativeSettings)
+lazy val coreNative = core
+  .native
+  .settings(nativeSettings)
   .settings(
     libraryDependencies ++= List(
       libs.tests.extrasConcurrent.value,
@@ -483,7 +485,8 @@ lazy val docs = (project in file("docs-gen-tmp/docs"))
     cleanFiles += ((ThisBuild / baseDirectory).value / "generated-docs" / "docs"),
     scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption).filter(opt => opt != "-Xfatal-warnings")),
     libraryDependencies ++= {
-      val latestTag = getTheLatestTaggedVersion()
+      implicit val logger: Logger = sLog.value
+      val latestTag               = getTheLatestTaggedVersion(version.value)
       List(
         "io.kevinlee" %% "effectie-cats-effect2" % latestTag,
         "io.kevinlee" %% "effectie-monix3"       % latestTag,
@@ -496,24 +499,20 @@ lazy val docs = (project in file("docs-gen-tmp/docs"))
       libraryDependencies.value,
     ),
     mdocVariables := {
-      val latestVersion = getTheLatestTaggedVersion()
+      implicit val logger: Logger = sLog.value
 
-      val websiteDir        = docusaurDir.value
-      val latestVersionFile = websiteDir / "latestVersion.json"
-      val latestVersionJson = raw"""{"version":"$latestVersion"}"""
+      val latestVersion = getTheLatestTaggedVersion(version.value)
 
-      val websiteDirRelativePath =
-        s"${latestVersionFile.getParentFile.getParentFile.getName.cyan}/${latestVersionFile.getParentFile.getName.yellow}"
-      sLog
-        .value
-        .info(
-          s""">> Writing ${"the latest version".blue} to $websiteDirRelativePath/${latestVersionFile.getName.green}.
-             |>> Content: ${latestVersionJson.blue}
-             |""".stripMargin
-        )
-      IO.write(latestVersionFile, latestVersionJson)
-
-      createMdocVariables(latestVersion.some)
+      val envVarCi = sys.env.get("CI")
+      val ciResult = s"""sys.env.get("CI")=${envVarCi}"""
+      envVarCi.foreach {
+        case "true" =>
+          logger.info(s">> ${ciResult.yellow} so ${"run".green} `${"writeLatestVersion".blue}`.")
+          writeLatestVersion(docusaurDir.value, latestVersion)
+        case _ =>
+          logger.info(s">> ${ciResult.yellow} so it will ${"not run".red} `${"writeLatestVersion".cyan}`.")
+      }
+      createMdocVariables(latestVersion)
     },
     docusaurDir := (ThisBuild / baseDirectory).value / "website",
     docusaurBuildDir := docusaurDir.value / "build",
@@ -529,7 +528,8 @@ lazy val docsCe3 = (project in file("docs-gen-tmp/docs-ce3"))
     cleanFiles += ((ThisBuild / baseDirectory).value / "generated-docs" / "docs" / "cats-effect3"),
     scalacOptions ~= (_.filterNot(props.isScala3IncompatibleScalacOption).filter(opt => opt != "-Xfatal-warnings")),
     libraryDependencies ++= {
-      val latestTag = getTheLatestTaggedVersion()
+      implicit val logger: Logger = sLog.value
+      val latestTag               = getTheLatestTaggedVersion(version.value)
       List(
         "org.typelevel" %% "cats-effect"           % "3.6.3",
         "io.kevinlee"   %% "effectie-cats-effect3" % latestTag,
@@ -542,8 +542,9 @@ lazy val docsCe3 = (project in file("docs-gen-tmp/docs-ce3"))
       libraryDependencies.value,
     ),
     mdocVariables := {
-      val latestVersion = getTheLatestTaggedVersion()
-      createMdocVariables(latestVersion.some)
+      implicit val logger: Logger = sLog.value
+      val latestVersion           = getTheLatestTaggedVersion(version.value)
+      createMdocVariables(latestVersion)
     },
   )
   .settings(noPublish)
@@ -565,7 +566,7 @@ lazy val docsV1 = (project in file("docs-gen-tmp/docs-v1"))
       isScala3(scalaVersion.value),
       libraryDependencies.value,
     ),
-    mdocVariables := createMdocVariables("1.16.0".some),
+    mdocVariables := createMdocVariables("1.16.0"),
   )
   .settings(noPublish)
 
@@ -578,18 +579,42 @@ addCommandAlias(
   "; docs/mdoc; docsV1/mdoc; docsCe3/mdoc",
 )
 
-def getTheLatestTaggedVersion(): String = {
+def getTheLatestTaggedVersion(version: String)(implicit logger: Logger): String = {
   import sys.process.*
-  "git fetch --tags".!
+  val envVarCi = sys.env.get("CI")
+  val ciResult = s"""sys.env.get("CI")=${envVarCi}"""
+  envVarCi.foreach {
+    case "true" =>
+      val gitFetchTagsCmd = "git fetch --tags"
+      logger.info(s">> ${ciResult.yellow} so ${"run".green} `${gitFetchTagsCmd.blue}`")
+      gitFetchTagsCmd.!
+    case _ =>
+      logger.info(s">> ${ciResult.yellow} so ${"skip fetching tags".red}")
+  }
+
   val tag = "git rev-list --tags --max-count=1".!!.trim
-  s"git describe --tags $tag".!!.trim.stripPrefix("v")
+  if (tag.nonEmpty)
+    s"git describe --tags $tag".!!.trim.stripPrefix("v")
+  else
+    version
 }
 
-def createMdocVariables(version: Option[String]): Map[String, String] = {
-  val versionForDoc = version match {
-    case Some(version) => version
-    case None => getTheLatestTaggedVersion()
-  }
+def writeLatestVersion(websiteDir: File, latestVersion: String)(implicit logger: Logger): Unit = {
+  val latestVersionFile = websiteDir / "latestVersion.json"
+  val latestVersionJson = raw"""{"version":"$latestVersion"}"""
+
+  val websiteDirRelativePath =
+    s"${latestVersionFile.getParentFile.getParentFile.getName.cyan}/${latestVersionFile.getParentFile.getName.yellow}"
+  logger.info(
+    s""">> Writing ${"the latest version".blue} to $websiteDirRelativePath/${latestVersionFile.getName.green}.
+         |>> Content: ${latestVersionJson.blue}
+         |""".stripMargin
+  )
+  IO.write(latestVersionFile, latestVersionJson)
+}
+
+def createMdocVariables(version: String): Map[String, String] = {
+  val versionForDoc = version
 
   Map(
     "VERSION"                               -> versionForDoc,
@@ -632,8 +657,8 @@ lazy val props =
     final val Scala3Version = "3.3.3"
 
 //    final val ProjectScalaVersion = "2.12.13"
-//    final val ProjectScalaVersion = Scala2Version
-    final val ProjectScalaVersion = Scala3Version
+    val ProjectScalaVersion = Scala2Version
+//    val ProjectScalaVersion = Scala3Version
 
     lazy val licenses = List("MIT" -> url("http://opensource.org/licenses/MIT"))
 
