@@ -620,8 +620,8 @@ def writeLatestVersion(websiteDir: File, latestVersion: String)(implicit logger:
     s"${latestVersionFile.getParentFile.getParentFile.getName.cyan}/${latestVersionFile.getParentFile.getName.yellow}"
   logger.info(
     s""">> Writing ${"the latest version".blue} to $websiteDirRelativePath/${latestVersionFile.getName.green}.
-         |>> Content: ${latestVersionJson.blue}
-         |""".stripMargin
+       |>> Content: ${latestVersionJson.blue}
+       |""".stripMargin
   )
   IO.write(latestVersionFile, latestVersionJson)
 }

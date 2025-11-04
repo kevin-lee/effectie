@@ -51,7 +51,7 @@ jobs:
           echo "JVM_OPTS=${JVM_OPTS}"
           echo "SBT_OPTS=${SBT_OPTS}"
           sbt \
-            ++${{ matrix.scala.version }}! \
+            ++${{ matrix.scala.version }} \
             "scalafixAll --check" \
             scalafmtCheckAll
 
@@ -72,6 +72,6 @@ jobs:
           echo "JVM_OPTS=${JVM_OPTS}"
           echo "SBT_OPTS=${SBT_OPTS}"
           sbt \
-            ++${{ matrix.scala.version }}! \
+            ++${{ matrix.scala.version }} \
             "scalafixAll --check" \
             scalafmtCheckAll
