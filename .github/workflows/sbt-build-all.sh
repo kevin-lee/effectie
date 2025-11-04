@@ -28,10 +28,10 @@ else
 #    echo "report build but it does nothing for now."
   fi
 
-#  echo "sbt -J-Xmx2048m ++${scala_version}! -v clean ${test_task}"
+#  echo "sbt -J-Xmx2048m ++${scala_version} -v clean ${test_task}"
 #  sbt \
 #    -J-Xmx2048m \
-#    ++${scala_version}! \
+#    ++${scala_version} \
 #    -v \
 #    clean \
 #    ${test_task}

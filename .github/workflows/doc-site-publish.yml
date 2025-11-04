@@ -52,7 +52,7 @@ jobs:
           SBT_OPTS: ${{ env.GH_JVM_OPTS }}
         run: |
           sbt \
-            ++${{ matrix.scala.version }}! \
+            ++${{ matrix.scala.version }} \
             docsCleanAll \
             docsMdocAll \
             docs/docusaurGenerateAlgoliaConfigFile \
