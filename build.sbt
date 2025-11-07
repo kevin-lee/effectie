@@ -685,7 +685,7 @@ def createMdocVariables(version: String): Map[String, String] = {
 lazy val props =
   new {
 
-    final val GitHubUsername = "Kevin-Lee"
+    final val GitHubUsername = "kevin-lee"
     final val RepoName       = "effectie"
 
     final val Scala2Versions = List(
