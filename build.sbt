@@ -827,7 +827,12 @@ def module(projectName: ProjectName, crossProject: CrossProject.Builder): CrossP
     .settings(
       name := prefixedName,
       fork := true,
-      scalacOptions := scalacOptions.value.filterNot(props.isScala3IncompatibleScalacOption),
+      scalacOptions := scalacOptions.value.filterNot(props.isScala3IncompatibleScalacOption) ++ (
+        if (scalaVersion.value.startsWith("3."))
+          Seq("-explain")
+        else
+          Seq.empty
+      ),
       scalafixConfig := (
         if (scalaVersion.value.startsWith("3"))
           ((ThisBuild / baseDirectory).value / ".scalafix-scala3.conf").some

@@ -51,7 +51,7 @@ import scala.annotation.implicitNotFound
   ---
   """
 )
-trait Fx[F[*]] extends FxCtor[F] with CanCatch[F] with CanHandleError[F] with CanRecover[F]
+trait Fx[F[*]] extends FxCtor[F] with CanCatch[F] with CanHandleError[F] with CanRecover[F] with OnNonFatal[F]
 
 object Fx {
 

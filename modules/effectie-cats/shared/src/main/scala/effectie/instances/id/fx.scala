@@ -1,7 +1,7 @@
 package effectie.instances.id
 
 import cats.Id
-import effectie.core.{Fx, FxCtor}
+import effectie.core.{Fx, FxCtor, OnNonFatal}
 
 import scala.util.Try
 
@@ -50,6 +50,12 @@ object fx {
       handleError: PartialFunction[Throwable, AA]
     ): Id[AA] =
       canRecover.idCanRecover.recoverFromNonFatal[A, AA](fa)(handleError)
+
+    @inline override final def onNonFatalWith[A](fa: => Id[A])(
+      partialFunction: PartialFunction[Throwable, Id[Unit]]
+    ): Id[A] =
+      OnNonFatal[Id](fxCtor, canHandleError.idCanHandleError).onNonFatalWith(fa)(partialFunction)
+
   }
 
 }
