@@ -1,6 +1,6 @@
 package effectie.instances.monix3
 
-import effectie.core.{Fx, FxCtor}
+import effectie.core.{Fx, FxCtor, OnNonFatal}
 import monix.eval.Task
 
 import scala.util.Try
@@ -56,6 +56,12 @@ object fx {
       handleError: PartialFunction[Throwable, AA]
     ): Task[AA] =
       canRecover.taskCanRecover.recoverFromNonFatal[A, AA](fa)(handleError)
+
+    @inline override final def onNonFatalWith[A](
+      fa: => Task[A]
+    )(partialFunction: PartialFunction[Throwable, Task[Unit]]): Task[A] =
+      OnNonFatal[Task](fxCtor, canHandleError.taskCanHandleError).onNonFatalWith(fa)(partialFunction)
+
   }
 
 }

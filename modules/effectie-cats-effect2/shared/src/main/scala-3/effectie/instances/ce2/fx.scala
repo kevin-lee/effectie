@@ -1,7 +1,7 @@
 package effectie.instances.ce2
 
 import cats.effect.IO
-import effectie.core.{Fx, FxCtor}
+import effectie.core.{Fx, FxCtor, OnNonFatal}
 
 import scala.util.Try
 
@@ -50,6 +50,11 @@ object fx {
       handleError: PartialFunction[Throwable, AA]
     ): IO[AA] =
       canRecover.ioCanRecover.recoverFromNonFatal(fa)(handleError)
+
+    inline override final def onNonFatalWith[A](fa: => IO[A])(
+      partialFunction: PartialFunction[Throwable, IO[Unit]]
+    ): IO[A] =
+      OnNonFatal[IO](fxCtor, canHandleError.ioCanHandleError).onNonFatalWith(fa)(partialFunction)
 
   }
 
