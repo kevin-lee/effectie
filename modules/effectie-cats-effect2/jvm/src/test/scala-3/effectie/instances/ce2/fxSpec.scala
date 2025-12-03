@@ -361,6 +361,20 @@ object FxSpec extends Properties {
         "test Fx[IO].recoverEitherTFromNonFatal should return the failed result",
         IoSpec.CanRecoverSpec.testCanRecover_IO_recoverEitherTFromNonFatalShouldReturnFailedResult,
       ),
+    ) ++
+    List(
+      example(
+        "test Fx[IO].onNonFatalWith should do something for NonFatal",
+        IoSpec.OnNonFatalSpec.testOnNonFatal_IO_onNonFatalWithShouldRecoverFromNonFatal,
+      ),
+      example(
+        "test Fx[IO].onNonFatalWith should do nothing for Fatal",
+        IoSpec.OnNonFatalSpec.testOnNonFatal_IO_onNonFatalWithShouldNotCatchFatal,
+      ),
+      example(
+        "test Fx[IO].onNonFatalWith should do nothing for the successful result",
+        IoSpec.OnNonFatalSpec.testOnNonFatal_IO_onNonFatalWithShouldReturnSuccessfulResult,
+      ),
     )
 
   def throwThrowable[A](throwable: => Throwable): A =
@@ -1472,6 +1486,98 @@ object FxSpec extends Properties {
             .unsafeRunSync()
 
         actual ==== expected
+      }
+
+    }
+
+    object OnNonFatalSpec {
+
+      def testOnNonFatal_IO_onNonFatalWithShouldRecoverFromNonFatal: Result = {
+
+        val expectedExpcetion = new RuntimeException("Something's wrong")
+        val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+        val expected          = 123.some
+        var actual            = none[Int] // scalafix:ok DisableSyntax.var
+
+        val result =
+          try {
+            val r = Fx[IO]
+              .onNonFatalWith(fa) {
+                case NonFatal(`expectedExpcetion`) =>
+                  IO.delay {
+                    actual = expected
+                  } *> IO.unit
+              }
+              .unsafeRunSync()
+            new AssertionError(s"Should have thrown an exception, but it was ${r.toString}.")
+          } catch {
+            case ex: Throwable =>
+              ex
+          }
+
+        Result.all(
+          List(
+            result ==== expectedExpcetion,
+            actual ==== expected,
+          )
+        )
+      }
+
+      @SuppressWarnings(Array("org.wartremover.warts.ToString"))
+      def testOnNonFatal_IO_onNonFatalWithShouldNotCatchFatal: Result = {
+
+        val expectedExpcetion = SomeControlThrowable("Something's wrong")
+        val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+        var actual            = none[Int] // scalafix:ok DisableSyntax.var
+
+        val io = Fx[IO].onNonFatalWith(fa) {
+          case NonFatal(`expectedExpcetion`) =>
+            IO.delay {
+              actual = 123.some
+              ()
+            } *> IO.unit
+        }
+        try {
+          val actual = io.unsafeRunSync()
+          Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+        } catch {
+          case ex: ControlThrowable =>
+            Result.all(
+              List(
+                actual ==== none[Int],
+                ex ==== expectedExpcetion,
+              )
+            )
+
+          case ex: Throwable =>
+            Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+        }
+
+      }
+
+      def testOnNonFatal_IO_onNonFatalWithShouldReturnSuccessfulResult: Result = {
+
+        val expectedResult = 999
+        val fa             = run[IO, Int](expectedResult)
+
+        val expected = none[Int]
+        var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+        val result = Fx[IO]
+          .onNonFatalWith(fa) {
+            case NonFatal(_) =>
+              IO.delay {
+                actual = 123.some
+              } *> IO.unit
+          }
+          .unsafeRunSync()
+
+        Result.all(
+          List(
+            result ==== expectedResult,
+            actual ==== expected,
+          )
+        )
       }
 
     }

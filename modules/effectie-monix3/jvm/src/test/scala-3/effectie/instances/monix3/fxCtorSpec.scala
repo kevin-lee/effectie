@@ -1,6 +1,5 @@
 package effectie.instances.monix3
 
-
 import effectie.instances.monix3.fxCtor.given
 import effectie.testing.tools
 
@@ -28,7 +27,10 @@ object FxCtorSpec extends Properties {
   val ioSpecs = List(
     property("test FxCtor[Task].effectOf", FxCtorSpecs.testEffectOf[Task](_.runSyncUnsafe() ==== ())),
     property("test FxCtor[Task].fromEffect(effectOf)", FxCtorSpecs.testFromEffect[Task](_.runSyncUnsafe() ==== ())),
-    property("test FxCtor[Task].fromEffect(pureOf)", FxCtorSpecs.testFromEffectWithPure[Task](_.runSyncUnsafe() ==== ())),
+    property(
+      "test FxCtor[Task].fromEffect(pureOf)",
+      FxCtorSpecs.testFromEffectWithPure[Task](_.runSyncUnsafe() ==== ()),
+    ),
     property("test FxCtor[Task].pureOf", FxCtorSpecs.testPureOf[Task](_.runSyncUnsafe() ==== ())),
     property(
       "test FxCtor[Task].pureOrError(success case)",

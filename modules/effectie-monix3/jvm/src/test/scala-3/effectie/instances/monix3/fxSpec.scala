@@ -33,7 +33,7 @@ object FxSpec extends Properties {
 
   override def tests: List[Test] = ioSpecs
 
-  /* IO */
+  /* Task */
   private val ioSpecs = List(
     property("test Fx[Task].effectOf", FxSpecs.testEffectOf[Task](_.runSyncUnsafe() ==== ())),
     property("test Fx[Task].fromEffect(effectOf)", FxSpecs.testFromEffect[Task](_.runSyncUnsafe() ==== ())),
@@ -122,7 +122,7 @@ object FxSpec extends Properties {
         TaskSpec.CanCatchSpec.testCanCatch_Task_catchNonFatalEitherTShouldReturnFailedResult,
       ),
     ) ++
-    /* IO */
+    /* Task */
     List(
       example(
         "test Fx[Task].handleNonFatalWith should handle NonFatal",
@@ -365,6 +365,20 @@ object FxSpec extends Properties {
         "test Fx[Task].recoverEitherTFromNonFatal should return the failed result",
         TaskSpec.CanRecoverSpec.testCanRecover_Task_recoverEitherTFromNonFatalShouldReturnFailedResult,
       ),
+    ) ++
+    List(
+      example(
+        "test Fx[Task].onNonFatalWith should do something for NonFatal",
+        TaskSpec.OnNonFatalSpec.testOnNonFatal_Task_onNonFatalWithShouldRecoverFromNonFatal,
+      ),
+      example(
+        "test Fx[Task].onNonFatalWith should do nothing for Fatal",
+        TaskSpec.OnNonFatalSpec.testOnNonFatal_Task_onNonFatalWithShouldNotCatchFatal,
+      ),
+      example(
+        "test Fx[Task].onNonFatalWith should do nothing for the successful result",
+        TaskSpec.OnNonFatalSpec.testOnNonFatal_Task_onNonFatalWithShouldReturnSuccessfulResult,
+      ),
     )
 
   def throwThrowable[A](throwable: => Throwable): A =
@@ -383,7 +397,7 @@ object FxSpec extends Properties {
 
 //      given ioFx: Fx[Task] = fx.ioFx
 
-      MonadSpec.testMonadLaws[Task]("IO")
+      MonadSpec.testMonadLaws[Task]("Task")
     }
 
     object CanCatchSpec {
@@ -1476,6 +1490,98 @@ object FxSpec extends Properties {
             .runSyncUnsafe()
 
         actual ==== expected
+      }
+
+    }
+
+    object OnNonFatalSpec {
+
+      def testOnNonFatal_Task_onNonFatalWithShouldRecoverFromNonFatal: Result = {
+
+        val expectedExpcetion = new RuntimeException("Something's wrong")
+        val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
+        val expected          = 123.some
+        var actual            = none[Int] // scalafix:ok DisableSyntax.var
+
+        val result =
+          try {
+            val r = Fx[Task]
+              .onNonFatalWith(fa) {
+                case NonFatal(`expectedExpcetion`) =>
+                  Task.delay {
+                    actual = expected
+                  } *> Task.unit
+              }
+              .runSyncUnsafe()
+            new AssertionError(s"Should have thrown an exception, but it was ${r.toString}.")
+          } catch {
+            case ex: Throwable =>
+              ex
+          }
+
+        Result.all(
+          List(
+            result ==== expectedExpcetion,
+            actual ==== expected,
+          )
+        )
+      }
+
+      @SuppressWarnings(Array("org.wartremover.warts.ToString"))
+      def testOnNonFatal_Task_onNonFatalWithShouldNotCatchFatal: Result = {
+
+        val expectedExpcetion = SomeControlThrowable("Something's wrong")
+        val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
+        var actual            = none[Int] // scalafix:ok DisableSyntax.var
+
+        val io = Fx[Task].onNonFatalWith(fa) {
+          case NonFatal(`expectedExpcetion`) =>
+            Task.delay {
+              actual = 123.some
+              ()
+            } *> Task.unit
+        }
+        try {
+          val actual = io.runSyncUnsafe()
+          Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+        } catch {
+          case ex: ControlThrowable =>
+            Result.all(
+              List(
+                actual ==== none[Int],
+                ex ==== expectedExpcetion,
+              )
+            )
+
+          case ex: Throwable =>
+            Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+        }
+
+      }
+
+      def testOnNonFatal_Task_onNonFatalWithShouldReturnSuccessfulResult: Result = {
+
+        val expectedResult = 999
+        val fa             = run[Task, Int](expectedResult)
+
+        val expected = none[Int]
+        var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+        val result = Fx[Task]
+          .onNonFatalWith(fa) {
+            case NonFatal(_) =>
+              Task.delay {
+                actual = 123.some
+              } *> Task.unit
+          }
+          .runSyncUnsafe()
+
+        Result.all(
+          List(
+            result ==== expectedResult,
+            actual ==== expected,
+          )
+        )
       }
 
     }

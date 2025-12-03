@@ -1176,4 +1176,86 @@ class fxSpec extends munit.CatsEffectSuite {
     actual.map(Assertions.assertEquals(_, expected))
   }
 
+  test("test Fx[IO].onNonFatalWith should do something for NonFatal") {
+
+    val expectedExpcetion = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+    val expected          = 123.some
+    var actual            = none[Int] // scalafix:ok DisableSyntax.var
+
+    try {
+      Fx[IO]
+        .onNonFatalWith(fa) {
+          case NonFatal(`expectedExpcetion`) =>
+            IO.delay {
+              actual = expected
+            } *> IO.unit
+        }
+        .map { actual =>
+          Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}"): Unit
+        }
+        .recover {
+          case NonFatal(`expectedExpcetion`) =>
+            Assertions.assertEquals(actual, expected)
+        }
+        .unsafeToFuture()
+    } catch {
+      case ex: Throwable =>
+        ex
+    }
+
+  }
+
+  //  test("test Fx[IO].onNonFatalWith should not do anything for Fatal") {
+  //
+  //    val expectedExpcetion = SomeControlThrowable("Something's wrong")
+  //    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+  //    var actual            = none[Int] // scalafix:ok DisableSyntax.var
+  //
+  //    try {
+  //      Fx[IO]
+  //        .onNonFatalWith(fa) {
+  //          case NonFatal(`expectedExpcetion`) =>
+  //            IO.delay {
+  //              actual = 123.some
+  //              ()
+  //            } *> IO.unit
+  //        }
+  //        .map { actual =>
+  //          Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+  //        }
+  //        .unsafeToFuture()
+  //    } catch {
+  //      case ex: ControlThrowable =>
+  //        Assertions.assertEquals(ex, expectedExpcetion)
+  //
+  //      case ex: Throwable =>
+  //        Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
+  //    }
+  //
+  //  }
+
+  test("test Fx[IO].onNonFatalWith should not do anything for the successful result") {
+
+    val expectedResult = 999
+    val fa             = run[IO, Int](expectedResult)
+
+    val expected = none[Int]
+    var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+    Fx[IO]
+      .onNonFatalWith(fa) {
+        case NonFatal(_) =>
+          IO.delay {
+            actual = 123.some
+          } *> IO.unit
+      }
+      .map { actualResult =>
+        Assertions.assertEquals(actualResult, expectedResult)
+        Assertions.assertEquals(actual, expected)
+      }
+      .unsafeToFuture()
+
+  }
+
 }

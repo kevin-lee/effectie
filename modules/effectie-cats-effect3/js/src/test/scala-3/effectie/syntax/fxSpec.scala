@@ -261,7 +261,7 @@ object fxSpec {
 
       val input = s
 
-      val io = input.pureOfOption[IO]
+      val io  = input.pureOfOption[IO]
       val io2 = pureOfOption(input)[IO]
       (for {
         actual  <- io
