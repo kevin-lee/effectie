@@ -19,7 +19,7 @@ trait ConsoleFx[F[*]] {
 object ConsoleFx {
   def apply[F[*]]: ConsoleFx[F] = consoleFx.asInstanceOf[ConsoleFx[F]] // scalafix:ok DisableSyntax.asInstanceOf
 
-  private final val consoleFx = new ConsoleFxF // scalafix:ok DisableSyntax.noFinalVal
+  private val consoleFx = new ConsoleFxF // scalafix:ok DisableSyntax.noFinalVal
 
   private final class ConsoleFxF[F[*]] extends ConsoleFx[F] {
 
