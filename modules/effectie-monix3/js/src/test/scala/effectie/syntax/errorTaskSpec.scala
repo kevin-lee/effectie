@@ -26,6 +26,7 @@ class errorTaskSpec
     with CanCatchTaskSyntaxSpec
     with CanHandleErrorTaskSyntaxSpec
     with CanRecoverTaskSyntaxSpec
+    with OnNonFatalTaskSyntaxSpec
 trait CommonErrorTaskSpec extends munit.FunSuite with FutureTools {
 
   implicit val ec: ExecutionContext = globalExecutionContext
@@ -1269,6 +1270,248 @@ trait CanRecoverTaskSyntaxSpec extends CommonErrorTaskSpec {
         Assertions.assertEquals(actual, expected)
       }
       .runToFuture
+  }
+
+}
+
+trait OnNonFatalTaskSyntaxSpec extends CommonErrorTaskSpec {
+
+  test("test OnNonFatal[Task].onNonFatalWith should do something for NonFatal") {
+
+    val expectedExpcetion = new RuntimeException("Something's wrong")
+    val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
+    val expected          = 123.some
+    var actual            = none[Int] // scalafix:ok DisableSyntax.var
+
+    fa.onNonFatalWith {
+      case NonFatal(`expectedExpcetion`) =>
+        Task.delay {
+          actual = expected
+        } *> Task.unit
+    }.map { actual =>
+      Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}"): Unit
+    }.recover {
+      case NonFatal(`expectedExpcetion`) =>
+        Assertions.assertEquals(actual, expected)
+    }.runToFuture
+
+  }
+
+  test("test OnNonFatal[Task].onNonFatalWith should not do anything for Fatal") {
+
+    val expectedExpcetion = SomeControlThrowable("Something's wrong")
+    val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
+    var actual            = none[Int] // scalafix:ok DisableSyntax.var
+
+    try {
+      fa.onNonFatalWith {
+        case NonFatal(`expectedExpcetion`) =>
+          Task.delay {
+            actual = 123.some
+            ()
+          } *> Task.unit
+      }.map { actual =>
+        Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+      }.runToFuture
+    } catch {
+      case ex: ControlThrowable =>
+        Assertions.assertEquals(ex, expectedExpcetion)
+
+      case ex: Throwable =>
+        Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
+    }
+
+  }
+
+  test("test OnNonFatal[Task].onNonFatalWith should not do anything for the successful result") {
+
+    val expectedResult = 999
+    val fa             = run[Task, Int](expectedResult)
+
+    val expected = none[Int]
+    var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+    fa.onNonFatalWith {
+      case NonFatal(_) =>
+        Task.delay {
+          actual = 123.some
+        } *> Task.unit
+    }.map { actualResult =>
+      Assertions.assertEquals(actualResult, expectedResult)
+      Assertions.assertEquals(actual, expected)
+    }.runToFuture
+
+  }
+
+  /////
+
+  test("test Task[Either[A, B]].onNonFatalWith should do something for NonFatal") {
+
+    val expectedExpcetion = new RuntimeException("Something's wrong")
+    val expectedResult    = expectedExpcetion
+    val fa                = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+
+    val expected = 123.some
+    var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+    fa.onNonFatalWith {
+      case NonFatal(`expectedExpcetion`) =>
+        Task.delay {
+          actual = expected
+        } *> Task.unit
+    }.map { r =>
+      Assertions.fail(s"Should have thrown an exception, but it was ${r.toString}.")
+    }.recover {
+      case actualFailedResult: RuntimeException =>
+        Assertions.assertEquals(actual, expected)
+        Assertions.assertEquals(actualFailedResult, expectedResult)
+    }.runToFuture
+
+  }
+
+  test("test Task[Either[A, B]].onNonFatalWith should do nothing for success case with Right") {
+
+    val expectedValue  = 1
+    val expectedResult = expectedValue.asRight[SomeError]
+    val fa             = run[Task, Either[SomeError, Int]](expectedResult)
+
+    val expected = none[Int]
+    var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+    fa.onNonFatalWith {
+      case NonFatal(_) =>
+        Task.delay {
+          actual = 123.some
+        } *> Task.unit
+    }.map { actualResult =>
+      Assertions.assertEquals(actual, expected)
+      Assertions.assertEquals(actualResult, expectedResult)
+    }.recover {
+      case ex: Throwable =>
+        Assertions.fail(s"Should not have thrown an exception, but it was ${ex.toString}.")
+    }.runToFuture
+
+  }
+
+  test("test Task[Either[A, B]].onNonFatalWith should do nothing for success case with Left") {
+
+    val expectedExpcetion = new RuntimeException("Something's wrong")
+    val expectedResult    = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+
+    val fa = run[Task, Int](throwThrowable(expectedExpcetion))
+      .catchNonFatal {
+        case err =>
+          SomeError.someThrowable(err)
+      }
+
+    val expected = none[Int]
+    var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+    fa.onNonFatalWith {
+      case NonFatal(`expectedExpcetion`) =>
+        Task.delay {
+          actual = 123.some
+        } *> Task.unit
+    }.map { actualResult =>
+      Assertions.assertEquals(actual, expected)
+      Assertions.assertEquals(actualResult, expectedResult)
+
+    }.recover {
+      case ex: Throwable =>
+        Assertions.fail(s"Should not have thrown an exception, but it was ${ex.toString}.")
+    }.runToFuture
+
+  }
+
+  /////////
+
+  test("test EitherT[F, A, B].onNonFatalWith should do something for NonFatal") {
+
+    val expectedExpcetion = new RuntimeException("Something's wrong")
+    val expectedResult    = expectedExpcetion
+    val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+
+    val expected = 123.some
+    var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+    fa.onNonFatalWith {
+      case NonFatal(`expectedExpcetion`) =>
+        Task.delay {
+          actual = expected
+        } *> Task.unit
+    }.value
+      .map { r =>
+        Assertions.fail(s"Should have thrown an exception, but it was ${r.toString}.")
+      }
+      .recover {
+        case actualFailedResult: RuntimeException =>
+          Assertions.assertEquals(actual, expected)
+          Assertions.assertEquals(actualFailedResult, expectedResult)
+      }
+      .runToFuture
+
+  }
+
+  test("test EitherT[F, A, B](F(Right(b))).onNonFatalWith should do nothing for success case with Right") {
+
+    val expectedValue  = 1
+    val expectedResult = expectedValue.asRight[SomeError]
+    val fa             = EitherT(run[Task, Either[SomeError, Int]](expectedResult))
+
+    val expected = none[Int]
+    var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+    fa.onNonFatalWith {
+      case NonFatal(_) =>
+        Task.delay {
+          actual = 123.some
+        } *> Task.unit
+    }.value
+      .map { actualResult =>
+        Assertions.assertEquals(actual, expected)
+        Assertions.assertEquals(actualResult, expectedResult)
+      }
+      .recover {
+        case ex: Throwable =>
+          Assertions.fail(s"Should not have thrown an exception, but it was ${ex.toString}.")
+      }
+      .runToFuture
+
+  }
+
+  test("test EitherT[F, A, B](F(Left(a))).onNonFatalWith should do nothing for success case with Left") {
+
+    val expectedExpcetion = new RuntimeException("Something's wrong")
+    val expectedResult    = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+
+    val fa = EitherT(
+      run[Task, Int](throwThrowable(expectedExpcetion))
+        .catchNonFatal {
+          case err => SomeError.someThrowable(err)
+        }
+    )
+
+    val expected = none[Int]
+    var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+    fa.onNonFatalWith {
+      case NonFatal(`expectedExpcetion`) =>
+        Task.delay {
+          actual = 123.some
+        } *> Task.unit
+    }.value
+      .map { actualResult =>
+        Assertions.assertEquals(actual, expected)
+        Assertions.assertEquals(actualResult, expectedResult)
+      }
+      .recover {
+        case ex: Throwable =>
+          throw new AssertionError(
+            s"Should not have thrown an exception, but it was ${ex.toString}."
+          ) // scalafix:ok DisableSyntax.throw
+      }
+      .runToFuture
+
   }
 
 }

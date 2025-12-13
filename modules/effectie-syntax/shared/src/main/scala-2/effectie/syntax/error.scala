@@ -2,7 +2,7 @@ package effectie.syntax
 
 import _root_.cats.data.EitherT
 import cats.FlatMap
-import effectie.core.{CanCatch, CanHandleError, CanRecover, FxCtor}
+import effectie.core.{CanCatch, CanHandleError, CanRecover, FxCtor, OnNonFatal}
 
 /** @author Kevin Lee
   * @since 2021-10-16
@@ -69,6 +69,14 @@ object error extends error {
       implicit canRecover: CanRecover[F]
     ): F[BB] =
       canRecover.recoverFromNonFatal[B, BB](fb())(handleError)
+
+    def onNonFatalWith(
+      partialFunction: PartialFunction[Throwable, F[Unit]]
+    )(
+      implicit onNonFatal: OnNonFatal[F]
+    ): F[B] =
+      onNonFatal.onNonFatalWith(fb())(partialFunction)
+
   }
 
   final class FEitherABErrorHandlingOps[F[*], A, B](private val fab: () => F[Either[A, B]]) extends AnyVal {
@@ -158,6 +166,13 @@ object error extends error {
         fxCtor.errorOf[B](_),
         fxCtor.pureOf,
       )
+
+    def onNonFatalWith(
+      partialFunction: PartialFunction[Throwable, F[Unit]]
+    )(
+      implicit onNonFatal: OnNonFatal[F]
+    ): EitherT[F, A, B] =
+      EitherT(onNonFatal.onNonFatalWith(efab().value)(partialFunction))
 
   }
 

@@ -26,7 +26,7 @@ import scala.util.control.{ControlThrowable, NonFatal}
   */
 object errorSpec extends Properties {
   override def tests: List[Test] =
-    CanCatchSyntaxSpec.tests ++ CanHandleErrorSyntaxSpec.tests ++ CanRecoverSyntaxSpec.tests
+    CanCatchSyntaxSpec.tests ++ CanHandleErrorSyntaxSpec.tests ++ CanRecoverSyntaxSpec.tests ++ OnNonFatalSyntaxSpec.tests
 }
 
 object CanCatchSyntaxSpec {
@@ -2765,6 +2765,345 @@ object CanRecoverSyntaxSpec {
 
       actual ==== expected
     }
+  }
+
+}
+
+object OnNonFatalSyntaxSpec {
+
+  def tests: List[Test] = List(
+    /* IO */
+    example(
+      "test OnNonFatal[IO].onNonFatalWith should do something for NonFatal",
+      IOSpec.testOnNonFatal_IO_onNonFatalWithShouldDoSomethingForNonFatal,
+    ),
+    example(
+      "test OnNonFatal[IO].onNonFatalWith should not do anything and not catch Fatal",
+      IOSpec.testOnNonFatal_IO_onNonFatalWithShouldNotCatchFatal,
+    ),
+    example(
+      "test OnNonFatal[IO].onNonFatalWith should not do anything for the successful result",
+      IOSpec.testOnNonFatal_IO_onNonFatalWithShouldReturnSuccessfulResult,
+    ),
+    example(
+      "test IO[Either[A, B]].onNonFatalWith should do something for NonFatal",
+      IOSpec.testOnNonFatal_IOEitherAB_onNonFatalWithEitherShouldDoSomethingForNonFatal,
+    ),
+    example(
+      "test IO[Either[A, B]].onNonFatalWith should do nothing for success case with Right",
+      IOSpec.testOnNonFatal_IOEitherAB_onNonFatalWithEitherShouldDoNothingForRightCase,
+    ),
+    example(
+      "test IO[Either[A, B]].onNonFatalWith should do nothing for success case with Left",
+      IOSpec.testOnNonFatal_IOEitherAB_onNonFatalWithEitherShouldDoNothingForLeftCase,
+    ),
+    example(
+      "test EitherT[F, A, B].onNonFatalWith should do something for NonFatal",
+      IOSpec.testOnNonFatal_EitherT_onNonFatalWithEitherShouldDoSomethingForNonFatal,
+    ),
+    example(
+      "test EitherT[F, A, B](F(Right(b))).onNonFatalWith should do nothing for success case with Right",
+      IOSpec.testOnNonFatal_EitherT_onNonFatalWithEitherShouldDoNothingForRightCase,
+    ),
+    example(
+      "test EitherT[F, A, B](F(Left(a))).onNonFatalWith should do nothing for success case with Left",
+      IOSpec.testOnNonFatal_EitherT_onNonFatalWithEitherShouldDoNothingForLeftCase,
+    ),
+  )
+
+  @SuppressWarnings(Array("org.wartremover.warts.Throw"))
+  def throwThrowable[A](throwable: => Throwable): A =
+    throw throwable // scalafix:ok DisableSyntax.throw
+
+  def run[F[*]: Fx, A](a: => A): F[A] =
+    effectOf[F](a)
+
+  object IOSpec {
+    import effectie.instances.ce3.fx.ioFx
+
+    def testOnNonFatal_IO_onNonFatalWithShouldDoSomethingForNonFatal: Result = runIO {
+
+      val expectedExpcetion = new RuntimeException("Something's wrong")
+      val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+      val expected          = 123.some
+      var actual            = none[Int] // scalafix:ok DisableSyntax.var
+
+      fa
+        .onNonFatalWith {
+          case NonFatal(`expectedExpcetion`) =>
+            IO {
+              actual = expected
+            } *> IO.unit
+        }
+        .attempt
+        .map {
+          case Right(r) =>
+            Result.failure.log(s"Should have thrown an exception, but it was ${r.toString}.")
+          case Left(actualException) =>
+            Result.all(
+              List(
+                actualException ==== expectedExpcetion,
+                actual ==== expected,
+              )
+            )
+        }
+
+    }
+
+    def testOnNonFatal_IO_onNonFatalWithShouldNotCatchFatal: Result = {
+
+      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
+      implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
+
+      val expectedExpcetion = SomeControlThrowable("Something's wrong")
+      val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+      var actual            = none[Int] // scalafix:ok DisableSyntax.var
+
+      try {
+        val r = fa
+          .onNonFatalWith {
+            case NonFatal(`expectedExpcetion`) =>
+              IO {
+                actual = 123.some
+                ()
+              } *> IO.unit
+          }
+          .unsafeRunSync()
+        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${r.toString}")
+      } catch {
+        case ex: ControlThrowable =>
+          Result.all(
+            List(
+              actual ==== none[Int],
+              ex ==== expectedExpcetion,
+            )
+          )
+
+        case ex: Throwable =>
+          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+      }
+
+    }
+
+    def testOnNonFatal_IO_onNonFatalWithShouldReturnSuccessfulResult: Result = runIO {
+
+      val expectedResult = 999
+      val fa             = run[IO, Int](expectedResult)
+      val expected       = none[Int]
+      var actual         = none[Int] // scalafix:ok DisableSyntax.var
+
+      fa.onNonFatalWith {
+        case NonFatal(_) =>
+          IO {
+            actual = 123.some
+          } *> IO.unit
+      }.attempt
+        .map {
+          case Right(result) =>
+            Result.all(
+              List(
+                result ==== expectedResult,
+                actual ==== expected,
+              )
+            )
+          case Left(ex) =>
+            Result.failure.log(s"No exception was expected but ${ex.getClass.getName} was thrown. ${ex.toString}")
+        }
+
+    }
+
+    def testOnNonFatal_IOEitherAB_onNonFatalWithEitherShouldDoSomethingForNonFatal: Result = runIO {
+
+      val expectedExpcetion = new RuntimeException("Something's wrong")
+      val expectedResult    = expectedExpcetion
+      val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+
+      val expected = 123.some
+      var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+      fa.onNonFatalWith {
+        case NonFatal(`expectedExpcetion`) =>
+          IO {
+            actual = expected
+          } *> IO.unit
+      }.attempt
+        .map {
+          case Right(r) =>
+            Result.failure.log(s"Should have thrown an exception, but it was ${r.toString}.")
+          case Left(actualFailedResult) =>
+            Result.all(
+              List(
+                actual ==== expected,
+                actualFailedResult ==== expectedResult,
+              )
+            )
+        }
+
+    }
+
+    def testOnNonFatal_IOEitherAB_onNonFatalWithEitherShouldDoNothingForRightCase: Result = runIO {
+
+      val expectedValue  = 1
+      val expectedResult = expectedValue.asRight[SomeError]
+      val fa             = run[IO, Either[SomeError, Int]](expectedResult)
+
+      val expected = none[Int]
+      var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+      fa.onNonFatalWith {
+        case NonFatal(_) =>
+          IO {
+            actual = 123.some
+          } *> IO.unit
+      }.attempt
+        .map {
+          case Right(actualResult) =>
+            Result.all(
+              List(
+                actual ==== expected,
+                actualResult ==== expectedResult,
+              )
+            )
+
+          case Left(ex) =>
+            Result.failure.log(s"Should not have thrown an exception, but it was ${ex.toString}.")
+        }
+
+    }
+
+    def testOnNonFatal_IOEitherAB_onNonFatalWithEitherShouldDoNothingForLeftCase: Result = runIO {
+
+      val expectedExpcetion = new RuntimeException("Something's wrong")
+      val expectedResult    = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+
+      val fa = run[IO, Int](throwThrowable(expectedExpcetion))
+        .catchNonFatal {
+          case err =>
+            SomeError.someThrowable(err)
+        }
+
+      val expected = none[Int]
+      var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+      fa.onNonFatalWith {
+        case NonFatal(`expectedExpcetion`) =>
+          IO {
+            actual = 123.some
+          } *> IO.unit
+      }.attempt
+        .map {
+          case Right(actualResult) =>
+            Result.all(
+              List(
+                actual ==== expected,
+                actualResult ==== expectedResult,
+              )
+            )
+          case Left(ex) =>
+            Result.failure.log(s"Should not have thrown an exception, but it was ${ex.toString}.")
+        }
+
+    }
+
+    /////////
+
+    def testOnNonFatal_EitherT_onNonFatalWithEitherShouldDoSomethingForNonFatal: Result = runIO {
+
+      val expectedExpcetion = new RuntimeException("Something's wrong")
+      val expectedResult    = expectedExpcetion
+      val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+
+      val expected = 123.some
+      var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+      fa.onNonFatalWith {
+        case NonFatal(`expectedExpcetion`) =>
+          IO {
+            actual = expected
+          } *> IO.unit
+      }.value
+        .attempt
+        .map {
+          case Right(r) =>
+            Result.failure.log(s"Should have thrown an exception, but it was ${r.toString}.")
+
+          case Left(actualFailedResult) =>
+            Result.all(
+              List(
+                actual ==== expected,
+                actualFailedResult ==== expectedResult,
+              )
+            )
+        }
+
+    }
+
+    def testOnNonFatal_EitherT_onNonFatalWithEitherShouldDoNothingForRightCase: Result = runIO {
+
+      val expectedValue  = 1
+      val expectedResult = expectedValue.asRight[SomeError]
+      val fa             = EitherT(run[IO, Either[SomeError, Int]](expectedResult))
+
+      val expected = none[Int]
+      var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+      fa.onNonFatalWith {
+        case NonFatal(_) =>
+          IO {
+            actual = 123.some
+          } *> IO.unit
+      }.value
+        .attempt
+        .map {
+          case Right(actualResult) =>
+            Result.all(
+              List(
+                actual ==== expected,
+                actualResult ==== expectedResult,
+              )
+            )
+          case Left(ex) =>
+            Result.failure.log(s"Should not have thrown an exception, but it was ${ex.toString}.")
+        }
+
+    }
+
+    def testOnNonFatal_EitherT_onNonFatalWithEitherShouldDoNothingForLeftCase: Result = runIO {
+
+      val expectedExpcetion = new RuntimeException("Something's wrong")
+      val expectedResult    = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+
+      val fa = EitherT(
+        run[IO, Int](throwThrowable(expectedExpcetion))
+          .catchNonFatal {
+            case err => SomeError.someThrowable(err)
+          }
+      )
+
+      val expected = none[Int]
+      var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+      fa.onNonFatalWith {
+        case NonFatal(`expectedExpcetion`) =>
+          IO {
+            actual = 123.some
+          } *> IO.unit
+      }.value
+        .attempt
+        .map {
+          case Right(actualResult) =>
+            Result.all(
+              List(
+                actual ==== expected,
+                actualResult ==== expectedResult,
+              )
+            )
+          case Left(ex) =>
+            Result.failure.log(s"Should not have thrown an exception, but it was ${ex.toString}.")
+        }
+
+    }
+
   }
 
 }

@@ -12,12 +12,14 @@ import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog.*
 import hedgehog.runner.*
 
+import scala.util.control.NonFatal
+
 /** @author Kevin Lee
   * @since 2022-02-13
   */
 object errorSpec extends Properties {
   override def tests: List[Test] =
-    CanCatchSyntaxSpec.tests ++ CanHandleErrorSyntaxSpec.tests ++ CanRecoverSyntaxSpec.tests
+    CanCatchSyntaxSpec.tests ++ CanHandleErrorSyntaxSpec.tests ++ CanRecoverSyntaxSpec.tests ++ OnNonFatalSyntaxSpec.tests
 }
 
 object CanCatchSyntaxSpec {
@@ -1215,6 +1217,425 @@ object CanRecoverSyntaxSpec {
         )(recoverEitherFromNonFatal(fa) { case NonFatal(_) => expected })
 
       actual ==== expected and actual2 ==== expected
+    }
+
+  }
+
+}
+
+object OnNonFatalSyntaxSpec {
+
+  def tests: List[Test] = List(
+    /* Future */
+    example(
+      "test OnNonFatal[Future].onNonFatalWith should do something for NonFatal",
+      FutureSpec.testOnNonFatal_Future_onNonFatalWithShouldDoSomethingForNonFatal,
+    ),
+    //    example(
+    //      "test OnNonFatal[Future].onNonFatalWith should not do anything and not catch Fatal",
+    //      FutureSpec.testOnNonFatal_Future_onNonFatalWithShouldNotCatchFatal,
+    //    ),
+    example(
+      "test OnNonFatal[Future].onNonFatalWith should not do anything for the successful result",
+      FutureSpec.testOnNonFatal_Future_onNonFatalWithShouldReturnSuccessfulResult,
+    ),
+    example(
+      "test Future[Either[A, B]].onNonFatalWith should do something for NonFatal",
+      FutureSpec.testOnNonFatal_FutureEitherAB_onNonFatalWithEitherShouldDoSomethingForNonFatal,
+    ),
+    example(
+      "test Future[Either[A, B]].onNonFatalWith should do nothing for success case with Right",
+      FutureSpec.testOnNonFatal_FutureEitherAB_onNonFatalWithEitherShouldDoNothingForRightCase,
+    ),
+    example(
+      "test Future[Either[A, B]].onNonFatalWith should do nothing for success case with Left",
+      FutureSpec.testOnNonFatal_FutureEitherAB_onNonFatalWithEitherShouldDoNothingForLeftCase,
+    ),
+    example(
+      "test EitherT[F, A, B].onNonFatalWith should do something for NonFatal",
+      FutureSpec.testOnNonFatal_EitherT_onNonFatalWithEitherShouldDoSomethingForNonFatal,
+    ),
+    example(
+      "test EitherT[F, A, B](F(Right(b))).onNonFatalWith should do nothing for success case with Right",
+      FutureSpec.testOnNonFatal_EitherT_onNonFatalWithEitherShouldDoNothingForRightCase,
+    ),
+    example(
+      "test EitherT[F, A, B](F(Left(a))).onNonFatalWith should do nothing for success case with Left",
+      FutureSpec.testOnNonFatal_EitherT_onNonFatalWithEitherShouldDoNothingForLeftCase,
+    ),
+  )
+
+  @SuppressWarnings(Array("org.wartremover.warts.Throw"))
+  def throwThrowable[A](throwable: => Throwable): A =
+    throw throwable // scalafix:ok DisableSyntax.throw
+
+  def run[F[*]: Fx, A](a: => A): F[A] =
+    effectOf[F](a)
+
+  object FutureSpec {
+    import effectie.instances.future.fx._
+
+    import java.util.concurrent.{ExecutorService, Executors}
+    import scala.concurrent.duration._
+    import scala.concurrent.{ExecutionContext, Future}
+
+    private given errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
+
+    private val waitFor = WaitFor(1.second)
+
+    def testOnNonFatal_Future_onNonFatalWithShouldDoSomethingForNonFatal: Result = {
+
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      given ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      val expectedExpcetion = new RuntimeException("Something's wrong")
+      val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+      val expected          = 123.some
+      var actual            = none[Int] // scalafix:ok DisableSyntax.var
+
+      val result =
+        try {
+          val r =
+            ConcurrentSupport.futureToValueAndTerminate(
+              executorService,
+              waitFor,
+            )(fa.onNonFatalWith {
+              case NonFatal(`expectedExpcetion`) =>
+                Future {
+                  actual = expected
+                } *> Future.unit
+            })
+          new AssertionError(s"Should have thrown an exception, but it was ${r.toString}.")
+        } catch {
+          case ex: Throwable =>
+            ex
+        }
+
+      Result.all(
+        List(
+          result ==== expectedExpcetion,
+          actual ==== expected,
+        )
+      )
+    }
+
+    //    def testOnNonFatal_Future_onNonFatalWithShouldNotCatchFatal: Result = {
+    //
+    //      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+    //      given ec: ExecutionContext             =
+    //        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+    //
+    //      val expectedExpcetion = SomeControlThrowable("Something's wrong")
+    //      val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+    //      var actual            = none[Int] // scalafix:ok DisableSyntax.var
+    //
+    //      try {
+    //        val r = ConcurrentSupport.futureToValueAndTerminate(
+    //          executorService,
+    //          waitFor,
+    //        )(fa.onNonFatalWith {
+    //          case NonFatal(`expectedExpcetion`) =>
+    //            Future {
+    //              actual = 123.some
+    //              ()
+    //            } *> Future.unit
+    //        })
+    //        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${r.toString}")
+    //      } catch {
+    //        case ex: ControlThrowable =>
+    //          Result.all(
+    //            List(
+    //              actual ==== none[Int],
+    //              ex ==== expectedExpcetion,
+    //            )
+    //          )
+    //
+    //        case ex: Throwable =>
+    //          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+    //      }
+    //
+    //    }
+
+    def testOnNonFatal_Future_onNonFatalWithShouldReturnSuccessfulResult: Result = {
+
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      given ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      val expectedResult = 999
+      val fa             = run[Future, Int](expectedResult)
+      val expected       = none[Int]
+      var actual         = none[Int] // scalafix:ok DisableSyntax.var
+
+      try {
+        val result =
+          ConcurrentSupport.futureToValueAndTerminate(
+            executorService,
+            waitFor,
+          )(fa.onNonFatalWith {
+            case NonFatal(_) =>
+              Future {
+                actual = 123.some
+              } *> Future.unit
+          })
+        Result.all(
+          List(
+            result ==== expectedResult,
+            actual ==== expected,
+          )
+        )
+      } catch {
+        case ex: Throwable =>
+          Result.failure.log(s"No exception was expected but ${ex.getClass.getName} was thrown. ${ex.toString}")
+      }
+
+    }
+
+    def testOnNonFatal_FutureEitherAB_onNonFatalWithEitherShouldDoSomethingForNonFatal: Result = {
+
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      given ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      val expectedExpcetion = new RuntimeException("Something's wrong")
+      val expectedResult    = expectedExpcetion.asLeft[Int]
+      val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+
+      val expected = 123.some
+      var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+      val actualFailedResult =
+        try {
+          val r =
+            ConcurrentSupport.futureToValue(
+              fa.onNonFatalWith {
+                case NonFatal(`expectedExpcetion`) =>
+                  Future {
+                    actual = expected
+                  } *> Future.unit
+              },
+              waitFor,
+            )
+          throw new AssertionError(
+            s"Should have thrown an exception, but it was ${r.toString}."
+          ) // scalafix:ok DisableSyntax.throw
+        } catch {
+          case ex: Throwable =>
+            ex.asLeft[Int]
+        }
+
+      Result.all(
+        List(
+          actual ==== expected,
+          actualFailedResult ==== expectedResult,
+        )
+      )
+    }
+
+    def testOnNonFatal_FutureEitherAB_onNonFatalWithEitherShouldDoNothingForRightCase: Result = {
+
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      given ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      val expectedValue  = 1
+      val expectedResult = expectedValue.asRight[SomeError]
+      val fa             = run[Future, Either[SomeError, Int]](expectedResult)
+
+      val expected = none[Int]
+      var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+      val actualResult =
+        try {
+          ConcurrentSupport.futureToValue(
+            fa.onNonFatalWith {
+              case NonFatal(_) =>
+                Future {
+                  actual = 123.some
+                } *> Future.unit
+            },
+            waitFor,
+          )
+        } catch {
+          case ex: Throwable =>
+            throw new AssertionError(
+              s"Should not have thrown an exception, but it was ${ex.toString}."
+            ) // scalafix:ok DisableSyntax.throw
+        }
+
+      Result.all(
+        List(
+          actual ==== expected,
+          actualResult ==== expectedResult,
+        )
+      )
+    }
+
+    def testOnNonFatal_FutureEitherAB_onNonFatalWithEitherShouldDoNothingForLeftCase: Result = {
+
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      given ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      val expectedExpcetion = new RuntimeException("Something's wrong")
+      val expectedResult    = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+
+      val fa = run[Future, Int](throwThrowable(expectedExpcetion))
+        .catchNonFatal(SomeError.someThrowable(_))
+
+      val expected = none[Int]
+      var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+      val actualResult =
+        try {
+          ConcurrentSupport.futureToValue(
+            fa.onNonFatalWith {
+              case NonFatal(`expectedExpcetion`) =>
+                Future {
+                  actual = 123.some
+                } *> Future.unit
+            },
+            waitFor,
+          )
+        } catch {
+          case ex: Throwable =>
+            throw new AssertionError(
+              s"Should not have thrown an exception, but it was ${ex.toString}."
+            ) // scalafix:ok DisableSyntax.throw
+        }
+
+      Result.all(
+        List(
+          actual ==== expected,
+          actualResult ==== expectedResult,
+        )
+      )
+    }
+
+    /////////
+
+    def testOnNonFatal_EitherT_onNonFatalWithEitherShouldDoSomethingForNonFatal: Result = {
+
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      given ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      val expectedExpcetion = new RuntimeException("Something's wrong")
+      val expectedResult    = expectedExpcetion.asLeft[Int]
+      val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+
+      val expected = 123.some
+      var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+      val actualFailedResult =
+        try {
+          val r =
+            ConcurrentSupport.futureToValue(
+              fa.onNonFatalWith {
+                case NonFatal(`expectedExpcetion`) =>
+                  Future {
+                    actual = expected
+                  } *> Future.unit
+              }.value,
+              waitFor,
+            )
+          throw new AssertionError(
+            s"Should have thrown an exception, but it was ${r.toString}."
+          ) // scalafix:ok DisableSyntax.throw
+        } catch {
+          case ex: Throwable =>
+            ex.asLeft[Int]
+        }
+
+      Result.all(
+        List(
+          actual ==== expected,
+          actualFailedResult ==== expectedResult,
+        )
+      )
+    }
+
+    def testOnNonFatal_EitherT_onNonFatalWithEitherShouldDoNothingForRightCase: Result = {
+
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      given ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      val expectedValue  = 1
+      val expectedResult = expectedValue.asRight[SomeError]
+      val fa             = EitherT(run[Future, Either[SomeError, Int]](expectedResult))
+
+      val expected = none[Int]
+      var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+      val actualResult =
+        try {
+          ConcurrentSupport.futureToValue(
+            fa.onNonFatalWith {
+              case NonFatal(_) =>
+                Future {
+                  actual = 123.some
+                } *> Future.unit
+            }.value,
+            waitFor,
+          )
+        } catch {
+          case ex: Throwable =>
+            throw new AssertionError(
+              s"Should not have thrown an exception, but it was ${ex.toString}."
+            ) // scalafix:ok DisableSyntax.throw
+        }
+
+      Result.all(
+        List(
+          actual ==== expected,
+          actualResult ==== expectedResult,
+        )
+      )
+    }
+
+    def testOnNonFatal_EitherT_onNonFatalWithEitherShouldDoNothingForLeftCase: Result = {
+
+      given executorService: ExecutorService = Executors.newFixedThreadPool(1)
+      given ec: ExecutionContext             =
+        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+      val expectedExpcetion = new RuntimeException("Something's wrong")
+      val expectedResult    = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+
+      val fa = EitherT(
+        run[Future, Int](throwThrowable(expectedExpcetion))
+          .catchNonFatal(SomeError.someThrowable(_))
+      )
+
+      val expected = none[Int]
+      var actual   = none[Int] // scalafix:ok DisableSyntax.var
+
+      val actualResult =
+        try {
+          ConcurrentSupport.futureToValue(
+            fa.onNonFatalWith {
+              case NonFatal(`expectedExpcetion`) =>
+                Future {
+                  actual = 123.some
+                } *> Future.unit
+            }.value,
+            waitFor,
+          )
+        } catch {
+          case ex: Throwable =>
+            throw new AssertionError(
+              s"Should not have thrown an exception, but it was ${ex.toString}."
+            ) // scalafix:ok DisableSyntax.throw
+        }
+
+      Result.all(
+        List(
+          actual ==== expected,
+          actualResult ==== expectedResult,
+        )
+      )
     }
 
   }

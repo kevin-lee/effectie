@@ -2,7 +2,7 @@ package effectie.syntax
 
 import cats.FlatMap
 import cats.data.EitherT
-import effectie.core.{CanCatch, CanHandleError, CanRecover, Fx, FxCtor}
+import effectie.core.{CanCatch, CanHandleError, CanRecover, Fx, FxCtor, OnNonFatal}
 
 /** @author Kevin Lee
   * @since 2021-10-16
@@ -46,6 +46,14 @@ trait error {
       using canRecover: CanRecover[F]
     ): F[BB] =
       canRecover.recoverFromNonFatal[B, BB](fb)(handleError)
+
+    def onNonFatalWith(
+      partialFunction: PartialFunction[Throwable, F[Unit]]
+    )(
+      using onNonFatal: OnNonFatal[F]
+    ): F[B] =
+      onNonFatal.onNonFatalWith(fb)(partialFunction)
+
   }
 
   extension [F[*], A, B](fab: => F[Either[A, B]]) {
@@ -136,6 +144,13 @@ trait error {
         err => fxCtor.errorOf[B](ev(err)),
         fxCtor.pureOf,
       )
+
+    def onNonFatalWith(
+      partialFunction: PartialFunction[Throwable, F[Unit]]
+    )(
+      using onNonFatal: OnNonFatal[F]
+    ): EitherT[F, A, B] =
+      EitherT(onNonFatal.onNonFatalWith(efab.value)(partialFunction))
 
   }
 
