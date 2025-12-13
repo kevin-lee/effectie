@@ -50,15 +50,15 @@ object onNonFatalSpec extends Properties {
 
     def testOnNonFatal_IO_onNonFatalWithShouldRecoverFromNonFatal: Result = runIO {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa                = run[IO, Int](throwThrowable[Int](expectedException))
       val expected          = 123.some
       var actual            = none[Int] // scalafix:ok DisableSyntax.var
 
       try {
         OnNonFatal[IO]
           .onNonFatalWith(fa) {
-            case NonFatal(`expectedExpcetion`) =>
+            case NonFatal(`expectedException`) =>
               IO.delay {
                 actual = expected
               } *> IO.unit
@@ -67,7 +67,7 @@ object onNonFatalSpec extends Properties {
             Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
           }
           .recover {
-            case NonFatal(`expectedExpcetion`) =>
+            case NonFatal(`expectedException`) =>
               actual ==== expected
           }
       } catch {
@@ -79,18 +79,18 @@ object onNonFatalSpec extends Properties {
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testOnNonFatal_IO_onNonFatalWithShouldNotCatchFatal: Result = {
-      val expectedExpcetion = SomeControlThrowable("Something's wrong")
+      val expectedException = SomeControlThrowable("Something's wrong")
 
       var actual = none[Int] // scalafix:ok DisableSyntax.var
 
       try {
         runIO {
 
-          val fa = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+          val fa = run[IO, Int](throwThrowable[Int](expectedException))
 
           OnNonFatal[IO]
             .onNonFatalWith(fa) {
-              case NonFatal(`expectedExpcetion`) =>
+              case NonFatal(`expectedException`) =>
                 IO.delay {
                   actual = 123.some
                   ()
@@ -106,7 +106,7 @@ object onNonFatalSpec extends Properties {
           Result.all(
             List(
               actual ==== none[Int],
-              ex ==== expectedExpcetion,
+              ex ==== expectedException,
             )
           )
 

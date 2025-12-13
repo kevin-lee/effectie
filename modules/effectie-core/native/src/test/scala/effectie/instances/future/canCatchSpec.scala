@@ -65,10 +65,10 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_Future_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
-      val expectedExpcetion                       = new RuntimeException("Something's wrong")
-      val expected: Either[RuntimeException, Int] = Left(expectedExpcetion)
+      val expectedException                       = new RuntimeException("Something's wrong")
+      val expected: Either[RuntimeException, Int] = Left(expectedException)
 
-      val fa     = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+      val fa     = run[Future, Int](throwThrowable[Int](expectedException))
       val actual = futureToValue(CanCatch[Future].catchNonFatalThrowable(fa), waitFor)
 
       actual ==== expected
@@ -76,10 +76,10 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_Future_catchNonFatalShouldCatchNonFatal: Result = {
 
-      val expectedExpcetion                = new RuntimeException("Something's wrong")
-      val expected: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
+      val expectedException                = new RuntimeException("Something's wrong")
+      val expected: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedException))
 
-      val fa     = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+      val fa     = run[Future, Int](throwThrowable[Int](expectedException))
       val actual = futureToValue(CanCatch[Future].catchNonFatal(fa)(SomeError.someThrowable), waitFor)
 
       actual ==== expected
@@ -107,10 +107,10 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_Future_catchNonFatalEitherShouldCatchNonFatal: Result = {
 
-      val expectedExpcetion                = new RuntimeException("Something's wrong")
-      val expected: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
+      val expectedException                = new RuntimeException("Something's wrong")
+      val expected: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedException))
 
-      val fa     = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val fa     = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
       val actual = futureToValue(CanCatch[Future].catchNonFatalEither(fa)(SomeError.someThrowable), waitFor)
 
       actual ==== expected

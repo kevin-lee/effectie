@@ -48,8 +48,8 @@ object onNonFatalSpec extends Properties {
 
     def testOnNonFatal_IO_onNonFatalWithShouldRecoverFromNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa                = run[IO, Int](throwThrowable[Int](expectedException))
       val expected          = 123.some
       var actual            = none[Int] // scalafix:ok DisableSyntax.var
 
@@ -57,7 +57,7 @@ object onNonFatalSpec extends Properties {
         try {
           val r = OnNonFatal[IO]
             .onNonFatalWith(fa) {
-              case NonFatal(`expectedExpcetion`) =>
+              case NonFatal(`expectedException`) =>
                 IO.delay {
                   actual = expected
                 } *> IO.unit
@@ -71,7 +71,7 @@ object onNonFatalSpec extends Properties {
 
       Result.all(
         List(
-          result ==== expectedExpcetion,
+          result ==== expectedException,
           actual ==== expected,
         )
       )
@@ -80,12 +80,12 @@ object onNonFatalSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testOnNonFatal_IO_onNonFatalWithShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = SomeControlThrowable("Something's wrong")
-      val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+      val expectedException = SomeControlThrowable("Something's wrong")
+      val fa                = run[IO, Int](throwThrowable[Int](expectedException))
       var actual            = none[Int] // scalafix:ok DisableSyntax.var
 
       val io = OnNonFatal[IO].onNonFatalWith(fa) {
-        case NonFatal(`expectedExpcetion`) =>
+        case NonFatal(`expectedException`) =>
           IO.delay {
             actual = 123.some
             ()
@@ -99,7 +99,7 @@ object onNonFatalSpec extends Properties {
           Result.all(
             List(
               actual ==== none[Int],
-              ex ==== expectedExpcetion,
+              ex ==== expectedException,
             )
           )
 

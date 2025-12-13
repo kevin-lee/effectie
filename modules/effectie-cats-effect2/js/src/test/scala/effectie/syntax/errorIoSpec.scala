@@ -40,9 +40,9 @@ trait CommonErrorIoSpec extends munit.FunSuite with FutureTools {
 trait CanCatchIoSyntaxSpec extends CommonErrorIoSpec {
 
   test("test CanCatch[IO].catchNonFatalThrowable should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
-    val expected          = expectedExpcetion.asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
+    val expected          = expectedException.asLeft[Int]
 
     fa.catchNonFatalThrowable
       .map { actual =>
@@ -82,9 +82,9 @@ trait CanCatchIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanCatch[IO].catchNonFatal should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
-    val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
+    val expected          = SomeError.someThrowable(expectedException).asLeft[Int]
 
     fa.catchNonFatal(SomeError.someThrowable)
       .map { actual =>
@@ -125,9 +125,9 @@ trait CanCatchIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanCatch[IO].catchNonFatalEither should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expected          = SomeError.someThrowable(expectedException).asLeft[Int]
 
     fa.catchNonFatalEither(SomeError.someThrowable)
       .map { actual =>
@@ -179,9 +179,9 @@ trait CanCatchIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanCatch[IO].catchNonFatalEitherT should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa       = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa       = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expected = SomeError.someThrowable(expectedException).asLeft[Int]
 
     fa.catchNonFatalEitherT(SomeError.someThrowable)
       .value
@@ -241,12 +241,12 @@ trait CanCatchIoSyntaxSpec extends CommonErrorIoSpec {
 trait CanHandleErrorIoSyntaxSpec extends CommonErrorIoSpec {
 
   test("test CanHandleError[IO].handleNonFatalWith should handle NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
     val expected          = 123
 
     fa.handleNonFatalWith {
-      case NonFatal(`expectedExpcetion`) =>
+      case NonFatal(`expectedException`) =>
         IO.pure(expected)
       case err =>
         throw err // scalafix:ok DisableSyntax.throw
@@ -287,8 +287,8 @@ trait CanHandleErrorIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanHandleError[IO].handleNonFatalWith(IO[Either]) should handle NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
     val actualFailedResult   =
       fa.handleNonFatalWith(_ => IO.pure(expectedFailedResult))
@@ -352,9 +352,9 @@ trait CanHandleErrorIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanHandleError[IO].handleEitherNonFatalWith should handle NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   = fa
       .handleEitherNonFatalWith(err => IO.pure(SomeError.someThrowable(err).asLeft[Int]))
       .map { actual =>
@@ -417,9 +417,9 @@ trait CanHandleErrorIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanHandleError[IO].handleEitherTNonFatalWith should handle NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   = fa
       .handleEitherTNonFatalWith(err => IO.pure(SomeError.someThrowable(err).asLeft[Int]))
       .value
@@ -487,12 +487,12 @@ trait CanHandleErrorIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanHandleError[IO].handleNonFatal should handle NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
     val expected          = 123
 
     fa.handleNonFatal {
-      case NonFatal(`expectedExpcetion`) =>
+      case NonFatal(`expectedException`) =>
         expected
       case err =>
         throw err // scalafix:ok DisableSyntax.throw
@@ -533,8 +533,8 @@ trait CanHandleErrorIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanHandleError[IO].handleNonFatalEither should handle NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
     val actualFailedResult   = fa
       .handleNonFatal(_ => expectedFailedResult)
@@ -598,9 +598,9 @@ trait CanHandleErrorIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanHandleError[IO].handleEitherNonFatal should handle NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   = fa
       .handleEitherNonFatal(err => SomeError.someThrowable(err).asLeft[Int])
       .map { actual =>
@@ -663,9 +663,9 @@ trait CanHandleErrorIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanHandleError[IO].handleEitherTNonFatal should handle NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   = fa
       .handleEitherTNonFatal(err => SomeError.someThrowable(err).asLeft[Int])
       .value
@@ -737,13 +737,13 @@ trait CanHandleErrorIoSyntaxSpec extends CommonErrorIoSpec {
 trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
 
   test("test CanRecover[IO].recoverFromNonFatalWith should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
     val expected          = 123
 
     fa
       .recoverFromNonFatalWith {
-        case NonFatal(`expectedExpcetion`) =>
+        case NonFatal(`expectedException`) =>
           IO.pure(expected)
       }
       .map { actual =>
@@ -753,10 +753,10 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanRecover[IO].recoverFromNonFatalWith should not catch Fatal") {
-    val expectedExpcetion = SomeControlThrowable("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = SomeControlThrowable("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
 
-    val io = fa.recoverFromNonFatalWith { case NonFatal(`expectedExpcetion`) => IO.pure(123) }
+    val io = fa.recoverFromNonFatalWith { case NonFatal(`expectedException`) => IO.pure(123) }
     try {
       io
         .map { actual =>
@@ -765,7 +765,7 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
         .unsafeToFuture()
     } catch {
       case ex: ControlThrowable =>
-        Assertions.assertEquals(ex, expectedExpcetion)
+        Assertions.assertEquals(ex, expectedException)
 
       case ex: Throwable =>
         Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
@@ -788,12 +788,12 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanRecover[IO].recoverFromNonFatalWithEither should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
     val actualFailedResult   = fa
       .recoverFromNonFatalWith {
-        case NonFatal(`expectedExpcetion`) => IO.pure(expectedFailedResult)
+        case NonFatal(`expectedException`) => IO.pure(expectedFailedResult)
       }
       .map { actual =>
         Assertions.assertEquals(actual, expectedFailedResult)
@@ -803,7 +803,7 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
     val expectedSuccessResult = 1.asRight[SomeError]
     val actualSuccessResult   = fa
       .recoverFromNonFatalWith {
-        case NonFatal(`expectedExpcetion`) => IO.pure(1.asRight[SomeError])
+        case NonFatal(`expectedException`) => IO.pure(1.asRight[SomeError])
       }
       .map { actual =>
         Assertions.assertEquals(actual, expectedSuccessResult)
@@ -814,11 +814,11 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanRecover[IO].recoverFromNonFatalWithEither should not catch Fatal") {
-    val expectedExpcetion = SomeControlThrowable("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val expectedException = SomeControlThrowable("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 
     val io = fa.recoverFromNonFatalWith {
-      case NonFatal(`expectedExpcetion`) => IO.pure(123.asRight[SomeError])
+      case NonFatal(`expectedException`) => IO.pure(123.asRight[SomeError])
     }
     try {
       io.map { actual =>
@@ -826,7 +826,7 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
       }.unsafeToFuture()
     } catch {
       case ex: ControlThrowable =>
-        Assertions.assertEquals(ex, expectedExpcetion)
+        Assertions.assertEquals(ex, expectedException)
 
       case ex: Throwable =>
         Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
@@ -863,9 +863,9 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanRecover[IO].recoverEitherFromNonFatalWith should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   = fa
       .recoverEitherFromNonFatalWith {
         case err => IO.pure(SomeError.someThrowable(err).asLeft[Int])
@@ -878,7 +878,7 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
     val expectedSuccessResult = 123.asRight[SomeError]
     val actualSuccessResult   = fa
       .recoverEitherFromNonFatalWith {
-        case NonFatal(`expectedExpcetion`) => IO.pure(123.asRight[SomeError])
+        case NonFatal(`expectedException`) => IO.pure(123.asRight[SomeError])
       }
       .map { actual =>
         Assertions.assertEquals(actual, expectedSuccessResult)
@@ -889,8 +889,8 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanRecover[IO].recoverEitherFromNonFatalWith should not catch Fatal") {
-    val expectedExpcetion = SomeControlThrowable("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val expectedException = SomeControlThrowable("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 
     val io = fa.recoverEitherFromNonFatalWith {
       case err => IO.pure(SomeError.someThrowable(err).asLeft[Int])
@@ -901,7 +901,7 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
       }.unsafeToFuture()
     } catch {
       case ex: ControlThrowable =>
-        Assertions.assertEquals(ex, expectedExpcetion)
+        Assertions.assertEquals(ex, expectedException)
 
       case ex: Throwable =>
         Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
@@ -938,9 +938,9 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanRecover[IO].recoverEitherTFromNonFatalWith should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   = fa
       .recoverEitherTFromNonFatalWith {
         case err => IO.pure(SomeError.someThrowable(err).asLeft[Int])
@@ -954,7 +954,7 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
     val expectedSuccessResult = 123.asRight[SomeError]
     val actualSuccessResult   = fa
       .recoverEitherTFromNonFatalWith {
-        case NonFatal(`expectedExpcetion`) => IO.pure(123.asRight[SomeError])
+        case NonFatal(`expectedException`) => IO.pure(123.asRight[SomeError])
       }
       .value
       .map { actual =>
@@ -966,8 +966,8 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanRecover[IO].recoverEitherTFromNonFatalWith should not catch Fatal") {
-    val expectedExpcetion = SomeControlThrowable("Something's wrong")
-    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+    val expectedException = SomeControlThrowable("Something's wrong")
+    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
 
     val io = fa.recoverEitherTFromNonFatalWith {
       case err => IO.pure(SomeError.someThrowable(err).asLeft[Int])
@@ -980,7 +980,7 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
         .unsafeToFuture()
     } catch {
       case ex: ControlThrowable =>
-        Assertions.assertEquals(ex, expectedExpcetion)
+        Assertions.assertEquals(ex, expectedException)
 
       case ex: Throwable =>
         Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
@@ -1021,13 +1021,13 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
   // /
 
   test("test CanRecover[IO].recoverFromNonFatal should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
     val expected          = 123
 
     fa
       .recoverFromNonFatal {
-        case NonFatal(`expectedExpcetion`) =>
+        case NonFatal(`expectedException`) =>
           expected
       }
       .map { actual =>
@@ -1037,17 +1037,17 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanRecover[IO].recoverFromNonFatal should not catch Fatal") {
-    val expectedExpcetion = SomeControlThrowable("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = SomeControlThrowable("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
 
-    val io = fa.recoverFromNonFatal { case NonFatal(`expectedExpcetion`) => 123 }
+    val io = fa.recoverFromNonFatal { case NonFatal(`expectedException`) => 123 }
     try {
       io.map { actual =>
         Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       }.unsafeToFuture()
     } catch {
       case ex: ControlThrowable =>
-        Assertions.assertEquals(ex, expectedExpcetion)
+        Assertions.assertEquals(ex, expectedException)
 
       case ex: Throwable =>
         Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
@@ -1067,11 +1067,11 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanRecover[IO].recoverFromNonFatalEither should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
     val actualFailedResult   = fa
-      .recoverFromNonFatal { case NonFatal(`expectedExpcetion`) => expectedFailedResult }
+      .recoverFromNonFatal { case NonFatal(`expectedException`) => expectedFailedResult }
       .map { actual =>
         Assertions.assertEquals(actual, expectedFailedResult)
       }
@@ -1079,7 +1079,7 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
 
     val expectedSuccessResult = 1.asRight[SomeError]
     val actualSuccessResult   = fa
-      .recoverFromNonFatal { case NonFatal(`expectedExpcetion`) => 1.asRight[SomeError] }
+      .recoverFromNonFatal { case NonFatal(`expectedException`) => 1.asRight[SomeError] }
       .map { actual =>
         Assertions.assertEquals(actual, expectedSuccessResult)
       }
@@ -1089,17 +1089,17 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanRecover[IO].recoverFromNonFatalEither should not catch Fatal") {
-    val expectedExpcetion = SomeControlThrowable("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val expectedException = SomeControlThrowable("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 
-    val io = fa.recoverFromNonFatal { case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError] }
+    val io = fa.recoverFromNonFatal { case NonFatal(`expectedException`) => 123.asRight[SomeError] }
     try {
       io.map { actual =>
         Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       }.unsafeToFuture()
     } catch {
       case ex: ControlThrowable =>
-        Assertions.assertEquals(ex, expectedExpcetion)
+        Assertions.assertEquals(ex, expectedException)
 
       case ex: Throwable =>
         Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
@@ -1132,9 +1132,9 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanRecover[IO].recoverEitherFromNonFatal should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   =
       fa.recoverEitherFromNonFatal {
         case err => SomeError.someThrowable(err).asLeft[Int]
@@ -1144,7 +1144,7 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
 
     val expectedSuccessResult = 123.asRight[SomeError]
     val actualSuccessResult   =
-      fa.recoverEitherFromNonFatal { case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError] }
+      fa.recoverEitherFromNonFatal { case NonFatal(`expectedException`) => 123.asRight[SomeError] }
         .map { actual =>
           Assertions.assertEquals(actual, expectedSuccessResult)
         }
@@ -1154,8 +1154,8 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanRecover[IO].recoverEitherFromNonFatal should not catch Fatal") {
-    val expectedExpcetion = SomeControlThrowable("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val expectedException = SomeControlThrowable("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 
     val io =
       fa.recoverEitherFromNonFatal {
@@ -1167,7 +1167,7 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
       }.unsafeToFuture()
     } catch {
       case ex: ControlThrowable =>
-        Assertions.assertEquals(ex, expectedExpcetion)
+        Assertions.assertEquals(ex, expectedException)
 
       case ex: Throwable =>
         Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
@@ -1198,9 +1198,9 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanRecover[IO].recoverEitherTFromNonFatal should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   =
       fa.recoverEitherTFromNonFatal {
         case err => SomeError.someThrowable(err).asLeft[Int]
@@ -1212,7 +1212,7 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
 
     val expectedSuccessResult = 123.asRight[SomeError]
     val actualSuccessResult   =
-      fa.recoverEitherTFromNonFatal { case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError] }
+      fa.recoverEitherTFromNonFatal { case NonFatal(`expectedException`) => 123.asRight[SomeError] }
         .value
         .map { actual =>
           Assertions.assertEquals(actual, expectedSuccessResult)
@@ -1223,8 +1223,8 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
   }
 
   test("test CanRecover[IO].recoverEitherTFromNonFatal should not catch Fatal") {
-    val expectedExpcetion = SomeControlThrowable("Something's wrong")
-    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+    val expectedException = SomeControlThrowable("Something's wrong")
+    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
 
     val io =
       fa.recoverEitherTFromNonFatal {
@@ -1238,7 +1238,7 @@ trait CanRecoverIoSyntaxSpec extends CommonErrorIoSpec {
         .unsafeToFuture()
     } catch {
       case ex: ControlThrowable =>
-        Assertions.assertEquals(ex, expectedExpcetion)
+        Assertions.assertEquals(ex, expectedException)
 
       case ex: Throwable =>
         Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
@@ -1276,20 +1276,20 @@ trait OnNonFatalIoSyntaxSpec extends CommonErrorIoSpec {
 
   test("test OnNonFatal[IO].onNonFatalWith should do something for NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
     val expected          = 123.some
     var actual            = none[Int] // scalafix:ok DisableSyntax.var
 
     fa.onNonFatalWith {
-      case NonFatal(`expectedExpcetion`) =>
+      case NonFatal(`expectedException`) =>
         IO.delay {
           actual = expected
         } *> IO.unit
     }.map { actual =>
       Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}"): Unit
     }.recover {
-      case NonFatal(`expectedExpcetion`) =>
+      case NonFatal(`expectedException`) =>
         Assertions.assertEquals(actual, expected)
     }.unsafeToFuture()
 
@@ -1297,13 +1297,13 @@ trait OnNonFatalIoSyntaxSpec extends CommonErrorIoSpec {
 
   test("test OnNonFatal[IO].onNonFatalWith should not do anything for Fatal") {
 
-    val expectedExpcetion = SomeControlThrowable("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = SomeControlThrowable("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
     var actual            = none[Int] // scalafix:ok DisableSyntax.var
 
     try {
       fa.onNonFatalWith {
-        case NonFatal(`expectedExpcetion`) =>
+        case NonFatal(`expectedException`) =>
           IO.delay {
             actual = 123.some
             ()
@@ -1313,7 +1313,7 @@ trait OnNonFatalIoSyntaxSpec extends CommonErrorIoSpec {
       }.unsafeToFuture()
     } catch {
       case ex: ControlThrowable =>
-        Assertions.assertEquals(ex, expectedExpcetion)
+        Assertions.assertEquals(ex, expectedException)
 
       case ex: Throwable =>
         Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
@@ -1345,15 +1345,15 @@ trait OnNonFatalIoSyntaxSpec extends CommonErrorIoSpec {
 
   test("test IO[Either[A, B]].onNonFatalWith should do something for NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val expectedResult    = expectedExpcetion
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val expectedResult    = expectedException
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 
     val expected = 123.some
     var actual   = none[Int] // scalafix:ok DisableSyntax.var
 
     fa.onNonFatalWith {
-      case NonFatal(`expectedExpcetion`) =>
+      case NonFatal(`expectedException`) =>
         IO.delay {
           actual = expected
         } *> IO.unit
@@ -1393,10 +1393,10 @@ trait OnNonFatalIoSyntaxSpec extends CommonErrorIoSpec {
 
   test("test IO[Either[A, B]].onNonFatalWith should do nothing for success case with Left") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val expectedResult    = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val expectedResult    = SomeError.someThrowable(expectedException).asLeft[Int]
 
-    val fa = run[IO, Int](throwThrowable(expectedExpcetion))
+    val fa = run[IO, Int](throwThrowable(expectedException))
       .catchNonFatal {
         case err =>
           SomeError.someThrowable(err)
@@ -1406,7 +1406,7 @@ trait OnNonFatalIoSyntaxSpec extends CommonErrorIoSpec {
     var actual   = none[Int] // scalafix:ok DisableSyntax.var
 
     fa.onNonFatalWith {
-      case NonFatal(`expectedExpcetion`) =>
+      case NonFatal(`expectedException`) =>
         IO.delay {
           actual = 123.some
         } *> IO.unit
@@ -1425,15 +1425,15 @@ trait OnNonFatalIoSyntaxSpec extends CommonErrorIoSpec {
 
   test("test EitherT[F, A, B].onNonFatalWith should do something for NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val expectedResult    = expectedExpcetion
-    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+    val expectedException = new RuntimeException("Something's wrong")
+    val expectedResult    = expectedException
+    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
 
     val expected = 123.some
     var actual   = none[Int] // scalafix:ok DisableSyntax.var
 
     fa.onNonFatalWith {
-      case NonFatal(`expectedExpcetion`) =>
+      case NonFatal(`expectedException`) =>
         IO.delay {
           actual = expected
         } *> IO.unit
@@ -1479,11 +1479,11 @@ trait OnNonFatalIoSyntaxSpec extends CommonErrorIoSpec {
 
   test("test EitherT[F, A, B](F(Left(a))).onNonFatalWith should do nothing for success case with Left") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val expectedResult    = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val expectedResult    = SomeError.someThrowable(expectedException).asLeft[Int]
 
     val fa = EitherT(
-      run[IO, Int](throwThrowable(expectedExpcetion))
+      run[IO, Int](throwThrowable(expectedException))
         .catchNonFatal {
           case err => SomeError.someThrowable(err)
         }
@@ -1493,7 +1493,7 @@ trait OnNonFatalIoSyntaxSpec extends CommonErrorIoSpec {
     var actual   = none[Int] // scalafix:ok DisableSyntax.var
 
     fa.onNonFatalWith {
-      case NonFatal(`expectedExpcetion`) =>
+      case NonFatal(`expectedException`) =>
         IO.delay {
           actual = 123.some
         } *> IO.unit

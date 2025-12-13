@@ -109,9 +109,9 @@ object fxFutureSpec extends Properties {
         implicit val ec: ExecutionContext             =
           ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-        val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+        val expected = SomeError.someThrowable(expectedException).asLeft[Int]
         val actual   = ConcurrentSupport.futureToValueAndTerminate(
           executorService,
           waitFor,
@@ -164,9 +164,9 @@ object fxFutureSpec extends Properties {
         implicit val ec: ExecutionContext             =
           ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-        val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+        val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
         val actualFailedResult   = ConcurrentSupport.futureToValue(
           Fx[Future]
             .handleEitherTNonFatalWith(fa)(err => Future(SomeError.someThrowable(err).asLeft[Int]))
@@ -175,7 +175,7 @@ object fxFutureSpec extends Properties {
         )
 
         val fa2      = EitherT(
-          run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+          run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
         )
         val expected = 1.asRight[SomeError]
         val actual   =
@@ -231,16 +231,16 @@ object fxFutureSpec extends Properties {
         implicit val ec: ExecutionContext             =
           ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-        val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+        val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
         val actualFailedResult   = ConcurrentSupport.futureToValue(
           Fx[Future].handleEitherTNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int]).value,
           waitFor,
         )
 
         val fa2      = EitherT(
-          run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+          run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
         )
         val expected = 1.asRight[SomeError]
         val actual   =
@@ -299,9 +299,9 @@ object fxFutureSpec extends Properties {
         implicit val ec: ExecutionContext             =
           ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-        val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+        val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
         val actualFailedResult   = ConcurrentSupport.futureToValue(
           Fx[Future]
             .recoverEitherTFromNonFatalWith(fa) {
@@ -314,7 +314,7 @@ object fxFutureSpec extends Properties {
         val expected = 1.asRight[SomeError]
 
         val fa2    = EitherT(
-          run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+          run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
         )
         val actual =
           ConcurrentSupport.futureToValueAndTerminate(
@@ -385,9 +385,9 @@ object fxFutureSpec extends Properties {
         implicit val ec: ExecutionContext             =
           ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-        val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+        val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
         val actualFailedResult   = ConcurrentSupport.futureToValue(
           Fx[Future]
             .recoverEitherTFromNonFatal(fa) {
@@ -398,7 +398,7 @@ object fxFutureSpec extends Properties {
         )
 
         val fa2      = EitherT(
-          run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+          run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
         )
         val expected = 1.asRight[SomeError]
         val actual   =

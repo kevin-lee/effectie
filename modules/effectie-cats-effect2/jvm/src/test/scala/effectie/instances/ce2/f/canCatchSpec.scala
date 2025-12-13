@@ -91,9 +91,9 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_IO_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
-      val expected          = expectedExpcetion.asLeft[Int]
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa                = run[IO, Int](throwThrowable[Int](expectedException))
+      val expected          = expectedException.asLeft[Int]
       val actual            = CanCatch[IO].catchNonFatalThrowable(fa).unsafeRunSync()
 
       actual ==== expected
@@ -129,9 +129,9 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_IO_catchNonFatalShouldCatchNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
-      val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa                = run[IO, Int](throwThrowable[Int](expectedException))
+      val expected          = SomeError.someThrowable(expectedException).asLeft[Int]
       val actual            = CanCatch[IO].catchNonFatal(fa)(SomeError.someThrowable).unsafeRunSync()
 
       actual ==== expected
@@ -167,9 +167,9 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_IO_catchNonFatalEitherShouldCatchNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-      val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+      val expected          = SomeError.someThrowable(expectedException).asLeft[Int]
       val actual            = CanCatch[IO].catchNonFatalEither(fa)(SomeError.someThrowable).unsafeRunSync()
 
       actual ==== expected
@@ -215,9 +215,9 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_IO_catchNonFatalEitherTShouldCatchNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa       = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-      val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa       = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+      val expected = SomeError.someThrowable(expectedException).asLeft[Int]
       val actual   = CanCatch[IO].catchNonFatalEitherT(fa)(SomeError.someThrowable).value.unsafeRunSync()
 
       actual ==== expected

@@ -42,9 +42,9 @@ trait CanCatchSpec {
 
   test("Fx[Future].catchNonFatalEitherT should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expected = SomeError.someThrowable(expectedException).asLeft[Int]
 
     Fx[Future].catchNonFatalEitherT(fa)(SomeError.someThrowable).value.map { actual =>
       Assertions.assertEquals(actual, expected)
@@ -82,9 +82,9 @@ trait CanHandleErrorSpec {
 
   test("Fx[Future].handleEitherTNonFatalWith should handle NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
 
     val actualFailedResult =
       Fx[Future]
@@ -95,7 +95,7 @@ trait CanHandleErrorSpec {
         }
 
     val fa2      = EitherT(
-      run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     )
     val expected = 1.asRight[SomeError]
 
@@ -138,9 +138,9 @@ trait CanHandleErrorSpec {
 
   test("Fx[Future].handleEitherTNonFatal should handle NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
 
     val actualFailedResult =
       Fx[Future].handleEitherTNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int]).value.map { actual =>
@@ -148,7 +148,7 @@ trait CanHandleErrorSpec {
       }
 
     val fa2      = EitherT(
-      run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     )
     val expected = 1.asRight[SomeError]
 
@@ -193,9 +193,9 @@ trait CanRecoverSpec {
 
   test("Fx[Future].recoverEitherTFromNonFatalWith should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
 
     val actualFailedResult =
       Fx[Future]
@@ -210,7 +210,7 @@ trait CanRecoverSpec {
     val expected = 1.asRight[SomeError]
 
     val fa2 = EitherT(
-      run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     )
 
     val actualHandledResult =
@@ -266,9 +266,9 @@ trait CanRecoverSpec {
 
   test("Fx[Future].recoverEitherTFromNonFatal should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
 
     val actualFailedResult =
       Fx[Future]
@@ -281,7 +281,7 @@ trait CanRecoverSpec {
         }
 
     val fa2      = EitherT(
-      run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     )
     val expected = 1.asRight[SomeError]
 

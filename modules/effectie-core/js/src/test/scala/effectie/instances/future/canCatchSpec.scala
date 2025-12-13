@@ -30,10 +30,10 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
 
   test("test CanCatch[Future].catchNonFatalThrowable should catch NonFatal") {
 
-    val expectedExpcetion                       = new RuntimeException("Something's wrong")
-    val expected: Either[RuntimeException, Int] = Left(expectedExpcetion)
+    val expectedException                       = new RuntimeException("Something's wrong")
+    val expected: Either[RuntimeException, Int] = Left(expectedException)
 
-    val fa = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+    val fa = run[Future, Int](throwThrowable[Int](expectedException))
 
     CanCatch[Future].catchNonFatalThrowable(fa).map { actual =>
       assertEquals(actual, expected)
@@ -42,10 +42,10 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
 
   test("test CanCatch[Future].catchNonFatal should catch NonFatal") {
 
-    val expectedExpcetion                = new RuntimeException("Something's wrong")
-    val expected: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
+    val expectedException                = new RuntimeException("Something's wrong")
+    val expected: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedException))
 
-    val fa = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+    val fa = run[Future, Int](throwThrowable[Int](expectedException))
 
     CanCatch[Future].catchNonFatal(fa)(SomeError.someThrowable).map { actual =>
       assertEquals(actual, expected)
@@ -78,10 +78,10 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
 
   test("test CanCatch[Future].catchNonFatalEither should catch NonFatal") {
 
-    val expectedExpcetion                = new RuntimeException("Something's wrong")
-    val expected: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
+    val expectedException                = new RuntimeException("Something's wrong")
+    val expected: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedException))
 
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     CanCatch[Future].catchNonFatalEither(fa)(SomeError.someThrowable).map { actual =>
       assertEquals(actual, expected)
     }

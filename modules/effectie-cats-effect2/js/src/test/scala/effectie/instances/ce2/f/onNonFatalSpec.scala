@@ -34,15 +34,15 @@ class onNonFatalSpec extends munit.FunSuite with FutureTools {
 
   test("test OnNonFatal[IO].onNonFatalWith should do something for NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
     val expected          = 123.some
     var actual            = none[Int] // scalafix:ok DisableSyntax.var
 
     try {
       OnNonFatal[IO]
         .onNonFatalWith(fa) {
-          case NonFatal(`expectedExpcetion`) =>
+          case NonFatal(`expectedException`) =>
             IO.delay {
               actual = expected
             } *> IO.unit
@@ -51,7 +51,7 @@ class onNonFatalSpec extends munit.FunSuite with FutureTools {
           Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}"): Unit
         }
         .recover {
-          case NonFatal(`expectedExpcetion`) =>
+          case NonFatal(`expectedException`) =>
             Assertions.assertEquals(actual, expected)
         }
         .unsafeToFuture()
@@ -64,14 +64,14 @@ class onNonFatalSpec extends munit.FunSuite with FutureTools {
 
   test("test OnNonFatal[IO].onNonFatalWith should not do anything for Fatal") {
 
-    val expectedExpcetion = SomeControlThrowable("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = SomeControlThrowable("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
     var actual            = none[Int] // scalafix:ok DisableSyntax.var
 
     try {
       OnNonFatal[IO]
         .onNonFatalWith(fa) {
-          case NonFatal(`expectedExpcetion`) =>
+          case NonFatal(`expectedException`) =>
             IO.delay {
               actual = 123.some
               ()
@@ -83,7 +83,7 @@ class onNonFatalSpec extends munit.FunSuite with FutureTools {
         .unsafeToFuture()
     } catch {
       case ex: ControlThrowable =>
-        Assertions.assertEquals(ex, expectedExpcetion)
+        Assertions.assertEquals(ex, expectedException)
 
       case ex: Throwable =>
         Assertions.fail(s"Unexpected Throwable: ${ex.toString}")

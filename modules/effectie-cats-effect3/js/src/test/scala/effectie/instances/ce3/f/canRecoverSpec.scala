@@ -26,11 +26,11 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 
   test("test CanRecover[IO].recoverFromNonFatalWith should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
     val expected          = 123
     val actual            = CanRecover[IO].recoverFromNonFatalWith(fa) {
-      case NonFatal(`expectedExpcetion`) =>
+      case NonFatal(`expectedException`) =>
         IO.pure(expected)
     }
     actual.map(Assertions.assertEquals(_, expected))
@@ -39,15 +39,15 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 
 //  test("test CanRecover[IO].recoverFromNonFatalWith should not catch Fatal") {
 //
-//    val expectedExpcetion = SomeControlThrowable("Something's wrong")
-//    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+//    val expectedException = SomeControlThrowable("Something's wrong")
+//    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
 //
-//    val io = CanRecover[IO].recoverFromNonFatalWith(fa) { case NonFatal(`expectedExpcetion`) => IO.pure(123) }
+//    val io = CanRecover[IO].recoverFromNonFatalWith(fa) { case NonFatal(`expectedException`) => IO.pure(123) }
 //    try {
 //      io.map(actual => Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}"))
 //    } catch {
 //      case ex: ControlThrowable =>
-//        Assertions.assertEquals(ex, expectedExpcetion)
+//        Assertions.assertEquals(ex, expectedException)
 //
 //      case ex: Throwable =>
 //        Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
@@ -69,18 +69,18 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 
   test("test CanRecover[IO].recoverFromNonFatalWithEither should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
     val actualFailedResult   = CanRecover[IO]
       .recoverFromNonFatalWith(fa) {
-        case NonFatal(`expectedExpcetion`) => IO.pure(expectedFailedResult)
+        case NonFatal(`expectedException`) => IO.pure(expectedFailedResult)
       }
 
     val expectedSuccessResult = 1.asRight[SomeError]
     val actualSuccessResult   = CanRecover[IO]
       .recoverFromNonFatalWith(fa) {
-        case NonFatal(`expectedExpcetion`) => IO.pure(1.asRight[SomeError])
+        case NonFatal(`expectedException`) => IO.pure(1.asRight[SomeError])
       }
 
     List(
@@ -91,17 +91,17 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 
 //  test("test CanRecover[IO].recoverFromNonFatalWithEither should not catch Fatal") {
 //
-//    val expectedExpcetion = SomeControlThrowable("Something's wrong")
-//    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+//    val expectedException = SomeControlThrowable("Something's wrong")
+//    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 //
 //    val io = CanRecover[IO].recoverFromNonFatalWith(fa) {
-//      case NonFatal(`expectedExpcetion`) => IO.pure(123.asRight[SomeError])
+//      case NonFatal(`expectedException`) => IO.pure(123.asRight[SomeError])
 //    }
 //    try {
 //      io.map(actual => Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}"))
 //    } catch {
 //      case ex: ControlThrowable =>
-//        Assertions.assertEquals(ex, expectedExpcetion)
+//        Assertions.assertEquals(ex, expectedException)
 //
 //      case ex: Throwable =>
 //        Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
@@ -136,9 +136,9 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 
   test("test CanRecover[IO].recoverEitherFromNonFatalWith should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   = CanRecover[IO]
       .recoverEitherFromNonFatalWith(fa) {
         case err => IO.pure(SomeError.someThrowable(err).asLeft[Int])
@@ -147,7 +147,7 @@ class canRecoverSpec extends munit.CatsEffectSuite {
     val expectedSuccessResult = 123.asRight[SomeError]
     val actualSuccessResult   = CanRecover[IO]
       .recoverEitherFromNonFatalWith(fa) {
-        case NonFatal(`expectedExpcetion`) => IO.pure(123.asRight[SomeError])
+        case NonFatal(`expectedException`) => IO.pure(123.asRight[SomeError])
       }
 
     List(
@@ -158,8 +158,8 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 
 //  test("test CanRecover[IO].recoverEitherFromNonFatalWith should not catch Fatal") {
 //
-//    val expectedExpcetion = SomeControlThrowable("Something's wrong")
-//    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+//    val expectedException = SomeControlThrowable("Something's wrong")
+//    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 //
 //    val io = CanRecover[IO].recoverEitherFromNonFatalWith(fa) {
 //      case err => IO.pure(SomeError.someThrowable(err).asLeft[Int])
@@ -168,7 +168,7 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 //      io.map(actual => Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}"))
 //    } catch {
 //      case ex: ControlThrowable =>
-//        Assertions.assertEquals(ex, expectedExpcetion)
+//        Assertions.assertEquals(ex, expectedException)
 //
 //      case ex: Throwable =>
 //        Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
@@ -204,9 +204,9 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 
   test("test CanRecover[IO].recoverEitherTFromNonFatalWith should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   = CanRecover[IO]
       .recoverEitherTFromNonFatalWith(fa) {
         case err => IO.pure(SomeError.someThrowable(err).asLeft[Int])
@@ -216,7 +216,7 @@ class canRecoverSpec extends munit.CatsEffectSuite {
     val expectedSuccessResult = 123.asRight[SomeError]
     val actualSuccessResult   = CanRecover[IO]
       .recoverEitherTFromNonFatalWith(fa) {
-        case NonFatal(`expectedExpcetion`) => IO.pure(123.asRight[SomeError])
+        case NonFatal(`expectedException`) => IO.pure(123.asRight[SomeError])
       }
       .value
 
@@ -228,8 +228,8 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 
 //  test("test CanRecover[IO].recoverEitherTFromNonFatalWith should not catch Fatal") {
 //
-//    val expectedExpcetion = SomeControlThrowable("Something's wrong")
-//    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+//    val expectedException = SomeControlThrowable("Something's wrong")
+//    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
 //
 //    val io = CanRecover[IO].recoverEitherTFromNonFatalWith(fa) {
 //      case err => IO.pure(SomeError.someThrowable(err).asLeft[Int])
@@ -239,7 +239,7 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 //        .map(actual => Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}"))
 //    } catch {
 //      case ex: ControlThrowable =>
-//        Assertions.assertEquals(ex, expectedExpcetion)
+//        Assertions.assertEquals(ex, expectedException)
 //
 //      case ex: Throwable =>
 //        Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
@@ -279,12 +279,12 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 
   test("test CanRecover[IO].recoverFromNonFatal should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
     val expected          = 123
     val actual            = CanRecover[IO]
       .recoverFromNonFatal(fa) {
-        case NonFatal(`expectedExpcetion`) =>
+        case NonFatal(`expectedException`) =>
           expected
       }
 
@@ -293,15 +293,15 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 
 //  test("test CanRecover[IO].recoverFromNonFatal should not catch Fatal") {
 //
-//    val expectedExpcetion = SomeControlThrowable("Something's wrong")
-//    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+//    val expectedException = SomeControlThrowable("Something's wrong")
+//    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
 //
-//    val io = CanRecover[IO].recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 123 }
+//    val io = CanRecover[IO].recoverFromNonFatal(fa) { case NonFatal(`expectedException`) => 123 }
 //    try {
 //      io.map(actual => Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}"))
 //    } catch {
 //      case ex: ControlThrowable =>
-//        Assertions.assertEquals(ex, expectedExpcetion)
+//        Assertions.assertEquals(ex, expectedException)
 //
 //      case ex: Throwable =>
 //        Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
@@ -320,15 +320,15 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 
   test("test CanRecover[IO].recoverFromNonFatalEither should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
     val actualFailedResult   = CanRecover[IO]
-      .recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => expectedFailedResult }
+      .recoverFromNonFatal(fa) { case NonFatal(`expectedException`) => expectedFailedResult }
 
     val expectedSuccessResult = 1.asRight[SomeError]
     val actualSuccessResult   = CanRecover[IO]
-      .recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 1.asRight[SomeError] }
+      .recoverFromNonFatal(fa) { case NonFatal(`expectedException`) => 1.asRight[SomeError] }
 
     List(
       actualFailedResult.map(Assertions.assertEquals(_, expectedFailedResult)),
@@ -338,15 +338,15 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 
 //  test("test CanRecover[IO].recoverFromNonFatalEither should not catch Fatal") {
 //
-//    val expectedExpcetion = SomeControlThrowable("Something's wrong")
-//    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+//    val expectedException = SomeControlThrowable("Something's wrong")
+//    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 //
-//    val io = CanRecover[IO].recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError] }
+//    val io = CanRecover[IO].recoverFromNonFatal(fa) { case NonFatal(`expectedException`) => 123.asRight[SomeError] }
 //    try {
 //      io.map(actual => Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}"))
 //    } catch {
 //      case ex: ControlThrowable =>
-//        Assertions.assertEquals(ex, expectedExpcetion)
+//        Assertions.assertEquals(ex, expectedException)
 //
 //      case ex: Throwable =>
 //        Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
@@ -375,9 +375,9 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 
   test("test CanRecover[IO].recoverEitherFromNonFatal should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   =
       CanRecover[IO]
         .recoverEitherFromNonFatal(fa) {
@@ -387,7 +387,7 @@ class canRecoverSpec extends munit.CatsEffectSuite {
     val expectedSuccessResult = 123.asRight[SomeError]
     val actualSuccessResult   =
       CanRecover[IO]
-        .recoverEitherFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError] }
+        .recoverEitherFromNonFatal(fa) { case NonFatal(`expectedException`) => 123.asRight[SomeError] }
 
     List(
       actualFailedResult.map(Assertions.assertEquals(_, expectedFailedResult)),
@@ -397,8 +397,8 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 
 //  test("test CanRecover[IO].recoverEitherFromNonFatal should not catch Fatal") {
 //
-//    val expectedExpcetion = SomeControlThrowable("Something's wrong")
-//    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+//    val expectedException = SomeControlThrowable("Something's wrong")
+//    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 //
 //    val io =
 //      CanRecover[IO].recoverEitherFromNonFatal(fa) {
@@ -408,7 +408,7 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 //      io.map(actual => Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}"))
 //    } catch {
 //      case ex: ControlThrowable =>
-//        Assertions.assertEquals(ex, expectedExpcetion)
+//        Assertions.assertEquals(ex, expectedException)
 //
 //      case ex: Throwable =>
 //        Assertions.fail(s"Unexpected Throwable: ${ex.toString}")
@@ -441,9 +441,9 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 
   test("test CanRecover[IO].recoverEitherTFromNonFatal should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   =
       CanRecover[IO]
         .recoverEitherTFromNonFatal(fa) {
@@ -454,7 +454,7 @@ class canRecoverSpec extends munit.CatsEffectSuite {
     val expectedSuccessResult = 123.asRight[SomeError]
     val actualSuccessResult   =
       CanRecover[IO]
-        .recoverEitherTFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError] }
+        .recoverEitherTFromNonFatal(fa) { case NonFatal(`expectedException`) => 123.asRight[SomeError] }
         .value
 
     List(
@@ -465,8 +465,8 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 
 //  test("test CanRecover[IO].recoverEitherTFromNonFatal should not catch Fatal") {
 //
-//    val expectedExpcetion = SomeControlThrowable("Something's wrong")
-//    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+//    val expectedException = SomeControlThrowable("Something's wrong")
+//    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
 //
 //    val io =
 //      CanRecover[IO].recoverEitherTFromNonFatal(fa) {
@@ -477,7 +477,7 @@ class canRecoverSpec extends munit.CatsEffectSuite {
 //        .map(actual => Assertions.fail(s"The expected fatal exception was not thrown. actual: ${actual.toString}"))
 //    } catch {
 //      case ex: ControlThrowable =>
-//        Assertions.assertEquals(ex, expectedExpcetion)
+//        Assertions.assertEquals(ex, expectedException)
 //
 //      case ex: Throwable =>
 //        Assertions.fail(s"Unexpected Throwable: ${ex.toString}")

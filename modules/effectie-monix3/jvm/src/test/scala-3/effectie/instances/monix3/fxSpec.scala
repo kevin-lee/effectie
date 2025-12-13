@@ -404,9 +404,9 @@ object FxSpec extends Properties {
 
       def testCanCatch_Task_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
-        val expected          = expectedExpcetion.asLeft[Int]
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa                = run[Task, Int](throwThrowable[Int](expectedException))
+        val expected          = expectedException.asLeft[Int]
         val actual            = Fx[Task].catchNonFatalThrowable(fa).runSyncUnsafe()
 
         actual ==== expected
@@ -441,9 +441,9 @@ object FxSpec extends Properties {
 
       def testCanCatch_Task_catchNonFatalShouldCatchNonFatal: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
-        val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa                = run[Task, Int](throwThrowable[Int](expectedException))
+        val expected          = SomeError.someThrowable(expectedException).asLeft[Int]
         val actual            = Fx[Task].catchNonFatal(fa)(SomeError.someThrowable).runSyncUnsafe()
 
         actual ==== expected
@@ -478,9 +478,9 @@ object FxSpec extends Properties {
 
       def testCanCatch_Task_catchNonFatalEitherShouldCatchNonFatal: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa       = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-        val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa       = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+        val expected = SomeError.someThrowable(expectedException).asLeft[Int]
         val actual   = Fx[Task].catchNonFatalEither(fa)(SomeError.someThrowable).runSyncUnsafe()
 
         actual ==== expected
@@ -525,9 +525,9 @@ object FxSpec extends Properties {
 
       def testCanCatch_Task_catchNonFatalEitherTShouldCatchNonFatal: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-        val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+        val expected = SomeError.someThrowable(expectedException).asLeft[Int]
         val actual   = Fx[Task].catchNonFatalEitherT(fa)(SomeError.someThrowable).value.runSyncUnsafe()
 
         actual ==== expected
@@ -576,12 +576,12 @@ object FxSpec extends Properties {
 
       def testCanHandleError_Task_handleNonFatalWithShouldHandleNonFatalWith: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa                = run[Task, Int](throwThrowable[Int](expectedException))
         val expected          = 123
         val actual            = Fx[Task]
           .handleNonFatalWith(fa) {
-            case NonFatal(`expectedExpcetion`) =>
+            case NonFatal(`expectedException`) =>
               Task.pure(expected)
           }
           .runSyncUnsafe()
@@ -618,8 +618,8 @@ object FxSpec extends Properties {
 
       def testCanHandleError_Task_handleNonFatalWithEitherShouldHandleNonFatalWith: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
         val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
         val actualFailedResult   =
           Fx[Task].handleNonFatalWith(fa)(_ => Task.pure(expectedFailedResult)).runSyncUnsafe()
@@ -670,9 +670,9 @@ object FxSpec extends Properties {
 
       def testCanHandleError_Task_handleEitherNonFatalWithShouldHandleNonFatalWith: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-        val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+        val expectedFailedResult  = SomeError.someThrowable(expectedException).asLeft[Int]
         val actualFailedResult    = Fx[Task]
           .handleEitherNonFatalWith(fa)(err => Task.pure(SomeError.someThrowable(err).asLeft[Int]))
           .runSyncUnsafe()
@@ -727,9 +727,9 @@ object FxSpec extends Properties {
 
       def testCanHandleError_Task_handleEitherTNonFatalWithShouldHandleNonFatalWith: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-        val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+        val expectedFailedResult  = SomeError.someThrowable(expectedException).asLeft[Int]
         val actualFailedResult    = Fx[Task]
           .handleEitherTNonFatalWith(fa)(err => Task.pure(SomeError.someThrowable(err).asLeft[Int]))
           .value
@@ -786,12 +786,12 @@ object FxSpec extends Properties {
 
       def testCanHandleError_Task_handleNonFatalShouldHandleNonFatal: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa                = run[Task, Int](throwThrowable[Int](expectedException))
         val expected          = 123
         val actual            = Fx[Task]
           .handleNonFatal(fa) {
-            case NonFatal(`expectedExpcetion`) =>
+            case NonFatal(`expectedException`) =>
               expected
           }
           .runSyncUnsafe()
@@ -828,8 +828,8 @@ object FxSpec extends Properties {
 
       def testCanHandleError_Task_handleNonFatalEitherShouldHandleNonFatal: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
         val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
         val actualFailedResult   = Fx[Task].handleNonFatal(fa)(_ => expectedFailedResult).runSyncUnsafe()
 
@@ -878,9 +878,9 @@ object FxSpec extends Properties {
 
       def testCanHandleError_Task_handleEitherNonFatalShouldHandleNonFatal: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-        val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+        val expectedFailedResult  = SomeError.someThrowable(expectedException).asLeft[Int]
         val actualFailedResult    = Fx[Task]
           .handleEitherNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int])
           .runSyncUnsafe()
@@ -936,9 +936,9 @@ object FxSpec extends Properties {
 
       def testCanHandleError_Task_handleEitherTNonFatalShouldHandleNonFatal: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-        val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+        val expectedFailedResult  = SomeError.someThrowable(expectedException).asLeft[Int]
         val actualFailedResult    = Fx[Task]
           .handleEitherTNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int])
           .value
@@ -998,12 +998,12 @@ object FxSpec extends Properties {
 
       def testCanRecover_Task_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa                = run[Task, Int](throwThrowable[Int](expectedException))
         val expected          = 123
         val actual            = Fx[Task]
           .recoverFromNonFatalWith(fa) {
-            case NonFatal(`expectedExpcetion`) =>
+            case NonFatal(`expectedException`) =>
               Task.pure(expected)
           }
           .runSyncUnsafe()
@@ -1013,16 +1013,16 @@ object FxSpec extends Properties {
 
       def testCanRecover_Task_recoverFromNonFatalWithShouldNotCatchFatal: Result = {
 
-        val expectedExpcetion = SomeControlThrowable("Something's wrong")
-        val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
+        val expectedException = SomeControlThrowable("Something's wrong")
+        val fa                = run[Task, Int](throwThrowable[Int](expectedException))
 
-        val io = Fx[Task].recoverFromNonFatalWith(fa) { case NonFatal(`expectedExpcetion`) => Task.pure(123) }
+        val io = Fx[Task].recoverFromNonFatalWith(fa) { case NonFatal(`expectedException`) => Task.pure(123) }
         try {
           val actual = io.runSyncUnsafe()
           Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
         } catch {
           case ex: ControlThrowable =>
-            ex ==== expectedExpcetion
+            ex ==== expectedException
 
           case ex: Throwable =>
             Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -1045,19 +1045,19 @@ object FxSpec extends Properties {
 
       def testCanRecover_Task_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
         val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
         val actualFailedResult   = Fx[Task]
           .recoverFromNonFatalWith(fa) {
-            case NonFatal(`expectedExpcetion`) => Task.pure(expectedFailedResult)
+            case NonFatal(`expectedException`) => Task.pure(expectedFailedResult)
           }
           .runSyncUnsafe()
 
         val expectedSuccessResult = 1.asRight[SomeError]
         val actualSuccessResult   = Fx[Task]
           .recoverFromNonFatalWith(fa) {
-            case NonFatal(`expectedExpcetion`) => Task.pure(1.asRight[SomeError])
+            case NonFatal(`expectedException`) => Task.pure(1.asRight[SomeError])
           }
           .runSyncUnsafe()
 
@@ -1066,18 +1066,18 @@ object FxSpec extends Properties {
 
       def testCanRecover_Task_recoverFromNonFatalWithEitherShouldNotCatchFatal: Result = {
 
-        val expectedExpcetion = SomeControlThrowable("Something's wrong")
-        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        val expectedException = SomeControlThrowable("Something's wrong")
+        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 
         val io = Fx[Task].recoverFromNonFatalWith(fa) {
-          case NonFatal(`expectedExpcetion`) => Task.pure(123.asRight[SomeError])
+          case NonFatal(`expectedException`) => Task.pure(123.asRight[SomeError])
         }
         try {
           val actual = io.runSyncUnsafe()
           Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
         } catch {
           case ex: ControlThrowable =>
-            ex ==== expectedExpcetion
+            ex ==== expectedException
 
           case ex: Throwable =>
             Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -1114,9 +1114,9 @@ object FxSpec extends Properties {
 
       def testCanRecover_Task_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-        val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+        val expectedFailedResult  = SomeError.someThrowable(expectedException).asLeft[Int]
         val actualFailedResult    = Fx[Task]
           .recoverEitherFromNonFatalWith(fa) {
             case err => Task.pure(SomeError.someThrowable(err).asLeft[Int])
@@ -1125,7 +1125,7 @@ object FxSpec extends Properties {
         val expectedSuccessResult = 123.asRight[SomeError]
         val actualSuccessResult   = Fx[Task]
           .recoverEitherFromNonFatalWith(fa) {
-            case NonFatal(`expectedExpcetion`) => Task.pure(123.asRight[SomeError])
+            case NonFatal(`expectedException`) => Task.pure(123.asRight[SomeError])
           }
           .runSyncUnsafe()
 
@@ -1134,8 +1134,8 @@ object FxSpec extends Properties {
 
       def testCanRecover_Task_recoverEitherFromNonFatalWithShouldNotCatchFatal: Result = {
 
-        val expectedExpcetion = SomeControlThrowable("Something's wrong")
-        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        val expectedException = SomeControlThrowable("Something's wrong")
+        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 
         val io = Fx[Task].recoverEitherFromNonFatalWith(fa) {
           case err => Task.pure(SomeError.someThrowable(err).asLeft[Int])
@@ -1145,7 +1145,7 @@ object FxSpec extends Properties {
           Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
         } catch {
           case ex: ControlThrowable =>
-            ex ==== expectedExpcetion
+            ex ==== expectedException
 
           case ex: Throwable =>
             Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -1183,9 +1183,9 @@ object FxSpec extends Properties {
 
       def testCanRecover_Task_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-        val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+        val expectedFailedResult  = SomeError.someThrowable(expectedException).asLeft[Int]
         val actualFailedResult    = Fx[Task]
           .recoverEitherTFromNonFatalWith(fa) {
             case err => Task.pure(SomeError.someThrowable(err).asLeft[Int])
@@ -1195,7 +1195,7 @@ object FxSpec extends Properties {
         val expectedSuccessResult = 123.asRight[SomeError]
         val actualSuccessResult   = Fx[Task]
           .recoverEitherTFromNonFatalWith(fa) {
-            case NonFatal(`expectedExpcetion`) => Task.pure(123.asRight[SomeError])
+            case NonFatal(`expectedException`) => Task.pure(123.asRight[SomeError])
           }
           .value
           .runSyncUnsafe()
@@ -1205,8 +1205,8 @@ object FxSpec extends Properties {
 
       def testCanRecover_Task_recoverEitherTFromNonFatalWithShouldNotCatchFatal: Result = {
 
-        val expectedExpcetion = SomeControlThrowable("Something's wrong")
-        val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+        val expectedException = SomeControlThrowable("Something's wrong")
+        val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
 
         val io = Fx[Task].recoverEitherTFromNonFatalWith(fa) {
           case err => Task.pure(SomeError.someThrowable(err).asLeft[Int])
@@ -1216,7 +1216,7 @@ object FxSpec extends Properties {
           Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
         } catch {
           case ex: ControlThrowable =>
-            ex ==== expectedExpcetion
+            ex ==== expectedException
 
           case ex: Throwable =>
             Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -1258,12 +1258,12 @@ object FxSpec extends Properties {
 
       def testCanRecover_Task_recoverFromNonFatalShouldRecoverFromNonFatal: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa                = run[Task, Int](throwThrowable[Int](expectedException))
         val expected          = 123
         val actual            = Fx[Task]
           .recoverFromNonFatal(fa) {
-            case NonFatal(`expectedExpcetion`) =>
+            case NonFatal(`expectedException`) =>
               expected
           }
           .runSyncUnsafe()
@@ -1273,16 +1273,16 @@ object FxSpec extends Properties {
 
       def testCanRecover_Task_recoverFromNonFatalShouldNotCatchFatal: Result = {
 
-        val expectedExpcetion = SomeControlThrowable("Something's wrong")
-        val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
+        val expectedException = SomeControlThrowable("Something's wrong")
+        val fa                = run[Task, Int](throwThrowable[Int](expectedException))
 
-        val io = Fx[Task].recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 123 }
+        val io = Fx[Task].recoverFromNonFatal(fa) { case NonFatal(`expectedException`) => 123 }
         try {
           val actual = io.runSyncUnsafe()
           Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
         } catch {
           case ex: ControlThrowable =>
-            ex ==== expectedExpcetion
+            ex ==== expectedException
 
           case ex: Throwable =>
             Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -1301,16 +1301,16 @@ object FxSpec extends Properties {
 
       def testCanRecover_Task_recoverFromNonFatalEitherShouldRecoverFromNonFatal: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
         val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
         val actualFailedResult   = Fx[Task]
-          .recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => expectedFailedResult }
+          .recoverFromNonFatal(fa) { case NonFatal(`expectedException`) => expectedFailedResult }
           .runSyncUnsafe()
 
         val expectedSuccessResult = 1.asRight[SomeError]
         val actualSuccessResult   = Fx[Task]
-          .recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 1.asRight[SomeError] }
+          .recoverFromNonFatal(fa) { case NonFatal(`expectedException`) => 1.asRight[SomeError] }
           .runSyncUnsafe()
 
         actualFailedResult ==== expectedFailedResult and actualSuccessResult ==== expectedSuccessResult
@@ -1318,16 +1318,16 @@ object FxSpec extends Properties {
 
       def testCanRecover_Task_recoverFromNonFatalEitherShouldNotCatchFatal: Result = {
 
-        val expectedExpcetion = SomeControlThrowable("Something's wrong")
-        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        val expectedException = SomeControlThrowable("Something's wrong")
+        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 
-        val io = Fx[Task].recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError] }
+        val io = Fx[Task].recoverFromNonFatal(fa) { case NonFatal(`expectedException`) => 123.asRight[SomeError] }
         try {
           val actual = io.runSyncUnsafe()
           Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
         } catch {
           case ex: ControlThrowable =>
-            ex ==== expectedExpcetion
+            ex ==== expectedException
 
           case ex: Throwable =>
             Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -1356,9 +1356,9 @@ object FxSpec extends Properties {
 
       def testCanRecover_Task_recoverEitherFromNonFatalShouldRecoverFromNonFatal: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-        val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+        val expectedFailedResult  = SomeError.someThrowable(expectedException).asLeft[Int]
         val actualFailedResult    =
           Fx[Task]
             .recoverEitherFromNonFatal(fa) {
@@ -1368,7 +1368,7 @@ object FxSpec extends Properties {
         val expectedSuccessResult = 123.asRight[SomeError]
         val actualSuccessResult   =
           Fx[Task]
-            .recoverEitherFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError] }
+            .recoverEitherFromNonFatal(fa) { case NonFatal(`expectedException`) => 123.asRight[SomeError] }
             .runSyncUnsafe()
 
         actualFailedResult ==== expectedFailedResult and actualSuccessResult ==== expectedSuccessResult
@@ -1376,8 +1376,8 @@ object FxSpec extends Properties {
 
       def testCanRecover_Task_recoverEitherFromNonFatalShouldNotCatchFatal: Result = {
 
-        val expectedExpcetion = SomeControlThrowable("Something's wrong")
-        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+        val expectedException = SomeControlThrowable("Something's wrong")
+        val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 
         val io =
           Fx[Task].recoverEitherFromNonFatal(fa) {
@@ -1388,7 +1388,7 @@ object FxSpec extends Properties {
           Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
         } catch {
           case ex: ControlThrowable =>
-            ex ==== expectedExpcetion
+            ex ==== expectedException
 
           case ex: Throwable =>
             Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -1423,9 +1423,9 @@ object FxSpec extends Properties {
 
       def testCanRecover_Task_recoverEitherTFromNonFatalShouldRecoverFromNonFatal: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-        val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+        val expectedFailedResult  = SomeError.someThrowable(expectedException).asLeft[Int]
         val actualFailedResult    =
           Fx[Task]
             .recoverEitherTFromNonFatal(fa) {
@@ -1436,7 +1436,7 @@ object FxSpec extends Properties {
         val expectedSuccessResult = 123.asRight[SomeError]
         val actualSuccessResult   =
           Fx[Task]
-            .recoverEitherTFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError] }
+            .recoverEitherTFromNonFatal(fa) { case NonFatal(`expectedException`) => 123.asRight[SomeError] }
             .value
             .runSyncUnsafe()
 
@@ -1445,8 +1445,8 @@ object FxSpec extends Properties {
 
       def testCanRecover_Task_recoverEitherTFromNonFatalShouldNotCatchFatal: Result = {
 
-        val expectedExpcetion = SomeControlThrowable("Something's wrong")
-        val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+        val expectedException = SomeControlThrowable("Something's wrong")
+        val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
 
         val io =
           Fx[Task].recoverEitherTFromNonFatal(fa) {
@@ -1457,7 +1457,7 @@ object FxSpec extends Properties {
           Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
         } catch {
           case ex: ControlThrowable =>
-            ex ==== expectedExpcetion
+            ex ==== expectedException
 
           case ex: Throwable =>
             Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -1498,8 +1498,8 @@ object FxSpec extends Properties {
 
       def testOnNonFatal_Task_onNonFatalWithShouldRecoverFromNonFatal: Result = {
 
-        val expectedExpcetion = new RuntimeException("Something's wrong")
-        val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
+        val expectedException = new RuntimeException("Something's wrong")
+        val fa                = run[Task, Int](throwThrowable[Int](expectedException))
         val expected          = 123.some
         var actual            = none[Int] // scalafix:ok DisableSyntax.var
 
@@ -1507,7 +1507,7 @@ object FxSpec extends Properties {
           try {
             val r = Fx[Task]
               .onNonFatalWith(fa) {
-                case NonFatal(`expectedExpcetion`) =>
+                case NonFatal(`expectedException`) =>
                   Task.delay {
                     actual = expected
                   } *> Task.unit
@@ -1521,7 +1521,7 @@ object FxSpec extends Properties {
 
         Result.all(
           List(
-            result ==== expectedExpcetion,
+            result ==== expectedException,
             actual ==== expected,
           )
         )
@@ -1530,12 +1530,12 @@ object FxSpec extends Properties {
       @SuppressWarnings(Array("org.wartremover.warts.ToString"))
       def testOnNonFatal_Task_onNonFatalWithShouldNotCatchFatal: Result = {
 
-        val expectedExpcetion = SomeControlThrowable("Something's wrong")
-        val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
+        val expectedException = SomeControlThrowable("Something's wrong")
+        val fa                = run[Task, Int](throwThrowable[Int](expectedException))
         var actual            = none[Int] // scalafix:ok DisableSyntax.var
 
         val io = Fx[Task].onNonFatalWith(fa) {
-          case NonFatal(`expectedExpcetion`) =>
+          case NonFatal(`expectedException`) =>
             Task.delay {
               actual = 123.some
               ()
@@ -1549,7 +1549,7 @@ object FxSpec extends Properties {
             Result.all(
               List(
                 actual ==== none[Int],
-                ex ==== expectedExpcetion,
+                ex ==== expectedException,
               )
             )
 

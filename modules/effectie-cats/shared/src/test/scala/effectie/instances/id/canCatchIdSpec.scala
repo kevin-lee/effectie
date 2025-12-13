@@ -92,9 +92,9 @@ object canCatchIdSpec extends Properties {
 
     def testCanCatch_Id_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      lazy val fa           = run[Id, Int](throwThrowable[Int](expectedExpcetion))
-      val expected          = expectedExpcetion.asLeft[Int]
+      val expectedException = new RuntimeException("Something's wrong")
+      lazy val fa           = run[Id, Int](throwThrowable[Int](expectedException))
+      val expected          = expectedException.asLeft[Int]
       val actual            = CanCatch[Id].catchNonFatalThrowable(fa)
 
       actual ==== expected
@@ -130,9 +130,9 @@ object canCatchIdSpec extends Properties {
 
     def testCanCatch_Id_catchNonFatalShouldCatchNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      lazy val fa           = run[Id, Int](throwThrowable[Int](expectedExpcetion))
-      val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val expectedException = new RuntimeException("Something's wrong")
+      lazy val fa           = run[Id, Int](throwThrowable[Int](expectedException))
+      val expected          = SomeError.someThrowable(expectedException).asLeft[Int]
       val actual            = CanCatch[Id].catchNonFatal(fa)(SomeError.someThrowable)
 
       actual ==== expected
@@ -168,9 +168,9 @@ object canCatchIdSpec extends Properties {
 
     def testCanCatch_Id_catchNonFatalEitherShouldCatchNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      lazy val fa           = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-      val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val expectedException = new RuntimeException("Something's wrong")
+      lazy val fa           = run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+      val expected          = SomeError.someThrowable(expectedException).asLeft[Int]
       val actual            = CanCatch[Id].catchNonFatalEither(fa)(SomeError.someThrowable)
 
       actual ==== expected
@@ -216,9 +216,9 @@ object canCatchIdSpec extends Properties {
 
     def testCanCatch_Id_catchNonFatalEitherTShouldCatchNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      lazy val fa  = EitherT(run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-      val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val expectedException = new RuntimeException("Something's wrong")
+      lazy val fa  = EitherT(run[Id, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+      val expected = SomeError.someThrowable(expectedException).asLeft[Int]
       val actual   = CanCatch[Id].catchNonFatalEitherT(fa)(SomeError.someThrowable).value
 
       actual ==== expected

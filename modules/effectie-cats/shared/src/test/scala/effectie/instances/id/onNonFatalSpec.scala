@@ -47,9 +47,9 @@ object onNonFatalSpec extends Properties {
 
     def testOnNonFatal_Id_onNonFatalWithShouldRecoverFromNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong 1")
+      val expectedException = new RuntimeException("Something's wrong 1")
 
-      lazy val fa  = run[Id, Int](throwThrowable[Int](expectedExpcetion))
+      lazy val fa  = run[Id, Int](throwThrowable[Int](expectedException))
       val expected = 123.some
 
       var actual = none[Int] // scalafix:ok DisableSyntax.var
@@ -58,7 +58,7 @@ object onNonFatalSpec extends Properties {
         try {
           val r: Id[Int] = OnNonFatal[Id]
             .onNonFatalWith(fa) {
-              case NonFatal(`expectedExpcetion`) =>
+              case NonFatal(`expectedException`) =>
                 FxCtor[Id].pureOf {
                   actual = expected
                   ()
@@ -72,7 +72,7 @@ object onNonFatalSpec extends Properties {
 
       Result.all(
         List(
-          result ==== expectedExpcetion,
+          result ==== expectedException,
           actual ==== expected,
         )
       )
@@ -81,15 +81,15 @@ object onNonFatalSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testOnNonFatal_Id_onNonFatalWithShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = SomeControlThrowable("Something's wrong 2")
+      val expectedException = SomeControlThrowable("Something's wrong 2")
 
       val expected = none[Int]
       var actual   = none[Int] // scalafix:ok DisableSyntax.var
 
       try {
-        val fa              = run[Id, Int](throwThrowable[Int](expectedExpcetion))
+        val fa              = run[Id, Int](throwThrowable[Int](expectedException))
         val result: Id[Int] = OnNonFatal[Id].onNonFatalWith(fa) {
-          case NonFatal(`expectedExpcetion`) =>
+          case NonFatal(`expectedException`) =>
             FxCtor[Id].pureOf {
               actual = 123.some
               ()
@@ -100,7 +100,7 @@ object onNonFatalSpec extends Properties {
         case ex: ControlThrowable =>
           Result.all(
             List(
-              ex ==== expectedExpcetion,
+              ex ==== expectedException,
               actual ==== expected,
             )
           )
