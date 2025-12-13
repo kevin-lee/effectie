@@ -338,10 +338,10 @@ class fxSpec extends munit.FunSuite with FutureTools {
 
   test("test Fx[Future]catchNonFatalThrowable should catch NonFatal") {
 
-    val expectedExpcetion                       = new RuntimeException("Something's wrong")
-    val expected: Either[RuntimeException, Int] = Left(expectedExpcetion)
+    val expectedException                       = new RuntimeException("Something's wrong")
+    val expected: Either[RuntimeException, Int] = Left(expectedException)
 
-    val fa = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+    val fa = run[Future, Int](throwThrowable[Int](expectedException))
 
     Fx[Future].catchNonFatalThrowable(fa).map { actual =>
       assertEquals(actual, expected)
@@ -351,10 +351,10 @@ class fxSpec extends munit.FunSuite with FutureTools {
 
   test("test Fx[Future]catchNonFatal should catch NonFatal") {
 
-    val expectedExpcetion                = new RuntimeException("Something's wrong")
-    val expected: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
+    val expectedException                = new RuntimeException("Something's wrong")
+    val expected: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedException))
 
-    val fa = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+    val fa = run[Future, Int](throwThrowable[Int](expectedException))
 
     Fx[Future].catchNonFatal(fa)(SomeError.someThrowable).map { actual =>
       assertEquals(actual, expected)
@@ -386,9 +386,9 @@ class fxSpec extends munit.FunSuite with FutureTools {
 
   test("test Fx[Future]catchNonFatalEither should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expected: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expected: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedException))
 
     Fx[Future].catchNonFatalEither(fa)(SomeError.someThrowable).map { actual =>
       assertEquals(actual, expected)
@@ -417,8 +417,8 @@ class fxSpec extends munit.FunSuite with FutureTools {
 
   test("test Fx[Future].handleNonFatalWith should handle NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[Future, Int](throwThrowable[Int](expectedException))
     val expected          = 1
     Fx[Future].handleNonFatalWith(fa)(_ => Future(expected)).map { actual =>
       assertEquals(actual, expected)
@@ -438,16 +438,16 @@ class fxSpec extends munit.FunSuite with FutureTools {
 
   test("test Fx[Future].handleNonFatalWithEither should handle NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedException))
 
     val failedResult =
       Fx[Future].handleNonFatalWith(fa)(err => Future(Left(SomeError.someThrowable(err)))).map { actualFailedResult =>
         assertEquals(actualFailedResult, expectedFailedResult)
       }
 
-    val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected: Either[SomeError, Int] = Right(1)
 
     val handledResult = Fx[Future].handleNonFatalWith(fa2)(_ => Future(expected)).map { actual =>
@@ -484,9 +484,9 @@ class fxSpec extends munit.FunSuite with FutureTools {
 
   test("test Fx[Future].handleEitherNonFatalWith should handle NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedException))
 
     val failedResult = Fx[Future]
       .handleEitherNonFatalWith(fa)(err => Future(Left(SomeError.someThrowable(err))))
@@ -494,7 +494,7 @@ class fxSpec extends munit.FunSuite with FutureTools {
         assertEquals(actualFailedResult, expectedFailedResult)
       }
 
-    val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected: Either[SomeError, Int] = Right(1)
 
     val handledResult = Fx[Future].handleEitherNonFatalWith(fa2)(_ => Future(expected)).map { actual =>
@@ -534,9 +534,9 @@ class fxSpec extends munit.FunSuite with FutureTools {
 
   test("test Fx[Future].handleNonFatal should handle NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
+    val expectedException = new RuntimeException("Something's wrong")
 
-    val fa       = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+    val fa       = run[Future, Int](throwThrowable[Int](expectedException))
     val expected = 1
 
     Fx[Future].handleNonFatal(fa)(_ => expected).map { actual =>
@@ -555,16 +555,16 @@ class fxSpec extends munit.FunSuite with FutureTools {
 
   test("test Fx[Future].handleNonFatalEither should handle NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedException))
 
     val failedResult =
       Fx[Future].handleNonFatal(fa)(err => Left(SomeError.someThrowable(err))).map { actualFailedResult =>
         assertEquals(actualFailedResult, expectedFailedResult)
       }
 
-    val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected: Either[SomeError, Int] = Right(1)
 
     val handledResult = Fx[Future].handleNonFatal(fa2)(_ => expected).map { actual =>
@@ -604,16 +604,16 @@ class fxSpec extends munit.FunSuite with FutureTools {
 
   test("test Fx[Future].handleEitherNonFatal should handle NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedException))
 
     val failedResult =
       Fx[Future].handleEitherNonFatal(fa)(err => Left(SomeError.someThrowable(err))).map { actualFailedResult =>
         assertEquals(actualFailedResult, expectedFailedResult)
       }
 
-    val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected: Either[SomeError, Int] = Right(1)
 
     val handledResult = Fx[Future].handleEitherNonFatal(fa2)(_ => expected).map { actual =>
@@ -653,14 +653,14 @@ class fxSpec extends munit.FunSuite with FutureTools {
 
   test("test Fx[Future].recoverFromNonFatalWith should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
+    val expectedException = new RuntimeException("Something's wrong")
 
-    val fa = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+    val fa = run[Future, Int](throwThrowable[Int](expectedException))
 
     val expected = 1
     Fx[Future]
       .recoverFromNonFatalWith(fa) {
-        case NonFatal(`expectedExpcetion`) => Future(expected)
+        case NonFatal(`expectedException`) => Future(expected)
       }
       .map { actual =>
         assertEquals(actual, expected)
@@ -683,9 +683,9 @@ class fxSpec extends munit.FunSuite with FutureTools {
 
   test("test Fx[Future].recoverFromNonFatalWithEither should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedException))
 
     val failedResult = Fx[Future]
       .recoverFromNonFatalWith(fa) {
@@ -695,12 +695,12 @@ class fxSpec extends munit.FunSuite with FutureTools {
         assertEquals(actualFailedResult, expectedFailedResult)
       }
 
-    val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected: Either[SomeError, Int] = Right(1)
 
     val handledResult = Fx[Future]
       .recoverFromNonFatalWith(fa2) {
-        case NonFatal(`expectedExpcetion`) => Future(expected)
+        case NonFatal(`expectedException`) => Future(expected)
       }
       .map { actual =>
         assertEquals(actual, expected)
@@ -747,10 +747,10 @@ class fxSpec extends munit.FunSuite with FutureTools {
 
   test("test Fx[Future].recoverEitherFromNonFatalWith should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 
-    val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
+    val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedException))
 
     val failedResult = Fx[Future]
       .recoverEitherFromNonFatalWith(fa) {
@@ -760,7 +760,7 @@ class fxSpec extends munit.FunSuite with FutureTools {
         assertEquals(actualFailedResult, expectedFailedResult)
       }
 
-    val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected: Either[SomeError, Int] = Right(1)
 
     val handledResult = Fx[Future]
@@ -814,12 +814,12 @@ class fxSpec extends munit.FunSuite with FutureTools {
 
   test("test Fx[Future].recoverFromNonFatal should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
+    val expectedException = new RuntimeException("Something's wrong")
 
-    val fa       = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+    val fa       = run[Future, Int](throwThrowable[Int](expectedException))
     val expected = 1
 
-    Fx[Future].recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => expected }.map { actual =>
+    Fx[Future].recoverFromNonFatal(fa) { case NonFatal(`expectedException`) => expected }.map { actual =>
       assertEquals(actual, expected)
     }
   }
@@ -837,9 +837,9 @@ class fxSpec extends munit.FunSuite with FutureTools {
 
   test("test Fx[Future].recoverFromNonFatalEither should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedException))
 
     val failedResult = Fx[Future]
       .recoverFromNonFatal(fa) {
@@ -849,11 +849,11 @@ class fxSpec extends munit.FunSuite with FutureTools {
         assertEquals(actualFailedResult, expectedFailedResult)
       }
 
-    val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected: Either[SomeError, Int] = Right(1)
 
     val handledResult =
-      Fx[Future].recoverFromNonFatal(fa2) { case NonFatal(`expectedExpcetion`) => expected }.map { actual =>
+      Fx[Future].recoverFromNonFatal(fa2) { case NonFatal(`expectedException`) => expected }.map { actual =>
         assertEquals(actual, expected)
       }
 
@@ -895,9 +895,9 @@ class fxSpec extends munit.FunSuite with FutureTools {
 
   test("test Fx[Future].recoverEitherFromNonFatal should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedException))
 
     val failedResult = Fx[Future]
       .recoverEitherFromNonFatal(fa) {
@@ -907,7 +907,7 @@ class fxSpec extends munit.FunSuite with FutureTools {
         assertEquals(actualFailedResult, expectedFailedResult)
       }
 
-    val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2 = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected: Either[SomeError, Int] = Right(1)
 
     val handledResult = Fx[Future].recoverEitherFromNonFatal(fa2) { case err @ _ => expected }.map { actual =>

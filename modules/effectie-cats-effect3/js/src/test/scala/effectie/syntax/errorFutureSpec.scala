@@ -40,9 +40,9 @@ trait CanCatchFutureSyntaxSpec extends CommonErrorFutureSpec {
   import effectie.instances.future.fxCtor._
 
   test("test CanCatch[Future]catchNonFatalThrowable should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
-    val expected          = expectedExpcetion.asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[Future, Int](throwThrowable[Int](expectedException))
+    val expected          = expectedException.asLeft[Int]
 
     fa.catchNonFatalThrowable.map { actual =>
       Assertions.assertEquals(actual, expected)
@@ -50,9 +50,9 @@ trait CanCatchFutureSyntaxSpec extends CommonErrorFutureSpec {
   }
 
   test("test CanCatch[Future]catchNonFatal should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
-    val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[Future, Int](throwThrowable[Int](expectedException))
+    val expected          = SomeError.someThrowable(expectedException).asLeft[Int]
 
     fa.catchNonFatal(SomeError.someThrowable).map { actual =>
       Assertions.assertEquals(actual, expected)
@@ -78,9 +78,9 @@ trait CanCatchFutureSyntaxSpec extends CommonErrorFutureSpec {
   }
 
   test("test CanCatch[Future]catchNonFatalEither should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa       = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa       = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expected = SomeError.someThrowable(expectedException).asLeft[Int]
 
     fa.catchNonFatalEither(SomeError.someThrowable).map { actual =>
       Assertions.assertEquals(actual, expected)
@@ -107,9 +107,9 @@ trait CanCatchFutureSyntaxSpec extends CommonErrorFutureSpec {
   }
 
   test("test CanCatch[Future]catchNonFatalEitherT should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expected = SomeError.someThrowable(expectedException).asLeft[Int]
 
     fa.catchNonFatalEitherT(SomeError.someThrowable).value.map { actual =>
       Assertions.assertEquals(actual, expected)
@@ -143,8 +143,8 @@ trait CanHandleErrorFutureSyntaxSpec extends CommonErrorFutureSpec {
   import effectie.instances.future.fxCtor._
 
   test("test CanHandleError[Future].handleNonFatalWith should handle NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[Future, Int](throwThrowable[Int](expectedException))
     val expected          = 1
 
     fa.handleNonFatalWith(_ => Future(expected)).map { actual =>
@@ -162,15 +162,15 @@ trait CanHandleErrorFutureSyntaxSpec extends CommonErrorFutureSpec {
   }
 
   test("test CanHandleError[Future].handleNonFatalWithEither should handle NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   =
       fa.handleNonFatalWith(err => Future(SomeError.someThrowable(err).asLeft[Int])).map { actual =>
         Assertions.assertEquals(actual, expectedFailedResult)
       }
 
-    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected = 1.asRight[SomeError]
     val actualSuccessResult =
       fa2.handleNonFatalWith(_ => Future(expected)).map { actual =>
@@ -200,15 +200,15 @@ trait CanHandleErrorFutureSyntaxSpec extends CommonErrorFutureSpec {
   }
 
   test("test CanHandleError[Future].handleEitherNonFatalWith should handle NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   =
       fa.handleEitherNonFatalWith(err => Future(SomeError.someThrowable(err).asLeft[Int])).map { actual =>
         Assertions.assertEquals(actual, expectedFailedResult)
       }
 
-    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected = 1.asRight[SomeError]
     val actualSuccessResult =
       fa2.handleEitherNonFatalWith(_ => Future(expected)).map { actual =>
@@ -238,15 +238,15 @@ trait CanHandleErrorFutureSyntaxSpec extends CommonErrorFutureSpec {
   }
 
   test("test CanHandleError[Future].handleEitherTNonFatalWith should handle NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   =
       fa.handleEitherTNonFatalWith(err => Future(SomeError.someThrowable(err).asLeft[Int])).value.map { actual =>
         Assertions.assertEquals(actual, expectedFailedResult)
       }
 
-    val fa2 = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+    val fa2 = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
     val expected            = 1.asRight[SomeError]
     val actualSuccessResult =
       fa2.handleEitherTNonFatalWith(_ => Future(expected)).value.map { actual =>
@@ -276,8 +276,8 @@ trait CanHandleErrorFutureSyntaxSpec extends CommonErrorFutureSpec {
   }
 
   test("test CanHandleError[Future].handleNonFatal should handle NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[Future, Int](throwThrowable[Int](expectedException))
     val expected          = 1
 
     fa.handleNonFatal(_ => expected).map { actual =>
@@ -295,15 +295,15 @@ trait CanHandleErrorFutureSyntaxSpec extends CommonErrorFutureSpec {
   }
 
   test("test CanHandleError[Future].handleNonFatalEither should handle NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   =
       fa.handleNonFatal(err => SomeError.someThrowable(err).asLeft[Int]).map { actual =>
         Assertions.assertEquals(actual, expectedFailedResult)
       }
 
-    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected = 1.asRight[SomeError]
     val actualSuccessResult = fa2.handleNonFatal(_ => expected).map { actual =>
       Assertions.assertEquals(actual, expected)
@@ -332,14 +332,14 @@ trait CanHandleErrorFutureSyntaxSpec extends CommonErrorFutureSpec {
   }
 
   test("test CanHandleError[Future].handleEitherNonFatal should handle NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   = fa.handleEitherNonFatal(err => SomeError.someThrowable(err).asLeft[Int]).map { actual =>
       Assertions.assertEquals(actual, expectedFailedResult)
     }
 
-    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected = 1.asRight[SomeError]
     val actualSuccessResult = fa2.handleEitherNonFatal(_ => expected).map { actual =>
       Assertions.assertEquals(actual, expected)
@@ -368,15 +368,15 @@ trait CanHandleErrorFutureSyntaxSpec extends CommonErrorFutureSpec {
   }
 
   test("test CanHandleError[Future].handleEitherTNonFatal should handle NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   =
       fa.handleEitherTNonFatal(err => SomeError.someThrowable(err).asLeft[Int]).value.map { actual =>
         Assertions.assertEquals(actual, expectedFailedResult)
       }
 
-    val fa2 = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+    val fa2 = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
     val expected            = 1.asRight[SomeError]
     val actualSuccessResult = fa2.handleEitherTNonFatal(_ => expected).value.map { actual =>
       Assertions.assertEquals(actual, expected)
@@ -412,12 +412,12 @@ trait CanRecoverFutureSyntaxSpec extends CommonErrorFutureSpec {
   import effectie.instances.future.fxCtor._
 
   test("test CanRecover[Future].recoverFromNonFatalWith should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[Future, Int](throwThrowable[Int](expectedException))
     val expected          = 1
 
     fa.recoverFromNonFatalWith {
-      case NonFatal(`expectedExpcetion`) => Future(expected)
+      case NonFatal(`expectedException`) => Future(expected)
     }.map { actual =>
       Assertions.assertEquals(actual, expected)
     }
@@ -435,9 +435,9 @@ trait CanRecoverFutureSyntaxSpec extends CommonErrorFutureSpec {
   }
 
   test("test CanRecover[Future].recoverFromNonFatalWithEither should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   =
       fa.recoverFromNonFatalWith {
         case err => Future(SomeError.someThrowable(err).asLeft[Int])
@@ -445,12 +445,12 @@ trait CanRecoverFutureSyntaxSpec extends CommonErrorFutureSpec {
         Assertions.assertEquals(actual, expectedFailedResult)
       }
 
-    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected = 1.asRight[SomeError]
     val actualSuccessResult =
       fa2
         .recoverFromNonFatalWith {
-          case NonFatal(`expectedExpcetion`) => Future(expected)
+          case NonFatal(`expectedException`) => Future(expected)
         }
         .map { actual =>
           Assertions.assertEquals(actual, expected)
@@ -483,9 +483,9 @@ trait CanRecoverFutureSyntaxSpec extends CommonErrorFutureSpec {
   }
 
   test("test CanRecover[Future].recoverEitherFromNonFatalWith should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   = fa
       .recoverEitherFromNonFatalWith {
         case err => Future(SomeError.someThrowable(err).asLeft[Int])
@@ -494,7 +494,7 @@ trait CanRecoverFutureSyntaxSpec extends CommonErrorFutureSpec {
         Assertions.assertEquals(actual, expectedFailedResult)
       }
 
-    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected = 1.asRight[SomeError]
     val actualSuccessResult =
       fa2
@@ -532,9 +532,9 @@ trait CanRecoverFutureSyntaxSpec extends CommonErrorFutureSpec {
   }
 
   test("test CanRecover[Future].recoverEitherTFromNonFatalWith should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   =
       fa.recoverEitherTFromNonFatalWith {
         case err => Future(SomeError.someThrowable(err).asLeft[Int])
@@ -543,7 +543,7 @@ trait CanRecoverFutureSyntaxSpec extends CommonErrorFutureSpec {
           Assertions.assertEquals(actual, expectedFailedResult)
         }
 
-    val fa2 = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+    val fa2 = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
     val expected            = 1.asRight[SomeError]
     val actualSuccessResult =
       fa2
@@ -586,11 +586,11 @@ trait CanRecoverFutureSyntaxSpec extends CommonErrorFutureSpec {
   // /
 
   test("test CanRecover[Future].recoverFromNonFatal should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[Future, Int](throwThrowable[Int](expectedException))
     val expected          = 1
 
-    fa.recoverFromNonFatal { case NonFatal(`expectedExpcetion`) => expected }.map { actual =>
+    fa.recoverFromNonFatal { case NonFatal(`expectedException`) => expected }.map { actual =>
       Assertions.assertEquals(actual, expected)
     }
   }
@@ -605,9 +605,9 @@ trait CanRecoverFutureSyntaxSpec extends CommonErrorFutureSpec {
   }
 
   test("test CanRecover[Future].recoverFromNonFatalEither should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   =
       fa.recoverFromNonFatal {
         case err => SomeError.someThrowable(err).asLeft[Int]
@@ -615,9 +615,9 @@ trait CanRecoverFutureSyntaxSpec extends CommonErrorFutureSpec {
         Assertions.assertEquals(actual, expectedFailedResult)
       }
 
-    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected = 1.asRight[SomeError]
-    val actualSuccessResult = fa2.recoverFromNonFatal { case NonFatal(`expectedExpcetion`) => expected }.map { actual =>
+    val actualSuccessResult = fa2.recoverFromNonFatal { case NonFatal(`expectedException`) => expected }.map { actual =>
       Assertions.assertEquals(actual, expected)
     }
 
@@ -646,9 +646,9 @@ trait CanRecoverFutureSyntaxSpec extends CommonErrorFutureSpec {
   }
 
   test("test CanRecover[Future].recoverEitherFromNonFatal should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   =
       fa.recoverEitherFromNonFatal {
         case err => SomeError.someThrowable(err).asLeft[Int]
@@ -656,7 +656,7 @@ trait CanRecoverFutureSyntaxSpec extends CommonErrorFutureSpec {
         Assertions.assertEquals(actual, expectedFailedResult)
       }
 
-    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected = 1.asRight[SomeError]
     val actualSuccessResult =
       fa2.recoverEitherFromNonFatal { case err @ _ => expected }.map { actual =>
@@ -688,9 +688,9 @@ trait CanRecoverFutureSyntaxSpec extends CommonErrorFutureSpec {
   }
 
   test("test CanRecover[Future].recoverEitherTFromNonFatal should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   = fa
       .recoverEitherTFromNonFatal {
         case err => SomeError.someThrowable(err).asLeft[Int]
@@ -700,7 +700,7 @@ trait CanRecoverFutureSyntaxSpec extends CommonErrorFutureSpec {
         Assertions.assertEquals(actual, expectedFailedResult)
       }
 
-    val fa2 = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+    val fa2 = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
     val expected            = 1.asRight[SomeError]
     val actualSuccessResult =
       fa2.recoverEitherTFromNonFatal { case err @ _ => expected }.value.map { actual =>

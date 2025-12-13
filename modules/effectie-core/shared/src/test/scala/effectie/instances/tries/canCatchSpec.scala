@@ -74,9 +74,9 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_Try_catchNonFatalThrowableShouldCatchNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong 1")
-      val fa                = run[Try, Int](throwThrowable[Int](expectedExpcetion))
-      val expected          = expectedExpcetion.asLeft[Int]
+      val expectedException = new RuntimeException("Something's wrong 1")
+      val fa                = run[Try, Int](throwThrowable[Int](expectedException))
+      val expected          = expectedException.asLeft[Int]
       val actual            = CanCatch[Try].catchNonFatalThrowable(fa)
 
       actual ==== Success(expected)
@@ -112,9 +112,9 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_Try_catchNonFatalShouldCatchNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong 3")
-      val fa                = run[Try, Int](throwThrowable[Int](expectedExpcetion))
-      val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val expectedException = new RuntimeException("Something's wrong 3")
+      val fa                = run[Try, Int](throwThrowable[Int](expectedException))
+      val expected          = SomeError.someThrowable(expectedException).asLeft[Int]
       val actual            = CanCatch[Try].catchNonFatal(fa)(SomeError.someThrowable)
 
       actual ==== Success(expected)
@@ -150,9 +150,9 @@ object canCatchSpec extends Properties {
 
     def testCanCatch_Try_catchNonFatalEitherShouldCatchNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong 5")
-      val fa       = run[Try, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-      val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val expectedException = new RuntimeException("Something's wrong 5")
+      val fa       = run[Try, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+      val expected = SomeError.someThrowable(expectedException).asLeft[Int]
       val actual   = CanCatch[Try].catchNonFatalEither(fa)(SomeError.someThrowable)
 
       actual ==== Success(expected)

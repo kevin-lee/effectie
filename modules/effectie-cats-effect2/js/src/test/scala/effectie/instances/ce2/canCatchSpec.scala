@@ -34,9 +34,9 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
 
   test("test CanCatch[IO].catchNonFatalThrowable should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
-    val expected          = expectedExpcetion.asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
+    val expected          = expectedException.asLeft[Int]
 
     CanCatch[IO]
       .catchNonFatalThrowable(fa)
@@ -82,9 +82,9 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
 
   test("test CanCatch[IO]catchNonFatal should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
-    val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
+    val expected          = SomeError.someThrowable(expectedException).asLeft[Int]
 
     CanCatch[IO]
       .catchNonFatal(fa)(SomeError.someThrowable)
@@ -130,9 +130,9 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
 
   test("test CanCatch[IO]catchNonFatalEither should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expected          = SomeError.someThrowable(expectedException).asLeft[Int]
 
     CanCatch[IO]
       .catchNonFatalEither(fa)(SomeError.someThrowable)
@@ -191,9 +191,9 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
 
   test("test CanCatch[IO]catchNonFatalEitherT should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa       = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa       = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expected = SomeError.someThrowable(expectedException).asLeft[Int]
 
     CanCatch[IO]
       .catchNonFatalEitherT(fa)(SomeError.someThrowable)
@@ -268,9 +268,9 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
 //      implicit val ec: ExecutionContext             =
 //        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 //
-//      val expectedExpcetion = new RuntimeException("Something's wrong")
-//      val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
-//      val expected          = expectedExpcetion.asLeft[Int]
+//      val expectedException = new RuntimeException("Something's wrong")
+//      val fa                = run[Future, Int](throwThrowable[Int](expectedException))
+//      val expected          = expectedException.asLeft[Int]
 //      val actual            = ConcurrentSupport.futureToValueAndTerminate(
 //        executorService,
 //        waitFor
@@ -285,9 +285,9 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
 //      implicit val ec: ExecutionContext             =
 //        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 //
-//      val expectedExpcetion = new RuntimeException("Something's wrong")
-//      val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
-//      val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+//      val expectedException = new RuntimeException("Something's wrong")
+//      val fa                = run[Future, Int](throwThrowable[Int](expectedException))
+//      val expected          = SomeError.someThrowable(expectedException).asLeft[Int]
 //      val actual            = ConcurrentSupport.futureToValueAndTerminate(
 //        executorService,
 //        waitFor
@@ -334,9 +334,9 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
 //      implicit val ec: ExecutionContext             =
 //        ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 //
-//      val expectedExpcetion = new RuntimeException("Something's wrong")
-//      val fa       = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-//      val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+//      val expectedException = new RuntimeException("Something's wrong")
+//      val fa       = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+//      val expected = SomeError.someThrowable(expectedException).asLeft[Int]
 //      val actual   = ConcurrentSupport.futureToValueAndTerminate(
 //        executorService,
 //        waitFor
@@ -379,9 +379,9 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
 //    }
 
   test("test CanCatch[Future]catchNonFatalEitherT should catch NonFatal") {
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expected = SomeError.someThrowable(expectedException).asLeft[Int]
 
     CanCatch[Future]
       .catchNonFatalEitherT(fa)(SomeError.someThrowable)

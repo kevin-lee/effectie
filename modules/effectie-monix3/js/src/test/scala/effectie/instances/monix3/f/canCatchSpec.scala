@@ -37,10 +37,10 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
 
   test("test CanCatch[Task].catchNonFatalThrowable should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
+    val expectedException = new RuntimeException("Something's wrong")
 
-    val fa       = run[Task, Int](throwThrowable[Int](expectedExpcetion))
-    val expected = expectedExpcetion.asLeft[Int]
+    val fa       = run[Task, Int](throwThrowable[Int](expectedException))
+    val expected = expectedException.asLeft[Int]
 
     CanCatch[Task]
       .catchNonFatalThrowable(fa)
@@ -86,9 +86,9 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
 
   test("test CanCatch[Task]catchNonFatal should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
-    val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[Task, Int](throwThrowable[Int](expectedException))
+    val expected          = SomeError.someThrowable(expectedException).asLeft[Int]
 
     CanCatch[Task]
       .catchNonFatal(fa)(SomeError.someThrowable)
@@ -137,9 +137,9 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
 
   test("test CanCatch[Task]catchNonFatalEither should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expected          = SomeError.someThrowable(expectedException).asLeft[Int]
 
     CanCatch[Task]
       .catchNonFatalEither(fa)(SomeError.someThrowable)
@@ -203,9 +203,9 @@ class canCatchSpec extends munit.FunSuite with FutureTools {
 
   test("test CanCatch[Task]catchNonFatalEitherT should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa       = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa       = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expected = SomeError.someThrowable(expectedException).asLeft[Int]
 
     CanCatch[Task]
       .catchNonFatalEitherT(fa)(SomeError.someThrowable)

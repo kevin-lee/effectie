@@ -34,8 +34,8 @@ class canHandleErrorFutureSpec extends munit.FunSuite with FutureTools {
 
   test("CanHandleError[Future].handleNonFatalWith should handle NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[Future, Int](throwThrowable[Int](expectedException))
     val expected          = 1
     CanHandleError[Future].handleNonFatalWith(fa)(_ => Future(expected)).map { actual =>
       Assertions.assertEquals(actual, expected)
@@ -55,14 +55,14 @@ class canHandleErrorFutureSpec extends munit.FunSuite with FutureTools {
 
   test("CanHandleError[Future].handleNonFatalWith(Either) should handle NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
 
     val actualFailedResult =
       CanHandleError[Future].handleNonFatalWith(fa)(err => Future(SomeError.someThrowable(err).asLeft[Int]))
 
-    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected = 1.asRight[SomeError]
     val actualHandledResult = CanHandleError[Future].handleNonFatalWith(fa2)(_ => Future(expected))
 
@@ -106,9 +106,9 @@ class canHandleErrorFutureSpec extends munit.FunSuite with FutureTools {
 
   test("CanHandleError[Future].handleEitherNonFatalWith should handle NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
 
     val actualFailedResult = CanHandleError[Future]
       .handleEitherNonFatalWith(fa)(err => Future(SomeError.someThrowable(err).asLeft[Int]))
@@ -116,7 +116,7 @@ class canHandleErrorFutureSpec extends munit.FunSuite with FutureTools {
         Assertions.assertEquals(actual, expectedFailedResult)
       }
 
-    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected = 1.asRight[SomeError]
     val actualHandledResult =
       CanHandleError[Future].handleEitherNonFatalWith(fa2)(_ => Future(expected)).map { actual =>
@@ -159,9 +159,9 @@ class canHandleErrorFutureSpec extends munit.FunSuite with FutureTools {
 
   test("CanHandleError[Future].handleEitherTNonFatalWith should handle NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
 
     val actualFailedResult = CanHandleError[Future]
       .handleEitherTNonFatalWith(fa)(err => Future(SomeError.someThrowable(err).asLeft[Int]))
@@ -170,7 +170,7 @@ class canHandleErrorFutureSpec extends munit.FunSuite with FutureTools {
         Assertions.assertEquals(actual, expectedFailedResult)
       }
 
-    val fa2 = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+    val fa2 = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
     val expected = 1.asRight[SomeError]
 
     val actualHandledResult =
@@ -214,8 +214,8 @@ class canHandleErrorFutureSpec extends munit.FunSuite with FutureTools {
 
   test("CanHandleError[Future].handleNonFatal should handle NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[Future, Int](throwThrowable[Int](expectedException))
     val expected          = 1
 
     CanHandleError[Future].handleNonFatal(fa)(_ => expected).map { actual =>
@@ -237,16 +237,16 @@ class canHandleErrorFutureSpec extends munit.FunSuite with FutureTools {
 
   test("CanHandleError[Future].handleNonFatal(Either) should handle NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
 
     val actualFailedResult =
       CanHandleError[Future].handleNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int]).map { actual =>
         Assertions.assertEquals(actual, expectedFailedResult)
       }
 
-    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected = 1.asRight[SomeError]
     val actualHandledResult = CanHandleError[Future].handleNonFatal(fa2)(_ => expected).map { actual =>
       Assertions.assertEquals(actual, expected)
@@ -286,9 +286,9 @@ class canHandleErrorFutureSpec extends munit.FunSuite with FutureTools {
 
   test("CanHandleError[Future].handleEitherNonFatal should handle NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
 
     val actualFailedResult = CanHandleError[Future]
       .handleEitherNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int])
@@ -296,7 +296,7 @@ class canHandleErrorFutureSpec extends munit.FunSuite with FutureTools {
         Assertions.assertEquals(actual, expectedFailedResult)
       }
 
-    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val fa2      = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expected = 1.asRight[SomeError]
 
     val actualHandledResult =
@@ -338,9 +338,9 @@ class canHandleErrorFutureSpec extends munit.FunSuite with FutureTools {
 
   test("test CanHandleError[Future].handleEitherTNonFatal should handle NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
 
     val actualFailedResult =
       CanHandleError[Future].handleEitherTNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int]).value.map {
@@ -348,7 +348,7 @@ class canHandleErrorFutureSpec extends munit.FunSuite with FutureTools {
           Assertions.assertEquals(actual, expectedFailedResult)
       }
 
-    val fa2 = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+    val fa2 = EitherT(run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
     val expected = 1.asRight[SomeError]
 
     val actualHandledResult =

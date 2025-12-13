@@ -103,12 +103,12 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_Future_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa                = run[Future, Int](throwThrowable[Int](expectedException))
       val expected          = 1
       val actual            = futureToValue(
         CanRecover[Future].recoverFromNonFatalWith(fa) {
-          case NonFatal(`expectedExpcetion`) => Future(expected)
+          case NonFatal(`expectedException`) => Future(expected)
         },
         waitFor,
       )
@@ -132,10 +132,10 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_Future_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal: Result = {
 
-      val expectedExpcetion                            = new RuntimeException("Something's wrong")
-      val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
+      val expectedException                            = new RuntimeException("Something's wrong")
+      val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedException))
 
-      val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
       val actualFailedResult =
         futureToValue(
           CanRecover[Future].recoverFromNonFatalWith(fa) {
@@ -146,11 +146,11 @@ object canRecoverSpec extends Properties {
 
       val expected: Either[SomeError, Int] = Right(1)
 
-      val fa2    = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val fa2    = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
       val actual =
         futureToValue(
           CanRecover[Future].recoverFromNonFatalWith(fa2) {
-            case NonFatal(`expectedExpcetion`) => Future(expected)
+            case NonFatal(`expectedException`) => Future(expected)
           },
           waitFor,
         )
@@ -193,10 +193,10 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_Future_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
-      val expectedExpcetion                            = new RuntimeException("Something's wrong")
-      val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
+      val expectedException                            = new RuntimeException("Something's wrong")
+      val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedException))
 
-      val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
       val actualFailedResult = futureToValue(
         CanRecover[Future]
           .recoverEitherFromNonFatalWith(fa) {
@@ -207,7 +207,7 @@ object canRecoverSpec extends Properties {
 
       val expected: Either[SomeError, Int] = Right(1)
 
-      val fa2    = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val fa2    = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
       val actual =
         futureToValue(
           CanRecover[Future]
@@ -258,11 +258,11 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_Future_recoverFromNonFatalShouldRecoverFromNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa                = run[Future, Int](throwThrowable[Int](expectedExpcetion))
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa                = run[Future, Int](throwThrowable[Int](expectedException))
       val expected          = 1
       val actual            = futureToValue(
-        CanRecover[Future].recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => expected },
+        CanRecover[Future].recoverFromNonFatal(fa) { case NonFatal(`expectedException`) => expected },
         waitFor,
       )
 
@@ -283,10 +283,10 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_Future_recoverFromNonFatalEitherShouldRecoverFromNonFatal: Result = {
 
-      val expectedExpcetion                            = new RuntimeException("Something's wrong")
-      val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
+      val expectedException                            = new RuntimeException("Something's wrong")
+      val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedException))
 
-      val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
       val actualFailedResult =
         futureToValue(
           CanRecover[Future].recoverFromNonFatal(fa) {
@@ -297,9 +297,9 @@ object canRecoverSpec extends Properties {
 
       val expected: Either[SomeError, Int] = Right(1)
 
-      val fa2    = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val fa2    = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
       val actual = futureToValue(
-        CanRecover[Future].recoverFromNonFatal(fa2) { case NonFatal(`expectedExpcetion`) => expected },
+        CanRecover[Future].recoverFromNonFatal(fa2) { case NonFatal(`expectedException`) => expected },
         waitFor,
       )
 
@@ -338,10 +338,10 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_Future_recoverEitherFromNonFatalShouldRecoverFromNonFatal: Result = {
 
-      val expectedExpcetion                            = new RuntimeException("Something's wrong")
-      val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedExpcetion))
+      val expectedException                            = new RuntimeException("Something's wrong")
+      val expectedFailedResult: Either[SomeError, Int] = Left(SomeError.someThrowable(expectedException))
 
-      val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val fa = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
       val actualFailedResult = futureToValue(
         CanRecover[Future]
           .recoverEitherFromNonFatal(fa) {
@@ -352,7 +352,7 @@ object canRecoverSpec extends Properties {
 
       val expected: Either[SomeError, Int] = Right(1)
 
-      val fa2    = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val fa2    = run[Future, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
       val actual =
         futureToValue(CanRecover[Future].recoverEitherFromNonFatal(fa2) { case _ => expected }, waitFor)
 

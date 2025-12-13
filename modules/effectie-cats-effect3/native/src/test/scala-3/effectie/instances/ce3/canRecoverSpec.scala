@@ -158,12 +158,12 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_IO_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa                = run[IO, Int](throwThrowable[Int](expectedException))
       val expected          = 123
 
       val actual = CanRecover[IO].recoverFromNonFatalWith(fa) {
-        case NonFatal(`expectedExpcetion`) =>
+        case NonFatal(`expectedException`) =>
           IO.pure(expected)
       }
 
@@ -175,16 +175,16 @@ object canRecoverSpec extends Properties {
       val compat          = new CatsEffectIoCompatForFuture
       given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
-      val expectedExpcetion = SomeControlThrowable("Something's wrong")
-      val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+      val expectedException = SomeControlThrowable("Something's wrong")
+      val fa                = run[IO, Int](throwThrowable[Int](expectedException))
 
-      val io = CanRecover[IO].recoverFromNonFatalWith(fa) { case NonFatal(`expectedExpcetion`) => IO.pure(123) }
+      val io = CanRecover[IO].recoverFromNonFatalWith(fa) { case NonFatal(`expectedException`) => IO.pure(123) }
       try {
         val actual = io.unsafeRunSync()
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
         case ex: ControlThrowable =>
-          ex ==== expectedExpcetion
+          ex ==== expectedException
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -206,18 +206,18 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_IO_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
       val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
       val actualFailedResult   = CanRecover[IO]
         .recoverFromNonFatalWith(fa) {
-          case NonFatal(`expectedExpcetion`) => IO.pure(expectedFailedResult)
+          case NonFatal(`expectedException`) => IO.pure(expectedFailedResult)
         }
 
       val expectedSuccessResult = 1.asRight[SomeError]
       val actualSuccessResult   = CanRecover[IO]
         .recoverFromNonFatalWith(fa) {
-          case NonFatal(`expectedExpcetion`) => IO.pure(1.asRight[SomeError])
+          case NonFatal(`expectedException`) => IO.pure(1.asRight[SomeError])
         }
 
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
@@ -228,18 +228,18 @@ object canRecoverSpec extends Properties {
       val compat          = new CatsEffectIoCompatForFuture
       given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
-      val expectedExpcetion = SomeControlThrowable("Something's wrong")
-      val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val expectedException = SomeControlThrowable("Something's wrong")
+      val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 
       val io = CanRecover[IO].recoverFromNonFatalWith(fa) {
-        case NonFatal(`expectedExpcetion`) => IO.pure(123.asRight[SomeError])
+        case NonFatal(`expectedException`) => IO.pure(123.asRight[SomeError])
       }
       try {
         val actual = io.unsafeRunSync()
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
         case ex: ControlThrowable =>
-          ex ==== expectedExpcetion
+          ex ==== expectedException
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -275,9 +275,9 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_IO_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-      val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+      val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
       val actualFailedResult   = CanRecover[IO]
         .recoverEitherFromNonFatalWith(fa) {
           case err => IO.pure(SomeError.someThrowable(err).asLeft[Int])
@@ -286,7 +286,7 @@ object canRecoverSpec extends Properties {
       val expectedSuccessResult = 123.asRight[SomeError]
       val actualSuccessResult   = CanRecover[IO]
         .recoverEitherFromNonFatalWith(fa) {
-          case NonFatal(`expectedExpcetion`) => IO.pure(123.asRight[SomeError])
+          case NonFatal(`expectedException`) => IO.pure(123.asRight[SomeError])
         }
 
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
@@ -297,8 +297,8 @@ object canRecoverSpec extends Properties {
       val compat          = new CatsEffectIoCompatForFuture
       given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
-      val expectedExpcetion = SomeControlThrowable("Something's wrong")
-      val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val expectedException = SomeControlThrowable("Something's wrong")
+      val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 
       val io = CanRecover[IO].recoverEitherFromNonFatalWith(fa) {
         case err => IO.pure(SomeError.someThrowable(err).asLeft[Int])
@@ -308,7 +308,7 @@ object canRecoverSpec extends Properties {
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
         case ex: ControlThrowable =>
-          ex ==== expectedExpcetion
+          ex ==== expectedException
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -345,9 +345,9 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-      val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+      val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
 
       val actualFailedResult = CanRecover[IO]
         .recoverEitherTFromNonFatalWith(fa) {
@@ -358,7 +358,7 @@ object canRecoverSpec extends Properties {
       val expectedSuccessResult = 123.asRight[SomeError]
       val actualSuccessResult   = CanRecover[IO]
         .recoverEitherTFromNonFatalWith(fa) {
-          case NonFatal(`expectedExpcetion`) => IO.pure(123.asRight[SomeError])
+          case NonFatal(`expectedException`) => IO.pure(123.asRight[SomeError])
         }
         .value
 
@@ -370,8 +370,8 @@ object canRecoverSpec extends Properties {
       val compat          = new CatsEffectIoCompatForFuture
       given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
-      val expectedExpcetion = SomeControlThrowable("Something's wrong")
-      val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+      val expectedException = SomeControlThrowable("Something's wrong")
+      val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
 
       val io = CanRecover[IO].recoverEitherTFromNonFatalWith(fa) {
         case err => IO.pure(SomeError.someThrowable(err).asLeft[Int])
@@ -381,7 +381,7 @@ object canRecoverSpec extends Properties {
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
         case ex: ControlThrowable =>
-          ex ==== expectedExpcetion
+          ex ==== expectedException
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -422,12 +422,12 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_IO_recoverFromNonFatalShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa                = run[IO, Int](throwThrowable[Int](expectedException))
       val expected          = 123
       val actual            = CanRecover[IO]
         .recoverFromNonFatal(fa) {
-          case NonFatal(`expectedExpcetion`) =>
+          case NonFatal(`expectedException`) =>
             expected
         }
 
@@ -439,16 +439,16 @@ object canRecoverSpec extends Properties {
       val compat          = new CatsEffectIoCompatForFuture
       given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
-      val expectedExpcetion = SomeControlThrowable("Something's wrong")
-      val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+      val expectedException = SomeControlThrowable("Something's wrong")
+      val fa                = run[IO, Int](throwThrowable[Int](expectedException))
 
-      val io = CanRecover[IO].recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 123 }
+      val io = CanRecover[IO].recoverFromNonFatal(fa) { case NonFatal(`expectedException`) => 123 }
       try {
         val actual = io.unsafeRunSync()
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
         case ex: ControlThrowable =>
-          ex ==== expectedExpcetion
+          ex ==== expectedException
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -467,15 +467,15 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_IO_recoverFromNonFatalEitherShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
       val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
       val actualFailedResult   = CanRecover[IO]
-        .recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => expectedFailedResult }
+        .recoverFromNonFatal(fa) { case NonFatal(`expectedException`) => expectedFailedResult }
 
       val expectedSuccessResult = 1.asRight[SomeError]
       val actualSuccessResult   = CanRecover[IO]
-        .recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 1.asRight[SomeError] }
+        .recoverFromNonFatal(fa) { case NonFatal(`expectedException`) => 1.asRight[SomeError] }
 
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
@@ -485,16 +485,16 @@ object canRecoverSpec extends Properties {
       val compat          = new CatsEffectIoCompatForFuture
       given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
-      val expectedExpcetion = SomeControlThrowable("Something's wrong")
-      val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val expectedException = SomeControlThrowable("Something's wrong")
+      val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 
-      val io = CanRecover[IO].recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError] }
+      val io = CanRecover[IO].recoverFromNonFatal(fa) { case NonFatal(`expectedException`) => 123.asRight[SomeError] }
       try {
         val actual = io.unsafeRunSync()
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
         case ex: ControlThrowable =>
-          ex ==== expectedExpcetion
+          ex ==== expectedException
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -523,9 +523,9 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_IO_recoverEitherFromNonFatalShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-      val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+      val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
       val actualFailedResult   =
         CanRecover[IO]
           .recoverEitherFromNonFatal(fa) {
@@ -535,7 +535,7 @@ object canRecoverSpec extends Properties {
       val expectedSuccessResult = 123.asRight[SomeError]
       val actualSuccessResult   =
         CanRecover[IO]
-          .recoverEitherFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError] }
+          .recoverEitherFromNonFatal(fa) { case NonFatal(`expectedException`) => 123.asRight[SomeError] }
 
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
@@ -545,8 +545,8 @@ object canRecoverSpec extends Properties {
       val compat          = new CatsEffectIoCompatForFuture
       given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
-      val expectedExpcetion = SomeControlThrowable("Something's wrong")
-      val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val expectedException = SomeControlThrowable("Something's wrong")
+      val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 
       val io =
         CanRecover[IO].recoverEitherFromNonFatal(fa) {
@@ -557,7 +557,7 @@ object canRecoverSpec extends Properties {
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
         case ex: ControlThrowable =>
-          ex ==== expectedExpcetion
+          ex ==== expectedException
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -590,9 +590,9 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_IO_recoverEitherTFromNonFatalShouldRecoverFromNonFatal: Result = withIO { implicit ticker =>
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-      val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+      val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
       val actualFailedResult   =
         CanRecover[IO]
           .recoverEitherTFromNonFatal(fa) {
@@ -603,7 +603,7 @@ object canRecoverSpec extends Properties {
       val expectedSuccessResult = 123.asRight[SomeError]
       val actualSuccessResult   =
         CanRecover[IO]
-          .recoverEitherTFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError] }
+          .recoverEitherTFromNonFatal(fa) { case NonFatal(`expectedException`) => 123.asRight[SomeError] }
           .value
 
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
@@ -614,8 +614,8 @@ object canRecoverSpec extends Properties {
       val compat          = new CatsEffectIoCompatForFuture
       given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
 
-      val expectedExpcetion = SomeControlThrowable("Something's wrong")
-      val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+      val expectedException = SomeControlThrowable("Something's wrong")
+      val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
 
       val io =
         CanRecover[IO].recoverEitherTFromNonFatal(fa) {
@@ -626,7 +626,7 @@ object canRecoverSpec extends Properties {
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
         case ex: ControlThrowable =>
-          ex ==== expectedExpcetion
+          ex ==== expectedException
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")

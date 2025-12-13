@@ -31,9 +31,9 @@ class canCatchSpec extends munit.CatsEffectSuite with FutureTools {
 
   test("test CanCatch[IO]catchNonFatalThrowable should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
-    val expected          = expectedExpcetion.asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
+    val expected          = expectedException.asLeft[Int]
     val actual            = CanCatch[IO].catchNonFatalThrowable(fa)
 
     actual.map(Assertions.assertEquals(_, expected))
@@ -69,9 +69,9 @@ class canCatchSpec extends munit.CatsEffectSuite with FutureTools {
 
   test("test CanCatch[IO]catchNonFatal should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
-    val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
+    val expected          = SomeError.someThrowable(expectedException).asLeft[Int]
     val actual            = CanCatch[IO].catchNonFatal(fa)(SomeError.someThrowable)
 
     actual.map(Assertions.assertEquals(_, expected))
@@ -107,9 +107,9 @@ class canCatchSpec extends munit.CatsEffectSuite with FutureTools {
 
   test("test CanCatch[IO]catchNonFatalEither should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expected          = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expected          = SomeError.someThrowable(expectedException).asLeft[Int]
     val actual            = CanCatch[IO].catchNonFatalEither(fa)(SomeError.someThrowable)
 
     actual.map(Assertions.assertEquals(_, expected))
@@ -154,9 +154,9 @@ class canCatchSpec extends munit.CatsEffectSuite with FutureTools {
 
   test("test CanCatch[IO]catchNonFatalEitherT should catch NonFatal") {
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa       = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expected = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa       = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expected = SomeError.someThrowable(expectedException).asLeft[Int]
     val actual   = CanCatch[IO].catchNonFatalEitherT(fa)(SomeError.someThrowable).value
 
     actual.map(Assertions.assertEquals(_, expected))

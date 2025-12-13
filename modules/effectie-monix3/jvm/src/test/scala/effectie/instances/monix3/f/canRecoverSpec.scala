@@ -162,12 +162,12 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_Task_recoverFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa                = run[Task, Int](throwThrowable[Int](expectedException))
       val expected          = 123
       val actual            = CanRecover[Task]
         .recoverFromNonFatalWith(fa) {
-          case NonFatal(`expectedExpcetion`) =>
+          case NonFatal(`expectedException`) =>
             Task.pure(expected)
         }
         .runSyncUnsafe()
@@ -178,16 +178,16 @@ object canRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_Task_recoverFromNonFatalWithShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = SomeControlThrowable("Something's wrong")
-      val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
+      val expectedException = SomeControlThrowable("Something's wrong")
+      val fa                = run[Task, Int](throwThrowable[Int](expectedException))
 
-      val io = CanRecover[Task].recoverFromNonFatalWith(fa) { case NonFatal(`expectedExpcetion`) => Task.pure(123) }
+      val io = CanRecover[Task].recoverFromNonFatalWith(fa) { case NonFatal(`expectedException`) => Task.pure(123) }
       try {
         val actual = io.runSyncUnsafe()
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
         case ex: ControlThrowable =>
-          ex ==== expectedExpcetion
+          ex ==== expectedException
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -210,19 +210,19 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_Task_recoverFromNonFatalWithEitherShouldRecoverFromNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
       val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
       val actualFailedResult   = CanRecover[Task]
         .recoverFromNonFatalWith(fa) {
-          case NonFatal(`expectedExpcetion`) => Task.pure(expectedFailedResult)
+          case NonFatal(`expectedException`) => Task.pure(expectedFailedResult)
         }
         .runSyncUnsafe()
 
       val expectedSuccessResult = 1.asRight[SomeError]
       val actualSuccessResult   = CanRecover[Task]
         .recoverFromNonFatalWith(fa) {
-          case NonFatal(`expectedExpcetion`) => Task.pure(1.asRight[SomeError])
+          case NonFatal(`expectedException`) => Task.pure(1.asRight[SomeError])
         }
         .runSyncUnsafe()
 
@@ -232,18 +232,18 @@ object canRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_Task_recoverFromNonFatalWithEitherShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = SomeControlThrowable("Something's wrong")
-      val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val expectedException = SomeControlThrowable("Something's wrong")
+      val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 
       val io = CanRecover[Task].recoverFromNonFatalWith(fa) {
-        case NonFatal(`expectedExpcetion`) => Task.pure(123.asRight[SomeError])
+        case NonFatal(`expectedException`) => Task.pure(123.asRight[SomeError])
       }
       try {
         val actual = io.runSyncUnsafe()
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
         case ex: ControlThrowable =>
-          ex ==== expectedExpcetion
+          ex ==== expectedException
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -280,9 +280,9 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_Task_recoverEitherFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-      val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+      val expectedFailedResult  = SomeError.someThrowable(expectedException).asLeft[Int]
       val actualFailedResult    = CanRecover[Task]
         .recoverEitherFromNonFatalWith(fa) {
           case err => Task.pure(SomeError.someThrowable(err).asLeft[Int])
@@ -291,7 +291,7 @@ object canRecoverSpec extends Properties {
       val expectedSuccessResult = 123.asRight[SomeError]
       val actualSuccessResult   = CanRecover[Task]
         .recoverEitherFromNonFatalWith(fa) {
-          case NonFatal(`expectedExpcetion`) => Task.pure(123.asRight[SomeError])
+          case NonFatal(`expectedException`) => Task.pure(123.asRight[SomeError])
         }
         .runSyncUnsafe()
 
@@ -301,8 +301,8 @@ object canRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_Task_recoverEitherFromNonFatalWithShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = SomeControlThrowable("Something's wrong")
-      val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val expectedException = SomeControlThrowable("Something's wrong")
+      val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 
       val io = CanRecover[Task].recoverEitherFromNonFatalWith(fa) {
         case err => Task.pure(SomeError.someThrowable(err).asLeft[Int])
@@ -312,7 +312,7 @@ object canRecoverSpec extends Properties {
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
         case ex: ControlThrowable =>
-          ex ==== expectedExpcetion
+          ex ==== expectedException
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -350,9 +350,9 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_Task_recoverEitherTFromNonFatalWithShouldRecoverFromNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-      val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+      val expectedFailedResult  = SomeError.someThrowable(expectedException).asLeft[Int]
       val actualFailedResult    = CanRecover[Task]
         .recoverEitherTFromNonFatalWith(fa) {
           case err => Task.pure(SomeError.someThrowable(err).asLeft[Int])
@@ -362,7 +362,7 @@ object canRecoverSpec extends Properties {
       val expectedSuccessResult = 123.asRight[SomeError]
       val actualSuccessResult   = CanRecover[Task]
         .recoverEitherTFromNonFatalWith(fa) {
-          case NonFatal(`expectedExpcetion`) => Task.pure(123.asRight[SomeError])
+          case NonFatal(`expectedException`) => Task.pure(123.asRight[SomeError])
         }
         .value
         .runSyncUnsafe()
@@ -373,8 +373,8 @@ object canRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_Task_recoverEitherTFromNonFatalWithShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = SomeControlThrowable("Something's wrong")
-      val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+      val expectedException = SomeControlThrowable("Something's wrong")
+      val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
 
       val io = CanRecover[Task].recoverEitherTFromNonFatalWith(fa) {
         case err => Task.pure(SomeError.someThrowable(err).asLeft[Int])
@@ -384,7 +384,7 @@ object canRecoverSpec extends Properties {
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
         case ex: ControlThrowable =>
-          ex ==== expectedExpcetion
+          ex ==== expectedException
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -426,12 +426,12 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_Task_recoverFromNonFatalShouldRecoverFromNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa                = run[Task, Int](throwThrowable[Int](expectedException))
       val expected          = 123
       val actual            = CanRecover[Task]
         .recoverFromNonFatal(fa) {
-          case NonFatal(`expectedExpcetion`) =>
+          case NonFatal(`expectedException`) =>
             expected
         }
         .runSyncUnsafe()
@@ -442,16 +442,16 @@ object canRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_Task_recoverFromNonFatalShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = SomeControlThrowable("Something's wrong")
-      val fa                = run[Task, Int](throwThrowable[Int](expectedExpcetion))
+      val expectedException = SomeControlThrowable("Something's wrong")
+      val fa                = run[Task, Int](throwThrowable[Int](expectedException))
 
-      val io = CanRecover[Task].recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 123 }
+      val io = CanRecover[Task].recoverFromNonFatal(fa) { case NonFatal(`expectedException`) => 123 }
       try {
         val actual = io.runSyncUnsafe()
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
         case ex: ControlThrowable =>
-          ex ==== expectedExpcetion
+          ex ==== expectedException
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -470,16 +470,16 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_Task_recoverFromNonFatalEitherShouldRecoverFromNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
       val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
       val actualFailedResult   = CanRecover[Task]
-        .recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => expectedFailedResult }
+        .recoverFromNonFatal(fa) { case NonFatal(`expectedException`) => expectedFailedResult }
         .runSyncUnsafe()
 
       val expectedSuccessResult = 1.asRight[SomeError]
       val actualSuccessResult   = CanRecover[Task]
-        .recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 1.asRight[SomeError] }
+        .recoverFromNonFatal(fa) { case NonFatal(`expectedException`) => 1.asRight[SomeError] }
         .runSyncUnsafe()
 
       actualFailedResult ==== expectedFailedResult and actualSuccessResult ==== expectedSuccessResult
@@ -488,16 +488,16 @@ object canRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_Task_recoverFromNonFatalEitherShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = SomeControlThrowable("Something's wrong")
-      val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val expectedException = SomeControlThrowable("Something's wrong")
+      val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 
-      val io = CanRecover[Task].recoverFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError] }
+      val io = CanRecover[Task].recoverFromNonFatal(fa) { case NonFatal(`expectedException`) => 123.asRight[SomeError] }
       try {
         val actual = io.runSyncUnsafe()
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
         case ex: ControlThrowable =>
-          ex ==== expectedExpcetion
+          ex ==== expectedException
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -528,9 +528,9 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_Task_recoverEitherFromNonFatalShouldRecoverFromNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-      val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+      val expectedFailedResult  = SomeError.someThrowable(expectedException).asLeft[Int]
       val actualFailedResult    =
         CanRecover[Task]
           .recoverEitherFromNonFatal(fa) {
@@ -540,7 +540,7 @@ object canRecoverSpec extends Properties {
       val expectedSuccessResult = 123.asRight[SomeError]
       val actualSuccessResult   =
         CanRecover[Task]
-          .recoverEitherFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError] }
+          .recoverEitherFromNonFatal(fa) { case NonFatal(`expectedException`) => 123.asRight[SomeError] }
           .runSyncUnsafe()
 
       actualFailedResult ==== expectedFailedResult and actualSuccessResult ==== expectedSuccessResult
@@ -549,8 +549,8 @@ object canRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_Task_recoverEitherFromNonFatalShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = SomeControlThrowable("Something's wrong")
-      val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+      val expectedException = SomeControlThrowable("Something's wrong")
+      val fa = run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
 
       val io =
         CanRecover[Task].recoverEitherFromNonFatal(fa) {
@@ -561,7 +561,7 @@ object canRecoverSpec extends Properties {
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
         case ex: ControlThrowable =>
-          ex ==== expectedExpcetion
+          ex ==== expectedException
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
@@ -596,9 +596,9 @@ object canRecoverSpec extends Properties {
 
     def testCanRecover_Task_recoverEitherTFromNonFatalShouldRecoverFromNonFatal: Result = {
 
-      val expectedExpcetion = new RuntimeException("Something's wrong")
-      val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-      val expectedFailedResult  = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+      val expectedException = new RuntimeException("Something's wrong")
+      val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+      val expectedFailedResult  = SomeError.someThrowable(expectedException).asLeft[Int]
       val actualFailedResult    =
         CanRecover[Task]
           .recoverEitherTFromNonFatal(fa) {
@@ -609,7 +609,7 @@ object canRecoverSpec extends Properties {
       val expectedSuccessResult = 123.asRight[SomeError]
       val actualSuccessResult   =
         CanRecover[Task]
-          .recoverEitherTFromNonFatal(fa) { case NonFatal(`expectedExpcetion`) => 123.asRight[SomeError] }
+          .recoverEitherTFromNonFatal(fa) { case NonFatal(`expectedException`) => 123.asRight[SomeError] }
           .value
           .runSyncUnsafe()
 
@@ -619,8 +619,8 @@ object canRecoverSpec extends Properties {
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
     def testCanRecover_Task_recoverEitherTFromNonFatalShouldNotCatchFatal: Result = {
 
-      val expectedExpcetion = SomeControlThrowable("Something's wrong")
-      val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
+      val expectedException = SomeControlThrowable("Something's wrong")
+      val fa = EitherT(run[Task, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
 
       val io =
         CanRecover[Task].recoverEitherTFromNonFatal(fa) {
@@ -631,7 +631,7 @@ object canRecoverSpec extends Properties {
         Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
       } catch {
         case ex: ControlThrowable =>
-          ex ==== expectedExpcetion
+          ex ==== expectedException
 
         case ex: Throwable =>
           Result.failure.log(s"Unexpected Throwable: ${ex.toString}")

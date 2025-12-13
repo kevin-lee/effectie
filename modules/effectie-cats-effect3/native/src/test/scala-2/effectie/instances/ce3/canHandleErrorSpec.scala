@@ -159,12 +159,12 @@ object canHandleErrorSpec extends Properties {
 
   def testCanHandleError_IO_handleNonFatalWithShouldHandleNonFatalWith: Result = withIO { implicit ticker =>
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
     val expected          = 123
     val actual            = CanHandleError[IO]
       .handleNonFatalWith(fa) {
-        case NonFatal(`expectedExpcetion`) =>
+        case NonFatal(`expectedException`) =>
           IO.pure(expected)
         case err =>
           throw err // scalafix:ok DisableSyntax.throw
@@ -206,8 +206,8 @@ object canHandleErrorSpec extends Properties {
 
   def testCanHandleError_IO_handleNonFatalWithEitherShouldHandleNonFatalWith: Result = withIO { implicit ticker =>
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
     val actualFailedResult   =
       CanHandleError[IO].handleNonFatalWith(fa)(_ => IO.pure(expectedFailedResult))
@@ -262,9 +262,9 @@ object canHandleErrorSpec extends Properties {
 
   def testCanHandleError_IO_handleEitherNonFatalWithShouldHandleNonFatalWith: Result = withIO { implicit ticker =>
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   = CanHandleError[IO]
       .handleEitherNonFatalWith(fa)(err => IO.pure(SomeError.someThrowable(err).asLeft[Int]))
 
@@ -323,9 +323,9 @@ object canHandleErrorSpec extends Properties {
 
   def testCanHandleError_IO_handleEitherTNonFatalWithShouldHandleNonFatalWith: Result = withIO { implicit ticker =>
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   = CanHandleError[IO]
       .handleEitherTNonFatalWith(fa)(err => IO.pure(SomeError.someThrowable(err).asLeft[Int]))
       .value
@@ -387,12 +387,12 @@ object canHandleErrorSpec extends Properties {
 
   def testCanHandleError_IO_handleNonFatalShouldHandleNonFatal: Result = withIO { implicit ticker =>
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Int](throwThrowable[Int](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Int](throwThrowable[Int](expectedException))
     val expected          = 123
     val actual            = CanHandleError[IO]
       .handleNonFatal(fa) {
-        case NonFatal(`expectedExpcetion`) =>
+        case NonFatal(`expectedException`) =>
           expected
         case err =>
           throw err // scalafix:ok DisableSyntax.throw
@@ -434,8 +434,8 @@ object canHandleErrorSpec extends Properties {
 
   def testCanHandleError_IO_handleNonFatalEitherShouldHandleNonFatal: Result = withIO { implicit ticker =>
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
     val expectedFailedResult = SomeError.message("Recovered Error").asLeft[Int]
     val actualFailedResult   = CanHandleError[IO].handleNonFatal(fa)(_ => expectedFailedResult)
 
@@ -488,9 +488,9 @@ object canHandleErrorSpec extends Properties {
 
   def testCanHandleError_IO_handleEitherNonFatalShouldHandleNonFatal: Result = withIO { implicit ticker =>
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   = CanHandleError[IO]
       .handleEitherNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int])
 
@@ -548,9 +548,9 @@ object canHandleErrorSpec extends Properties {
 
   def testCanHandleError_IO_handleEitherTNonFatalShouldHandleNonFatal: Result = withIO { implicit ticker =>
 
-    val expectedExpcetion = new RuntimeException("Something's wrong")
-    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedExpcetion)))
-    val expectedFailedResult = SomeError.someThrowable(expectedExpcetion).asLeft[Int]
+    val expectedException = new RuntimeException("Something's wrong")
+    val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
+    val expectedFailedResult = SomeError.someThrowable(expectedException).asLeft[Int]
     val actualFailedResult   = CanHandleError[IO]
       .handleEitherTNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int])
       .value
