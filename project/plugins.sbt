@@ -8,7 +8,7 @@ addSbtPlugin("org.scalameta" % "sbt-scalafmt"  % "2.4.6")
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "2.4.0")
 addSbtPlugin("org.scoverage" % "sbt-coveralls" % "1.3.2")
 addSbtPlugin("org.scalameta" % "sbt-mdoc"      % "2.3.2")
-addSbtPlugin("io.kevinlee"   % "sbt-docusaur"  % "0.18.0")
+addSbtPlugin("io.kevinlee"   % "sbt-docusaur"  % "0.21.0")
 
 addSbtPlugin("org.scala-js"       % "sbt-scalajs"              % "1.18.2")
 addSbtPlugin("org.portable-scala" % "sbt-scalajs-crossproject" % "1.3.2")
@@ -18,7 +18,7 @@ addSbtPlugin("org.portable-scala" % "sbt-scala-native-crossproject" % "1.3.2")
 
 addSbtPlugin("org.scalameta" % "sbt-native-image" % "0.3.2")
 
-val sbtDevOopsVersion = "3.3.1"
+val sbtDevOopsVersion = "3.3.2"
 addSbtPlugin("io.kevinlee" % "sbt-devoops-scala"     % sbtDevOopsVersion)
 addSbtPlugin("io.kevinlee" % "sbt-devoops-sbt-extra" % sbtDevOopsVersion)
 addSbtPlugin("io.kevinlee" % "sbt-devoops-github"    % sbtDevOopsVersion)
