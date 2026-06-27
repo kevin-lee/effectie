@@ -84,23 +84,21 @@ object onNonFatalSpec extends Properties {
       var actual = none[Int] // scalafix:ok DisableSyntax.var
 
       try {
-        runIO {
-
-          val fa = run[IO, Int](throwThrowable[Int](expectedException))
-
+        /* `fa` is by-name and forced synchronously by onNonFatalWith, so the fatal is thrown during
+         * construction (never inside an IO) and cannot trip cats-effect's process-global onFatalFailure
+         * latch that otherwise hangs every fatal test after the first on a live IORuntime.
+         */
+        val _ =
           OnNonFatal[IO]
-            .onNonFatalWith(fa) {
+            .onNonFatalWith(throwThrowable[IO[Int]](expectedException)) {
               case NonFatal(`expectedException`) =>
                 IO.delay {
                   actual = 123.some
                   ()
                 } *> IO.unit
             }
-            .map { actual =>
-              Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
-            }
 
-        }
+        Result.failure.log("The expected fatal exception was not thrown.")
       } catch {
         case ex: ControlThrowable =>
           Result.all(
