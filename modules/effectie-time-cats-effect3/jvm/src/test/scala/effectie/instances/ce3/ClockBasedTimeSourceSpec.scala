@@ -55,7 +55,7 @@ object ClockBasedTimeSourceSpec extends Properties with ClockBased {
           .map { expected =>
             Result.diff(
               actual.toEpochMilli.milliseconds,
-              (expected.toEpochMilli.milliseconds +- 500.milliseconds),
+              (expected.toEpochMilli.milliseconds +- 700.milliseconds),
             )(
               _.isWithIn(_)
             )

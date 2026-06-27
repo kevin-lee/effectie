@@ -13,7 +13,6 @@ import effectie.testing.types._
 import fxCtor.taskFxCtor
 import munit.Assertions
 
-import scala.concurrent._
 import scala.concurrent.duration._
 
 import monix.eval.Task
@@ -23,7 +22,7 @@ import monix.eval.Task
   */
 class canCatchSpec extends munit.FunSuite with FutureTools {
 
-  implicit val ec: ExecutionContext = globalExecutionContext
+  implicit val ec: scala.concurrent.ExecutionContext = globalExecutionContext
 
   import monix.execution.Scheduler.Implicits.global
 

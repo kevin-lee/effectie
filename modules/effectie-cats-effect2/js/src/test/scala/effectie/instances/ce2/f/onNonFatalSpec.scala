@@ -9,7 +9,6 @@ import effectie.testing.FutureTools
 import munit.Assertions
 
 import scala.concurrent.ExecutionContext
-import scala.concurrent.duration.FiniteDuration
 import scala.util.control.{ControlThrowable, NonFatal}
 
 import scala.concurrent.duration._
