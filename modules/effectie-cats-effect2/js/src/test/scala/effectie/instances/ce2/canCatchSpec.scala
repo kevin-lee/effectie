@@ -13,7 +13,6 @@ import effectie.testing.types._
 import fxCtor.ioFxCtor
 import munit.Assertions
 
-import scala.concurrent._
 import scala.concurrent.duration._
 
 /** @author Kevin Lee
@@ -21,7 +20,7 @@ import scala.concurrent.duration._
   */
 class canCatchSpec extends munit.FunSuite with FutureTools {
 
-  implicit val ec: ExecutionContext = globalExecutionContext
+  implicit val ec: scala.concurrent.ExecutionContext = globalExecutionContext
 
   override val munitTimeout: FiniteDuration = 200.milliseconds
 

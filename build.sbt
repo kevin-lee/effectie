@@ -484,13 +484,13 @@ lazy val props =
     final val RepoName       = "effectie"
 
     final val Scala2Versions = List(
-      "2.13.16",
-      "2.12.18",
+      "2.13.18",
+      "2.12.20",
     )
     final val Scala2Version  = Scala2Versions.head
 //    final val Scala2Version  = Scala2Versions.last
 
-    final val Scala3Version = "3.3.3"
+    val Scala3Version = "3.3.5"
 
 //    final val ProjectScalaVersion = "2.12.13"
     val ProjectScalaVersion = Scala2Version
@@ -515,7 +515,7 @@ lazy val props =
 
     final val IncludeTest = "compile->compile;test->test"
 
-    final val hedgehogLatestVersion = "0.13.0"
+    val hedgehogLatestVersion = "0.13.1"
 
     val MunitVersion = "0.7.29"
 
@@ -526,16 +526,16 @@ lazy val props =
     val catsEffect2Version       = "2.4.1"
     val catsEffect2LatestVersion = "2.5.4"
 
-    val catsEffect3Version          = "3.3.14"
-    val catsEffect3ForNativeVersion = "3.7.0-RC1"
+    val catsEffect3Version          = "3.7.0"
+    val catsEffect3ForNativeVersion = "3.7.0"
 
     final val cats2_0_0Version       = "2.0.0"
     final val catsEffect2_0_0Version = "2.0.0"
 
     final val monixVersion3_3_0 = "3.3.0"
-    final val monixVersion      = "3.4.0"
+    final val monixVersion      = "3.4.1"
 
-    final val ExtrasVersion = "0.49.0"
+    val ExtrasVersion = "0.53.0"
 
     val ScalaJsMacrotaskExecutorVersion = "1.1.1"
 

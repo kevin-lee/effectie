@@ -28,8 +28,8 @@ object IoAppUtils {
   def runtime(): IORuntime = {
     lazy val runtime: IORuntime = {
 
-      val (compute, compDown) =
-        IORuntime.createDefaultComputeThreadPool(runtime)
+      val (compute, poller, compDown) =
+        IORuntime.createWorkStealingComputeThreadPool()
 
       val (blocking, blockDown) =
         IORuntime.createDefaultBlockingExecutionContext()
@@ -41,6 +41,7 @@ object IoAppUtils {
         compute,
         blocking,
         scheduler,
+        List(poller),
         { () =>
           compDown()
           blockDown()
