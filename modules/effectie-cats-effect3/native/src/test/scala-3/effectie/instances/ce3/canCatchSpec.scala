@@ -3,7 +3,6 @@ package effectie.instances.ce3
 import cats.*
 import cats.data.EitherT
 import cats.effect.*
-import cats.effect.unsafe.IORuntime
 import cats.instances.all.*
 import cats.syntax.all.*
 import effectie.SomeControlThrowable
@@ -11,12 +10,10 @@ import effectie.core.*
 import effectie.syntax.error.*
 import effectie.syntax.fx.*
 import effectie.testing.types.SomeError
-import extras.concurrent.testing.ConcurrentSupport
 import extras.hedgehog.ce3.syntax.runner._
 import hedgehog.*
 import hedgehog.runner.*
 
-import java.util.concurrent.ExecutorService
 
 /** @author Kevin Lee
   * @since 2020-07-31
@@ -100,10 +97,7 @@ object canCatchSpec extends Properties {
       actual.completeAs(expected)
     }
 
-    def testCanCatch_IO_catchNonFatalThrowableShouldNotCatchFatal: Result = {
-
-      val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+    def testCanCatch_IO_catchNonFatalThrowableShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = run[IO, Int](throwThrowable[Int](fatalExpcetion))
@@ -140,10 +134,7 @@ object canCatchSpec extends Properties {
       actual.completeAs(expected)
     }
 
-    def testCanCatch_IO_catchNonFatalShouldNotCatchFatal: Result = {
-
-      val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+    def testCanCatch_IO_catchNonFatalShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = run[IO, Int](throwThrowable[Int](fatalExpcetion))
@@ -180,10 +171,7 @@ object canCatchSpec extends Properties {
       actual.completeAs(expected)
     }
 
-    def testCanCatch_IO_catchNonFatalEitherShouldNotCatchFatal: Result = {
-
-      val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+    def testCanCatch_IO_catchNonFatalEitherShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
@@ -230,10 +218,7 @@ object canCatchSpec extends Properties {
       actual.completeAs(expected)
     }
 
-    def testCanCatch_IO_catchNonFatalEitherTShouldNotCatchFatal: Result = {
-
-      val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+    def testCanCatch_IO_catchNonFatalEitherTShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))

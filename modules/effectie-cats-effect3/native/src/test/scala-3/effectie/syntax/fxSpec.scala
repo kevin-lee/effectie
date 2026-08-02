@@ -3,11 +3,8 @@ package effectie.syntax
 import cats.*
 import cats.syntax.all.*
 import cats.effect.IO
-import cats.effect.unsafe.IORuntime
 import effectie.core.{Fx, FxCtor}
-import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
 import effectie.instances.ce3.fx.given
-import effectie.instances.ce3.testing
 import effectie.syntax.fx.*
 import effectie.testing.tools.expectThrowable
 import effectie.testing.types.SomeThrowableError
@@ -85,10 +82,6 @@ object fxSpec extends Properties {
   }
 
   object IoSpec {
-
-    val compat          = new CatsEffectIoCompatForFuture
-    given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
-
     def testAll: Property =
       for {
         before <- Gen.int(Range.linear(Int.MinValue, Int.MaxValue)).log("before")

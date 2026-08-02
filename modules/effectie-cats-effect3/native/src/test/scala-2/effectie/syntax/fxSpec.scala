@@ -1,12 +1,9 @@
 package effectie.syntax
 
 import cats.effect.IO
-import cats.effect.unsafe.IORuntime
 import cats.syntax.all._
 import effectie.core.{Fx, FxCtor}
-import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
 import effectie.instances.ce3.fx._
-import effectie.instances.ce3.testing.IoAppUtils
 import effectie.syntax.fx._
 import effectie.testing.tools.expectThrowable
 import effectie.testing.types.SomeThrowableError
@@ -87,10 +84,6 @@ object fxSpec extends Properties {
   }
 
   object IoSpec {
-
-    val compat                 = new CatsEffectIoCompatForFuture
-    implicit val rt: IORuntime = IoAppUtils.runtime(compat.es)
-
     @SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Nothing"))
     def testAll: Property =
       for {

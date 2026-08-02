@@ -3,7 +3,6 @@ package effectie.instances.ce3
 import cats.*
 import cats.data.EitherT
 import cats.effect.IO
-import cats.effect.unsafe.IORuntime
 import cats.instances.all.*
 import cats.syntax.all.*
 import effectie.testing.types.SomeError
@@ -11,12 +10,10 @@ import effectie.core.*
 import effectie.syntax.error.*
 import effectie.syntax.fx.*
 import effectie.SomeControlThrowable
-import extras.concurrent.testing.ConcurrentSupport
 import extras.hedgehog.ce3.syntax.runner._
 import hedgehog.*
 import hedgehog.runner.*
 
-import java.util.concurrent.ExecutorService
 import scala.util.control.{ControlThrowable, NonFatal}
 
 /** @author Kevin Lee
@@ -169,10 +166,7 @@ object canHandleErrorSpec extends Properties {
       actual.completeAs(expected)
     }
 
-    def testCanHandleError_IO_handleNonFatalWithShouldNotHandleFatalWith: Result = {
-
-      val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+    def testCanHandleError_IO_handleNonFatalWithShouldNotHandleFatalWith: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = run[IO, Int](throwThrowable[Int](fatalExpcetion))
@@ -214,10 +208,7 @@ object canHandleErrorSpec extends Properties {
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
-    def testCanHandleError_IO_handleNonFatalWithEitherShouldNotHandleFatalWith: Result = {
-
-      val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+    def testCanHandleError_IO_handleNonFatalWithEitherShouldNotHandleFatalWith: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
@@ -269,10 +260,7 @@ object canHandleErrorSpec extends Properties {
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
-    def testCanHandleError_IO_handleEitherNonFatalWithShouldNotHandleFatalWith: Result = {
-
-      val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+    def testCanHandleError_IO_handleEitherNonFatalWithShouldNotHandleFatalWith: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
@@ -330,10 +318,7 @@ object canHandleErrorSpec extends Properties {
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
-    def testCanHandleError_IO_handleEitherTNonFatalWithShouldNotHandleFatalWith: Result = {
-
-      val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+    def testCanHandleError_IO_handleEitherTNonFatalWithShouldNotHandleFatalWith: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
@@ -391,10 +376,7 @@ object canHandleErrorSpec extends Properties {
       actual.completeAs(expected)
     }
 
-    def testCanHandleError_IO_handleNonFatalShouldNotHandleFatal: Result = {
-
-      val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+    def testCanHandleError_IO_handleNonFatalShouldNotHandleFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = run[IO, Int](throwThrowable[Int](fatalExpcetion))
@@ -434,10 +416,7 @@ object canHandleErrorSpec extends Properties {
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
-    def testCanHandleError_IO_handleNonFatalEitherShouldNotHandleFatal: Result = {
-
-      val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+    def testCanHandleError_IO_handleNonFatalEitherShouldNotHandleFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
@@ -489,10 +468,7 @@ object canHandleErrorSpec extends Properties {
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
-    def testCanHandleError_IO_handleEitherNonFatalShouldNotHandleFatal: Result = {
-
-      val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+    def testCanHandleError_IO_handleEitherNonFatalShouldNotHandleFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
@@ -549,10 +525,7 @@ object canHandleErrorSpec extends Properties {
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
-    def testCanHandleError_IO_handleEitherTNonFatalShouldNotHandleFatal: Result = {
-
-      val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-      given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+    def testCanHandleError_IO_handleEitherTNonFatalShouldNotHandleFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val fatalExpcetion = SomeControlThrowable("Something's wrong")
       val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))

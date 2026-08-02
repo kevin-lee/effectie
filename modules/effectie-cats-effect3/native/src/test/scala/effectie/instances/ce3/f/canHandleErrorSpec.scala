@@ -4,7 +4,6 @@ import canHandleError._
 import cats._
 import cats.data.EitherT
 import cats.effect.IO
-import cats.effect.unsafe.IORuntime
 import cats.instances.all._
 import cats.syntax.all._
 import effectie.SomeControlThrowable
@@ -20,7 +19,6 @@ import fxCtor._
 import hedgehog._
 import hedgehog.runner._
 
-import java.util.concurrent.ExecutorService
 import scala.util.control.{ControlThrowable, NonFatal}
 
 /** @author Kevin Lee
@@ -335,26 +333,24 @@ object canHandleErrorSpec extends Properties {
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
-    def testCanHandleError_IO_handleNonFatalWithShouldNotHandleFatalWith: Result = {
+    def testCanHandleError_IO_handleNonFatalWithShouldNotHandleFatalWith: Result =
+      testing.IoAppUtils.withNewRuntime { implicit rt =>
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
-      implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
+        val fatalExpcetion = SomeControlThrowable("Something's wrong")
+        val fa             = run[IO, Int](throwThrowable[Int](fatalExpcetion))
 
-      val fatalExpcetion = SomeControlThrowable("Something's wrong")
-      val fa             = run[IO, Int](throwThrowable[Int](fatalExpcetion))
+        try {
+          val actual = CanHandleError[IO].handleNonFatalWith(fa)(_ => IO.pure(123)).unsafeRunSync()
+          Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+        } catch {
+          case ex: ControlThrowable =>
+            ex ==== fatalExpcetion
 
-      try {
-        val actual = CanHandleError[IO].handleNonFatalWith(fa)(_ => IO.pure(123)).unsafeRunSync()
-        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
-      } catch {
-        case ex: ControlThrowable =>
-          ex ==== fatalExpcetion
+          case ex: Throwable =>
+            Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+        }
 
-        case ex: Throwable =>
-          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
       }
-
-    }
 
     def testCanHandleError_IO_handleNonFatalWithShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
@@ -381,26 +377,24 @@ object canHandleErrorSpec extends Properties {
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
-    def testCanHandleError_IO_handleNonFatalWithEitherShouldNotHandleFatalWith: Result = {
+    def testCanHandleError_IO_handleNonFatalWithEitherShouldNotHandleFatalWith: Result =
+      testing.IoAppUtils.withNewRuntime { implicit rt =>
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
-      implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
+        val fatalExpcetion = SomeControlThrowable("Something's wrong")
+        val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
 
-      val fatalExpcetion = SomeControlThrowable("Something's wrong")
-      val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
+        try {
+          val actual = CanHandleError[IO].handleNonFatalWith(fa)(_ => IO.pure(123.asRight[SomeError])).unsafeRunSync()
+          Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+        } catch {
+          case ex: SomeControlThrowable =>
+            ex.getMessage ==== fatalExpcetion.getMessage
 
-      try {
-        val actual = CanHandleError[IO].handleNonFatalWith(fa)(_ => IO.pure(123.asRight[SomeError])).unsafeRunSync()
-        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
-      } catch {
-        case ex: SomeControlThrowable =>
-          ex.getMessage ==== fatalExpcetion.getMessage
+          case ex: Throwable =>
+            Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+        }
 
-        case ex: Throwable =>
-          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
       }
-
-    }
 
     def testCanHandleError_IO_handleNonFatalWithEitherShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
@@ -437,29 +431,27 @@ object canHandleErrorSpec extends Properties {
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
-    def testCanHandleError_IO_handleEitherNonFatalWithShouldNotHandleFatalWith: Result = {
+    def testCanHandleError_IO_handleEitherNonFatalWithShouldNotHandleFatalWith: Result =
+      testing.IoAppUtils.withNewRuntime { implicit rt =>
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
-      implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
+        val fatalExpcetion = SomeControlThrowable("Something's wrong")
+        val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
 
-      val fatalExpcetion = SomeControlThrowable("Something's wrong")
-      val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
+        try {
+          val actual =
+            CanHandleError[IO]
+              .handleEitherNonFatalWith(fa)(err => IO.pure(SomeError.someThrowable(err).asLeft[Int]))
+              .unsafeRunSync()
+          Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+        } catch {
+          case ex: ControlThrowable =>
+            ex ==== fatalExpcetion
 
-      try {
-        val actual =
-          CanHandleError[IO]
-            .handleEitherNonFatalWith(fa)(err => IO.pure(SomeError.someThrowable(err).asLeft[Int]))
-            .unsafeRunSync()
-        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
-      } catch {
-        case ex: ControlThrowable =>
-          ex ==== fatalExpcetion
+          case ex: Throwable =>
+            Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+        }
 
-        case ex: Throwable =>
-          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
       }
-
-    }
 
     def testCanHandleError_IO_handleEitherNonFatalWithShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
@@ -499,30 +491,28 @@ object canHandleErrorSpec extends Properties {
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
-    def testCanHandleError_IO_handleEitherTNonFatalWithShouldNotHandleFatalWith: Result = {
+    def testCanHandleError_IO_handleEitherTNonFatalWithShouldNotHandleFatalWith: Result =
+      testing.IoAppUtils.withNewRuntime { implicit rt =>
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
-      implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
+        val fatalExpcetion = SomeControlThrowable("Something's wrong")
+        val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
 
-      val fatalExpcetion = SomeControlThrowable("Something's wrong")
-      val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
+        try {
+          val actual =
+            CanHandleError[IO]
+              .handleEitherTNonFatalWith(fa)(err => IO.pure(SomeError.someThrowable(err).asLeft[Int]))
+              .value
+              .unsafeRunSync()
+          Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+        } catch {
+          case ex: ControlThrowable =>
+            ex ==== fatalExpcetion
 
-      try {
-        val actual =
-          CanHandleError[IO]
-            .handleEitherTNonFatalWith(fa)(err => IO.pure(SomeError.someThrowable(err).asLeft[Int]))
-            .value
-            .unsafeRunSync()
-        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
-      } catch {
-        case ex: ControlThrowable =>
-          ex ==== fatalExpcetion
+          case ex: Throwable =>
+            Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+        }
 
-        case ex: Throwable =>
-          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
       }
-
-    }
 
     def testCanHandleError_IO_handleEitherTNonFatalWithShouldReturnSuccessfulResult: Result =
       withIO { implicit ticker =>
@@ -563,26 +553,24 @@ object canHandleErrorSpec extends Properties {
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
-    def testCanHandleError_IO_handleNonFatalShouldNotHandleFatal: Result = {
+    def testCanHandleError_IO_handleNonFatalShouldNotHandleFatal: Result =
+      testing.IoAppUtils.withNewRuntime { implicit rt =>
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
-      implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
+        val fatalExpcetion = SomeControlThrowable("Something's wrong")
+        val fa             = run[IO, Int](throwThrowable[Int](fatalExpcetion))
 
-      val fatalExpcetion = SomeControlThrowable("Something's wrong")
-      val fa             = run[IO, Int](throwThrowable[Int](fatalExpcetion))
+        try {
+          val actual = CanHandleError[IO].handleNonFatal(fa)(_ => 123).unsafeRunSync()
+          Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+        } catch {
+          case ex: ControlThrowable =>
+            ex ==== fatalExpcetion
 
-      try {
-        val actual = CanHandleError[IO].handleNonFatal(fa)(_ => 123).unsafeRunSync()
-        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
-      } catch {
-        case ex: ControlThrowable =>
-          ex ==== fatalExpcetion
+          case ex: Throwable =>
+            Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+        }
 
-        case ex: Throwable =>
-          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
       }
-
-    }
 
     def testCanHandleError_IO_handleNonFatalShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
@@ -607,26 +595,24 @@ object canHandleErrorSpec extends Properties {
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
-    def testCanHandleError_IO_handleNonFatalEitherShouldNotHandleFatal: Result = {
+    def testCanHandleError_IO_handleNonFatalEitherShouldNotHandleFatal: Result =
+      testing.IoAppUtils.withNewRuntime { implicit rt =>
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
-      implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
+        val fatalExpcetion = SomeControlThrowable("Something's wrong")
+        val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
 
-      val fatalExpcetion = SomeControlThrowable("Something's wrong")
-      val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
+        try {
+          val actual = CanHandleError[IO].handleNonFatal(fa)(_ => 123.asRight[SomeError]).unsafeRunSync()
+          Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+        } catch {
+          case ex: ControlThrowable =>
+            ex ==== fatalExpcetion
 
-      try {
-        val actual = CanHandleError[IO].handleNonFatal(fa)(_ => 123.asRight[SomeError]).unsafeRunSync()
-        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
-      } catch {
-        case ex: ControlThrowable =>
-          ex ==== fatalExpcetion
+          case ex: Throwable =>
+            Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+        }
 
-        case ex: Throwable =>
-          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
       }
-
-    }
 
     def testCanHandleError_IO_handleNonFatalEitherShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
@@ -663,29 +649,27 @@ object canHandleErrorSpec extends Properties {
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
-    def testCanHandleError_IO_handleEitherNonFatalShouldNotHandleFatal: Result = {
+    def testCanHandleError_IO_handleEitherNonFatalShouldNotHandleFatal: Result =
+      testing.IoAppUtils.withNewRuntime { implicit rt =>
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
-      implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
+        val fatalExpcetion = SomeControlThrowable("Something's wrong")
+        val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
 
-      val fatalExpcetion = SomeControlThrowable("Something's wrong")
-      val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
+        try {
+          val actual =
+            CanHandleError[IO]
+              .handleEitherNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int])
+              .unsafeRunSync()
+          Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+        } catch {
+          case ex: ControlThrowable =>
+            ex ==== fatalExpcetion
 
-      try {
-        val actual =
-          CanHandleError[IO]
-            .handleEitherNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int])
-            .unsafeRunSync()
-        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
-      } catch {
-        case ex: ControlThrowable =>
-          ex ==== fatalExpcetion
+          case ex: Throwable =>
+            Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+        }
 
-        case ex: Throwable =>
-          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
       }
-
-    }
 
     def testCanHandleError_IO_handleEitherNonFatalShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
@@ -724,30 +708,28 @@ object canHandleErrorSpec extends Properties {
     }
 
     @SuppressWarnings(Array("org.wartremover.warts.ToString"))
-    def testCanHandleError_IO_handleEitherTNonFatalShouldNotHandleFatal: Result = {
+    def testCanHandleError_IO_handleEitherTNonFatalShouldNotHandleFatal: Result =
+      testing.IoAppUtils.withNewRuntime { implicit rt =>
 
-      val es: ExecutorService    = ConcurrentSupport.newExecutorService(2)
-      implicit val rt: IORuntime = testing.IoAppUtils.runtime(es)
+        val fatalExpcetion = SomeControlThrowable("Something's wrong")
+        val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
 
-      val fatalExpcetion = SomeControlThrowable("Something's wrong")
-      val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
+        try {
+          val actual =
+            CanHandleError[IO]
+              .handleEitherTNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int])
+              .value
+              .unsafeRunSync()
+          Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
+        } catch {
+          case ex: ControlThrowable =>
+            ex ==== fatalExpcetion
 
-      try {
-        val actual =
-          CanHandleError[IO]
-            .handleEitherTNonFatal(fa)(err => SomeError.someThrowable(err).asLeft[Int])
-            .value
-            .unsafeRunSync()
-        Result.failure.log(s"The expected fatal exception was not thrown. actual: ${actual.toString}")
-      } catch {
-        case ex: ControlThrowable =>
-          ex ==== fatalExpcetion
+          case ex: Throwable =>
+            Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
+        }
 
-        case ex: Throwable =>
-          Result.failure.log(s"Unexpected Throwable: ${ex.toString}")
       }
-
-    }
 
     def testCanHandleError_IO_handleEitherTNonFatalShouldReturnSuccessfulResult: Result = withIO { implicit ticker =>
 
