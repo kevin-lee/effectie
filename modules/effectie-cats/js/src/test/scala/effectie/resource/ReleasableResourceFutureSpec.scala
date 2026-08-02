@@ -92,6 +92,31 @@ class ReleasableResourceFutureSpec extends munit.FunSuite with FutureTools {
       case ReleasableResource.ExitCase.Canceled => "Canceled"
     }
 
+  test("test ReleasableResource[Future] ExitCase: Completed on success, Errored on use failure") {
+    var exitCases = Vector.empty[String] // scalafix:ok DisableSyntax.var
+
+    def resource: ReleasableResource[Future, Int] =
+      ReleasableResource.makeCase(Future(1)) { (_, exitCase) =>
+        Future {
+          exitCases = exitCases :+ exitCaseName(exitCase)
+          ()
+        }
+      }
+
+    for {
+      firstResult  <- resource.use(n => Future.successful(n))
+      secondResult <- resource.use(_ => Future.failed[Int](TestException(9))).recover { case TestException(9) => -1 }
+    } yield {
+      Assertions.assertEquals(firstResult, 1, "first use result")
+      Assertions.assertEquals(secondResult, -1, "second use result")
+      Assertions.assertEquals(
+        exitCases,
+        Vector("Completed", s"Errored(${TestException(9).toString})"),
+        "exit cases seen by release",
+      )
+    }
+  }
+
   test("test ReleasableResource[Future] flatMap chain: LIFO release with ExitCase.Completed") {
     var eventLog = Vector.empty[String] // scalafix:ok DisableSyntax.var
 
