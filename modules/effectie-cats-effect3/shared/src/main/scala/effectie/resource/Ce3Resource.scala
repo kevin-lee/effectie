@@ -1,49 +1,44 @@
 package effectie.resource
 
-import cats.effect.{MonadCancelThrow, Resource, Sync}
+import cats.effect.kernel.MonadCancelThrow
+import cats.effect.{Resource, Sync}
 
 /** @author Kevin Lee
   * @since 2022-11-06
   */
-trait Ce3Resource[F[*], A] extends ReleasableResource[F, A]
 object Ce3Resource {
 
-  def fromAutoCloseable[F[*]: Sync, A <: AutoCloseable](acquire: F[A]): Ce3Resource[F, A] =
-    new Ce3ResourceF[F, A](Resource.fromAutoCloseable(acquire))
+  @deprecated(
+    message = "Use ReleasableResource.fromAutoCloseable(acquire) instead " +
+      "(FxCtor[F] is available via import effectie.instances.ce3.f.fxCtor._). " +
+      "To run .use(...), import effectie.instances.ce3.resource._ or effectie.instances.ce3.f.resource._ for UseResource[F] (for Scala 3, use .given instead of ._).",
+    since = "2.5.0",
+  )
+  def fromAutoCloseable[F[*]: Sync, A <: AutoCloseable](acquire: F[A]): ReleasableResource[F, A] =
+    ReleasableResource.fromAutoCloseable(acquire)(effectie.instances.ce3.f.fxCtor.syncFxCtor)
 
-  def make[F[*]: Sync, A](acquire: F[A])(release: A => F[Unit]): Ce3Resource[F, A] =
-    new Ce3ResourceF[F, A](Resource.make(acquire)(release))
+  @deprecated(
+    message = "Use ReleasableResource.make(acquire)(release) instead. " +
+      "To run .use(...), import effectie.instances.ce3.resource._ or effectie.instances.ce3.f.resource._ for UseResource[F] (for Scala 3, use .given instead of ._).",
+    since = "2.5.0",
+  )
+  def make[F[*]: Sync, A](acquire: F[A])(release: A => F[Unit]): ReleasableResource[F, A] =
+    ReleasableResource.make(acquire)(release)
 
+  @deprecated(
+    message = "Use Ce3UseResource.fromCatsEffectResource(underlying) instead. " +
+      "To run .use(...), import effectie.instances.ce3.resource._ or effectie.instances.ce3.f.resource._ for UseResource[F] (for Scala 3, use .given instead of ._).",
+    since = "2.5.0",
+  )
   def apply[F[*]: MonadCancelThrow, A](underlying: Resource[F, A]): ReleasableResource[F, A] =
-    new Ce3ResourceF[F, A](underlying)
+    Ce3UseResource.fromCatsEffectResource(underlying)
 
+  @deprecated(
+    message = "Use ReleasableResource.pure(acquire) instead. " +
+      "To run .use(...), import effectie.instances.ce3.resource._ or effectie.instances.ce3.f.resource._ for UseResource[F] (for Scala 3, use .given instead of ._).",
+    since = "2.5.0",
+  )
   def pure[F[*]: MonadCancelThrow, A](acquire: A): ReleasableResource[F, A] =
-    new Ce3ResourceF(Resource.pure(acquire))
-
-  private final class Ce3ResourceF[F[*]: MonadCancelThrow, A](val underlying: Resource[F, A])
-      extends Ce3Resource[F, A] {
-
-    override def use[B](f: A => F[B]): F[B] = underlying.use(f)
-
-    override def map[B](f: A => B): ReleasableResource[F, B] = new Ce3ResourceF(underlying.map(f))
-
-    override def flatMap[B](f: A => ReleasableResource[F, B]): ReleasableResource[F, B] =
-      new BindCe3ResourceF(this, f)
-  }
-
-  private final class BindCe3ResourceF[F[*]: MonadCancelThrow, A, B](
-    val resource: ReleasableResource[F, A],
-    nextF: A => ReleasableResource[F, B],
-  ) extends Ce3Resource[F, B] {
-    override def use[C](f: B => F[C]): F[C] =
-      resource.use { a =>
-        nextF(a).use(f)
-      }
-
-    override def map[C](f: B => C): ReleasableResource[F, C] = flatMap(b => pure(f(b)))
-
-    override def flatMap[C](f: B => ReleasableResource[F, C]): ReleasableResource[F, C] =
-      new BindCe3ResourceF[F, B, C](this, f)
-  }
+    ReleasableResource.pure(acquire)
 
 }

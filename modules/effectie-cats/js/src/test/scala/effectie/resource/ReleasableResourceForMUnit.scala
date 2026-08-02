@@ -30,7 +30,7 @@ object ReleasableResourceForMUnit {
       useF: A => F[Unit],
       errorTest: Option[Throwable => Unit],
       releasableResourceConstructor: F[A] => ReleasableResource[F, A],
-    )(implicit FC: FxCtor[F], CC: CanCatch[F], M: Monad[F]): F[Unit] =
+    )(implicit FC: FxCtor[F], CC: CanCatch[F], M: Monad[F], UR: UseResource[F]): F[Unit] =
       testReleasableResourceUse0[F, A](
         testResourceConstructor,
         content,
@@ -44,7 +44,7 @@ object ReleasableResourceForMUnit {
       useF: A => F[Unit],
       errorTest: Option[Throwable => Unit],
       releasableResourceConstructor: A => ReleasableResource[F, A],
-    )(implicit FC: FxCtor[F], CC: CanCatch[F], M: Monad[F]): F[Unit] =
+    )(implicit FC: FxCtor[F], CC: CanCatch[F], M: Monad[F], UR: UseResource[F]): F[Unit] =
       testReleasableResourceUseWithPure0[F, A](
         testResourceConstructor,
         content,
@@ -68,7 +68,7 @@ object ReleasableResourceForMUnit {
       useF: A => F[Unit],
       errorTest: Option[Throwable => Unit],
       releasableResourceConstructor: (=> F[A]) => ReleasableResource[F, A],
-    )(implicit FC: FxCtor[F], CC: CanCatch[F], M: Monad[F]): F[Unit] =
+    )(implicit FC: FxCtor[F], CC: CanCatch[F], M: Monad[F], UR: UseResource[F]): F[Unit] =
       testReleasableResourceUse0[F, A](
         testResourceConstructor,
         content,
@@ -78,7 +78,7 @@ object ReleasableResourceForMUnit {
       )
   }
 
-  private def testReleasableResourceUse0[F[*]: FxCtor: CanCatch: Monad, A <: TestableResource](
+  private def testReleasableResourceUse0[F[*]: FxCtor: CanCatch: Monad: UseResource, A <: TestableResource](
     testResourceConstructor: () => A,
     content: Vector[String],
     useF: A => F[Unit],
@@ -93,7 +93,7 @@ object ReleasableResourceForMUnit {
     ShouldTestClose.yes,
   )
 
-  private def testReleasableResourceUseWithPure0[F[*]: FxCtor: CanCatch: Monad, A <: TestableResource](
+  private def testReleasableResourceUseWithPure0[F[*]: FxCtor: CanCatch: Monad: UseResource, A <: TestableResource](
     testResourceConstructor: () => A,
     content: Vector[String],
     useF: A => F[Unit],
@@ -109,7 +109,7 @@ object ReleasableResourceForMUnit {
       ShouldTestClose.no,
     )
 
-  private def _testReleasableResourceUse[F[*]: FxCtor: CanCatch: Monad, A <: TestableResource](
+  private def _testReleasableResourceUse[F[*]: FxCtor: CanCatch: Monad: UseResource, A <: TestableResource](
     testResourceConstructor: () => A,
     content: Vector[String],
     useF: A => F[Unit],

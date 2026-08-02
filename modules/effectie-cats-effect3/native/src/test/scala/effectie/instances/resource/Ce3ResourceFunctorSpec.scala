@@ -1,5 +1,7 @@
 package effectie.resource
 
+import scala.annotation.nowarn
+import effectie.instances.ce3.resource.ioUseResource
 import cats.effect.IO
 import cats.syntax.all._
 import cats.{Eq, Functor}
@@ -10,15 +12,19 @@ import hedgehog.runner._
 /** @author Kevin Lee
   * @since 2023-05-22
   */
+@nowarn("cat=deprecation")
 object Ce3ResourceFunctorSpec extends Properties {
 
   import cats.effect.unsafe.implicits.global
 
-  implicit def releasableResourceEq[F[*]](implicit eq: Eq[F[Int]], toF: Int => F[Int]): Eq[ReleasableResource[F, Int]] =
+  implicit def releasableResourceEq[F[*]](
+    implicit eq: Eq[F[Int]],
+    toF: Int => F[Int],
+    ur: UseResource[F],
+  ): Eq[ReleasableResource[F, Int]] =
     (resource1, resource2) => eq.eqv(resource1.use(toF), resource2.use(toF))
 
   override def tests: List[Test] = {
-    implicit val resourceMaker: ResourceMaker[IO] = Ce3ResourceMaker.maker[IO]
 
     implicit val toF: Int => IO[Int] = IO.delay(_)
     implicit def eqF: Eq[IO[Int]]    = (fa: IO[Int], fb: IO[Int]) => fa.flatMap(a => fb.map(_ === a)).unsafeRunSync()
@@ -51,7 +57,7 @@ object Ce3ResourceFunctorSpec extends Properties {
     )
   }
 
-  def testMap[F[*]: ResourceMaker](
+  def testMap[F[*]: UseResource](
     ctor: Int => ReleasableResource[F, Int],
     toF: Result => F[Result],
     get: F[Result] => Result,

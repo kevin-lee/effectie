@@ -6,12 +6,14 @@ import effectie.resource.data.{TestResource, TestResourceNoAutoClose, TestableRe
 import effectie.testing.{FutureTools, RandomGens}
 import munit.Assertions
 
+import scala.annotation.nowarn
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
 /** @author Kevin Lee
   * @since 2022-11-12
   */
+@nowarn("cat=deprecation")
 class ReleasableFutureResourceSpec extends munit.FunSuite with FutureTools {
 
   implicit val ec: ExecutionContext = globalExecutionContext
@@ -71,7 +73,7 @@ class ReleasableFutureResourceSpec extends munit.FunSuite with FutureTools {
               content,
               _ => Future.successful(()),
               none,
-              ReleasableFutureResource.make(_)(a => Future(a.release())),
+              ReleasableResource.makeFuture(_)(a => Future(a.release())),
             ),
           ReleasableResourceForMUnit
             .testReleasableResourceUse[Future](TestResourceNoAutoClose.apply)(
@@ -106,7 +108,7 @@ class ReleasableFutureResourceSpec extends munit.FunSuite with FutureTools {
                     s"TestException was expected but it is ${ex.getClass.getSimpleName}. Error: ${ex.toString}"
                   )
               }),
-              ReleasableFutureResource.make(_)(a => Future(a.release())),
+              ReleasableResource.makeFuture(_)(a => Future(a.release())),
             ),
           ReleasableResourceForMUnit
             .testReleasableResourceUse[Future](TestResourceNoAutoClose.apply)(
@@ -142,7 +144,7 @@ class ReleasableFutureResourceSpec extends munit.FunSuite with FutureTools {
               content,
               _ => Future.successful(()),
               none,
-              ReleasableFutureResource.pure(_),
+              ReleasableResource.pureFuture(_),
             ),
           ReleasableResourceForMUnit
             .testReleasableResourceUse[Future](TestResourceNoAutoClose.apply)
@@ -179,7 +181,7 @@ class ReleasableFutureResourceSpec extends munit.FunSuite with FutureTools {
                     s"TestException was expected but it is ${ex.getClass.getSimpleName}. Error: ${ex.toString}"
                   )
               }),
-              ReleasableFutureResource.pure(_),
+              ReleasableResource.pureFuture(_),
             ),
           ReleasableResourceForMUnit
             .testReleasableResourceUse[Future](TestResourceNoAutoClose.apply)
@@ -210,7 +212,7 @@ class ReleasableFutureResourceSpec extends munit.FunSuite with FutureTools {
 
     import scala.concurrent.Future
 
-    val resource = ReleasableFutureResource[TestResource](Future(testResource))
+    val resource = ReleasableResource.futureResource[TestResource](Future(testResource))
 
     var actualContent = Vector.empty[String] // scalafix:ok DisableSyntax.var
 
@@ -249,7 +251,7 @@ class ReleasableFutureResourceSpec extends munit.FunSuite with FutureTools {
 
     import scala.concurrent.Future
 
-    val resource      = ReleasableFutureResource[TestResource](Future(testResource))
+    val resource      = ReleasableResource.futureResource[TestResource](Future(testResource))
     var actualContent = Vector.empty[String] // scalafix:ok DisableSyntax.var
 
     Assertions.assertEquals(testResource.content, content, "[B] content does not match")
@@ -295,7 +297,7 @@ class ReleasableFutureResourceSpec extends munit.FunSuite with FutureTools {
 
     import scala.concurrent.Future
 
-    val resource = ReleasableFutureResource(Future(testResource))
+    val resource = ReleasableResource.futureResource(Future(testResource))
 
     var actualContent = Vector.empty[String] // scalafix:ok DisableSyntax.var
 
@@ -320,9 +322,9 @@ class ReleasableFutureResourceSpec extends munit.FunSuite with FutureTools {
 
     resource
       .flatMap { _ =>
-        ReleasableFutureResource(Future(testResource2))
+        ReleasableResource.futureResource(Future(testResource2))
       }
-      .flatMap(_ => ReleasableFutureResource.pure(testResource3))
+      .flatMap(_ => ReleasableResource.pureFuture(testResource3))
       .use { newResource =>
         actualContent = content ++ content2 ++ newResource.content
         Future.unit
@@ -366,7 +368,7 @@ class ReleasableFutureResourceSpec extends munit.FunSuite with FutureTools {
 
     import scala.concurrent.Future
 
-    val resource = ReleasableFutureResource(Future(testResource))
+    val resource = ReleasableResource.futureResource(Future(testResource))
 
     var actualContent = Vector.empty[String] // scalafix:ok DisableSyntax.var
 
@@ -390,8 +392,8 @@ class ReleasableFutureResourceSpec extends munit.FunSuite with FutureTools {
     )
 
     resource
-      .flatMap(_ => ReleasableFutureResource(Future(testResource2)))
-      .flatMap(_ => ReleasableFutureResource.pure(testResource3))
+      .flatMap(_ => ReleasableResource.futureResource(Future(testResource2)))
+      .flatMap(_ => ReleasableResource.pureFuture(testResource3))
       .use { newResource =>
         actualContent = content ++ content2 ++ newResource.content
         Future.failed[Unit](TestException(123))
@@ -435,7 +437,7 @@ class ReleasableFutureResourceSpec extends munit.FunSuite with FutureTools {
 
     import scala.concurrent.Future
 
-    val resource = ReleasableFutureResource(Future(testResource))
+    val resource = ReleasableResource.futureResource(Future(testResource))
 
     var actualContent = Vector.empty[String] // scalafix:ok DisableSyntax.var
 
@@ -460,13 +462,13 @@ class ReleasableFutureResourceSpec extends munit.FunSuite with FutureTools {
 
     resource
       .flatMap { _ =>
-        ReleasableFutureResource(Future(testResource2))
+        ReleasableResource.futureResource(Future(testResource2))
       }
       .map(_.content ++ content3)
       .flatMap { content =>
-        ReleasableFutureResource
-          .make(Future(content.foreach(testResource3.write)))(_ => Future.unit)
-          .flatMap(_ => ReleasableFutureResource.pure(testResource3))
+        ReleasableResource
+          .makeFuture(Future(content.foreach(testResource3.write)))(_ => Future.unit)
+          .flatMap(_ => ReleasableResource.pureFuture(testResource3))
       }
       .use { newResource =>
         actualContent = content ++ newResource.content
@@ -510,7 +512,7 @@ class ReleasableFutureResourceSpec extends munit.FunSuite with FutureTools {
 
     import scala.concurrent.Future
 
-    val resource = ReleasableFutureResource(Future(testResource))
+    val resource = ReleasableResource.futureResource(Future(testResource))
 
     var actualContent = Vector.empty[String] // scalafix:ok DisableSyntax.var
 
@@ -534,12 +536,12 @@ class ReleasableFutureResourceSpec extends munit.FunSuite with FutureTools {
     )
 
     resource
-      .flatMap(_ => ReleasableFutureResource(Future(testResource2)))
+      .flatMap(_ => ReleasableResource.futureResource(Future(testResource2)))
       .map(_.content ++ content3)
       .flatMap { content =>
-        ReleasableFutureResource
-          .make(Future(content.foreach(testResource3.write)))(_ => Future.unit)
-          .flatMap(_ => ReleasableFutureResource.pure(testResource3))
+        ReleasableResource
+          .makeFuture(Future(content.foreach(testResource3.write)))(_ => Future.unit)
+          .flatMap(_ => ReleasableResource.pureFuture(testResource3))
       }
       .use { newResource =>
         actualContent = content ++ newResource.content

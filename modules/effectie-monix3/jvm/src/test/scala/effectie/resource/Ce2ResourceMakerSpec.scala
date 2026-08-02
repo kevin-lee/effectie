@@ -1,5 +1,7 @@
 package effectie.resource
 
+import scala.annotation.nowarn
+import effectie.instances.monix3.resource.taskUseResource
 import cats.syntax.all._
 import effectie.instances.monix3.fx.taskFx
 import effectie.resource.data.TestErrors.TestException
@@ -13,6 +15,7 @@ import monix.eval.Task
 /** @author Kevin Lee
   * @since 2022-11-06
   */
+@nowarn("cat=deprecation")
 object Ce2ResourceMakerSpec extends Properties {
   import monix.execution.Scheduler.Implicits.global
 

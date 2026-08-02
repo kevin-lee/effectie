@@ -6,9 +6,12 @@ import effectie.core.{CanCatch, FxCtor}
 import effectie.resource.data.TestableResource
 import hedgehog._
 
+import scala.annotation.nowarn
+
 /** @author Kevin Lee
   * @since 2022-11-06
   */
+@nowarn("cat=deprecation")
 object ResourceMakerSpec {
   def testForAutoCloseable[F[*]]: TestForAutoCloseable1[F] = new TestForAutoCloseable1[F]
 
@@ -24,7 +27,7 @@ object ResourceMakerSpec {
       content: Vector[String],
       useF: A => F[Unit],
       errorTest: Option[Throwable => Result],
-    )(implicit FC: FxCtor[F], CC: CanCatch[F], M: Monad[F], RM: ResourceMaker[F]): F[Result] =
+    )(implicit FC: FxCtor[F], CC: CanCatch[F], M: Monad[F], RM: ResourceMaker[F], UR: UseResource[F]): F[Result] =
       testForAutoCloseable0(
         testResourceConstructor,
         content,
@@ -34,7 +37,7 @@ object ResourceMakerSpec {
   }
 
   private def testForAutoCloseable0[
-    F[*]: FxCtor: CanCatch: Monad: ResourceMaker,
+    F[*]: FxCtor: CanCatch: Monad: ResourceMaker: UseResource,
     A <: TestableResource with AutoCloseable,
   ](
     testResourceConstructor: () => A,
@@ -125,7 +128,7 @@ object ResourceMakerSpec {
       content: Vector[String],
       useF: A => F[Result],
       errorTest: Option[Throwable => Result],
-    )(implicit FF: FxCtor[F], CC: CanCatch[F], M: Monad[F], RM: ResourceMaker[F]) =
+    )(implicit FF: FxCtor[F], CC: CanCatch[F], M: Monad[F], RM: ResourceMaker[F], UR: UseResource[F]) =
       testForMake0(
         testResourceConstructor,
         release,
@@ -135,7 +138,7 @@ object ResourceMakerSpec {
       )
   }
 
-  private def testForMake0[F[*]: FxCtor: CanCatch: Monad: ResourceMaker, A <: TestableResource](
+  private def testForMake0[F[*]: FxCtor: CanCatch: Monad: ResourceMaker: UseResource, A <: TestableResource](
     testResourceConstructor: () => A,
     release: A => Unit,
     content: Vector[String],
@@ -229,7 +232,7 @@ object ResourceMakerSpec {
       useF: A => F[Result],
       closeStatusTest: TestableResource.CloseStatus => Result,
       errorTest: Option[Throwable => Result],
-    )(implicit FF: FxCtor[F], CC: CanCatch[F], M: Monad[F]) =
+    )(implicit FF: FxCtor[F], CC: CanCatch[F], M: Monad[F], UR: UseResource[F]) =
       testFor0(
         testResourceConstructor,
         maker,
@@ -240,7 +243,7 @@ object ResourceMakerSpec {
       )
   }
 
-  private def testFor0[F[*]: FxCtor: CanCatch: Monad, A <: TestableResource](
+  private def testFor0[F[*]: FxCtor: CanCatch: Monad: UseResource, A <: TestableResource](
     testResourceConstructor: () => A,
     maker: A => ReleasableResource[F, A],
     content: Vector[String],

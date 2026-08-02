@@ -1,5 +1,7 @@
 package effectie.resource
 
+import scala.annotation.nowarn
+import effectie.instances.ce2.resource.ioUseResource
 import cats.effect.IO
 import cats.syntax.all._
 import cats.{Applicative, Eq}
@@ -10,8 +12,13 @@ import hedgehog.runner._
 /** @author Kevin Lee
   * @since 2023-05-22
   */
+@nowarn("cat=deprecation")
 object Ce2ResourceApplicativeSpec extends Properties {
-  implicit def releasableResourceEq[F[*]](implicit eq: Eq[F[Int]], toF: Int => F[Int]): Eq[ReleasableResource[F, Int]] =
+  implicit def releasableResourceEq[F[*]](
+    implicit eq: Eq[F[Int]],
+    toF: Int => F[Int],
+    ur: UseResource[F],
+  ): Eq[ReleasableResource[F, Int]] =
     (resource1, resource2) => eq.eqv(resource1.use(toF), resource2.use(toF))
 
   override def tests: List[Test] = {
@@ -93,7 +100,7 @@ object Ce2ResourceApplicativeSpec extends Properties {
     )
   }
 
-  def testMap[F[*]: ResourceMaker](
+  def testMap[F[*]: UseResource](
     ctor: Int => ReleasableResource[F, Int],
     toF: Result => F[Result],
     get: F[Result] => Result,
@@ -111,7 +118,7 @@ object Ce2ResourceApplicativeSpec extends Properties {
       )
     }
 
-  def testAp[F[*]: ResourceMaker](
+  def testAp[F[*]: ResourceMaker: UseResource](
     ctor: Int => ReleasableResource[F, Int],
     toF: Result => F[Result],
     get: F[Result] => Result,
