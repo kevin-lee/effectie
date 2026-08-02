@@ -1,7 +1,7 @@
 package effectie.resource
 
 import effectie.resource.data.TestErrors.TestException
-import effectie.resource.data.{TestResourceNoAutoClose, TestableResource}
+import effectie.resource.data.{TestResource, TestResourceNoAutoClose, TestableResource}
 import effectie.testing.FutureTools
 import munit.Assertions
 
@@ -91,6 +91,59 @@ class ReleasableResourceFutureSpec extends munit.FunSuite with FutureTools {
       case ReleasableResource.ExitCase.Errored(err) => s"Errored(${err.toString})"
       case ReleasableResource.ExitCase.Canceled => "Canceled"
     }
+
+  test("test ReleasableResource.fromAutoCloseable[Future, A]: close() is called on success and on failure") {
+    import effectie.instances.future.fxCtor._
+
+    val successResource = TestResource()
+    val failureResource = TestResource()
+    val throwResource   = TestResource()
+
+    Assertions.assertEquals(
+      successResource.closeStatus,
+      TestableResource.CloseStatus.notClosed,
+      "the resource should not be closed before use",
+    )
+
+    for {
+      _ <- ReleasableResource
+             .fromAutoCloseable[Future, TestResource](Future(successResource))
+             .use(resource => Future(resource.write("written")))
+      _ <- ReleasableResource
+             .fromAutoCloseable[Future, TestResource](Future(failureResource))
+             .use(_ => Future.failed[Unit](TestException(1)))
+             .map(_ => Assertions.fail("An error was expected but the use succeeded"))
+             .recover {
+               case TestException(1) => ()
+               case ex: Throwable => Assertions.fail(s"TestException(1) was expected but got ${ex.toString}")
+             }
+      _ <- ReleasableResource
+             .fromAutoCloseable[Future, TestResource](Future(throwResource))
+             .use[Unit](_ => throw TestException(2)) // scalafix:ok DisableSyntax.throw
+             .map(_ => Assertions.fail("An error was expected but the use succeeded"))
+             .recover {
+               case TestException(2) => ()
+               case ex: Throwable => Assertions.fail(s"TestException(2) was expected but got ${ex.toString}")
+             }
+    } yield {
+      Assertions.assertEquals(successResource.content, Vector("written"), "content written during use")
+      Assertions.assertEquals(
+        successResource.closeStatus,
+        TestableResource.CloseStatus.closed,
+        "close() should be called when the use function succeeds",
+      )
+      Assertions.assertEquals(
+        failureResource.closeStatus,
+        TestableResource.CloseStatus.closed,
+        "close() should be called when the use function returns a failed Future",
+      )
+      Assertions.assertEquals(
+        throwResource.closeStatus,
+        TestableResource.CloseStatus.closed,
+        "close() should be called when the use function throws synchronously",
+      )
+    }
+  }
 
   test("test ReleasableResource[Future] ExitCase: Completed on success, Errored on use failure") {
     var exitCases = Vector.empty[String] // scalafix:ok DisableSyntax.var
