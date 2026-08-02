@@ -1,7 +1,7 @@
 package effectie.resource
 
 import effectie.resource.data.TestErrors.TestException
-import effectie.resource.data.{TestResourceNoAutoClose, TestableResource}
+import effectie.resource.data.{TestResource, TestResourceNoAutoClose, TestableResource}
 import extras.concurrent.testing.ConcurrentSupport
 import extras.concurrent.testing.types.{ErrorLogger, WaitFor}
 import hedgehog._
@@ -38,6 +38,10 @@ object ReleasableResourceFutureSpec extends Properties {
     example(
       "test ReleasableResource[Future] flatMap chain: acquisition order and LIFO release with ExitCase.Completed",
       testFlatMapChainLifoRelease,
+    ),
+    example(
+      "test ReleasableResource.fromAutoCloseable[Future, A]: close() is called on success and on failure",
+      testFromAutoCloseableClosesTheResource,
     ),
   )
 
@@ -205,6 +209,75 @@ object ReleasableResourceFutureSpec extends Properties {
           )
         )
     }
+  }
+
+  def testFromAutoCloseableClosesTheResource: Result = {
+    import effectie.instances.future.fxCtor._
+
+    implicit val errorLogger: ErrorLogger[Throwable] = ErrorLogger.printlnDefaultErrorLogger
+
+    val waitFor                                   = WaitFor(400.milliseconds)
+    implicit val executorService: ExecutorService = Executors.newFixedThreadPool(3)
+    implicit val ec: ExecutionContext             =
+      ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
+
+    val successResource = TestResource()
+    val failureResource = TestResource()
+    val throwResource   = TestResource()
+
+    val beforeUse = Result.all(
+      List(
+        (successResource.closeStatus ==== TestableResource.CloseStatus.notClosed)
+          .log("the resource should not be closed before use"),
+        (failureResource.closeStatus ==== TestableResource.CloseStatus.notClosed)
+          .log("the resource should not be closed before use"),
+      )
+    )
+
+    val results =
+      ConcurrentSupport.futureToValueAndTerminate(
+        executorService,
+        waitFor,
+      )(
+        for {
+          successResult <- ReleasableResource
+                             .fromAutoCloseable[Future, TestResource](Future(successResource))
+                             .use(resource => Future(resource.write("written")))
+                             .map(_ => Result.success)
+          failureResult <- ReleasableResource
+                             .fromAutoCloseable[Future, TestResource](Future(failureResource))
+                             .use(_ => Future.failed[Unit](TestException(1)))
+                             .map(_ => Result.failure.log("An error was expected but the use succeeded"))
+                             .recover {
+                               case TestException(1) => Result.success
+                               case ex: Throwable =>
+                                 Result.failure.log(s"TestException(1) was expected but got ${ex.toString}")
+                             }
+          throwResult   <- ReleasableResource
+                             .fromAutoCloseable[Future, TestResource](Future(throwResource))
+                             .use[Unit](_ => throw TestException(2)) // scalafix:ok DisableSyntax.throw
+                             .map(_ => Result.failure.log("An error was expected but the use succeeded"))
+                             .recover {
+                               case TestException(2) => Result.success
+                               case ex: Throwable =>
+                                 Result.failure.log(s"TestException(2) was expected but got ${ex.toString}")
+                             }
+        } yield Result.all(List(successResult, failureResult, throwResult))
+      )
+
+    Result.all(
+      List(
+        beforeUse,
+        results,
+        (successResource.content ==== Vector("written")).log("content written during use"),
+        (successResource.closeStatus ==== TestableResource.CloseStatus.closed)
+          .log("close() should be called when the use function succeeds"),
+        (failureResource.closeStatus ==== TestableResource.CloseStatus.closed)
+          .log("close() should be called when the use function returns a failed Future"),
+        (throwResource.closeStatus ==== TestableResource.CloseStatus.closed)
+          .log("close() should be called when the use function throws synchronously"),
+      )
+    )
   }
 
   def testFlatMapChainLifoRelease: Result = {

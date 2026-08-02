@@ -98,6 +98,10 @@ object UseResourceTryInterpreterSpec extends Properties {
       "test ReleasableResource.ExitCase smart constructors",
       testExitCaseSmartConstructors,
     ),
+    example(
+      "test ReleasableResource.fromAutoCloseable[Try, A]: close() is called when the use function fails or throws",
+      testFromAutoCloseableClosesOnUseFailure,
+    ),
     property(
       "test deprecated ReleasableResource Try shims: usingResource / usingResourceFromTry / makeTry / pureTry",
       testDeprecatedTryShims,
@@ -712,6 +716,39 @@ object UseResourceTryInterpreterSpec extends Properties {
     )
   }
 
+  def testFromAutoCloseableClosesOnUseFailure: Result = {
+    import effectie.instances.tries.fxCtor._
+
+    val failedResource = TestResource()
+
+    val beforeUse = (failedResource.closeStatus ==== TestableResource.CloseStatus.notClosed)
+      .log("the resource should not be closed before use")
+
+    val failedResult =
+      ReleasableResource
+        .fromAutoCloseable[Try, TestResource](Try(failedResource))
+        .use(_ => Failure[Unit](TestException(1)))
+
+    val thrownResource = TestResource()
+
+    val thrownResult =
+      ReleasableResource
+        .fromAutoCloseable[Try, TestResource](Try(thrownResource))
+        .use[Unit](_ => throw TestException(2)) // scalafix:ok DisableSyntax.throw
+
+    Result.all(
+      List(
+        beforeUse,
+        (failedResult ==== Failure(TestException(1))).log("the use error should propagate"),
+        (failedResource.closeStatus ==== TestableResource.CloseStatus.closed)
+          .log("close() should be called when the use function returns a Failure"),
+        (thrownResult ==== Failure(TestException(2))).log("the thrown error should propagate"),
+        (thrownResource.closeStatus ==== TestableResource.CloseStatus.closed)
+          .log("close() should be called when the use function throws synchronously"),
+      )
+    )
+  }
+
   @nowarn("cat=deprecation")
   def testDeprecatedTryShims: Property =
     for {
@@ -721,11 +758,14 @@ object UseResourceTryInterpreterSpec extends Properties {
                    .map(_.toVector)
                    .log("content")
     } yield {
-      var acquireCount = 0 // scalafix:ok DisableSyntax.var
+      var acquireCount                                = 0 // scalafix:ok DisableSyntax.var
+      var usingResourceInstance: Option[TestResource] = None // scalafix:ok DisableSyntax.var
 
       val usingResourceResource = ReleasableResource.usingResource {
         acquireCount += 1
-        TestResource()
+        val acquired = TestResource()
+        usingResourceInstance = Some(acquired)
+        acquired
       }
 
       val usingResourceBeforeUse = (acquireCount ==== 0).log("usingResource should not acquire at construction")
@@ -749,6 +789,9 @@ object UseResourceTryInterpreterSpec extends Properties {
           usingResourceBeforeUse,
           (usingResourceResult ==== Success(())).log("usingResource use result"),
           (acquireCount ==== 1).log("usingResource should acquire once on use"),
+          (usingResourceInstance.map(_.content) ==== Some(content)).log("usingResource content"),
+          (usingResourceInstance.map(_.closeStatus) ==== Some(TestableResource.CloseStatus.closed))
+            .log("usingResource should close the acquired resource"),
           (fromTryResult ==== Success(())).log("usingResourceFromTry use result"),
           (fromTryResource.content ==== content).log("usingResourceFromTry content"),
           (fromTryResource.closeStatus ==== TestableResource.CloseStatus.closed)
