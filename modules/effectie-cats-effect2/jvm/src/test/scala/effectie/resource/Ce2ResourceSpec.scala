@@ -1,5 +1,7 @@
 package effectie.resource
 
+import scala.annotation.nowarn
+import effectie.instances.ce2.resource.ioUseResource
 import cats.effect._
 import cats.syntax.all._
 import effectie.instances.ce2.fx.ioFx
@@ -11,6 +13,7 @@ import hedgehog.runner._
 /** @author Kevin Lee
   * @since 2022-11-06
   */
+@nowarn("cat=deprecation")
 object Ce2ResourceSpec extends Properties {
   type F[A] = IO[A]
   val F: IO.type = IO

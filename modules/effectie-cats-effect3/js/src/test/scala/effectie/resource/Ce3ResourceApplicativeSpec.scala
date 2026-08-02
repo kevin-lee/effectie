@@ -1,5 +1,7 @@
 package effectie.resource
 
+import scala.annotation.nowarn
+import effectie.instances.ce3.resource.ioUseResource
 import cats.effect.IO
 import cats.syntax.all._
 import cats.{Applicative, Eq}
@@ -11,12 +13,17 @@ import munit.Assertions
 /** @author Kevin Lee
   * @since 2023-05-22
   */
+@nowarn("cat=deprecation")
 class Ce3ResourceApplicativeSpec extends munit.CatsEffectSuite {
 
   final type F[A] = IO[A]
   final val F = IO // scalafix:ok DisableSyntax.noFinalVal
 
-  implicit def releasableResourceEq[G[*]](implicit eq: Eq[G[Int]], toF: Int => G[Int]): Eq[ReleasableResource[G, Int]] =
+  implicit def releasableResourceEq[G[*]](
+    implicit eq: Eq[G[Int]],
+    toF: Int => G[Int],
+    ur: UseResource[G],
+  ): Eq[ReleasableResource[G, Int]] =
     (resource1, resource2) => eq.eqv(resource1.use(toF), resource2.use(toF))
 
   implicit val resourceMaker: ResourceMaker[F] = Ce3ResourceMaker.maker[F]
@@ -95,7 +102,6 @@ class Ce3ResourceApplicativeSpec extends munit.CatsEffectSuite {
 
   /////
   test("test ReleasableResource[F, *].map") {
-    implicit val resourceMaker: ResourceMaker[F] = Ce3ResourceMaker.maker[F]
     testMap[F](
       Ce3Resource.pure[F, Int],
       F.delay(_),
@@ -113,7 +119,7 @@ class Ce3ResourceApplicativeSpec extends munit.CatsEffectSuite {
       .unsafeToFuture()
   }
 
-  def testMap[G[*]: ResourceMaker](
+  def testMap[G[*]: UseResource](
     ctor: Int => ReleasableResource[G, Int],
     toF: Unit => G[Unit],
   ): G[Unit] = {
@@ -126,7 +132,7 @@ class Ce3ResourceApplicativeSpec extends munit.CatsEffectSuite {
       .use(toF)
   }
 
-  def testAp[G[*]: ResourceMaker](
+  def testAp[G[*]: ResourceMaker: UseResource](
     ctor: Int => ReleasableResource[G, Int],
     toF: Unit => G[Unit],
   ): G[Unit] = {

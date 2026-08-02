@@ -1,5 +1,7 @@
 package effectie.resource
 
+import scala.annotation.nowarn
+import effectie.instances.ce2.resource.ioUseResource
 import cats.effect._
 import cats.syntax.all._
 import effectie.instances.ce2.fx.ioFx
@@ -14,6 +16,7 @@ import scala.concurrent.duration._
 /** @author Kevin Lee
   * @since 2022-11-06
   */
+@nowarn("cat=deprecation")
 class Ce2ResourceSpec extends munit.FunSuite with FutureTools {
 
   implicit val ec: ExecutionContext = globalExecutionContext

@@ -1,5 +1,7 @@
 package effectie.resource
 
+import scala.annotation.nowarn
+import effectie.instances.ce2.resource.ioUseResource
 import cats.effect.IO
 import cats.syntax.all._
 import cats.{Eq, Functor}
@@ -14,6 +16,7 @@ import scala.concurrent.duration._
 /** @author Kevin Lee
   * @since 2023-05-22
   */
+@nowarn("cat=deprecation")
 class Ce2ResourceFunctorSpec extends munit.FunSuite with FutureTools {
 
   implicit val ec: ExecutionContext = globalExecutionContext
@@ -23,10 +26,12 @@ class Ce2ResourceFunctorSpec extends munit.FunSuite with FutureTools {
   final type F[A] = IO[A]
   final val F = IO // scalafix:ok DisableSyntax.noFinalVal
 
-  implicit def releasableResourceEq[G[*]](implicit eq: Eq[G[Int]], toF: Int => G[Int]): Eq[ReleasableResource[G, Int]] =
+  implicit def releasableResourceEq[G[*]](
+    implicit eq: Eq[G[Int]],
+    toF: Int => G[Int],
+    ur: UseResource[G],
+  ): Eq[ReleasableResource[G, Int]] =
     (resource1, resource2) => eq.eqv(resource1.use(toF), resource2.use(toF))
-
-  implicit val resourceMaker: ResourceMaker[F] = Ce2ResourceMaker.maker[F]
 
   implicit val toF: Int => F[Int] = F.delay(_)
 
@@ -65,7 +70,7 @@ class Ce2ResourceFunctorSpec extends munit.FunSuite with FutureTools {
       .unsafeToFuture()
   }
 
-  def testMap[G[*]: ResourceMaker](
+  def testMap[G[*]: UseResource](
     ctor: Int => ReleasableResource[G, Int],
     toF: Unit => G[Unit],
   ): G[Unit] = {

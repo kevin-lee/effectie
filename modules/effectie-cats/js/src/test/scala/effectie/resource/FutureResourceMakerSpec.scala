@@ -6,12 +6,14 @@ import effectie.resource.data.{TestResource, TestResourceNoAutoClose, TestableRe
 import effectie.testing.FutureTools
 import munit.Assertions
 
+import scala.annotation.nowarn
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
 /** @author Kevin Lee
   * @since 2022-11-12
   */
+@nowarn("cat=deprecation")
 class FutureResourceMakerSpec extends munit.FunSuite with FutureTools {
 
   implicit val ec: ExecutionContext = globalExecutionContext
@@ -119,7 +121,14 @@ class FutureResourceMakerSpec extends munit.FunSuite with FutureTools {
         },
         content,
         _ => Future.successful(()),
-        none,
+        Option({
+          case err: RuntimeException if Option(err.getMessage).exists(_.startsWith("Test error in closing resource")) =>
+            ()
+          case ex: Throwable =>
+            Assertions.fail(
+              s"The release RuntimeException was expected to propagate (2.5.0 semantics) but got ${ex.getClass.getSimpleName}. Error: ${ex.toString}"
+            )
+        }),
       )
 
   }

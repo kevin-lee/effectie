@@ -1,5 +1,7 @@
 package effectie.resource
 
+import scala.annotation.nowarn
+import effectie.instances.ce3.resource.ioUseResource
 import cats.effect.{Resource, _}
 import cats.syntax.all._
 import effectie.instances.ce3.fx.ioFx
@@ -11,6 +13,7 @@ import munit.Assertions
 /** @author Kevin Lee
   * @since 2022-11-06
   */
+@nowarn("cat=deprecation")
 class Ce3ResourceSpec extends munit.CatsEffectSuite {
   type F[A] = IO[A]
   val F: IO.type = IO

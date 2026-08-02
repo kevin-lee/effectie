@@ -8,11 +8,13 @@ import hedgehog._
 import hedgehog.runner._
 
 import java.util.concurrent.{ExecutorService, Executors}
+import scala.annotation.nowarn
 import scala.concurrent.ExecutionContext
 
 /** @author Kevin Lee
   * @since 2022-11-12
   */
+@nowarn("cat=deprecation")
 object ReleasableFutureResourceSpec extends Properties {
 
   override def tests: List[Test] = List(
@@ -177,7 +179,7 @@ object ReleasableFutureResourceSpec extends Properties {
                   content,
                   _ => Future.successful(()),
                   none,
-                  ReleasableFutureResource.make(_)(a => Future(a.release())),
+                  ReleasableResource.makeFuture(_)(a => Future(a.release())),
                 ),
               ReleasableResourceSpec
                 .testReleasableResourceUse[Future](TestResourceNoAutoClose.apply)(
@@ -234,7 +236,7 @@ object ReleasableFutureResourceSpec extends Properties {
                           s"TestException was expected but it is ${ex.getClass.getSimpleName}. Error: ${ex.toString}"
                         )
                   }),
-                  ReleasableFutureResource.make(_)(a => Future(a.release())),
+                  ReleasableResource.makeFuture(_)(a => Future(a.release())),
                 ),
               ReleasableResourceSpec
                 .testReleasableResourceUse[Future](TestResourceNoAutoClose.apply)(
@@ -292,7 +294,7 @@ object ReleasableFutureResourceSpec extends Properties {
                   content,
                   _ => Future.successful(()),
                   none,
-                  ReleasableFutureResource.pure(_),
+                  ReleasableResource.pureFuture(_),
                 ),
               ReleasableResourceSpec
                 .testReleasableResourceUse[Future](TestResourceNoAutoClose.apply)
@@ -351,7 +353,7 @@ object ReleasableFutureResourceSpec extends Properties {
                           s"TestException was expected but it is ${ex.getClass.getSimpleName}. Error: ${ex.toString}"
                         )
                   }),
-                  ReleasableFutureResource.pure(_),
+                  ReleasableResource.pureFuture(_),
                 ),
               ReleasableResourceSpec
                 .testReleasableResourceUse[Future](TestResourceNoAutoClose.apply)
@@ -410,7 +412,7 @@ object ReleasableFutureResourceSpec extends Properties {
       implicit val ec: ExecutionContext             =
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
-      val resource = ReleasableFutureResource[TestResource](Future(testResource))
+      val resource = ReleasableResource.futureResource[TestResource](Future(testResource))
 
       var actualContent = Vector.empty[String] // scalafix:ok DisableSyntax.var
 
@@ -474,7 +476,7 @@ object ReleasableFutureResourceSpec extends Properties {
       implicit val ec: ExecutionContext             =
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
-      val resource      = ReleasableFutureResource[TestResource](Future(testResource))
+      val resource      = ReleasableResource.futureResource[TestResource](Future(testResource))
       var actualContent = Vector.empty[String] // scalafix:ok DisableSyntax.var
 
       val before = List(
@@ -550,7 +552,7 @@ object ReleasableFutureResourceSpec extends Properties {
       implicit val ec: ExecutionContext             =
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
-      val resource = ReleasableFutureResource(Future(testResource))
+      val resource = ReleasableResource.futureResource(Future(testResource))
 
       var actualContent = Vector.empty[String] // scalafix:ok DisableSyntax.var
 
@@ -573,9 +575,9 @@ object ReleasableFutureResourceSpec extends Properties {
         ) {
           resource
             .flatMap { _ =>
-              ReleasableFutureResource(Future(testResource2))
+              ReleasableResource.futureResource(Future(testResource2))
             }
-            .flatMap(_ => ReleasableFutureResource.pure(testResource3))
+            .flatMap(_ => ReleasableResource.pureFuture(testResource3))
             .use { newResource =>
               actualContent = content ++ content2 ++ newResource.content
               Future.unit
@@ -636,7 +638,7 @@ object ReleasableFutureResourceSpec extends Properties {
       implicit val ec: ExecutionContext             =
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
-      val resource = ReleasableFutureResource(Future(testResource))
+      val resource = ReleasableResource.futureResource(Future(testResource))
 
       var actualContent = Vector.empty[String] // scalafix:ok DisableSyntax.var
 
@@ -658,8 +660,8 @@ object ReleasableFutureResourceSpec extends Properties {
           waitFor,
         ) {
           resource
-            .flatMap(_ => ReleasableFutureResource(Future(testResource2)))
-            .flatMap(_ => ReleasableFutureResource.pure(testResource3))
+            .flatMap(_ => ReleasableResource.futureResource(Future(testResource2)))
+            .flatMap(_ => ReleasableResource.pureFuture(testResource3))
             .use { newResource =>
               actualContent = content ++ content2 ++ newResource.content
               Future.failed[Unit](TestException(123))
@@ -723,7 +725,7 @@ object ReleasableFutureResourceSpec extends Properties {
       implicit val ec: ExecutionContext             =
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
-      val resource = ReleasableFutureResource(Future(testResource))
+      val resource = ReleasableResource.futureResource(Future(testResource))
 
       var actualContent = Vector.empty[String] // scalafix:ok DisableSyntax.var
 
@@ -746,13 +748,13 @@ object ReleasableFutureResourceSpec extends Properties {
         ) {
           resource
             .flatMap { _ =>
-              ReleasableFutureResource(Future(testResource2))
+              ReleasableResource.futureResource(Future(testResource2))
             }
             .map(_.content ++ content3)
             .flatMap { content =>
-              ReleasableFutureResource
-                .make(Future(content.foreach(testResource3.write)))(_ => Future.unit)
-                .flatMap(_ => ReleasableFutureResource.pure(testResource3))
+              ReleasableResource
+                .makeFuture(Future(content.foreach(testResource3.write)))(_ => Future.unit)
+                .flatMap(_ => ReleasableResource.pureFuture(testResource3))
             }
             .use { newResource =>
               actualContent = content ++ newResource.content
@@ -814,7 +816,7 @@ object ReleasableFutureResourceSpec extends Properties {
       implicit val ec: ExecutionContext             =
         ConcurrentSupport.newExecutionContext(executorService, ErrorLogger.printlnExecutionContextErrorLogger)
 
-      val resource = ReleasableFutureResource(Future(testResource))
+      val resource = ReleasableResource.futureResource(Future(testResource))
 
       var actualContent = Vector.empty[String] // scalafix:ok DisableSyntax.var
 
@@ -836,12 +838,12 @@ object ReleasableFutureResourceSpec extends Properties {
           waitFor,
         ) {
           resource
-            .flatMap(_ => ReleasableFutureResource(Future(testResource2)))
+            .flatMap(_ => ReleasableResource.futureResource(Future(testResource2)))
             .map(_.content ++ content3)
             .flatMap { content =>
-              ReleasableFutureResource
-                .make(Future(content.foreach(testResource3.write)))(_ => Future.unit)
-                .flatMap(_ => ReleasableFutureResource.pure(testResource3))
+              ReleasableResource
+                .makeFuture(Future(content.foreach(testResource3.write)))(_ => Future.unit)
+                .flatMap(_ => ReleasableResource.pureFuture(testResource3))
             }
             .use { newResource =>
               actualContent = content ++ newResource.content

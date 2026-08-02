@@ -1,5 +1,7 @@
 package effectie.resource
 
+import scala.annotation.nowarn
+import effectie.instances.monix3.resource.taskUseResource
 import cats.syntax.all._
 import effectie.instances.monix3.fx.taskFx
 import effectie.resource.data.TestErrors.TestException
@@ -15,6 +17,7 @@ import monix.eval.Task
 /** @author Kevin Lee
   * @since 2022-11-06
   */
+@nowarn("cat=deprecation")
 class Ce2ResourceMakerSpec extends munit.FunSuite with FutureTools {
 
   implicit val ec: ExecutionContext = globalExecutionContext

@@ -8,11 +8,13 @@ import hedgehog._
 import hedgehog.runner._
 
 import java.util.concurrent.{ExecutorService, Executors}
+import scala.annotation.nowarn
 import scala.concurrent.ExecutionContext
 
 /** @author Kevin Lee
   * @since 2022-11-12
   */
+@nowarn("cat=deprecation")
 object FutureResourceMakerSpec extends Properties {
 
   override def tests: List[Test] = List(
@@ -253,7 +255,17 @@ object FutureResourceMakerSpec extends Properties {
             },
             content,
             _ => Future.successful(Result.success),
-            none,
+            Option({
+              case err: RuntimeException
+                  if Option(err.getMessage).exists(_.startsWith("Test error in closing resource")) =>
+                Result.success
+              case ex: Throwable =>
+                Result
+                  .failure
+                  .log(
+                    s"The release RuntimeException was expected to propagate (2.5.0 semantics) but got ${ex.getClass.getSimpleName}. Error: ${ex.toString}"
+                  )
+            }),
           )
       )
 

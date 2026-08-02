@@ -1,5 +1,7 @@
 package effectie.resource
 
+import scala.annotation.nowarn
+import effectie.instances.monix3.resource.taskUseResource
 import cats.syntax.all._
 import cats.{Eq, Functor}
 import effectie.testing.cats.Specs
@@ -11,14 +13,18 @@ import monix.eval.Task
 /** @author Kevin Lee
   * @since 2023-05-22
   */
+@nowarn("cat=deprecation")
 object Ce2ResourceFunctorSpec extends Properties {
   import monix.execution.Scheduler.Implicits.global
 
-  implicit def releasableResourceEq[F[*]](implicit eq: Eq[F[Int]], toF: Int => F[Int]): Eq[ReleasableResource[F, Int]] =
+  implicit def releasableResourceEq[F[*]](
+    implicit eq: Eq[F[Int]],
+    toF: Int => F[Int],
+    ur: UseResource[F],
+  ): Eq[ReleasableResource[F, Int]] =
     (resource1, resource2) => eq.eqv(resource1.use(toF), resource2.use(toF))
 
   override def tests: List[Test] = {
-    implicit val resourceMaker: ResourceMaker[Task] = Ce2ResourceMaker.maker[Task]
 
     implicit val toF: Int => Task[Int] = Task.delay(_)
     implicit def eqF: Eq[Task[Int]] = (fa: Task[Int], fb: Task[Int]) => fa.flatMap(a => fb.map(_ === a)).runSyncUnsafe()
@@ -51,7 +57,7 @@ object Ce2ResourceFunctorSpec extends Properties {
     )
   }
 
-  def testMap[F[*]: ResourceMaker](
+  def testMap[F[*]: UseResource](
     ctor: Int => ReleasableResource[F, Int],
     toF: Result => F[Result],
     get: F[Result] => Result,

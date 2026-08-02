@@ -6,9 +6,12 @@ import effectie.core.{CanCatch, FxCtor}
 import effectie.resource.data.TestableResource
 import munit.Assertions
 
+import scala.annotation.nowarn
+
 /** @author Kevin Lee
   * @since 2022-11-06
   */
+@nowarn("cat=deprecation")
 object ResourceMakerForMUnit {
   def testForAutoCloseable[F[*]]: TestForAutoCloseable1[F] = new TestForAutoCloseable1[F]
 
@@ -24,7 +27,7 @@ object ResourceMakerForMUnit {
       content: Vector[String],
       useF: A => F[Unit],
       errorTest: Option[Throwable => Unit],
-    )(implicit FC: FxCtor[F], CC: CanCatch[F], M: Monad[F], RM: ResourceMaker[F]): F[Unit] =
+    )(implicit FC: FxCtor[F], CC: CanCatch[F], M: Monad[F], RM: ResourceMaker[F], UR: UseResource[F]): F[Unit] =
       testForAutoCloseable0(
         testResourceConstructor,
         content,
@@ -34,7 +37,7 @@ object ResourceMakerForMUnit {
   }
 
   private def testForAutoCloseable0[
-    F[*]: FxCtor: CanCatch: Monad: ResourceMaker,
+    F[*]: FxCtor: CanCatch: Monad: ResourceMaker: UseResource,
     A <: TestableResource with AutoCloseable,
   ](
     testResourceConstructor: () => A,
@@ -127,7 +130,7 @@ object ResourceMakerForMUnit {
       content: Vector[String],
       useF: A => F[Unit],
       errorTest: Option[Throwable => Unit],
-    )(implicit FF: FxCtor[F], CC: CanCatch[F], M: Monad[F], RM: ResourceMaker[F]) =
+    )(implicit FF: FxCtor[F], CC: CanCatch[F], M: Monad[F], RM: ResourceMaker[F], UR: UseResource[F]) =
       testForMake0(
         testResourceConstructor,
         release,
@@ -137,7 +140,7 @@ object ResourceMakerForMUnit {
       )
   }
 
-  private def testForMake0[F[*]: FxCtor: CanCatch: Monad: ResourceMaker, A <: TestableResource](
+  private def testForMake0[F[*]: FxCtor: CanCatch: Monad: ResourceMaker: UseResource, A <: TestableResource](
     testResourceConstructor: () => A,
     release: A => Unit,
     content: Vector[String],
@@ -240,7 +243,7 @@ object ResourceMakerForMUnit {
       useF: A => F[Unit],
       closeStatusTest: TestableResource.CloseStatus => Unit,
       errorTest: Option[Throwable => Unit],
-    )(implicit FF: FxCtor[F], CC: CanCatch[F], M: Monad[F]) =
+    )(implicit FF: FxCtor[F], CC: CanCatch[F], M: Monad[F], UR: UseResource[F]) =
       testFor0(
         testResourceConstructor,
         maker,
@@ -251,7 +254,7 @@ object ResourceMakerForMUnit {
       )
   }
 
-  private def testFor0[F[*]: FxCtor: CanCatch: Monad, A <: TestableResource](
+  private def testFor0[F[*]: FxCtor: CanCatch: Monad: UseResource, A <: TestableResource](
     testResourceConstructor: () => A,
     maker: A => ReleasableResource[F, A],
     content: Vector[String],
