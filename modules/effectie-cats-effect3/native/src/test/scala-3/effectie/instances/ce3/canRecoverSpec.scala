@@ -3,12 +3,10 @@ package effectie.instances.ce3
 import cats.*
 import cats.data.EitherT
 import cats.effect.IO
-import cats.effect.unsafe.IORuntime
 import cats.instances.all.*
 import cats.syntax.all.*
 import effectie.SomeControlThrowable
 import effectie.core.*
-import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
 import effectie.syntax.error.*
 import effectie.syntax.fx.*
 import effectie.testing.types.SomeError
@@ -170,10 +168,7 @@ object canRecoverSpec extends Properties {
       actual.completeAs(expected)
     }
 
-    def testCanRecover_IO_recoverFromNonFatalWithShouldNotCatchFatal: Result = {
-
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+    def testCanRecover_IO_recoverFromNonFatalWithShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val expectedException = SomeControlThrowable("Something's wrong")
       val fa                = run[IO, Int](throwThrowable[Int](expectedException))
@@ -223,10 +218,7 @@ object canRecoverSpec extends Properties {
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
-    def testCanRecover_IO_recoverFromNonFatalWithEitherShouldNotCatchFatal: Result = {
-
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+    def testCanRecover_IO_recoverFromNonFatalWithEitherShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val expectedException = SomeControlThrowable("Something's wrong")
       val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
@@ -292,10 +284,7 @@ object canRecoverSpec extends Properties {
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
-    def testCanRecover_IO_recoverEitherFromNonFatalWithShouldNotCatchFatal: Result = {
-
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+    def testCanRecover_IO_recoverEitherFromNonFatalWithShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val expectedException = SomeControlThrowable("Something's wrong")
       val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
@@ -365,10 +354,7 @@ object canRecoverSpec extends Properties {
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
-    def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldNotCatchFatal: Result = {
-
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+    def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val expectedException = SomeControlThrowable("Something's wrong")
       val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
@@ -434,10 +420,7 @@ object canRecoverSpec extends Properties {
       actual.completeAs(expected)
     }
 
-    def testCanRecover_IO_recoverFromNonFatalShouldNotCatchFatal: Result = {
-
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+    def testCanRecover_IO_recoverFromNonFatalShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val expectedException = SomeControlThrowable("Something's wrong")
       val fa                = run[IO, Int](throwThrowable[Int](expectedException))
@@ -480,10 +463,7 @@ object canRecoverSpec extends Properties {
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
-    def testCanRecover_IO_recoverFromNonFatalEitherShouldNotCatchFatal: Result = {
-
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+    def testCanRecover_IO_recoverFromNonFatalEitherShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val expectedException = SomeControlThrowable("Something's wrong")
       val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
@@ -540,10 +520,7 @@ object canRecoverSpec extends Properties {
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
-    def testCanRecover_IO_recoverEitherFromNonFatalShouldNotCatchFatal: Result = {
-
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+    def testCanRecover_IO_recoverEitherFromNonFatalShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val expectedException = SomeControlThrowable("Something's wrong")
       val fa                = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
@@ -609,10 +586,7 @@ object canRecoverSpec extends Properties {
       actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
     }
 
-    def testCanRecover_IO_recoverEitherTFromNonFatalShouldNotCatchFatal: Result = {
-
-      val compat          = new CatsEffectIoCompatForFuture
-      given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+    def testCanRecover_IO_recoverEitherTFromNonFatalShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
       val expectedException = SomeControlThrowable("Something's wrong")
       val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))

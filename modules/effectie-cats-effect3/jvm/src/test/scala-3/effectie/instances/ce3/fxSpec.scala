@@ -2,13 +2,11 @@ package effectie.instances.ce3
 
 import cats.data.EitherT
 import cats.effect.*
-import cats.effect.unsafe.IORuntime
 import cats.instances.either.*
 import cats.syntax.all.*
 import cats.{Eq, Functor, Show}
 import effectie.SomeControlThrowable
 import effectie.core.Fx
-import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
 import effectie.specs.MonadSpec
 import effectie.instances.ce3.fx.given
 import effectie.specs.fxSpec.FxSpecs
@@ -1720,10 +1718,7 @@ object FxSpec extends Properties {
 
     object OnNonFatalSpec {
 
-      def testOnNonFatal_IO_onNonFatalWithShouldRecoverFromNonFatal: Result = {
-
-        val compat          = new CatsEffectIoCompatForFuture
-        given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      def testOnNonFatal_IO_onNonFatalWithShouldRecoverFromNonFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val expectedException = new RuntimeException("Something's wrong")
         val fa                = run[IO, Int](throwThrowable[Int](expectedException))
@@ -1789,10 +1784,7 @@ object FxSpec extends Properties {
 
       }
 
-      def testOnNonFatal_IO_onNonFatalWithShouldReturnSuccessfulResult: Result = {
-
-        val compat          = new CatsEffectIoCompatForFuture
-        given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      def testOnNonFatal_IO_onNonFatalWithShouldReturnSuccessfulResult: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val expectedResult = 999
         val fa             = run[IO, Int](expectedResult)

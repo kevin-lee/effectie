@@ -2,24 +2,20 @@ package effectie.instances.ce3
 
 import cats.data.EitherT
 import cats.effect.*
-import cats.effect.unsafe.IORuntime
 import cats.instances.either.*
 import cats.syntax.all.*
 import cats.{Eq, Functor, Show}
 import effectie.SomeControlThrowable
 import effectie.core.Fx
-import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
 import effectie.specs.MonadSpec
 import effectie.instances.ce3.fx.given
 import effectie.specs.fxSpec.FxSpecs
 import effectie.syntax.error.*
 import effectie.testing.types.{SomeError, SomeThrowableError}
-import extras.concurrent.testing.ConcurrentSupport
 import extras.hedgehog.ce3.syntax.runner.*
 import hedgehog.*
 import hedgehog.runner.*
 
-import java.util.concurrent.ExecutorService
 import scala.util.control.{ControlThrowable, NonFatal}
 
 /** @author Kevin Lee
@@ -611,10 +607,7 @@ object FxSpec extends Properties {
       }
 
       @SuppressWarnings(Array("org.wartremover.warts.ToString"))
-      def testCanCatch_IO_catchNonFatalThrowableShouldNotCatchFatal: Result = {
-
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      def testCanCatch_IO_catchNonFatalThrowableShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val fatalExpcetion = SomeControlThrowable("Something's wrong")
         val fa             = run[IO, Int](throwThrowable[Int](fatalExpcetion))
@@ -649,10 +642,7 @@ object FxSpec extends Properties {
       }
 
       @SuppressWarnings(Array("org.wartremover.warts.ToString"))
-      def testCanCatch_IO_catchNonFatalShouldNotCatchFatal: Result = {
-
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      def testCanCatch_IO_catchNonFatalShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val fatalExpcetion = SomeControlThrowable("Something's wrong")
         val fa             = run[IO, Int](throwThrowable[Int](fatalExpcetion))
@@ -690,10 +680,7 @@ object FxSpec extends Properties {
       }
 
       @SuppressWarnings(Array("org.wartremover.warts.ToString"))
-      def testCanCatch_IO_catchNonFatalEitherShouldNotCatchFatal: Result = {
-
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      def testCanCatch_IO_catchNonFatalEitherShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val fatalExpcetion = SomeControlThrowable("Something's wrong")
         val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
@@ -741,10 +728,7 @@ object FxSpec extends Properties {
       }
 
       @SuppressWarnings(Array("org.wartremover.warts.ToString"))
-      def testCanCatch_IO_catchNonFatalEitherTShouldNotCatchFatal: Result = {
-
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      def testCanCatch_IO_catchNonFatalEitherTShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val fatalExpcetion = SomeControlThrowable("Something's wrong")
         val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
@@ -799,10 +783,7 @@ object FxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanHandleError_IO_handleNonFatalWithShouldNotHandleFatalWith: Result = {
-
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      def testCanHandleError_IO_handleNonFatalWithShouldNotHandleFatalWith: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val fatalExpcetion = SomeControlThrowable("Something's wrong")
         val fa             = run[IO, Int](throwThrowable[Int](fatalExpcetion))
@@ -844,10 +825,7 @@ object FxSpec extends Properties {
         actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
       }
 
-      def testCanHandleError_IO_handleNonFatalWithEitherShouldNotHandleFatalWith: Result = {
-
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      def testCanHandleError_IO_handleNonFatalWithEitherShouldNotHandleFatalWith: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val fatalExpcetion = SomeControlThrowable("Something's wrong")
         val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
@@ -900,10 +878,7 @@ object FxSpec extends Properties {
         actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
       }
 
-      def testCanHandleError_IO_handleEitherNonFatalWithShouldNotHandleFatalWith: Result = {
-
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      def testCanHandleError_IO_handleEitherNonFatalWithShouldNotHandleFatalWith: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val fatalExpcetion = SomeControlThrowable("Something's wrong")
         val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
@@ -962,10 +937,7 @@ object FxSpec extends Properties {
         actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
       }
 
-      def testCanHandleError_IO_handleEitherTNonFatalWithShouldNotHandleFatalWith: Result = {
-
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      def testCanHandleError_IO_handleEitherTNonFatalWithShouldNotHandleFatalWith: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val fatalExpcetion = SomeControlThrowable("Something's wrong")
         val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
@@ -1023,10 +995,7 @@ object FxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanHandleError_IO_handleNonFatalShouldNotHandleFatal: Result = {
-
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      def testCanHandleError_IO_handleNonFatalShouldNotHandleFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val fatalExpcetion = SomeControlThrowable("Something's wrong")
         val fa             = run[IO, Int](throwThrowable[Int](fatalExpcetion))
@@ -1066,10 +1035,7 @@ object FxSpec extends Properties {
         actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
       }
 
-      def testCanHandleError_IO_handleNonFatalEitherShouldNotHandleFatal: Result = {
-
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      def testCanHandleError_IO_handleNonFatalEitherShouldNotHandleFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val fatalExpcetion = SomeControlThrowable("Something's wrong")
         val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
@@ -1121,10 +1087,7 @@ object FxSpec extends Properties {
         actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
       }
 
-      def testCanHandleError_IO_handleEitherNonFatalShouldNotHandleFatal: Result = {
-
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      def testCanHandleError_IO_handleEitherNonFatalShouldNotHandleFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val fatalExpcetion = SomeControlThrowable("Something's wrong")
         val fa             = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion))
@@ -1181,10 +1144,7 @@ object FxSpec extends Properties {
         actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
       }
 
-      def testCanHandleError_IO_handleEitherTNonFatalShouldNotHandleFatal: Result = {
-
-        val es: ExecutorService = ConcurrentSupport.newExecutorService(2)
-        given rt: IORuntime     = testing.IoAppUtils.runtime(es)
+      def testCanHandleError_IO_handleEitherTNonFatalShouldNotHandleFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val fatalExpcetion = SomeControlThrowable("Something's wrong")
         val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](fatalExpcetion)))
@@ -1244,10 +1204,7 @@ object FxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanRecover_IO_recoverFromNonFatalWithShouldNotCatchFatal: Result = {
-
-        val compat          = new CatsEffectIoCompatForFuture
-        given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      def testCanRecover_IO_recoverFromNonFatalWithShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val expectedException = SomeControlThrowable("Something's wrong")
         val fa                = run[IO, Int](throwThrowable[Int](expectedException))
@@ -1297,10 +1254,7 @@ object FxSpec extends Properties {
         actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
       }
 
-      def testCanRecover_IO_recoverFromNonFatalWithEitherShouldNotCatchFatal: Result = {
-
-        val compat          = new CatsEffectIoCompatForFuture
-        given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      def testCanRecover_IO_recoverFromNonFatalWithEitherShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val expectedException = SomeControlThrowable("Something's wrong")
         val fa = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
@@ -1366,10 +1320,7 @@ object FxSpec extends Properties {
         actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
       }
 
-      def testCanRecover_IO_recoverEitherFromNonFatalWithShouldNotCatchFatal: Result = {
-
-        val compat          = new CatsEffectIoCompatForFuture
-        given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      def testCanRecover_IO_recoverEitherFromNonFatalWithShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val expectedException = SomeControlThrowable("Something's wrong")
         val fa = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
@@ -1440,10 +1391,7 @@ object FxSpec extends Properties {
           actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
         }
 
-      def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldNotCatchFatal: Result = {
-
-        val compat          = new CatsEffectIoCompatForFuture
-        given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      def testCanRecover_IO_recoverEitherTFromNonFatalWithShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val expectedException = SomeControlThrowable("Something's wrong")
         val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
@@ -1509,10 +1457,7 @@ object FxSpec extends Properties {
         actual.completeAs(expected)
       }
 
-      def testCanRecover_IO_recoverFromNonFatalShouldNotCatchFatal: Result = {
-
-        val compat          = new CatsEffectIoCompatForFuture
-        given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      def testCanRecover_IO_recoverFromNonFatalShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val expectedException = SomeControlThrowable("Something's wrong")
         val fa                = run[IO, Int](throwThrowable[Int](expectedException))
@@ -1555,10 +1500,7 @@ object FxSpec extends Properties {
         actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
       }
 
-      def testCanRecover_IO_recoverFromNonFatalEitherShouldNotCatchFatal: Result = {
-
-        val compat          = new CatsEffectIoCompatForFuture
-        given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      def testCanRecover_IO_recoverFromNonFatalEitherShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val expectedException = SomeControlThrowable("Something's wrong")
         val fa = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
@@ -1615,10 +1557,7 @@ object FxSpec extends Properties {
         actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
       }
 
-      def testCanRecover_IO_recoverEitherFromNonFatalShouldNotCatchFatal: Result = {
-
-        val compat          = new CatsEffectIoCompatForFuture
-        given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      def testCanRecover_IO_recoverEitherFromNonFatalShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val expectedException = SomeControlThrowable("Something's wrong")
         val fa = run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException))
@@ -1684,10 +1623,7 @@ object FxSpec extends Properties {
         actualFailedResult.completeAs(expectedFailedResult) and actualSuccessResult.completeAs(expectedSuccessResult)
       }
 
-      def testCanRecover_IO_recoverEitherTFromNonFatalShouldNotCatchFatal: Result = {
-
-        val compat          = new CatsEffectIoCompatForFuture
-        given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      def testCanRecover_IO_recoverEitherTFromNonFatalShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val expectedException = SomeControlThrowable("Something's wrong")
         val fa = EitherT(run[IO, Either[SomeError, Int]](throwThrowable[Either[SomeError, Int]](expectedException)))
@@ -1738,10 +1674,7 @@ object FxSpec extends Properties {
 
     object OnNonFatalSpec {
 
-      def testOnNonFatal_IO_onNonFatalWithShouldRecoverFromNonFatal: Result = {
-
-        val compat          = new CatsEffectIoCompatForFuture
-        given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      def testOnNonFatal_IO_onNonFatalWithShouldRecoverFromNonFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val expectedException = new RuntimeException("Something's wrong")
         val fa                = run[IO, Int](throwThrowable[Int](expectedException))
@@ -1773,10 +1706,7 @@ object FxSpec extends Properties {
       }
 
       @SuppressWarnings(Array("org.wartremover.warts.ToString"))
-      def testOnNonFatal_IO_onNonFatalWithShouldNotCatchFatal: Result = {
-
-        val compat          = new CatsEffectIoCompatForFuture
-        given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      def testOnNonFatal_IO_onNonFatalWithShouldNotCatchFatal: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val expectedException = SomeControlThrowable("Something's wrong")
         val fa                = run[IO, Int](throwThrowable[Int](expectedException))
@@ -1807,10 +1737,7 @@ object FxSpec extends Properties {
 
       }
 
-      def testOnNonFatal_IO_onNonFatalWithShouldReturnSuccessfulResult: Result = {
-
-        val compat          = new CatsEffectIoCompatForFuture
-        given rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+      def testOnNonFatal_IO_onNonFatalWithShouldReturnSuccessfulResult: Result = testing.IoAppUtils.withNewRuntime { implicit rt =>
 
         val expectedResult = 999
         val fa             = run[IO, Int](expectedResult)

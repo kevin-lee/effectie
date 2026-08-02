@@ -3,9 +3,6 @@ package effectie.instances.ce3.testing
 import cats.effect.unsafe.{IORuntime, IORuntimeConfig}
 import hedgehog.core.Result
 
-import java.util.concurrent.ExecutorService
-import scala.annotation.nowarn
-
 /** @author Kevin Lee
   * @since 2021-07-22
   */
@@ -16,40 +13,34 @@ object IoAppUtils {
     finally runtime.shutdown()
   }
 
-  def computeWorkerThreadCount: Int = {
-    val num = Math.max(2, Runtime.getRuntime.availableProcessors())
-    println(s"Worker thread count: ${num.toString}")
-    num
+  def withNewRuntime(test: IORuntime => Result): Result = {
+    val rt = runtime()
+    try test(rt)
+    finally rt.shutdown()
   }
 
-  @nowarn
-  def runtime(es: ExecutorService): IORuntime = runtime()
+  private def runtime(): IORuntime = {
 
-  def runtime(): IORuntime = {
-    lazy val runtime: IORuntime = {
+    val (compute, poller, compDown) =
+      IORuntime.createWorkStealingComputeThreadPool()
 
-      val (compute, poller, compDown) =
-        IORuntime.createWorkStealingComputeThreadPool()
+    val (blocking, blockDown) =
+      IORuntime.createDefaultBlockingExecutionContext()
 
-      val (blocking, blockDown) =
-        IORuntime.createDefaultBlockingExecutionContext()
+    val (scheduler, schedDown) =
+      IORuntime.createDefaultScheduler()
 
-      val (scheduler, schedDown) =
-        IORuntime.createDefaultScheduler()
-
-      IORuntime(
-        compute,
-        blocking,
-        scheduler,
-        List(poller),
-        { () =>
-          compDown()
-          blockDown()
-          schedDown()
-        },
-        IORuntimeConfig(),
-      )
-    }
-    runtime
+    IORuntime(
+      compute,
+      blocking,
+      scheduler,
+      List(poller),
+      { () =>
+        compDown()
+        blockDown()
+        schedDown()
+      },
+      IORuntimeConfig(),
+    )
   }
 }

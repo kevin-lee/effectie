@@ -3,11 +3,9 @@ package effectie.instances.ce3
 import cats.Eq
 import cats.data.EitherT
 import cats.effect._
-import cats.effect.unsafe.IORuntime
 import cats.syntax.all._
 import effectie.SomeControlThrowable
 import effectie.core._
-import effectie.instances.ce3.compat.CatsEffectIoCompatForFuture
 import effectie.specs.MonadSpec
 import effectie.specs.fxSpec.FxSpecs
 import effectie.syntax.error._
@@ -1687,40 +1685,38 @@ object fxSpec extends Properties {
 
     object OnNonFatalSpec {
 
-      def testOnNonFatal_IO_onNonFatalWithShouldRecoverFromNonFatal: Result = {
+      def testOnNonFatal_IO_onNonFatalWithShouldRecoverFromNonFatal: Result =
+        testing.IoAppUtils.withNewRuntime { implicit rt =>
 
-        val compat                 = new CatsEffectIoCompatForFuture
-        implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+          val expectedException = new RuntimeException("Something's wrong")
+          val fa                = run[IO, Int](throwThrowable[Int](expectedException))
+          val expected          = 123.some
+          var actual            = none[Int] // scalafix:ok DisableSyntax.var
 
-        val expectedException = new RuntimeException("Something's wrong")
-        val fa                = run[IO, Int](throwThrowable[Int](expectedException))
-        val expected          = 123.some
-        var actual            = none[Int] // scalafix:ok DisableSyntax.var
+          val result =
+            try {
+              val r = Fx[IO]
+                .onNonFatalWith(fa) {
+                  case NonFatal(`expectedException`) =>
+                    IO.delay {
+                      actual = expected
+                    } *> IO.unit
+                }
+                .unsafeRunSync()
 
-        val result =
-          try {
-            val r = Fx[IO]
-              .onNonFatalWith(fa) {
-                case NonFatal(`expectedException`) =>
-                  IO.delay {
-                    actual = expected
-                  } *> IO.unit
-              }
-              .unsafeRunSync()
+              new AssertionError(s"Should have thrown an exception, but it was ${r.toString}.")
+            } catch {
+              case ex: Throwable =>
+                ex
+            }
 
-            new AssertionError(s"Should have thrown an exception, but it was ${r.toString}.")
-          } catch {
-            case ex: Throwable =>
-              ex
-          }
-
-        Result.all(
-          List(
-            result ==== expectedException,
-            actual ==== expected,
+          Result.all(
+            List(
+              result ==== expectedException,
+              actual ==== expected,
+            )
           )
-        )
-      }
+        }
 
       @SuppressWarnings(Array("org.wartremover.warts.ToString"))
       def testOnNonFatal_IO_onNonFatalWithShouldNotCatchFatal: Result = {
@@ -1756,33 +1752,31 @@ object fxSpec extends Properties {
 
       }
 
-      def testOnNonFatal_IO_onNonFatalWithShouldReturnSuccessfulResult: Result = {
+      def testOnNonFatal_IO_onNonFatalWithShouldReturnSuccessfulResult: Result =
+        testing.IoAppUtils.withNewRuntime { implicit rt =>
 
-        val compat                 = new CatsEffectIoCompatForFuture
-        implicit val rt: IORuntime = testing.IoAppUtils.runtime(compat.es)
+          val expectedResult = 999
+          val fa             = run[IO, Int](expectedResult)
 
-        val expectedResult = 999
-        val fa             = run[IO, Int](expectedResult)
+          val expected = none[Int]
+          var actual   = none[Int] // scalafix:ok DisableSyntax.var
 
-        val expected = none[Int]
-        var actual   = none[Int] // scalafix:ok DisableSyntax.var
+          val result = Fx[IO]
+            .onNonFatalWith(fa) {
+              case NonFatal(_) =>
+                IO.delay {
+                  actual = 123.some
+                } *> IO.unit
+            }
+            .unsafeRunSync()
 
-        val result = Fx[IO]
-          .onNonFatalWith(fa) {
-            case NonFatal(_) =>
-              IO.delay {
-                actual = 123.some
-              } *> IO.unit
-          }
-          .unsafeRunSync()
-
-        Result.all(
-          List(
-            result ==== expectedResult,
-            actual ==== expected,
+          Result.all(
+            List(
+              result ==== expectedResult,
+              actual ==== expected,
+            )
           )
-        )
-      }
+        }
 
     }
 
