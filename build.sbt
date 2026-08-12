@@ -31,7 +31,7 @@ ThisBuild / scmInfo :=
       s"git@github.com:${props.GitHubUsername}/${props.RepoName}.git",
     )
   )
-ThisBuild / licenses := props.licenses
+ThisBuild / licenses := List(License.MIT)
 
 ThisBuild / scalafixConfig := (
   if (scalaVersion.value.startsWith("3"))
@@ -476,7 +476,6 @@ lazy val monix3Js  = monix3
   .settings(jsSettingsForFuture)
   .settings(jsSettings)
 
-
 lazy val props =
   new {
 
@@ -495,8 +494,6 @@ lazy val props =
 //    final val ProjectScalaVersion = "2.12.13"
     val ProjectScalaVersion = Scala2Version
 //    val ProjectScalaVersion = Scala3Version
-
-    lazy val licenses = List("MIT" -> url("http://opensource.org/licenses/MIT"))
 
     val removeDottyIncompatible: ModuleID => Boolean =
       m =>
@@ -703,7 +700,7 @@ def module(projectName: ProjectName, crossProject: CrossProject.Builder): CrossP
         else
           Seq.empty
       },
-      licenses := props.licenses,
+      licenses := List(License.MIT),
       /* Coveralls { */
       coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, 10)) | Some((2, 11)) =>
