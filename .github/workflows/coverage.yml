@@ -10,6 +10,9 @@ on:
       - main
       - 'effectie-1'
 
+permissions:
+  contents: read
+
 env:
   GH_SBT_OPTS: "-Xss64m -Xms1024m -XX:MaxMetaspaceSize=2G -Xmx16G -XX:MaxInlineLevel=18 -XX:+UnlockExperimentalVMOptions"
   GH_JVM_OPTS: "-Xss64m -Xms1024m -XX:MaxMetaspaceSize=2G -Xmx16G -XX:MaxInlineLevel=18 -XX:+UnlockExperimentalVMOptions"

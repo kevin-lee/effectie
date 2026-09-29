@@ -5,10 +5,15 @@ on:
     branches:
       - publish-docs
 
+permissions:
+  contents: read
+
 jobs:
   build:
 
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
     - uses: actions/checkout@v1
@@ -31,7 +36,7 @@ jobs:
 
     - name: publish GitHub Pages
       env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_AUTH_TOKEN_GITHUB }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         docker run \
         -e GITHUB_TOKEN=$GITHUB_TOKEN \
