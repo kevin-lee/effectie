@@ -6,14 +6,13 @@
 [![Release Status](https://github.com/Kevin-Lee/effectie/workflows/Release/badge.svg)](https://github.com/Kevin-Lee/effectie/actions?workflow=Release)
 [![Latest version](https://index.scala-lang.org/kevin-lee/effectie/latest.svg)](https://index.scala-lang.org/kevin-lee/effectie)
 
-
-|                Project | Maven Central                                                                                                                                                                                   |
-|-----------------------:|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|          effectie-core | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kevinlee/effectie-core_2.13/badge.svg)](https://search.maven.org/artifact/io.kevinlee/effectie-core_2.13)                 |
-|        effectie-syntax | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kevinlee/effectie-syntax_2.13/badge.svg)](https://search.maven.org/artifact/io.kevinlee/effectie-syntax_2.13)             |
-|  effectie-cats-effect2 | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kevinlee/effectie-cats-effect2_2.13/badge.svg)](https://search.maven.org/artifact/io.kevinlee/effectie-cats-effect2_2.13) |
-|  effectie-cats-effect3 | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kevinlee/effectie-cats-effect3_2.13/badge.svg)](https://search.maven.org/artifact/io.kevinlee/effectie-cats-effect3_2.13) |
-|        effectie-monix3 | [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.kevinlee/effectie-monix3_2.13/badge.svg)](https://search.maven.org/artifact/io.kevinlee/effectie-monix3_2.13)             |
+|               Project | Maven Central                                                                                                                                                         |
+|----------------------:|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|         effectie-core | [![Maven Central](https://img.shields.io/maven-central/v/io.kevinlee/effectie-core_3)](https://search.maven.org/artifact/io.kevinlee/effectie-core_3)                 |
+|       effectie-syntax | [![Maven Central](https://img.shields.io/maven-central/v/io.kevinlee/effectie-syntax_3)](https://search.maven.org/artifact/io.kevinlee/effectie-syntax_3)             |
+| effectie-cats-effect2 | [![Maven Central](https://img.shields.io/maven-central/v/io.kevinlee/effectie-cats-effect2_3)](https://search.maven.org/artifact/io.kevinlee/effectie-cats-effect2_3) |
+| effectie-cats-effect3 | [![Maven Central](https://img.shields.io/maven-central/v/io.kevinlee/effectie-cats-effect3_3)](https://search.maven.org/artifact/io.kevinlee/effectie-cats-effect3_3) |
+|       effectie-monix3 | [![Maven Central](https://img.shields.io/maven-central/v/io.kevinlee/effectie-monix3_3)](https://search.maven.org/artifact/io.kevinlee/effectie-monix3_3)             |
 
 ## Test Coverage
 [![codecov](https://codecov.io/gh/Kevin-Lee/effectie/branch/main/graph/badge.svg?token=7KES1SX90T)](https://codecov.io/gh/Kevin-Lee/effectie)
