@@ -20,6 +20,9 @@ on:
         required: true
         default: '3'
 
+permissions:
+  contents: read
+
 jobs:
 
   build:
