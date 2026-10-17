@@ -3,3 +3,5 @@
 2bcde6f9df141d693f7c6e98bdd0fc0e5c33f877
 # Remove scalafmt formatting
 fcb0894c2deb1e24fab922d7ef06c4539e3fae4f
+# Reformat project/ProjectInfo.scala
+c12dc06a6f1e9d3e7938aad371bed0f5500d3482
